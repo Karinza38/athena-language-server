@@ -1,0 +1,351 @@
+// Athena Un-Grammar.
+//
+// This grammar specifies the structure of Rust's concrete syntax tree.
+// It does not specify parsing rules (ambiguities, precedence, etc are out of scope).
+// Tokens are processed -- contextual keywords are recognised, compound operators glued.
+//
+// Legend:
+//
+//   //          -- comment
+//   Name =      -- non-terminal definition
+//   'ident'     -- token (terminal)
+//   A B         -- sequence
+//   A | B       -- alternation
+//   A*          -- zero or more repetition
+//   A?          -- zero or one repetition
+//   (A)         -- same as A
+//   label:A     -- suggested name for field of AST node
+
+//********************//
+// Names and Literals //
+//********************//
+
+Identifier =
+    'ident'
+
+Literal =
+    'int_number' | 'string' | 'char'
+
+MetaIdent =
+    '\'' Identifier
+
+Unit =
+    '(' ')'
+
+//*******//
+// Sorts //
+//*******//
+
+Sort =
+    VarSort
+    | IdentSort 
+    | CompoundSort
+
+IdentSort =
+    Identifier
+
+VarSort =
+    '\'' Identifier 
+
+CompoundSort =
+    '(' Sort* ')' 
+
+
+//****************************//
+// Expressions and Deductions //
+//****************************//
+
+Phrase =
+    ExprPhrase
+    | DedPhrase
+
+ExprPhrase = 
+    Expr
+
+DedPhrase =
+    Ded
+
+Expr =
+    IdentExpr
+    | Literal
+    | Unit
+    | TermVarExpr
+    | MetaIdent
+    | CheckExpr
+    | LambdaExpr
+    | ApplicationExpr
+    | ListExpr
+    | MethodExpr
+    | LetExpr
+    | LetRecExpr
+    | MatchExpr
+    | TryExpr
+    | CellExpr
+    | SetExpr
+    | RefExpr
+    | WhileExpr
+    | MakeVectorExpr
+    | VectorSubExpr
+    | VectorSetExpr
+    | SeqExpr
+    | AndExpr
+    | OrExpr
+
+IdentExpr =
+    Identifier
+
+TermVarExpr =
+    '?' Identifier (':' Sort)?
+
+CheckExpr =
+    'check' '{' CheckArm*  '}'
+
+CheckArm = 
+    '|'? Phrase '=>' Expr
+
+LambdaExpr =
+    'lambda' '(' Identifier* ')' Expr
+
+ApplicationExpr =
+    '(' Expr Phrase* ')'
+
+ListExpr =
+    '[' Phrase* ']'
+
+MethodExpr =
+    'method' '(' Identifier* ')' Ded
+
+LetExpr =
+    'let' '{' LetPart* '}' Expr
+
+LetRecExpr =
+    'letrec' '{' LetRecPart* '}' Expr
+
+MatchExpr =
+    'match' Phrase '{' arms:MatchArm* '}'
+
+MatchArm = 
+    '|'? Pat '=>' Expr
+
+TryExpr =
+    'try' '{' TryArm* '}'
+
+TryArm =
+    '|'? Expr
+
+CellExpr =
+    'cell' Phrase
+
+SetExpr =
+    'set!' Expr Phrase
+
+RefExpr =
+    'ref' Expr
+
+WhileExpr =
+    'while' Phrase Expr
+
+MakeVectorExpr =
+    'make-vector' Expr Phrase
+
+VectorSubExpr =
+    'vector-sub' Expr Expr
+
+VectorSetExpr =
+    'vector-set!' Expr Expr Phrase
+
+SeqExpr =
+    '(' 'seq' Phrase* ')'
+
+AndExpr =
+    '(' '&&' Phrase* ')'
+
+OrExpr =
+    '(' '||' Phrase* ')'
+
+//************//
+// Deductions //
+//************//
+
+Ded = 
+    MethodCallDed
+    | BangMethodCallDed
+    | AssumeDed
+    | NamedAssumeDed
+    | ProofByContraDed
+    | UniversalGeneralDed
+    | ExistentialInstantDed
+    | InductDed
+    | CasesDed
+    | CheckDed
+    | MatchDed
+    | LetDed
+    | LetRecDed
+    | TryDed
+
+MethodCallDed =
+    '(' 'apply-method' Expr Phrase* ')'
+
+BangMethodCallDed =
+    '(' '!' Expr Phrase* ')'
+
+AssumeDed =
+    'assume' Phrase Ded
+
+NamedAssumeDed =
+    'assume' AssumePart* Ded
+
+AssumePart =
+    ';'? Identifier ':=' Phrase
+
+ProofByContraDed =
+    'suppose-absurd' Phrase Ded
+
+UniversalGeneralDed =
+    'generalize-over' Expr Ded
+    | 'pick-any' Identifier (':' Sort)? Ded
+
+ExistentialInstantDed =
+    'with-witness' Expr Phrase Ded
+    | 'pick-witness' Identifier 'for' Ded
+    | 'pick-witnesses' Identifier Identifier* 'for' Ded
+
+RestrictedApplyPat =
+    '(' Identifier RestrictedPat RestrictedPat* ')'
+
+RestrictedNamedPat =
+    '(' Identifier 'as' RestrictedPat ')'
+
+RestrictedPat =
+    IdentPat
+    | AnnotatedIdentPat
+    | RestrictedApplyPat
+    | RestrictedNamedPat
+
+InductDed =
+    'by-induction' Phrase '{'RestrictedMatchDed* '}'
+
+RestrictedMatchDed =
+    '|' RestrictedPat '=>' Ded
+
+CasesDed =
+    'datatype-cases' Phrase '{' RestrictedMatchDed* '}'
+
+CheckDed =
+    'check' '{' arms:CheckDedArm* '}'
+
+CheckDedArm =
+    '|'? Phrase '=>' Ded
+
+MatchDed =
+    'match' Phrase '{' arms:MatchDedArm* '}'
+
+MatchDedArm =
+    '|'? Pat '=>' Ded
+
+LetDed =
+    'let' '{' LetPart* '}' Ded
+
+LetPart =
+    ';'? Pat ':=' Phrase
+
+LetRecDed =
+    'letrec' '{' LetRecPart* '}' Ded
+
+LetRecPart = 
+    ';'? Identifier ':=' Expr
+
+TryDed =
+    'try' '{' Ded TryDedPart* '}'
+
+TryDedPart =
+    '|' Ded
+
+//**********//
+// Patterns //
+//**********//
+
+Pat =
+    IdentPat
+    | AnnotatedIdentPat
+    | VarPat
+    | MetaIdentPat
+    | LiteralPat
+    | UnitPat
+    | WildcardPat
+    | NamedPat
+    | ValOfPat
+    | ListOfPat
+    | SplitPat
+    | ListPat
+    | CompoundPat
+    | WherePat
+    | SomeThingPat
+
+IdentPat =
+    Identifier
+
+AnnotatedIdentPat =
+    Identifier ':' Sort
+
+VarPat =
+    '?' Identifier ':' Sort
+
+LiteralPat =
+    Literal
+
+MetaIdentPat =
+    MetaIdent
+
+UnitPat =
+    Unit
+
+WildcardPat = 
+    '_'
+
+NamedPat =
+    '(' 'bind' Identifier Pat ')'
+    | '(' Identifier 'as' Pat ')'
+
+ValOfPat =
+    '(' 'val-of' Identifier ')'
+
+ListOfPat =
+    '(' 'list-of' Pat Pat ')'
+
+SplitPat =
+    '(' 'split' Pat Pat ')'
+
+SimplePat =
+    IdentPat
+    | WildcardPat
+
+ListPat =
+    '[' Pat* ']'
+
+CompoundPat =
+    '(' Pat* ')'
+
+WherePat =
+    '(' Pat 'where' Expr ')'
+
+SomeThing =
+    'some-var'
+    | 'some-sent-con'
+    | 'some-quant'
+    | 'some-term'
+    | 'some-atom'
+    | 'some-sentence'
+    | 'some-list'
+    | 'some-cell'
+    | 'some-vector'
+    | 'some-proc'
+    | 'some-method'
+    | 'some-symbol'
+    | 'some-table'
+    | 'some-map'
+    | 'some-sub'
+    | 'some-char'
+
+SomeThingPat =
+    '(' SomeThing SimplePat ')'
