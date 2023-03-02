@@ -8,7 +8,7 @@ mod tests;
 
 use std::{marker::PhantomData, sync::Arc};
 
-pub use syntax_kind::*;
+pub use syntax_kind::SyntaxKind;
 
 pub use crate::{
     ast::{AstNode, AstToken},

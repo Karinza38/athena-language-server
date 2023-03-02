@@ -1,16 +1,4 @@
-//! rust-analyzer relies heavily on source code generation.
-//!
-//! Things like feature documentation or assist tests are implemented by
-//! processing rust-analyzer's own source code and generating the appropriate
-//! output. See `sourcegen_` tests in various crates.
-//!
-//! This crate contains utilities to make this kind of source-gen easy.
-
-#![warn(
-    rust_2018_idioms,
-    unused_lifetimes,
-    semicolon_in_expressions_from_macros
-)]
+//! Utilities for source-code generation.
 
 use std::{
     fmt, fs, mem,
@@ -143,7 +131,7 @@ impl fmt::Display for Location {
         let name = self.file.file_name().unwrap();
         write!(
             f,
-            "https://github.com/rust-lang/rust-analyzer/blob/master/{}#L{}[{}]",
+            "https://github.com/nathanwhit/athena-lsp/blob/master/{}#L{}[{}]",
             path,
             self.line,
             name.to_str().unwrap()
@@ -152,7 +140,6 @@ impl fmt::Display for Location {
 }
 
 pub fn reformat(text: String) -> String {
-    eprintln!("reformatting:\n{}", text);
     let file = syn::parse_file(&text).unwrap();
     prettyplease::unparse(&file)
 }

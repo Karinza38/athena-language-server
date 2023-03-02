@@ -2,6 +2,7 @@ use rowan::{GreenNodeBuilder, Language};
 
 use crate::{Parse, SyntaxError, SyntaxKind, TextSize};
 
+#[allow(unused_imports)]
 pub(crate) use rowan::{GreenNode, GreenToken, NodeOrToken};
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
@@ -39,12 +40,6 @@ impl SyntaxTreeBuilder {
 
     pub fn finish(self) -> Parse<SyntaxNode> {
         let (green, errors) = self.finish_raw();
-        // Disable block validation, see https://github.com/rust-lang/rust-analyzer/pull/10357
-        // #[allow(clippy::overly_complex_bool_expr)]
-        // if cfg!(debug_assertions) && false {
-        //     let node = SyntaxNode::new_root(green.clone());
-        //     crate::validation::validate_block_structure(&node);
-        // }
         Parse::new(green, errors)
     }
 

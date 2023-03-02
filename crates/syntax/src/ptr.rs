@@ -1,4 +1,4 @@
-//! In rust-analyzer, syntax trees are transient objects.
+//! Syntax trees are transient objects.
 //!
 //! That means that we create trees when we need them, and tear them down to
 //! save memory. In this architecture, hanging on to a particular syntax node

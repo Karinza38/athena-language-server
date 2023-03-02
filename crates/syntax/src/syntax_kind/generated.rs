@@ -239,10 +239,13 @@ impl SyntaxKind {
         Some(kw)
     }
     pub fn from_contextual_keyword(ident: &str) -> Option<SyntaxKind> {
-        let kw = match ident {
-            _ => return None,
-        };
-        Some(kw)
+        #[allow(unused_variables, unreachable_code)]
+        {
+            let kw = match ident {
+                _ => return None,
+            };
+            Some(kw)
+        }
     }
     pub fn from_char(c: char) -> Option<SyntaxKind> {
         let tok = match c {

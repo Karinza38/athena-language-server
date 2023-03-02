@@ -293,7 +293,7 @@ fn generate_nodes(kinds: KindsSrc<'_>, grammar: &AstSrc) -> String {
     }
 
     let ast = quote! {
-        #![allow(non_snake_case)]
+        #![allow(non_snake_case, dead_code, unused_imports)]
         use crate::{
             SyntaxNode, SyntaxToken, SyntaxKind::{self, *},
             ast::{self, AstNode, AstChildren, support},
@@ -447,11 +447,14 @@ fn generate_syntax_kinds(grammar: KindsSrc<'_>) -> String {
             }
 
             pub fn from_contextual_keyword(ident: &str) -> Option<SyntaxKind> {
-                let kw = match ident {
-                    #(#contextual_keywords_values => #contextual_keywords,)*
-                    _ => return None,
-                };
-                Some(kw)
+                #[allow(unused_variables, unreachable_code)]
+                {
+                    let kw = match ident {
+                        #(#contextual_keywords_values => #contextual_keywords,)*
+                        _ => return None,
+                    };
+                    Some(kw)
+                }
             }
 
             pub fn from_char(c: char) -> Option<SyntaxKind> {
@@ -545,7 +548,6 @@ impl Field {
     fn token_kind(&self) -> Option<proc_macro2::TokenStream> {
         match self {
             Field::Token(token) => {
-                eprintln!("{token}");
                 if token == "'" {
                     return Some(quote! { T!['\''] });
                 } else if token == "!" {
@@ -932,7 +934,6 @@ fn extract_enum_traits(ast: &mut AstSrc) {
             .variants
             .iter()
             .map(|var| {
-                eprintln!("{}: {}", enm.name, var);
                 nodes
                     .iter()
                     .find(|it| &it.name == var)
