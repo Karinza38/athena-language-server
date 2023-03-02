@@ -48,8 +48,69 @@ VarSort =
     '\'' Identifier 
 
 CompoundSort =
-    '(' Sort* ')' 
+    '(' Sort* ')'
 
+//************//
+// Statements //
+//************//
+
+Stmt =
+    DirStmt
+    | PhraseStmt
+
+PhraseStmt =
+    Phrase
+
+DirStmt =
+    Dir
+
+//************//
+// Directives //
+//************//
+
+Dir =
+    ModuleDir
+    | DomainDir
+    | DomainsDir
+    | DeclareDir
+    | DefineDir
+    | DefineProcDir
+    | DefineMultiDir
+
+
+ModuleDir =
+    'module' Identifier '{' Stmt* '}'
+
+DomainDir =
+    'domain' SortDecl
+
+DomainsDir =
+    'domains' (SortDecl (',' SortDecl)*)
+
+SortDecl =
+    IdentSort
+    | CompoundSortDecl
+
+CompoundSortDecl =
+    '(' SortDecl* ')'
+
+DeclareDir =
+    'declare' Identifier* ':' SortVarsDecl? FuncSorts '->' return_sort:SortDecl
+
+FuncSorts =
+    '[' SortDecl* ']'
+
+SortVarsDecl =
+    '(' (IdentSort (',' IdentSort)*) ')'
+
+DefineDir =
+    'define' Identifier ':=' Phrase
+
+DefineProcDir =
+    'define' '(' Identifier args:Identifier* ')' ':=' Phrase
+
+DefineMultiDir =
+    'define' '[' Pat* ']' ':=' '[' Phrase* ']'
 
 //****************************//
 // Expressions and Deductions //

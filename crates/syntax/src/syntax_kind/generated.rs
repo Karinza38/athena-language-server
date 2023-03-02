@@ -26,6 +26,7 @@ pub enum SyntaxKind {
     COLON_EQ,
     SINGLE_QUOTE,
     SEMI,
+    THIN_ARROW,
     WHILE_KW,
     LET_KW,
     LETREC_KW,
@@ -75,6 +76,11 @@ pub enum SyntaxKind {
     AS_KW,
     BIND_KW,
     FOR_KW,
+    DEFINE_KW,
+    MODULE_KW,
+    DECLARE_KW,
+    DOMAIN_KW,
+    DOMAINS_KW,
     INT_NUMBER,
     STRING,
     ERROR,
@@ -154,6 +160,18 @@ pub enum SyntaxKind {
     LET_PART,
     CHECK_ARM,
     LET_REC_PART,
+    FUNC_SORTS,
+    SORT_VARS_DECL,
+    COMPOUND_SORT_DECL,
+    DEFINE_DIR,
+    DEFINE_MULTI_DIR,
+    DEFINE_PROC_DIR,
+    DOMAIN_DIR,
+    DOMAINS_DIR,
+    DECLARE_DIR,
+    MODULE_DIR,
+    DIR_STMT,
+    PHRASE_STMT,
     #[doc(hidden)]
     __LAST,
 }
@@ -170,14 +188,15 @@ impl SyntaxKind {
             SOME_TERM_KW | SOME_ATOM_KW | SOME_SENTENCE_KW | SOME_LIST_KW | SOME_CELL_KW
             | SOME_VECTOR_KW | SOME_PROC_KW | SOME_METHOD_KW | SOME_SYMBOL_KW |
             SOME_TABLE_KW | SOME_MAP_KW | SOME_SUB_KW | SOME_CHAR_KW | SPLIT_KW |
-            WHERE_KW | LIST_OF_KW | VAL_OF_KW | AS_KW | BIND_KW | FOR_KW
+            WHERE_KW | LIST_OF_KW | VAL_OF_KW | AS_KW | BIND_KW | FOR_KW | DEFINE_KW |
+            MODULE_KW | DECLARE_KW | DOMAIN_KW | DOMAINS_KW
         )
     }
     pub fn is_punct(self) -> bool {
         matches!(
             self, L_PAREN | R_PAREN | L_CURLY | R_CURLY | L_BRACK | R_BRACK | QUESTION |
             PIPE | UNDERSCORE | COLON | FAT_ARROW | BANG | AMP2 | PIPE2 | COLON_EQ |
-            SINGLE_QUOTE | SEMI
+            SINGLE_QUOTE | SEMI | THIN_ARROW
         )
     }
     pub fn is_literal(self) -> bool {
@@ -234,6 +253,11 @@ impl SyntaxKind {
             "as" => AS_KW,
             "bind" => BIND_KW,
             "for" => FOR_KW,
+            "define" => DEFINE_KW,
+            "module" => MODULE_KW,
+            "declare" => DECLARE_KW,
+            "domain" => DOMAIN_KW,
+            "domains" => DOMAINS_KW,
             _ => return None,
         };
         Some(kw)
@@ -319,6 +343,9 @@ macro_rules! T {
     };
     [;] => {
         $crate ::SyntaxKind::SEMI
+    };
+    [->] => {
+        $crate ::SyntaxKind::THIN_ARROW
     };
     [while] => {
         $crate ::SyntaxKind::WHILE_KW
@@ -466,6 +493,21 @@ macro_rules! T {
     };
     [for] => {
         $crate ::SyntaxKind::FOR_KW
+    };
+    [define] => {
+        $crate ::SyntaxKind::DEFINE_KW
+    };
+    [module] => {
+        $crate ::SyntaxKind::MODULE_KW
+    };
+    [declare] => {
+        $crate ::SyntaxKind::DECLARE_KW
+    };
+    [domain] => {
+        $crate ::SyntaxKind::DOMAIN_KW
+    };
+    [domains] => {
+        $crate ::SyntaxKind::DOMAINS_KW
     };
     [lifetime_ident] => {
         $crate ::SyntaxKind::LIFETIME_IDENT

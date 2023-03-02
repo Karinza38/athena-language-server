@@ -162,9 +162,7 @@ fn generate_nodes(kinds: KindsSrc<'_>, grammar: &AstSrc) -> String {
                 quote!(impl ast::#trait_name for #name {})
             });
 
-            let ast_node = if en.name == "Stmt" {
-                quote! {}
-            } else {
+            let ast_node = {
                 quote! {
                     impl AstNode for #name {
                         fn can_cast(kind: SyntaxKind) -> bool {
@@ -553,7 +551,11 @@ impl Field {
                 } else if token == "!" {
                     return Some(quote! { T![!] });
                 }
-                let token = token.replace("-", "_").replace("!", "bang");
+                let token = if token == "->" {
+                    token.clone()
+                } else {
+                    token.replace("-", "_").replace("!", "bang")
+                };
                 let token = token.parse::<proc_macro2::TokenStream>().unwrap();
                 Some(quote! { T![#token] })
             }
@@ -563,7 +565,12 @@ impl Field {
     fn method_name(&self) -> proc_macro2::Ident {
         match self {
             Field::Token(name) => {
-                let processed_name = name.as_str().replace("-", "_").replace("!", "_bang");
+                let processed_name = if name.starts_with("-") {
+                    name.clone()
+                } else {
+                    // FIXME: Should really have a smarter way to handle this
+                    name.as_str().replace("-", "_").replace("!", "_bang")
+                };
                 let name = match name.as_str() {
                     ";" => "semicolon",
                     "->" => "thin_arrow",
@@ -794,10 +801,8 @@ fn lower_comma_list(
         Rule::Seq(it) => it,
         _ => return false,
     };
-    let (node, repeat, trailing_comma) = match rule.as_slice() {
-        [Rule::Node(node), Rule::Rep(repeat), Rule::Opt(trailing_comma)] => {
-            (node, repeat, trailing_comma)
-        }
+    let (node, repeat) = match rule.as_slice() {
+        [Rule::Node(node), Rule::Rep(repeat)] => (node, repeat),
         _ => return false,
     };
     let repeat = match &**repeat {
@@ -805,7 +810,7 @@ fn lower_comma_list(
         _ => return false,
     };
     match repeat.as_slice() {
-        [comma, Rule::Node(n)] if comma == &**trailing_comma && n == node => (),
+        [_comma, Rule::Node(n)] if n == node => (),
         _ => return false,
     }
     let ty = grammar[*node].name.clone();

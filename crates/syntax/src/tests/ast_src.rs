@@ -28,6 +28,7 @@ pub(crate) const KINDS_SRC: KindsSrc<'_> = KindsSrc {
         (":=", "COLON_EQ"),
         ("'", "SINGLE_QUOTE"),
         (";", "SEMI"),
+        ("->", "THIN_ARROW"),
     ],
     keywords: &[
         "while",
@@ -79,6 +80,11 @@ pub(crate) const KINDS_SRC: KindsSrc<'_> = KindsSrc {
         "as",
         "bind",
         "for",
+        "define",
+        "module",
+        "declare",
+        "domain",
+        "domains",
     ],
     contextual_keywords: &[],
     literals: &["INT_NUMBER", "STRING"],
@@ -163,6 +169,20 @@ pub(crate) const KINDS_SRC: KindsSrc<'_> = KindsSrc {
         "LET_PART",
         "CHECK_ARM",
         "LET_REC_PART",
+        // Directives
+        "FUNC_SORTS",
+        "SORT_VARS_DECL",
+        "COMPOUND_SORT_DECL",
+        "DEFINE_DIR",
+        "DEFINE_MULTI_DIR",
+        "DEFINE_PROC_DIR",
+        "DOMAIN_DIR",
+        "DOMAINS_DIR",
+        "DECLARE_DIR",
+        "MODULE_DIR",
+        // Statements
+        "DIR_STMT",
+        "PHRASE_STMT",
     ],
 };
 
