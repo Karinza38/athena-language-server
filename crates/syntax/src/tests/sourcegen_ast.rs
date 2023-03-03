@@ -554,15 +554,20 @@ fn generate_lexer(grammar: &AstSrc) -> String {
         #[derive(Logos, Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
         pub(crate) enum LexerToken {
             #( #logos_rule )*
-
-            #[regex("#.+", logos::skip)]
-            #[regex("[ \t\n]+", logos::skip)]
             #[error]
             Error,
         }
 
         impl LexerToken {
             #to_syntax_kind
+
+            pub(crate) fn len(self) -> usize {
+                match self {
+                    #(Self::#variant_names(len) => len,)*
+                    #(Self::#complex_variant_names(len) => len,)*
+                    Self::Error => 0,
+                }
+            }
         }
     };
 
@@ -742,10 +747,10 @@ fn lower_token_defs(res: &mut AstSrc, grammar: &Grammar, token_def_rule: &Rule) 
         let token = &grammar[*tok];
 
         let Some((name, def)) = token.name.split_once('=') else { panic!("not a valid token def")};
-        ignore_tok_names.push(name);
-        let name = token_name(name);
+        ignore_tok_names.push(name.trim());
+        let name = token_name(name.trim());
         println!("name = {}, def = {}", name, def);
-        token_defs.push(AstTokenDefinition::regex(name, def));
+        token_defs.push(AstTokenDefinition::regex(name, def.trim()));
     }
 
     for token in grammar
@@ -764,7 +769,7 @@ fn lower_token_defs(res: &mut AstSrc, grammar: &Grammar, token_def_rule: &Rule) 
 
 fn lower(grammar: &Grammar) -> AstSrc {
     let mut res = AstSrc {
-        tokens: "Whitespace Comment String IntNumber Ident"
+        tokens: "Whitespace Comment String Ident"
             .split_ascii_whitespace()
             .map(|it| it.to_string())
             .collect::<Vec<_>>(),

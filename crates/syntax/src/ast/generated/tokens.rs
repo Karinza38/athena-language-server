@@ -69,27 +69,6 @@ impl AstToken for String {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
-pub struct IntNumber {
-    pub(crate) syntax: SyntaxToken,
-}
-impl std::fmt::Display for IntNumber {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        std::fmt::Display::fmt(&self.syntax, f)
-    }
-}
-impl AstToken for IntNumber {
-    fn can_cast(kind: SyntaxKind) -> bool {
-        kind == INT_NUMBER
-    }
-    fn cast(syntax: SyntaxToken) -> Option<Self> {
-        if Self::can_cast(syntax.kind()) { Some(Self { syntax }) } else { None }
-    }
-    fn syntax(&self) -> &SyntaxToken {
-        &self.syntax
-    }
-}
-
-#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct Ident {
     pub(crate) syntax: SyntaxToken,
 }
