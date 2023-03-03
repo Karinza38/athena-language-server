@@ -29,6 +29,7 @@ pub(crate) const KINDS_SRC: KindsSrc<'_> = KindsSrc {
         ("'", "SINGLE_QUOTE"),
         (";", "SEMI"),
         ("->", "THIN_ARROW"),
+        (",", "COMMA"),
     ],
     keywords: &[
         "while",
@@ -87,7 +88,7 @@ pub(crate) const KINDS_SRC: KindsSrc<'_> = KindsSrc {
         "domains",
     ],
     contextual_keywords: &[],
-    literals: &["INT_NUMBER", "STRING"],
+    literals: &["INT_NUMBER", "STRING", "CHAR"],
     tokens: &["ERROR", "IDENT", "WHITESPACE", "COMMENT"],
     nodes: &[
         "SOURCE_FILE",
@@ -191,6 +192,7 @@ pub(crate) struct AstSrc {
     pub(crate) tokens: Vec<String>,
     pub(crate) nodes: Vec<AstNodeSrc>,
     pub(crate) enums: Vec<AstEnumSrc>,
+    pub(crate) token_defs: Vec<AstTokenDefinition>,
 }
 
 #[derive(Debug)]
@@ -223,4 +225,52 @@ pub(crate) struct AstEnumSrc {
     pub(crate) name: String,
     pub(crate) traits: Vec<String>,
     pub(crate) variants: Vec<String>,
+}
+
+#[derive(Debug)]
+pub(crate) struct AstTokenDefinition {
+    pub(crate) name: String,
+    pub(crate) def: AstTokenDef,
+}
+
+impl AstTokenDefinition {
+    pub(crate) fn regex(name: impl Into<String>, regex: impl Into<String>) -> Self {
+        Self {
+            name: name.into(),
+            def: AstTokenDef::Regex(regex.into()),
+        }
+    }
+
+    pub(crate) fn literal(name: impl Into<String>, literal: impl Into<String>) -> Self {
+        Self {
+            name: name.into(),
+            def: AstTokenDef::Literal(literal.into()),
+        }
+    }
+
+    // this is a terrible name
+    pub(crate) fn raw_token(&self) -> String {
+        match self {
+            AstTokenDefinition {
+                def: AstTokenDef::Literal(l),
+                ..
+            } => match l.as_str() {
+                "{" => "'{'",
+                "}" => "'}'",
+                "(" => "'('",
+                ")" => "')'",
+                "[" => "'['",
+                "]" => "']'",
+                _ => l,
+            }
+            .into(),
+            AstTokenDefinition { name, .. } => name.clone(),
+        }
+    }
+}
+
+#[derive(Debug)]
+pub(crate) enum AstTokenDef {
+    Literal(String),
+    Regex(String),
 }

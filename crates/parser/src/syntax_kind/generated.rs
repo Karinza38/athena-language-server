@@ -27,6 +27,7 @@ pub enum SyntaxKind {
     SINGLE_QUOTE,
     SEMI,
     THIN_ARROW,
+    COMMA,
     WHILE_KW,
     LET_KW,
     LETREC_KW,
@@ -83,6 +84,7 @@ pub enum SyntaxKind {
     DOMAINS_KW,
     INT_NUMBER,
     STRING,
+    CHAR,
     ERROR,
     IDENT,
     WHITESPACE,
@@ -177,7 +179,7 @@ pub enum SyntaxKind {
 }
 use self::SyntaxKind::*;
 impl SyntaxKind {
-    pub const LAST_TOKEN: SyntaxKind = SyntaxKind::THIN_ARROW;
+    pub const LAST_TOKEN: SyntaxKind = SyntaxKind::COMMA;
     pub fn is_keyword(self) -> bool {
         matches!(
             self, WHILE_KW | LET_KW | LETREC_KW | TRY_KW | CHECK_KW | LAMBDA_KW |
@@ -197,11 +199,11 @@ impl SyntaxKind {
         matches!(
             self, L_PAREN | R_PAREN | L_CURLY | R_CURLY | L_BRACK | R_BRACK | QUESTION |
             PIPE | UNDERSCORE | COLON | FAT_ARROW | BANG | AMP2 | PIPE2 | COLON_EQ |
-            SINGLE_QUOTE | SEMI | THIN_ARROW
+            SINGLE_QUOTE | SEMI | THIN_ARROW | COMMA
         )
     }
     pub fn is_literal(self) -> bool {
-        matches!(self, INT_NUMBER | STRING)
+        matches!(self, INT_NUMBER | STRING | CHAR)
     }
     pub fn from_keyword(ident: &str) -> Option<SyntaxKind> {
         let kw = match ident {
@@ -287,6 +289,7 @@ impl SyntaxKind {
             '!' => BANG,
             '\'' => SINGLE_QUOTE,
             ';' => SEMI,
+            ',' => COMMA,
             _ => return None,
         };
         Some(tok)
@@ -347,6 +350,9 @@ macro_rules! T {
     };
     [->] => {
         $crate ::SyntaxKind::THIN_ARROW
+    };
+    [,] => {
+        $crate ::SyntaxKind::COMMA
     };
     [while] => {
         $crate ::SyntaxKind::WHILE_KW

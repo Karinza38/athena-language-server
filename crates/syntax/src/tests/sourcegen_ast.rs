@@ -8,7 +8,8 @@ use std::{
 use ungrammar::{Grammar, Rule};
 
 use crate::tests::ast_src::{
-    AstEnumSrc, AstNodeSrc, AstSrc, Cardinality, Field, KindsSrc, KINDS_SRC,
+    AstEnumSrc, AstNodeSrc, AstSrc, AstTokenDef, AstTokenDefinition, Cardinality, Field, KindsSrc,
+    KINDS_SRC,
 };
 
 #[test]
@@ -31,6 +32,10 @@ fn sourcegen_ast() {
     let ast_nodes = generate_nodes(KINDS_SRC, &ast);
     let ast_nodes_file = sourcegen::project_root().join("crates/syntax/src/ast/generated/nodes.rs");
     sourcegen::ensure_file_contents(ast_nodes_file.as_path(), &ast_nodes);
+
+    let lexer = generate_lexer(&ast);
+    let lexer_file = sourcegen::project_root().join("crates/parser/src/lexer/generated.rs");
+    sourcegen::ensure_file_contents(lexer_file.as_path(), &lexer);
 }
 
 fn generate_tokens(grammar: &AstSrc) -> String {
@@ -482,6 +487,88 @@ fn generate_syntax_kinds(grammar: KindsSrc<'_>) -> String {
     sourcegen::add_preamble("sourcegen_ast", sourcegen::reformat(ast.to_string()))
 }
 
+fn print_lit(s: &str) {
+    for b in s.bytes() {
+        print!("{}", char::from(b));
+    }
+}
+
+fn generate_lexer(grammar: &AstSrc) -> String {
+    let mut logos_rule = Vec::new();
+    let mut variant_names = Vec::new();
+    let mut complex_variant_names = Vec::new();
+    for token_def in &grammar.token_defs {
+        let variant_name = format_ident!("{}", to_pascal_case(&token_def.name));
+        let variant = quote! { #variant_name(usize) };
+        let logos_annotation = match &token_def.def {
+            AstTokenDef::Regex(reg) => {
+                complex_variant_names.push(variant_name.clone());
+                let mut buf = String::from("r###\"");
+                buf.push_str(reg);
+                buf.push_str("\"###");
+                let reg = buf.parse::<proc_macro2::TokenStream>().unwrap();
+                quote! { #[regex(#reg, |lex| lex.slice().len())] }
+            }
+            AstTokenDef::Literal(lit) => {
+                variant_names.push((variant_name.clone(), token_def.raw_token()));
+                quote! { #[token(#lit, |lex| lex.slice().len())] }
+            }
+        };
+        logos_rule.push(quote! {
+            #logos_annotation
+            #variant,
+        });
+    }
+
+    let (variant_names, syntax_kind) = variant_names
+        .into_iter()
+        .map(|(v, t)| {
+            let kind = token_kind_raw(&t);
+            (v, kind)
+        })
+        .unzip::<_, _, Vec<_>, Vec<_>>();
+
+    let (complex_variant_names, complex_syntax_kind) = complex_variant_names
+        .into_iter()
+        .map(|v| {
+            let kind = format_ident!("{}", to_upper_snake_case(&v.to_string()));
+            (v, quote! { SyntaxKind::#kind })
+        })
+        .unzip::<_, _, Vec<_>, Vec<_>>();
+
+    let to_syntax_kind = quote! {
+        pub(crate) fn to_syntax_kind(self) -> SyntaxKind {
+            match self {
+                #(Self::#variant_names(..) => #syntax_kind,)*
+                #(Self::#complex_variant_names(..) => #complex_syntax_kind,)*
+                Self::Error => SyntaxKind::ERROR,
+            }
+        }
+    };
+
+    let lexer = quote! {
+        #![allow(bad_style, missing_docs, unreachable_pub)]
+        use logos::Logos;
+        use crate::{SyntaxKind, T};
+
+        #[derive(Logos, Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
+        pub(crate) enum LexerToken {
+            #( #logos_rule )*
+
+            #[regex("#.+", logos::skip)]
+            #[regex("[ \t\n]+", logos::skip)]
+            #[error]
+            Error,
+        }
+
+        impl LexerToken {
+            #to_syntax_kind
+        }
+    };
+
+    sourcegen::add_preamble("sourcegen_ast", sourcegen::reformat(lexer.to_string()))
+}
+
 fn to_upper_snake_case(s: &str) -> String {
     let mut buf = String::with_capacity(s.len());
     let mut prev = false;
@@ -537,6 +624,67 @@ fn pluralize(s: &str) -> String {
     format!("{s}s")
 }
 
+fn token_name(name: &str) -> String {
+    let processed_name = if name.starts_with("-") {
+        name.to_owned()
+    } else {
+        // FIXME: Should really have a smarter way to handle this
+        name.replace("-", "_").replace("!", "_bang")
+    };
+    match name {
+        ";" => "semicolon",
+        "->" => "thin_arrow",
+        "'{'" | "{" => "l_curly",
+        "'}'" | "}" => "r_curly",
+        "'('" | "(" => "l_paren",
+        "')'" | ")" => "r_paren",
+        "'['" | "[" => "l_brack",
+        "']'" | "]" => "r_brack",
+        "<" => "l_angle",
+        ">" => "r_angle",
+        "=" => "eq",
+        "!" => "bang",
+        "*" => "star",
+        "&" => "amp",
+        "_" => "underscore",
+        "." => "dot",
+        ".." => "dotdot",
+        "..." => "dotdotdot",
+        "..=" => "dotdoteq",
+        "=>" => "fat_arrow",
+        "@" => "at",
+        ":" => "colon",
+        "::" => "coloncolon",
+        "#" => "pound",
+        "?" => "question_mark",
+        "," => "comma",
+        "|" => "pipe",
+        "~" => "tilde",
+        "'" => "single_quote",
+        "&&" => "ampamp",
+        "||" => "pipepipe",
+        "set!" => "set_bang",
+        ":=" => "colon_eq",
+        _ => processed_name.as_str(),
+    }
+    .into()
+}
+
+fn token_kind_raw(token: &str) -> proc_macro2::TokenStream {
+    if token == "'" {
+        return quote! { T!['\''] };
+    } else if token == "!" {
+        return quote! { T![!] };
+    }
+    let token = if token == "->" {
+        token.to_owned()
+    } else {
+        token.replace("-", "_").replace("!", "bang")
+    };
+    let token = token.parse::<proc_macro2::TokenStream>().unwrap();
+    quote! { T![#token] }
+}
+
 impl Field {
     fn is_many(&self) -> bool {
         matches!(
@@ -549,68 +697,14 @@ impl Field {
     }
     fn token_kind(&self) -> Option<proc_macro2::TokenStream> {
         match self {
-            Field::Token(token) => {
-                if token == "'" {
-                    return Some(quote! { T!['\''] });
-                } else if token == "!" {
-                    return Some(quote! { T![!] });
-                }
-                let token = if token == "->" {
-                    token.clone()
-                } else {
-                    token.replace("-", "_").replace("!", "bang")
-                };
-                let token = token.parse::<proc_macro2::TokenStream>().unwrap();
-                Some(quote! { T![#token] })
-            }
+            Field::Token(token) => Some(token_kind_raw(token)),
             _ => None,
         }
     }
     fn method_name(&self) -> proc_macro2::Ident {
         match self {
             Field::Token(name) => {
-                let processed_name = if name.starts_with("-") {
-                    name.clone()
-                } else {
-                    // FIXME: Should really have a smarter way to handle this
-                    name.as_str().replace("-", "_").replace("!", "_bang")
-                };
-                let name = match name.as_str() {
-                    ";" => "semicolon",
-                    "->" => "thin_arrow",
-                    "'{'" => "l_curly",
-                    "'}'" => "r_curly",
-                    "'('" => "l_paren",
-                    "')'" => "r_paren",
-                    "'['" => "l_brack",
-                    "']'" => "r_brack",
-                    "<" => "l_angle",
-                    ">" => "r_angle",
-                    "=" => "eq",
-                    "!" => "bang",
-                    "*" => "star",
-                    "&" => "amp",
-                    "_" => "underscore",
-                    "." => "dot",
-                    ".." => "dotdot",
-                    "..." => "dotdotdot",
-                    "..=" => "dotdoteq",
-                    "=>" => "fat_arrow",
-                    "@" => "at",
-                    ":" => "colon",
-                    "::" => "coloncolon",
-                    "#" => "pound",
-                    "?" => "question_mark",
-                    "," => "comma",
-                    "|" => "pipe",
-                    "~" => "tilde",
-                    "'" => "single_quote",
-                    "&&" => "ampamp",
-                    "||" => "pipepipe",
-                    "set!" => "set_bang",
-                    ":=" => "colon_eq",
-                    _ => processed_name.as_str(),
-                };
+                let name = token_name(name);
                 format_ident!("{}_token", name)
             }
             Field::Node { name, .. } => {
@@ -630,6 +724,44 @@ impl Field {
     }
 }
 
+fn lower_token_defs(res: &mut AstSrc, grammar: &Grammar, token_def_rule: &Rule) {
+    let mut ignore_toks = Vec::new();
+    let mut ignore_tok_names = Vec::new();
+    let Rule::Alt(alts) = token_def_rule else { unreachable!()};
+
+    let mut token_defs = Vec::new();
+    for alt in alts {
+        print!("alt = ");
+        print_rule(alt, grammar);
+        println!();
+        let tok = match alt {
+            Rule::Token(tok) => tok,
+            _ => unreachable!(),
+        };
+        ignore_toks.push(tok);
+        let token = &grammar[*tok];
+
+        let Some((name, def)) = token.name.split_once('=') else { panic!("not a valid token def")};
+        ignore_tok_names.push(name);
+        let name = token_name(name);
+        println!("name = {}, def = {}", name, def);
+        token_defs.push(AstTokenDefinition::regex(name, def));
+    }
+
+    for token in grammar
+        .tokens()
+        .filter(|t| !ignore_toks.contains(&t))
+        .map(|t| &grammar[t])
+        .filter(|d| !ignore_tok_names.contains(&&*d.name))
+    {
+        let name = token_name(&token.name);
+        println!("name = {name}");
+        token_defs.push(AstTokenDefinition::literal(name, &token.name));
+    }
+
+    res.token_defs.extend(token_defs);
+}
+
 fn lower(grammar: &Grammar) -> AstSrc {
     let mut res = AstSrc {
         tokens: "Whitespace Comment String IntNumber Ident"
@@ -639,11 +771,17 @@ fn lower(grammar: &Grammar) -> AstSrc {
         ..Default::default()
     };
 
-    let nodes = grammar.iter().collect::<Vec<_>>();
+    let nodes = grammar.iter().collect_vec();
 
     for &node in &nodes {
         let name = grammar[node].name.clone();
         let rule = &grammar[node].rule;
+
+        if name == "Tokens" {
+            lower_token_defs(&mut res, grammar, rule);
+            continue;
+        }
+
         match lower_enum(grammar, rule) {
             Some(variants) => {
                 let enum_src = AstEnumSrc {
