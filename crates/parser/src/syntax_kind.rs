@@ -1,5 +1,7 @@
 mod generated;
-pub use generated::SyntaxKind;
+
+#[allow(unreachable_pub)]
+pub use self::generated::{SyntaxKind, T};
 
 impl From<u16> for SyntaxKind {
     #[inline]
@@ -21,4 +23,6 @@ impl SyntaxKind {
     pub fn is_trivia(self) -> bool {
         matches!(self, SyntaxKind::WHITESPACE | SyntaxKind::COMMENT)
     }
+
+    pub const MAX_VALUE: usize = SyntaxKind::__LAST as usize;
 }

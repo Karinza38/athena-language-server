@@ -15,7 +15,7 @@ use crate::tests::ast_src::{
 fn sourcegen_ast() {
     let syntax_kinds = generate_syntax_kinds(KINDS_SRC);
     let syntax_kinds_file =
-        sourcegen::project_root().join("crates/syntax/src/syntax_kind/generated.rs");
+        sourcegen::project_root().join("crates/parser/src/syntax_kind/generated.rs");
     sourcegen::ensure_file_contents(syntax_kinds_file.as_path(), &syntax_kinds);
 
     let grammar = include_str!(concat!(env!("CARGO_MANIFEST_DIR"), "/athena.ungram"))
@@ -397,6 +397,8 @@ fn generate_syntax_kinds(grammar: KindsSrc<'_>) -> String {
         .map(|name| format_ident!("{}", name))
         .collect::<Vec<_>>();
 
+    let last_token = punctuation.last().unwrap();
+
     let ast = quote! {
         #![allow(bad_style, missing_docs, unreachable_pub)]
         /// The kind of syntax node, e.g. `IDENT`, `USE_KW`, or `STRUCT`.
@@ -422,6 +424,8 @@ fn generate_syntax_kinds(grammar: KindsSrc<'_>) -> String {
         use self::SyntaxKind::*;
 
         impl SyntaxKind {
+            pub const LAST_TOKEN: SyntaxKind = SyntaxKind::#last_token;
+
             pub fn is_keyword(self) -> bool {
                 matches!(self, #(#all_keywords)|*)
             }

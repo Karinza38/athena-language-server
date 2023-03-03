@@ -1,14 +1,13 @@
 mod ast;
 mod ptr;
 mod syntax_error;
-mod syntax_kind;
 mod syntax_node;
 #[cfg(test)]
 mod tests;
 
 use std::{marker::PhantomData, sync::Arc};
 
-pub use syntax_kind::SyntaxKind;
+pub use parser::{SyntaxKind, T};
 
 pub use crate::{
     ast::{AstNode, AstToken},
