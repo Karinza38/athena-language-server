@@ -17,7 +17,9 @@ fn sourcegen_ast() {
     let syntax_kinds = generate_syntax_kinds(KINDS_SRC);
     let syntax_kinds_file =
         sourcegen::project_root().join("crates/parser/src/syntax_kind/generated.rs");
-    sourcegen::ensure_file_contents(syntax_kinds_file.as_path(), &syntax_kinds);
+    let mut up_to_date = true;
+    up_to_date =
+        up_to_date && sourcegen::ensure_file_contents(syntax_kinds_file.as_path(), &syntax_kinds);
 
     let grammar = include_str!(concat!(env!("CARGO_MANIFEST_DIR"), "/athena.ungram"))
         .parse()
@@ -27,15 +29,21 @@ fn sourcegen_ast() {
     let ast_tokens = generate_tokens(&ast);
     let ast_tokens_file =
         sourcegen::project_root().join("crates/syntax/src/ast/generated/tokens.rs");
-    sourcegen::ensure_file_contents(ast_tokens_file.as_path(), &ast_tokens);
+    up_to_date =
+        up_to_date && sourcegen::ensure_file_contents(ast_tokens_file.as_path(), &ast_tokens);
 
     let ast_nodes = generate_nodes(KINDS_SRC, &ast);
     let ast_nodes_file = sourcegen::project_root().join("crates/syntax/src/ast/generated/nodes.rs");
-    sourcegen::ensure_file_contents(ast_nodes_file.as_path(), &ast_nodes);
+    up_to_date =
+        up_to_date && sourcegen::ensure_file_contents(ast_nodes_file.as_path(), &ast_nodes);
 
     let lexer = generate_lexer(&ast);
     let lexer_file = sourcegen::project_root().join("crates/parser/src/lexer/generated.rs");
-    sourcegen::ensure_file_contents(lexer_file.as_path(), &lexer);
+    up_to_date = up_to_date && sourcegen::ensure_file_contents(lexer_file.as_path(), &lexer);
+
+    if !up_to_date {
+        sourcegen::fail_sourcegen_test();
+    }
 }
 
 fn generate_tokens(grammar: &AstSrc) -> String {

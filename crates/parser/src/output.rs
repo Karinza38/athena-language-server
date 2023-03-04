@@ -1,5 +1,6 @@
 use crate::SyntaxKind;
 
+#[derive(Debug)]
 pub enum Step {
     Token { kind: SyntaxKind },
     Enter { kind: SyntaxKind },

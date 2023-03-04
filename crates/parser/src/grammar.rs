@@ -1,4 +1,5 @@
 mod expressions;
+mod sorts;
 
 use crate::{parser::Parser, token_set::TokenSet, SyntaxKind, T};
 use SyntaxKind::{CHAR, IDENT, STRING};

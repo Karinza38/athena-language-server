@@ -135,8 +135,8 @@ DedPhrase =
 
 Expr =
     IdentExpr
-    | Literal
-    | Unit
+    | LiteralExpr
+    | UnitExpr
     | TermVarExpr
     | MetaIdent
     | CheckExpr

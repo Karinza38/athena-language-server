@@ -1,0 +1,9 @@
+TERM_VAR_EXPR
+  QUESTION "?"
+  IDENTIFIER
+    IDENT "foo"
+  COLON ":"
+  IDENT_SORT
+    IDENTIFIER
+      IDENT "bar"
+      WHITESPACE "\n"

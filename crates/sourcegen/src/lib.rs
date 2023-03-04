@@ -150,13 +150,17 @@ pub fn add_preamble(generator: &'static str, mut text: String) -> String {
     text
 }
 
+pub fn fail_sourcegen_test() {
+    panic!("some file was not up to date and has been updated, simply re-run the tests");
+}
+
 /// Checks that the `file` has the specified `contents`. If that is not the
 /// case, updates the file and then fails the test.
-pub fn ensure_file_contents(file: &Path, contents: &str) {
+pub fn ensure_file_contents(file: &Path, contents: &str) -> bool {
     if let Ok(old_contents) = fs::read_to_string(file) {
         if normalize_newlines(&old_contents) == normalize_newlines(contents) {
             // File is already up to date.
-            return;
+            return true;
         }
     }
 
@@ -172,7 +176,7 @@ pub fn ensure_file_contents(file: &Path, contents: &str) {
         let _ = fs::create_dir_all(parent);
     }
     fs::write(file, contents).unwrap();
-    panic!("some file was not up to date and has been updated, simply re-run the tests");
+    false
 }
 
 fn normalize_newlines(s: &str) -> String {

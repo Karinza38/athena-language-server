@@ -335,6 +335,26 @@ impl IdentExpr {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
+pub struct LiteralExpr {
+    pub(crate) syntax: SyntaxNode,
+}
+impl LiteralExpr {
+    pub fn literal(&self) -> Option<Literal> {
+        support::child(&self.syntax)
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+pub struct UnitExpr {
+    pub(crate) syntax: SyntaxNode,
+}
+impl UnitExpr {
+    pub fn unit(&self) -> Option<Unit> {
+        support::child(&self.syntax)
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct TermVarExpr {
     pub(crate) syntax: SyntaxNode,
 }
@@ -693,26 +713,6 @@ impl OrExpr {
     }
     pub fn r_paren_token(&self) -> Option<SyntaxToken> {
         support::token(&self.syntax, T![')'])
-    }
-}
-
-#[derive(Debug, Clone, PartialEq, Eq, Hash)]
-pub struct LiteralExpr {
-    pub(crate) syntax: SyntaxNode,
-}
-impl LiteralExpr {
-    pub fn literal(&self) -> Option<Literal> {
-        support::child(&self.syntax)
-    }
-}
-
-#[derive(Debug, Clone, PartialEq, Eq, Hash)]
-pub struct UnitExpr {
-    pub(crate) syntax: SyntaxNode,
-}
-impl UnitExpr {
-    pub fn unit(&self) -> Option<Unit> {
-        support::child(&self.syntax)
     }
 }
 
@@ -1596,8 +1596,8 @@ pub enum Pat {
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub enum Expr {
     IdentExpr(IdentExpr),
-    Literal(Literal),
-    Unit(Unit),
+    LiteralExpr(LiteralExpr),
+    UnitExpr(UnitExpr),
     TermVarExpr(TermVarExpr),
     MetaIdent(MetaIdent),
     CheckExpr(CheckExpr),
@@ -1894,6 +1894,28 @@ impl AstNode for IdentExpr {
         &self.syntax
     }
 }
+impl AstNode for LiteralExpr {
+    fn can_cast(kind: SyntaxKind) -> bool {
+        kind == LITERAL_EXPR
+    }
+    fn cast(syntax: SyntaxNode) -> Option<Self> {
+        if Self::can_cast(syntax.kind()) { Some(Self { syntax }) } else { None }
+    }
+    fn syntax(&self) -> &SyntaxNode {
+        &self.syntax
+    }
+}
+impl AstNode for UnitExpr {
+    fn can_cast(kind: SyntaxKind) -> bool {
+        kind == UNIT_EXPR
+    }
+    fn cast(syntax: SyntaxNode) -> Option<Self> {
+        if Self::can_cast(syntax.kind()) { Some(Self { syntax }) } else { None }
+    }
+    fn syntax(&self) -> &SyntaxNode {
+        &self.syntax
+    }
+}
 impl AstNode for TermVarExpr {
     fn can_cast(kind: SyntaxKind) -> bool {
         kind == TERM_VAR_EXPR
@@ -2106,28 +2128,6 @@ impl AstNode for AndExpr {
 impl AstNode for OrExpr {
     fn can_cast(kind: SyntaxKind) -> bool {
         kind == OR_EXPR
-    }
-    fn cast(syntax: SyntaxNode) -> Option<Self> {
-        if Self::can_cast(syntax.kind()) { Some(Self { syntax }) } else { None }
-    }
-    fn syntax(&self) -> &SyntaxNode {
-        &self.syntax
-    }
-}
-impl AstNode for LiteralExpr {
-    fn can_cast(kind: SyntaxKind) -> bool {
-        kind == LITERAL_EXPR
-    }
-    fn cast(syntax: SyntaxNode) -> Option<Self> {
-        if Self::can_cast(syntax.kind()) { Some(Self { syntax }) } else { None }
-    }
-    fn syntax(&self) -> &SyntaxNode {
-        &self.syntax
-    }
-}
-impl AstNode for UnitExpr {
-    fn can_cast(kind: SyntaxKind) -> bool {
-        kind == UNIT_EXPR
     }
     fn cast(syntax: SyntaxNode) -> Option<Self> {
         if Self::can_cast(syntax.kind()) { Some(Self { syntax }) } else { None }
@@ -2917,14 +2917,14 @@ impl From<IdentExpr> for Expr {
         Expr::IdentExpr(node)
     }
 }
-impl From<Literal> for Expr {
-    fn from(node: Literal) -> Expr {
-        Expr::Literal(node)
+impl From<LiteralExpr> for Expr {
+    fn from(node: LiteralExpr) -> Expr {
+        Expr::LiteralExpr(node)
     }
 }
-impl From<Unit> for Expr {
-    fn from(node: Unit) -> Expr {
-        Expr::Unit(node)
+impl From<UnitExpr> for Expr {
+    fn from(node: UnitExpr) -> Expr {
+        Expr::UnitExpr(node)
     }
 }
 impl From<TermVarExpr> for Expr {
@@ -3035,18 +3035,18 @@ impl From<OrExpr> for Expr {
 impl AstNode for Expr {
     fn can_cast(kind: SyntaxKind) -> bool {
         matches!(
-            kind, IDENT_EXPR | LITERAL | UNIT | TERM_VAR_EXPR | META_IDENT | CHECK_EXPR |
-            LAMBDA_EXPR | APPLICATION_EXPR | LIST_EXPR | METHOD_EXPR | LET_EXPR |
-            LET_REC_EXPR | MATCH_EXPR | TRY_EXPR | CELL_EXPR | SET_EXPR | REF_EXPR |
-            WHILE_EXPR | MAKE_VECTOR_EXPR | VECTOR_SUB_EXPR | VECTOR_SET_EXPR | SEQ_EXPR
-            | AND_EXPR | OR_EXPR
+            kind, IDENT_EXPR | LITERAL_EXPR | UNIT_EXPR | TERM_VAR_EXPR | META_IDENT |
+            CHECK_EXPR | LAMBDA_EXPR | APPLICATION_EXPR | LIST_EXPR | METHOD_EXPR |
+            LET_EXPR | LET_REC_EXPR | MATCH_EXPR | TRY_EXPR | CELL_EXPR | SET_EXPR |
+            REF_EXPR | WHILE_EXPR | MAKE_VECTOR_EXPR | VECTOR_SUB_EXPR | VECTOR_SET_EXPR
+            | SEQ_EXPR | AND_EXPR | OR_EXPR
         )
     }
     fn cast(syntax: SyntaxNode) -> Option<Self> {
         let res = match syntax.kind() {
             IDENT_EXPR => Expr::IdentExpr(IdentExpr { syntax }),
-            LITERAL => Expr::Literal(Literal { syntax }),
-            UNIT => Expr::Unit(Unit { syntax }),
+            LITERAL_EXPR => Expr::LiteralExpr(LiteralExpr { syntax }),
+            UNIT_EXPR => Expr::UnitExpr(UnitExpr { syntax }),
             TERM_VAR_EXPR => Expr::TermVarExpr(TermVarExpr { syntax }),
             META_IDENT => Expr::MetaIdent(MetaIdent { syntax }),
             CHECK_EXPR => Expr::CheckExpr(CheckExpr { syntax }),
@@ -3075,8 +3075,8 @@ impl AstNode for Expr {
     fn syntax(&self) -> &SyntaxNode {
         match self {
             Expr::IdentExpr(it) => &it.syntax,
-            Expr::Literal(it) => &it.syntax,
-            Expr::Unit(it) => &it.syntax,
+            Expr::LiteralExpr(it) => &it.syntax,
+            Expr::UnitExpr(it) => &it.syntax,
             Expr::TermVarExpr(it) => &it.syntax,
             Expr::MetaIdent(it) => &it.syntax,
             Expr::CheckExpr(it) => &it.syntax,
@@ -3464,6 +3464,16 @@ impl std::fmt::Display for IdentExpr {
         std::fmt::Display::fmt(self.syntax(), f)
     }
 }
+impl std::fmt::Display for LiteralExpr {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        std::fmt::Display::fmt(self.syntax(), f)
+    }
+}
+impl std::fmt::Display for UnitExpr {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        std::fmt::Display::fmt(self.syntax(), f)
+    }
+}
 impl std::fmt::Display for TermVarExpr {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         std::fmt::Display::fmt(self.syntax(), f)
@@ -3560,16 +3570,6 @@ impl std::fmt::Display for AndExpr {
     }
 }
 impl std::fmt::Display for OrExpr {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        std::fmt::Display::fmt(self.syntax(), f)
-    }
-}
-impl std::fmt::Display for LiteralExpr {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        std::fmt::Display::fmt(self.syntax(), f)
-    }
-}
-impl std::fmt::Display for UnitExpr {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         std::fmt::Display::fmt(self.syntax(), f)
     }

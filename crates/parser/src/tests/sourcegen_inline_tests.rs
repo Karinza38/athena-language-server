@@ -27,6 +27,7 @@ fn sourcegen_parser_tests() {
         }
 
         let mut new_idx = existing.len() + 1;
+        let mut up_to_date = true;
         for (name, test) in tests {
             let path = match existing.get(name) {
                 Some((path, _test)) => path.clone(),
@@ -36,7 +37,10 @@ fn sourcegen_parser_tests() {
                     tests_dir.join(&test.entry).join(file_name)
                 }
             };
-            sourcegen::ensure_file_contents(&path, &test.text);
+            up_to_date = up_to_date && sourcegen::ensure_file_contents(&path, &test.text);
+        }
+        if !up_to_date {
+            sourcegen::fail_sourcegen_test();
         }
     }
 }

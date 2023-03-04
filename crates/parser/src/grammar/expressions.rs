@@ -1,7 +1,7 @@
 use super::{identifier, literal};
 use crate::{
     parser::Parser,
-    SyntaxKind::{CHAR, IDENT, IDENT_EXPR, STRING},
+    SyntaxKind::{self, CHAR, IDENT, IDENT_EXPR, STRING, UNIT_EXPR},
     T,
 };
 
@@ -23,11 +23,47 @@ pub(crate) fn literal_expr(p: &mut Parser) {
     m.complete(p, IDENT_EXPR);
 }
 
+// test(expr) simple_unit_expr
+// ()
+pub(crate) fn unit_expr(p: &mut Parser) {
+    assert!(p.at(T!['(']));
+    let m = p.start();
+    super::unit(p);
+    m.complete(p, UNIT_EXPR);
+}
+
+// test(expr) simple_term_var_expr
+// ?foo:bar
+pub(crate) fn term_var_expr(p: &mut Parser) {
+    assert!(p.at(T![?]));
+    let m = p.start();
+    p.bump(T![?]);
+
+    if p.at(IDENT) {
+        identifier(p);
+    } else {
+        p.error("Expected to find an identifier for the term variable");
+    }
+
+    p.expect(T![:]);
+
+    if super::sorts::sort(p) {
+        m.complete(p, SyntaxKind::TERM_VAR_EXPR);
+    } else {
+        p.error("Expected to find a sort for the term variable");
+        m.complete(p, SyntaxKind::TERM_VAR_EXPR);
+    }
+}
+
 pub(crate) fn expr(p: &mut Parser) {
     if p.at(IDENT) {
         ident_expr(p);
     } else if p.at_one_of(super::LIT_SET) {
         literal_expr(p);
+    } else if p.at(T!['(']) {
+        unit_expr(p);
+    } else if p.at(T![?]) {
+        term_var_expr(p);
     } else {
         todo!();
     }

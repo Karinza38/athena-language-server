@@ -72,6 +72,7 @@ fn parse_err() {
 #[test]
 fn parse_inline_ok() {
     for case in TestCase::list("parser/inline/ok") {
+        eprintln!("running test case: {case:?}");
         let (actual, errors) = parse(EntryPoint::Expr, &case.text);
         assert!(
             !errors,
@@ -112,14 +113,12 @@ fn parse(entry: EntryPoint, text: &str) -> (String, bool) {
             writeln!(buf, "{indent}{kind:?} {text:?}").unwrap();
         }
         crate::StrStep::Enter { kind } => {
-            eprintln!("entering");
             assert!(depth > 0 || len == 0);
             depth += 1;
             writeln!(buf, "{indent}{kind:?}").unwrap();
             indent.push_str("  ");
         }
         crate::StrStep::Exit => {
-            eprintln!("exiting");
             assert!(depth > 0);
             depth -= 1;
             indent.pop();
@@ -150,7 +149,7 @@ fn parse(entry: EntryPoint, text: &str) -> (String, bool) {
     (buf, has_errors)
 }
 
-#[derive(PartialEq, Eq, PartialOrd, Ord)]
+#[derive(PartialEq, Eq, PartialOrd, Ord, Debug)]
 struct TestCase {
     ath: PathBuf,
     entry: EntryPoint,
