@@ -1,0 +1,4 @@
+IDENT_EXPR
+  LITERAL
+    STRING "\"fooby\""
+    WHITESPACE "\n"

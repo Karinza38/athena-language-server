@@ -14,12 +14,20 @@ pub(crate) fn ident_expr(p: &mut Parser) {
     m.complete(p, IDENT_EXPR);
 }
 
-pub(crate) fn expr(p: &mut Parser) {
+// test(expr) simple_literal_expr
+// "fooby"
+pub(crate) fn literal_expr(p: &mut Parser) {
+    assert!(p.at_one_of(super::LIT_SET));
     let m = p.start();
+    literal(p);
+    m.complete(p, IDENT_EXPR);
+}
+
+pub(crate) fn expr(p: &mut Parser) {
     if p.at(IDENT) {
         ident_expr(p);
     } else if p.at_one_of(super::LIT_SET) {
-        literal(p);
+        literal_expr(p);
     } else {
         todo!();
     }

@@ -162,6 +162,12 @@ Expr =
 IdentExpr =
     Identifier
 
+LiteralExpr =
+    Literal
+
+UnitExpr =
+    Unit
+
 TermVarExpr =
     '?' Identifier (':' Sort)?
 

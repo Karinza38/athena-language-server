@@ -697,6 +697,26 @@ impl OrExpr {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
+pub struct LiteralExpr {
+    pub(crate) syntax: SyntaxNode,
+}
+impl LiteralExpr {
+    pub fn literal(&self) -> Option<Literal> {
+        support::child(&self.syntax)
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+pub struct UnitExpr {
+    pub(crate) syntax: SyntaxNode,
+}
+impl UnitExpr {
+    pub fn unit(&self) -> Option<Unit> {
+        support::child(&self.syntax)
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct CheckArm {
     pub(crate) syntax: SyntaxNode,
 }
@@ -2086,6 +2106,28 @@ impl AstNode for AndExpr {
 impl AstNode for OrExpr {
     fn can_cast(kind: SyntaxKind) -> bool {
         kind == OR_EXPR
+    }
+    fn cast(syntax: SyntaxNode) -> Option<Self> {
+        if Self::can_cast(syntax.kind()) { Some(Self { syntax }) } else { None }
+    }
+    fn syntax(&self) -> &SyntaxNode {
+        &self.syntax
+    }
+}
+impl AstNode for LiteralExpr {
+    fn can_cast(kind: SyntaxKind) -> bool {
+        kind == LITERAL_EXPR
+    }
+    fn cast(syntax: SyntaxNode) -> Option<Self> {
+        if Self::can_cast(syntax.kind()) { Some(Self { syntax }) } else { None }
+    }
+    fn syntax(&self) -> &SyntaxNode {
+        &self.syntax
+    }
+}
+impl AstNode for UnitExpr {
+    fn can_cast(kind: SyntaxKind) -> bool {
+        kind == UNIT_EXPR
     }
     fn cast(syntax: SyntaxNode) -> Option<Self> {
         if Self::can_cast(syntax.kind()) { Some(Self { syntax }) } else { None }
@@ -3518,6 +3560,16 @@ impl std::fmt::Display for AndExpr {
     }
 }
 impl std::fmt::Display for OrExpr {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        std::fmt::Display::fmt(self.syntax(), f)
+    }
+}
+impl std::fmt::Display for LiteralExpr {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        std::fmt::Display::fmt(self.syntax(), f)
+    }
+}
+impl std::fmt::Display for UnitExpr {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         std::fmt::Display::fmt(self.syntax(), f)
     }

@@ -36,7 +36,6 @@ impl<'i> LexedInput<'i> {
         output: &crate::output::Output,
         sink: &mut dyn FnMut(StrStep<'_>),
     ) -> bool {
-        eprintln!("Intersprers");
         let mut builder = Builder::new(self, sink);
 
         for event in output.steps() {
@@ -46,6 +45,14 @@ impl<'i> LexedInput<'i> {
                 crate::output::Step::Exit => builder.exit(),
                 crate::output::Step::Error { msg } => builder.error(msg),
             }
+        }
+
+        match mem::replace(&mut builder.state, State::Normal) {
+            State::PendingExit => {
+                builder.eat_trivia();
+                (builder.sink)(StrStep::Exit);
+            }
+            State::PendingEnter | State::Normal => unreachable!(),
         }
 
         builder.pos == self.len() // at EOF
@@ -106,9 +113,6 @@ impl<'i, 'o> Builder<'i, 'o> {
             State::PendingExit => (self.sink)(StrStep::Exit),
             State::Normal => {}
         }
-        self.eat_trivia();
-        (self.sink)(StrStep::Exit);
-        self.eat_trivia();
     }
 
     fn eat_trivia(&mut self) {

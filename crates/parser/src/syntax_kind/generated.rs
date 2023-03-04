@@ -100,6 +100,8 @@ pub enum SyntaxKind {
     EXPR_PHRASE,
     DED_PHRASE,
     IDENT_EXPR,
+    LITERAL_EXPR,
+    UNIT_EXPR,
     TERM_VAR_EXPR,
     CHECK_EXPR,
     LAMBDA_EXPR,

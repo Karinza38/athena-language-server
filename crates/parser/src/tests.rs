@@ -112,12 +112,14 @@ fn parse(entry: EntryPoint, text: &str) -> (String, bool) {
             writeln!(buf, "{indent}{kind:?} {text:?}").unwrap();
         }
         crate::StrStep::Enter { kind } => {
+            eprintln!("entering");
             assert!(depth > 0 || len == 0);
             depth += 1;
             writeln!(buf, "{indent}{kind:?}").unwrap();
             indent.push_str("  ");
         }
         crate::StrStep::Exit => {
+            eprintln!("exiting");
             assert!(depth > 0);
             depth -= 1;
             indent.pop();

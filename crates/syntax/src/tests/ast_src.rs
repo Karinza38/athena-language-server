@@ -105,6 +105,8 @@ pub(crate) const KINDS_SRC: KindsSrc<'_> = KindsSrc {
         "DED_PHRASE",
         // Exprs
         "IDENT_EXPR",
+        "LITERAL_EXPR",
+        "UNIT_EXPR",
         "TERM_VAR_EXPR",
         "CHECK_EXPR",
         "LAMBDA_EXPR",

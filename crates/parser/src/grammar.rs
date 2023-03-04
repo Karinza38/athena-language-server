@@ -25,7 +25,7 @@ fn identifier(p: &mut Parser) {
 
     let m = p.start();
     p.bump(IDENT);
-    m.complete(p, IDENT);
+    m.complete(p, SyntaxKind::IDENTIFIER);
 }
 
 const LIT_KINDS: &[SyntaxKind] = &[CHAR, STRING];
