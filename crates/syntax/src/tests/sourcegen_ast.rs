@@ -402,7 +402,7 @@ fn generate_syntax_kinds(grammar: KindsSrc<'_>) -> String {
         .map(|name| format_ident!("{}", name))
         .collect::<Vec<_>>();
 
-    let last_token = punctuation.last().unwrap();
+    let last_token = tokens.last().unwrap();
 
     let ast = quote! {
         #![allow(bad_style, missing_docs, unreachable_pub)]

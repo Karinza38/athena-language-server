@@ -179,7 +179,7 @@ pub enum SyntaxKind {
 }
 use self::SyntaxKind::*;
 impl SyntaxKind {
-    pub const LAST_TOKEN: SyntaxKind = SyntaxKind::COMMA;
+    pub const LAST_TOKEN: SyntaxKind = SyntaxKind::COMMENT;
     pub fn is_keyword(self) -> bool {
         matches!(
             self, WHILE_KW | LET_KW | LETREC_KW | TRY_KW | CHECK_KW | LAMBDA_KW |

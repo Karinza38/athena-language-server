@@ -65,6 +65,10 @@ impl<'i> LexedInput<'i> {
         self.kind[idx]
     }
 
+    pub fn kinds(&self) -> impl Iterator<Item = SyntaxKind> + '_ {
+        self.kind[..self.len()].iter().copied()
+    }
+
     pub fn text_for_range(&self, range: Range<usize>) -> &str {
         assert!(range.start < range.end && range.end <= self.len());
         let start = self.start[range.start] as usize;
@@ -79,6 +83,10 @@ impl<'i> LexedInput<'i> {
         start..end
     }
 
+    pub fn text(&self, idx: usize) -> &str {
+        self.text_for_range(idx..idx + 1)
+    }
+
     pub fn text_start(&self, idx: usize) -> usize {
         assert!(idx < self.len());
         self.start[idx] as usize
@@ -88,6 +96,15 @@ impl<'i> LexedInput<'i> {
         assert!(idx < self.len());
         let r = self.range_for_token(idx);
         r.end - r.start
+    }
+
+    pub fn error(&self, idx: usize) -> Option<&str> {
+        assert!(idx < self.len());
+        let err = self
+            .error
+            .binary_search_by_key(&(idx as u32), |e| e.token)
+            .ok()?;
+        Some(self.error[err].msg.as_str())
     }
 
     pub fn errors(&self) -> impl Iterator<Item = (usize, &str)> + '_ {

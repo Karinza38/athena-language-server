@@ -2,7 +2,7 @@ use static_assertions::const_assert;
 
 use crate::SyntaxKind;
 
-type Repr = u64;
+type Repr = u128;
 
 #[derive(Clone, Copy, PartialEq, Eq)]
 pub(crate) struct TokenSet(Repr);

@@ -1,4 +1,4 @@
-use crate::{event::Event, input::Input, SyntaxKind};
+use crate::{event::Event, input::Input, SyntaxKind, token_set::TokenSet};
 use drop_bomb::DropBomb;
 
 pub(crate) struct Parser<'i> {
@@ -87,6 +87,10 @@ impl<'i> Parser<'i> {
         let pos = self.events.len() as u32;
         self.push_event(Event::tombstone());
         Marker::new(pos)
+    }
+
+    pub(crate) fn at_one_of(&self, set: TokenSet) -> bool {
+        set.contains(self.current())
     }
 
     fn push_event(&mut self, event: Event) {
