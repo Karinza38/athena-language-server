@@ -1,0 +1,17 @@
+---
+source: crates/parser/src/tests.rs
+description: "?x: 'foo\n"
+input_file: crates/parser/test_data/parser/inline/ok/expr/0007_simple_var_sort.ath
+---
+TERM_VAR_EXPR
+  QUESTION "?"
+  IDENTIFIER
+    IDENT "x"
+  COLON ":"
+  WHITESPACE " "
+  VAR_SORT
+    SINGLE_QUOTE "'"
+    IDENTIFIER
+      IDENT "foo"
+      WHITESPACE "\n"
+

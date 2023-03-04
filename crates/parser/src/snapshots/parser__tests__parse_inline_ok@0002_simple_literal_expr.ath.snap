@@ -1,0 +1,10 @@
+---
+source: crates/parser/src/tests.rs
+description: "\"fooby\"\n"
+input_file: crates/parser/test_data/parser/inline/ok/expr/0002_simple_literal_expr.ath
+---
+LITERAL_EXPR
+  LITERAL
+    STRING "\"fooby\""
+    WHITESPACE "\n"
+

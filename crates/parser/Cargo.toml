@@ -14,5 +14,5 @@ static_assertions = "1.1.0"
 nightly = ["static_assertions/nightly"]
 
 [dev-dependencies]
-expect-test = "1.4.1"
+insta = { version = "1.28.0", features = ["glob"] }
 sourcegen = { path = "../sourcegen" }

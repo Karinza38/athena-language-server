@@ -20,7 +20,7 @@ pub(crate) fn literal_expr(p: &mut Parser) {
     assert!(p.at_one_of(super::LIT_SET));
     let m = p.start();
     literal(p);
-    m.complete(p, IDENT_EXPR);
+    m.complete(p, SyntaxKind::LITERAL_EXPR);
 }
 
 // test(expr) simple_unit_expr

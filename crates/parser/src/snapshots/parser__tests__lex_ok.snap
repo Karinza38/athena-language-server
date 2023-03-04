@@ -1,0 +1,14 @@
+---
+source: crates/parser/src/tests.rs
+description: "?x: (List Int)"
+---
+QUESTION "?"
+IDENT "x"
+COLON ":"
+WHITESPACE " "
+L_PAREN "("
+IDENT "List"
+WHITESPACE " "
+IDENT "Int"
+R_PAREN ")"
+

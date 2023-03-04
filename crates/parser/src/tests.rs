@@ -6,7 +6,9 @@ use std::{
     path::{Path, PathBuf},
 };
 
-use expect_test::expect_file;
+// use expect_test::expect_file;
+
+use insta::assert_snapshot;
 
 use crate::{EntryPoint, LexedInput};
 
@@ -14,7 +16,7 @@ use crate::{EntryPoint, LexedInput};
 fn lex_ok() {
     for case in TestCase::list("lexer/ok") {
         let actual = lex(&case.text);
-        expect_file![case.ast].assert_eq(&actual)
+        insta::with_settings!({description => &case.text, omit_expression => true }, { assert_snapshot!(actual) });
     }
 }
 
@@ -22,7 +24,7 @@ fn lex_ok() {
 fn lex_err() {
     for case in TestCase::list("lexer/err") {
         let actual = lex(&case.text);
-        expect_file![case.ast].assert_eq(&actual)
+        assert_snapshot!(actual)
     }
 }
 
@@ -52,7 +54,7 @@ fn parse_ok() {
             "errors in an OK file {}:\n{actual}",
             case.ath.display()
         );
-        expect_file![case.ast].assert_eq(&actual);
+        assert_snapshot!(actual)
     }
 }
 
@@ -65,13 +67,14 @@ fn parse_err() {
             "no errors in an ERR file {}:\n{actual}",
             case.ath.display()
         );
-        expect_file![case.ast].assert_eq(&actual)
+        assert_snapshot!(actual)
     }
 }
 
 #[test]
 fn parse_inline_ok() {
-    for case in TestCase::list("parser/inline/ok") {
+    insta::glob!("../test_data", "parser/inline/ok/*/*.ath", |path| {
+        let case = TestCase::read(path);
         eprintln!("running test case: {case:?}");
         let (actual, errors) = parse(EntryPoint::Expr, &case.text);
         assert!(
@@ -79,8 +82,8 @@ fn parse_inline_ok() {
             "errors in an OK file {}:\n{actual}",
             case.ath.display()
         );
-        expect_file![case.ast].assert_eq(&actual);
-    }
+        insta::with_settings!({description => &case.text, omit_expression => true }, { assert_snapshot!(actual) });
+    });
 }
 
 #[test]
@@ -92,7 +95,7 @@ fn parse_inline_err() {
             "no errors in an ERR file {}:\n{actual}",
             case.ath.display()
         );
-        expect_file![case.ast].assert_eq(&actual)
+        assert_snapshot!(actual)
     }
 }
 
@@ -153,11 +156,36 @@ fn parse(entry: EntryPoint, text: &str) -> (String, bool) {
 struct TestCase {
     ath: PathBuf,
     entry: EntryPoint,
-    ast: PathBuf,
     text: String,
 }
 
 impl TestCase {
+    fn read(path: &Path) -> TestCase {
+        let entry = match path
+            .parent()
+            .unwrap()
+            .file_name()
+            .unwrap()
+            .to_str()
+            .unwrap()
+        {
+            "expr" => EntryPoint::Expr,
+            "file" => EntryPoint::SourceFile,
+            _ => panic!("unknown entry point"),
+        };
+        if path.extension().unwrap_or_default() == "ath" {
+            let ath = path.into();
+            let text = fs::read_to_string(&ath).unwrap();
+            TestCase {
+                ath,
+                text,
+                entry: EntryPoint::SourceFile,
+            }
+        } else {
+            panic!("unknown file extension");
+        }
+    }
+
     fn list(path: &str) -> Vec<TestCase> {
         let crate_root_dir = Path::new(env!("CARGO_MANIFEST_DIR"));
         let test_data_dir = crate_root_dir.join("test_data");
@@ -186,7 +214,6 @@ impl TestCase {
                 let text = fs::read_to_string(&ath).unwrap();
                 res.push(TestCase {
                     ath,
-                    ast,
                     text,
                     entry: EntryPoint::SourceFile,
                 });
