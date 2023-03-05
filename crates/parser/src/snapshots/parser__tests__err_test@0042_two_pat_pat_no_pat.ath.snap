@@ -1,0 +1,14 @@
+---
+source: crates/parser/src/tests.rs
+description: "(split )\n"
+input_file: crates/parser/test_data/parser/inline/err/pat/0042_two_pat_pat_no_pat.ath
+---
+SPLIT_PAT
+  L_PAREN "("
+  SPLIT_KW "split"
+  WHITESPACE " "
+  R_PAREN ")"
+  WHITESPACE "\n"
+error 7: expected a pattern
+error 7: expected a second pattern
+

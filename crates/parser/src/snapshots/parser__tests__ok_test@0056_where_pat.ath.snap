@@ -1,0 +1,21 @@
+---
+source: crates/parser/src/tests.rs
+description: "( a where b )\n"
+input_file: crates/parser/test_data/parser/inline/ok/pat/0056_where_pat.ath
+---
+WHERE_PAT
+  L_PAREN "("
+  WHITESPACE " "
+  IDENT_PAT
+    IDENTIFIER
+      IDENT "a"
+      WHITESPACE " "
+  WHERE_KW "where"
+  WHITESPACE " "
+  IDENT_EXPR
+    IDENTIFIER
+      IDENT "b"
+      WHITESPACE " "
+  R_PAREN ")"
+  WHITESPACE "\n"
+

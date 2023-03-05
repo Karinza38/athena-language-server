@@ -1,0 +1,17 @@
+---
+source: crates/parser/src/tests.rs
+description: "(split pat )\n"
+input_file: crates/parser/test_data/parser/inline/err/pat/0040_two_pat_pat_no_second_pat.ath
+---
+SPLIT_PAT
+  L_PAREN "("
+  SPLIT_KW "split"
+  WHITESPACE " "
+  IDENT_PAT
+    IDENTIFIER
+      IDENT "pat"
+      WHITESPACE " "
+  R_PAREN ")"
+  WHITESPACE "\n"
+error 11: expected a second pattern
+

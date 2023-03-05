@@ -1,0 +1,19 @@
+---
+source: crates/parser/src/tests.rs
+description: "(split a b)\n"
+input_file: crates/parser/test_data/parser/inline/ok/pat/0049_split_pat.ath
+---
+SPLIT_PAT
+  L_PAREN "("
+  SPLIT_KW "split"
+  WHITESPACE " "
+  IDENT_PAT
+    IDENTIFIER
+      IDENT "a"
+      WHITESPACE " "
+  IDENT_PAT
+    IDENTIFIER
+      IDENT "b"
+  R_PAREN ")"
+  WHITESPACE "\n"
+

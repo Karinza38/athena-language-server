@@ -1,0 +1,18 @@
+---
+source: crates/parser/src/tests.rs
+description: "(foo as \"hello\")\n"
+input_file: crates/parser/test_data/parser/inline/ok/pat/0046_named_pat.ath
+---
+NAMED_PAT
+  L_PAREN "("
+  IDENTIFIER
+    IDENT "foo"
+    WHITESPACE " "
+  AS_KW "as"
+  WHITESPACE " "
+  LITERAL_PAT
+    LITERAL
+      STRING "\"hello\""
+  R_PAREN ")"
+  WHITESPACE "\n"
+

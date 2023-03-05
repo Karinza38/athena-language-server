@@ -1,0 +1,43 @@
+---
+source: crates/parser/src/tests.rs
+description: "(a b [c] [] [1 2 3])\n"
+input_file: crates/parser/test_data/parser/inline/ok/pat/0054_compound_pat_multi_item.ath
+---
+COMPOUND_PAT
+  L_PAREN "("
+  IDENT_PAT
+    IDENTIFIER
+      IDENT "a"
+      WHITESPACE " "
+  IDENT_PAT
+    IDENTIFIER
+      IDENT "b"
+      WHITESPACE " "
+  LIST_PAT
+    L_BRACK "["
+    IDENT_PAT
+      IDENTIFIER
+        IDENT "c"
+    R_BRACK "]"
+    WHITESPACE " "
+  LIST_PAT
+    L_BRACK "["
+    R_BRACK "]"
+    WHITESPACE " "
+  LIST_PAT
+    L_BRACK "["
+    IDENT_PAT
+      IDENTIFIER
+        IDENT "1"
+        WHITESPACE " "
+    IDENT_PAT
+      IDENTIFIER
+        IDENT "2"
+        WHITESPACE " "
+    IDENT_PAT
+      IDENTIFIER
+        IDENT "3"
+    R_BRACK "]"
+  R_PAREN ")"
+  WHITESPACE "\n"
+

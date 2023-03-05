@@ -1,0 +1,13 @@
+---
+source: crates/parser/src/tests.rs
+description: "?foo:\n"
+input_file: crates/parser/test_data/parser/inline/err/pat/0034_var_pat_no_sort.ath
+---
+VAR_PAT
+  QUESTION "?"
+  IDENTIFIER
+    IDENT "foo"
+  COLON ":"
+  WHITESPACE "\n"
+error 6: expected a sort annotation
+

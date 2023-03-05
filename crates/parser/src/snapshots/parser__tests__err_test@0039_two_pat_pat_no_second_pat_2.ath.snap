@@ -1,0 +1,17 @@
+---
+source: crates/parser/src/tests.rs
+description: "(list-of pat )\n"
+input_file: crates/parser/test_data/parser/inline/err/pat/0039_two_pat_pat_no_second_pat_2.ath
+---
+LIST_OF_PAT
+  L_PAREN "("
+  LIST_OF_KW "list-of"
+  WHITESPACE " "
+  IDENT_PAT
+    IDENTIFIER
+      IDENT "pat"
+      WHITESPACE " "
+  R_PAREN ")"
+  WHITESPACE "\n"
+error 13: expected a second pattern
+

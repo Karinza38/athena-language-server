@@ -72,6 +72,7 @@ fn ok_test(p: &Path) {
 
 fn err_test(p: &Path) {
     let case = TestCase::read(p);
+    eprintln!("running test: {}", case.ath.display());
     let (actual, errors) = parse(case.entry, &case.text);
     assert!(
         errors,

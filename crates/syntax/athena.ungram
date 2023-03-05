@@ -345,19 +345,19 @@ TryDedPart =
 Pat =
     IdentPat // ✅
     | AnnotatedIdentPat // ✅
-    | VarPat
-    | MetaIdentPat
-    | LiteralPat
-    | UnitPat
-    | WildcardPat
-    | NamedPat
-    | ValOfPat
-    | ListOfPat
-    | SplitPat
-    | ListPat
-    | CompoundPat
-    | WherePat
-    | SomeThingPat
+    | VarPat // ✅
+    | MetaIdentPat // ✅
+    | LiteralPat // ✅
+    | UnitPat // ✅
+    | WildcardPat // ✅
+    | NamedPat // ✅
+    | ValOfPat // ✅
+    | ListOfPat // ✅
+    | SplitPat // ✅
+    | ListPat // ✅
+    | CompoundPat // ✅
+    | WherePat // ✅
+    | SomeThingPat // ✅
 
 IdentPat =
     Identifier

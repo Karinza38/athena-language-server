@@ -45,6 +45,12 @@ impl<'i> Parser<'i> {
         }
     }
 
+    pub(crate) fn bump_one_of(&mut self, set: TokenSet) {
+        let kind = self.current();
+        assert!(set.contains(kind));
+        self.bump_impl(kind);
+    }
+
     pub(crate) fn bump_any(&mut self) {
         let kind = self.current();
         if kind == SyntaxKind::EOF {
@@ -83,6 +89,20 @@ impl<'i> Parser<'i> {
         self.input.kind(self.pos + n) == kind
     }
 
+    /// Check that the next token is `kind`
+    pub(crate) fn peek_at(&self, kind: SyntaxKind) -> bool {
+        self.nth_at(1, kind)
+    }
+
+    pub(crate) fn nth_at_one_of(&self, n: usize, set: TokenSet) -> bool {
+        set.contains(self.nth(n))
+    }
+
+    /// Check that the next token is in `set`
+    pub(crate) fn peek_at_one_of(&self, set: TokenSet) -> bool {
+        self.nth_at_one_of(1, set)
+    }
+
     pub(crate) fn start(&mut self) -> Marker {
         let pos = self.events.len() as u32;
         self.push_event(Event::tombstone());
@@ -90,7 +110,7 @@ impl<'i> Parser<'i> {
     }
 
     pub(crate) fn at_one_of(&self, set: TokenSet) -> bool {
-        set.contains(self.current())
+        self.nth_at_one_of(0, set)
     }
 
     fn push_event(&mut self, event: Event) {

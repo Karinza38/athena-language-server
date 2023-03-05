@@ -1,0 +1,11 @@
+---
+source: crates/parser/src/tests.rs
+description: "()\n"
+input_file: crates/parser/test_data/parser/inline/ok/pat/0043_unit_pat.ath
+---
+UNIT_PAT
+  UNIT
+    L_PAREN "("
+    R_PAREN ")"
+    WHITESPACE "\n"
+

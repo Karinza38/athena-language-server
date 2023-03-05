@@ -1,0 +1,14 @@
+---
+source: crates/parser/src/tests.rs
+description: "(some-var _)\n"
+input_file: crates/parser/test_data/parser/inline/ok/pat/0048_simple_pat.ath
+---
+SOME_THING_PAT
+  L_PAREN "("
+  SOME_VAR_KW "some-var"
+  WHITESPACE " "
+  WILDCARD_PAT
+    UNDERSCORE "_"
+  R_PAREN ")"
+  WHITESPACE "\n"
+

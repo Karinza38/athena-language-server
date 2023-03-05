@@ -1,0 +1,13 @@
+---
+source: crates/parser/src/tests.rs
+description: "(val-of )\n"
+input_file: crates/parser/test_data/parser/inline/err/pat/0038_val_of_pat_no_pat.ath
+---
+VAL_OF_PAT
+  L_PAREN "("
+  VAL_OF_KW "val-of"
+  WHITESPACE " "
+  R_PAREN ")"
+  WHITESPACE "\n"
+error 8: expected an identifier as part of the `val-of` pattern
+

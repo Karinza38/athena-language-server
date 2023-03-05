@@ -1,0 +1,16 @@
+---
+source: crates/parser/src/tests.rs
+description: "(foo as )\n"
+input_file: crates/parser/test_data/parser/inline/err/pat/0037_named_as_pat_no_pat.ath
+---
+NAMED_PAT
+  L_PAREN "("
+  IDENTIFIER
+    IDENT "foo"
+    WHITESPACE " "
+  AS_KW "as"
+  WHITESPACE " "
+  R_PAREN ")"
+  WHITESPACE "\n"
+error 8: expected a pattern to bind to
+

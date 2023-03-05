@@ -1,0 +1,11 @@
+---
+source: crates/parser/src/tests.rs
+description: "'foo\n"
+input_file: crates/parser/test_data/parser/inline/ok/pat/0042_simple_meta_ident_pat.ath
+---
+META_IDENT_PAT
+  META_IDENT
+    SINGLE_QUOTE "'"
+    IDENT "foo"
+    WHITESPACE "\n"
+

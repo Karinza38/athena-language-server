@@ -1,0 +1,21 @@
+---
+source: crates/parser/src/tests.rs
+description: "[a b c\n"
+input_file: crates/parser/test_data/parser/inline/err/pat/0043_list_pat_no_end.ath
+---
+LIST_PAT
+  L_BRACK "["
+  IDENT_PAT
+    IDENTIFIER
+      IDENT "a"
+      WHITESPACE " "
+  IDENT_PAT
+    IDENTIFIER
+      IDENT "b"
+      WHITESPACE " "
+  IDENT_PAT
+    IDENTIFIER
+      IDENT "c"
+      WHITESPACE "\n"
+error 7: expected R_BRACK
+

@@ -1,0 +1,17 @@
+---
+source: crates/parser/src/tests.rs
+description: "(a where )\n"
+input_file: crates/parser/test_data/parser/inline/err/pat/0044_where_pat_no_expr.ath
+---
+WHERE_PAT
+  L_PAREN "("
+  IDENT_PAT
+    IDENTIFIER
+      IDENT "a"
+      WHITESPACE " "
+  WHERE_KW "where"
+  WHITESPACE " "
+  R_PAREN ")"
+  WHITESPACE "\n"
+error 9: expected an where clause expression
+

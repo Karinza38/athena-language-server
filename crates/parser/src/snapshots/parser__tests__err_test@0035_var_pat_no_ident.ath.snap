@@ -1,0 +1,15 @@
+---
+source: crates/parser/src/tests.rs
+description: "? :Int\n"
+input_file: crates/parser/test_data/parser/inline/err/pat/0035_var_pat_no_ident.ath
+---
+VAR_PAT
+  QUESTION "?"
+  WHITESPACE " "
+  COLON ":"
+  IDENT_SORT
+    IDENTIFIER
+      IDENT "Int"
+      WHITESPACE "\n"
+error 2: expected an identifier
+

@@ -1,0 +1,16 @@
+---
+source: crates/parser/src/tests.rs
+description: "(bind foo )\n"
+input_file: crates/parser/test_data/parser/inline/err/pat/0036_named_bind_pat_no_pat.ath
+---
+NAMED_PAT
+  L_PAREN "("
+  BIND_KW "bind"
+  WHITESPACE " "
+  IDENTIFIER
+    IDENT "foo"
+    WHITESPACE " "
+  R_PAREN ")"
+  WHITESPACE "\n"
+error 10: expected a pattern to bind to
+

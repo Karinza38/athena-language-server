@@ -1,0 +1,19 @@
+---
+source: crates/parser/src/tests.rs
+description: "(list-of a b)\n"
+input_file: crates/parser/test_data/parser/inline/ok/pat/0050_list_of_pat.ath
+---
+LIST_OF_PAT
+  L_PAREN "("
+  LIST_OF_KW "list-of"
+  WHITESPACE " "
+  IDENT_PAT
+    IDENTIFIER
+      IDENT "a"
+      WHITESPACE " "
+  IDENT_PAT
+    IDENTIFIER
+      IDENT "b"
+  R_PAREN ")"
+  WHITESPACE "\n"
+
