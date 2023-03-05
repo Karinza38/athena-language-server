@@ -1,0 +1,17 @@
+---
+source: crates/parser/src/tests.rs
+description: "vector-sub foo bar\n"
+input_file: crates/parser/test_data/parser/inline/ok/expr/0029_simple_vector_sub_expr.ath
+---
+VECTOR_SUB_EXPR
+  VECTOR_SUB_KW "vector-sub"
+  WHITESPACE " "
+  IDENT_EXPR
+    IDENTIFIER
+      IDENT "foo"
+      WHITESPACE " "
+  IDENT_EXPR
+    IDENTIFIER
+      IDENT "bar"
+      WHITESPACE "\n"
+

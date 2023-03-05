@@ -139,7 +139,7 @@ Expr =
     | UnitExpr // ✅
     | TermVarExpr // ✅
     | MetaIdent // ✅
-    | CheckExpr
+    | CheckExpr // ✅
     | LambdaExpr // ✅
     | ApplicationExpr // ✅
     | ListExpr // ✅
@@ -148,13 +148,13 @@ Expr =
     | LetRecExpr
     | MatchExpr
     | TryExpr
-    | CellExpr
-    | SetExpr
-    | RefExpr
+    | CellExpr // ✅
+    | SetExpr // ✅
+    | RefExpr // ✅
     | WhileExpr
-    | MakeVectorExpr
-    | VectorSubExpr
-    | VectorSetExpr
+    | MakeVectorExpr // ✅
+    | VectorSubExpr // ✅
+    | VectorSetExpr // ✅
     | SeqExpr // ✅
     | AndExpr // ✅
     | OrExpr // ✅

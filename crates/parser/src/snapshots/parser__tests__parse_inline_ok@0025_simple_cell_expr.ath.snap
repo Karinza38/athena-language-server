@@ -1,0 +1,14 @@
+---
+source: crates/parser/src/tests.rs
+description: "cell foo\n"
+input_file: crates/parser/test_data/parser/inline/ok/expr/0025_simple_cell_expr.ath
+---
+CELL_EXPR
+  CELL_KW "cell"
+  WHITESPACE " "
+  EXPR_PHRASE
+    IDENT_EXPR
+      IDENTIFIER
+        IDENT "foo"
+        WHITESPACE "\n"
+

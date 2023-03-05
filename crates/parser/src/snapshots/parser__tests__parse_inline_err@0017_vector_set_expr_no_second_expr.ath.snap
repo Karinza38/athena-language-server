@@ -1,0 +1,15 @@
+---
+source: crates/parser/src/tests.rs
+description: "vector-set! foo\n"
+input_file: crates/parser/test_data/parser/inline/err/expr/0017_vector_set_expr_no_second_expr.ath
+---
+VECTOR_SET_EXPR
+  VECTOR_SETBANG_KW "vector-set!"
+  WHITESPACE " "
+  IDENT_EXPR
+    IDENTIFIER
+      IDENT "foo"
+      WHITESPACE "\n"
+error 16: Expected to find an index (expr) for the vector-set! expression
+error 16: Expected to find a value (phrase) for the vector-set! expression
+

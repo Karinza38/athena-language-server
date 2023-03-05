@@ -575,7 +575,7 @@ pub struct SetExpr {
 }
 impl SetExpr {
     pub fn set_bang_token(&self) -> Option<SyntaxToken> {
-        support::token(&self.syntax, T![setbang])
+        support::token(&self.syntax, T![set!])
     }
     pub fn expr(&self) -> Option<Expr> {
         support::child(&self.syntax)
@@ -620,7 +620,7 @@ pub struct MakeVectorExpr {
 }
 impl MakeVectorExpr {
     pub fn make_vector_token(&self) -> Option<SyntaxToken> {
-        support::token(&self.syntax, T![make_vector])
+        support::token(&self.syntax, T![make - vector])
     }
     pub fn expr(&self) -> Option<Expr> {
         support::child(&self.syntax)
@@ -636,7 +636,7 @@ pub struct VectorSubExpr {
 }
 impl VectorSubExpr {
     pub fn vector_sub_token(&self) -> Option<SyntaxToken> {
-        support::token(&self.syntax, T![vector_sub])
+        support::token(&self.syntax, T![vector - sub])
     }
     pub fn expr(&self) -> Option<Expr> {
         support::child(&self.syntax)
@@ -649,7 +649,7 @@ pub struct VectorSetExpr {
 }
 impl VectorSetExpr {
     pub fn vector_set_bang_token(&self) -> Option<SyntaxToken> {
-        support::token(&self.syntax, T![vector_setbang])
+        support::token(&self.syntax, T![vector - set!])
     }
     pub fn expr(&self) -> Option<Expr> {
         support::child(&self.syntax)
@@ -824,7 +824,7 @@ impl MethodCallDed {
         support::token(&self.syntax, T!['('])
     }
     pub fn apply_method_token(&self) -> Option<SyntaxToken> {
-        support::token(&self.syntax, T![apply_method])
+        support::token(&self.syntax, T![apply - method])
     }
     pub fn expr(&self) -> Option<Expr> {
         support::child(&self.syntax)
@@ -897,7 +897,7 @@ pub struct ProofByContraDed {
 }
 impl ProofByContraDed {
     pub fn suppose_absurd_token(&self) -> Option<SyntaxToken> {
-        support::token(&self.syntax, T![suppose_absurd])
+        support::token(&self.syntax, T![suppose - absurd])
     }
     pub fn phrase(&self) -> Option<Phrase> {
         support::child(&self.syntax)
@@ -913,7 +913,7 @@ pub struct UniversalGeneralDed {
 }
 impl UniversalGeneralDed {
     pub fn generalize_over_token(&self) -> Option<SyntaxToken> {
-        support::token(&self.syntax, T![generalize_over])
+        support::token(&self.syntax, T![generalize - over])
     }
     pub fn expr(&self) -> Option<Expr> {
         support::child(&self.syntax)
@@ -922,7 +922,7 @@ impl UniversalGeneralDed {
         support::child(&self.syntax)
     }
     pub fn pick_any_token(&self) -> Option<SyntaxToken> {
-        support::token(&self.syntax, T![pick_any])
+        support::token(&self.syntax, T![pick - any])
     }
     pub fn identifier(&self) -> Option<Identifier> {
         support::child(&self.syntax)
@@ -941,7 +941,7 @@ pub struct ExistentialInstantDed {
 }
 impl ExistentialInstantDed {
     pub fn with_witness_token(&self) -> Option<SyntaxToken> {
-        support::token(&self.syntax, T![with_witness])
+        support::token(&self.syntax, T![with - witness])
     }
     pub fn expr(&self) -> Option<Expr> {
         support::child(&self.syntax)
@@ -953,7 +953,7 @@ impl ExistentialInstantDed {
         support::child(&self.syntax)
     }
     pub fn pick_witness_token(&self) -> Option<SyntaxToken> {
-        support::token(&self.syntax, T![pick_witness])
+        support::token(&self.syntax, T![pick - witness])
     }
     pub fn identifier(&self) -> Option<Identifier> {
         support::child(&self.syntax)
@@ -962,7 +962,7 @@ impl ExistentialInstantDed {
         support::token(&self.syntax, T![for])
     }
     pub fn pick_witnesses_token(&self) -> Option<SyntaxToken> {
-        support::token(&self.syntax, T![pick_witnesses])
+        support::token(&self.syntax, T![pick - witnesses])
     }
     pub fn identifiers(&self) -> AstChildren<Identifier> {
         support::children(&self.syntax)
@@ -975,7 +975,7 @@ pub struct InductDed {
 }
 impl InductDed {
     pub fn by_induction_token(&self) -> Option<SyntaxToken> {
-        support::token(&self.syntax, T![by_induction])
+        support::token(&self.syntax, T![by - induction])
     }
     pub fn phrase(&self) -> Option<Phrase> {
         support::child(&self.syntax)
@@ -997,7 +997,7 @@ pub struct CasesDed {
 }
 impl CasesDed {
     pub fn datatype_cases_token(&self) -> Option<SyntaxToken> {
-        support::token(&self.syntax, T![datatype_cases])
+        support::token(&self.syntax, T![datatype - cases])
     }
     pub fn phrase(&self) -> Option<Phrase> {
         support::child(&self.syntax)
@@ -1372,7 +1372,7 @@ impl ValOfPat {
         support::token(&self.syntax, T!['('])
     }
     pub fn val_of_token(&self) -> Option<SyntaxToken> {
-        support::token(&self.syntax, T![val_of])
+        support::token(&self.syntax, T![val - of])
     }
     pub fn identifier(&self) -> Option<Identifier> {
         support::child(&self.syntax)
@@ -1391,7 +1391,7 @@ impl ListOfPat {
         support::token(&self.syntax, T!['('])
     }
     pub fn list_of_token(&self) -> Option<SyntaxToken> {
-        support::token(&self.syntax, T![list_of])
+        support::token(&self.syntax, T![list - of])
     }
     pub fn pat(&self) -> Option<Pat> {
         support::child(&self.syntax)
@@ -1499,52 +1499,52 @@ pub struct SomeThing {
 }
 impl SomeThing {
     pub fn some_var_token(&self) -> Option<SyntaxToken> {
-        support::token(&self.syntax, T![some_var])
+        support::token(&self.syntax, T![some - var])
     }
     pub fn some_sent_con_token(&self) -> Option<SyntaxToken> {
-        support::token(&self.syntax, T![some_sent_con])
+        support::token(&self.syntax, T![some - sent - con])
     }
     pub fn some_quant_token(&self) -> Option<SyntaxToken> {
-        support::token(&self.syntax, T![some_quant])
+        support::token(&self.syntax, T![some - quant])
     }
     pub fn some_term_token(&self) -> Option<SyntaxToken> {
-        support::token(&self.syntax, T![some_term])
+        support::token(&self.syntax, T![some - term])
     }
     pub fn some_atom_token(&self) -> Option<SyntaxToken> {
-        support::token(&self.syntax, T![some_atom])
+        support::token(&self.syntax, T![some - atom])
     }
     pub fn some_sentence_token(&self) -> Option<SyntaxToken> {
-        support::token(&self.syntax, T![some_sentence])
+        support::token(&self.syntax, T![some - sentence])
     }
     pub fn some_list_token(&self) -> Option<SyntaxToken> {
-        support::token(&self.syntax, T![some_list])
+        support::token(&self.syntax, T![some - list])
     }
     pub fn some_cell_token(&self) -> Option<SyntaxToken> {
-        support::token(&self.syntax, T![some_cell])
+        support::token(&self.syntax, T![some - cell])
     }
     pub fn some_vector_token(&self) -> Option<SyntaxToken> {
-        support::token(&self.syntax, T![some_vector])
+        support::token(&self.syntax, T![some - vector])
     }
     pub fn some_proc_token(&self) -> Option<SyntaxToken> {
-        support::token(&self.syntax, T![some_proc])
+        support::token(&self.syntax, T![some - proc])
     }
     pub fn some_method_token(&self) -> Option<SyntaxToken> {
-        support::token(&self.syntax, T![some_method])
+        support::token(&self.syntax, T![some - method])
     }
     pub fn some_symbol_token(&self) -> Option<SyntaxToken> {
-        support::token(&self.syntax, T![some_symbol])
+        support::token(&self.syntax, T![some - symbol])
     }
     pub fn some_table_token(&self) -> Option<SyntaxToken> {
-        support::token(&self.syntax, T![some_table])
+        support::token(&self.syntax, T![some - table])
     }
     pub fn some_map_token(&self) -> Option<SyntaxToken> {
-        support::token(&self.syntax, T![some_map])
+        support::token(&self.syntax, T![some - map])
     }
     pub fn some_sub_token(&self) -> Option<SyntaxToken> {
-        support::token(&self.syntax, T![some_sub])
+        support::token(&self.syntax, T![some - sub])
     }
     pub fn some_char_token(&self) -> Option<SyntaxToken> {
-        support::token(&self.syntax, T![some_char])
+        support::token(&self.syntax, T![some - char])
     }
 }
 

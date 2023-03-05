@@ -384,25 +384,25 @@ macro_rules! T {
     [cell] => {
         $crate ::SyntaxKind::CELL_KW
     };
-    [setbang] => {
+    [set!] => {
         $crate ::SyntaxKind::SETBANG_KW
     };
     [ref] => {
         $crate ::SyntaxKind::REF_KW
     };
-    [make_vector] => {
+    [make - vector] => {
         $crate ::SyntaxKind::MAKE_VECTOR_KW
     };
-    [vector_sub] => {
+    [vector - sub] => {
         $crate ::SyntaxKind::VECTOR_SUB_KW
     };
-    [vector_setbang] => {
+    [vector - set!] => {
         $crate ::SyntaxKind::VECTOR_SETBANG_KW
     };
     [seq] => {
         $crate ::SyntaxKind::SEQ_KW
     };
-    [apply_method] => {
+    [apply - method] => {
         $crate ::SyntaxKind::APPLY_METHOD_KW
     };
     [conclude] => {
@@ -411,76 +411,76 @@ macro_rules! T {
     [assume] => {
         $crate ::SyntaxKind::ASSUME_KW
     };
-    [suppose_absurd] => {
+    [suppose - absurd] => {
         $crate ::SyntaxKind::SUPPOSE_ABSURD_KW
     };
-    [generalize_over] => {
+    [generalize - over] => {
         $crate ::SyntaxKind::GENERALIZE_OVER_KW
     };
-    [pick_any] => {
+    [pick - any] => {
         $crate ::SyntaxKind::PICK_ANY_KW
     };
-    [with_witness] => {
+    [with - witness] => {
         $crate ::SyntaxKind::WITH_WITNESS_KW
     };
-    [pick_witness] => {
+    [pick - witness] => {
         $crate ::SyntaxKind::PICK_WITNESS_KW
     };
-    [pick_witnesses] => {
+    [pick - witnesses] => {
         $crate ::SyntaxKind::PICK_WITNESSES_KW
     };
-    [by_induction] => {
+    [by - induction] => {
         $crate ::SyntaxKind::BY_INDUCTION_KW
     };
-    [datatype_cases] => {
+    [datatype - cases] => {
         $crate ::SyntaxKind::DATATYPE_CASES_KW
     };
-    [some_var] => {
+    [some - var] => {
         $crate ::SyntaxKind::SOME_VAR_KW
     };
-    [some_sent_con] => {
+    [some - sent - con] => {
         $crate ::SyntaxKind::SOME_SENT_CON_KW
     };
-    [some_quant] => {
+    [some - quant] => {
         $crate ::SyntaxKind::SOME_QUANT_KW
     };
-    [some_term] => {
+    [some - term] => {
         $crate ::SyntaxKind::SOME_TERM_KW
     };
-    [some_atom] => {
+    [some - atom] => {
         $crate ::SyntaxKind::SOME_ATOM_KW
     };
-    [some_sentence] => {
+    [some - sentence] => {
         $crate ::SyntaxKind::SOME_SENTENCE_KW
     };
-    [some_list] => {
+    [some - list] => {
         $crate ::SyntaxKind::SOME_LIST_KW
     };
-    [some_cell] => {
+    [some - cell] => {
         $crate ::SyntaxKind::SOME_CELL_KW
     };
-    [some_vector] => {
+    [some - vector] => {
         $crate ::SyntaxKind::SOME_VECTOR_KW
     };
-    [some_proc] => {
+    [some - proc] => {
         $crate ::SyntaxKind::SOME_PROC_KW
     };
-    [some_method] => {
+    [some - method] => {
         $crate ::SyntaxKind::SOME_METHOD_KW
     };
-    [some_symbol] => {
+    [some - symbol] => {
         $crate ::SyntaxKind::SOME_SYMBOL_KW
     };
-    [some_table] => {
+    [some - table] => {
         $crate ::SyntaxKind::SOME_TABLE_KW
     };
-    [some_map] => {
+    [some - map] => {
         $crate ::SyntaxKind::SOME_MAP_KW
     };
-    [some_sub] => {
+    [some - sub] => {
         $crate ::SyntaxKind::SOME_SUB_KW
     };
-    [some_char] => {
+    [some - char] => {
         $crate ::SyntaxKind::SOME_CHAR_KW
     };
     [split] => {
@@ -489,10 +489,10 @@ macro_rules! T {
     [where] => {
         $crate ::SyntaxKind::WHERE_KW
     };
-    [list_of] => {
+    [list - of] => {
         $crate ::SyntaxKind::LIST_OF_KW
     };
-    [val_of] => {
+    [val - of] => {
         $crate ::SyntaxKind::VAL_OF_KW
     };
     [as] => {

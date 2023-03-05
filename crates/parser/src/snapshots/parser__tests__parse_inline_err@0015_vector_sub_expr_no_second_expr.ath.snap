@@ -1,0 +1,14 @@
+---
+source: crates/parser/src/tests.rs
+description: "vector-sub foo\n"
+input_file: crates/parser/test_data/parser/inline/err/expr/0015_vector_sub_expr_no_second_expr.ath
+---
+VECTOR_SUB_EXPR
+  VECTOR_SUB_KW "vector-sub"
+  WHITESPACE " "
+  IDENT_EXPR
+    IDENTIFIER
+      IDENT "foo"
+      WHITESPACE "\n"
+error 15: Expected to find a value (expr) for the vector-sub expression
+

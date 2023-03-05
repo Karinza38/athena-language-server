@@ -1,0 +1,18 @@
+---
+source: crates/parser/src/tests.rs
+description: "vector-set! foo bar\n"
+input_file: crates/parser/test_data/parser/inline/err/expr/0018_vector_set_expr_no_phrase.ath
+---
+VECTOR_SET_EXPR
+  VECTOR_SETBANG_KW "vector-set!"
+  WHITESPACE " "
+  IDENT_EXPR
+    IDENTIFIER
+      IDENT "foo"
+      WHITESPACE " "
+  IDENT_EXPR
+    IDENTIFIER
+      IDENT "bar"
+      WHITESPACE "\n"
+error 20: Expected to find a value (phrase) for the vector-set! expression
+

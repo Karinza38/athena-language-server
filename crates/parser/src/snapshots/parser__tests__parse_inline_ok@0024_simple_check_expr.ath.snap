@@ -1,0 +1,40 @@
+---
+source: crates/parser/src/tests.rs
+description: "check { false => true\n     | else => false\n}\n"
+input_file: crates/parser/test_data/parser/inline/ok/expr/0024_simple_check_expr.ath
+---
+CHECK_EXPR
+  CHECK_KW "check"
+  WHITESPACE " "
+  L_CURLY "{"
+  WHITESPACE " "
+  CHECK_ARM
+    EXPR_PHRASE
+      IDENT_EXPR
+        IDENTIFIER
+          IDENT "false"
+          WHITESPACE " "
+    FAT_ARROW "=>"
+    WHITESPACE " "
+    EXPR_PHRASE
+      IDENT_EXPR
+        IDENTIFIER
+          IDENT "true"
+          WHITESPACE "\n     "
+  CHECK_ARM
+    PIPE "|"
+    WHITESPACE " "
+    EXPR_PHRASE
+      IDENT_EXPR
+        IDENTIFIER
+          IDENT "else"
+          WHITESPACE " "
+    FAT_ARROW "=>"
+    WHITESPACE " "
+    IDENT_EXPR
+      IDENTIFIER
+        IDENT "false"
+        WHITESPACE "\n"
+  R_CURLY "}"
+  WHITESPACE "\n"
+

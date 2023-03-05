@@ -1,0 +1,16 @@
+---
+source: crates/parser/src/tests.rs
+description: "check {}\n"
+input_file: crates/parser/test_data/parser/inline/err/expr/0006_check_expr_no_arms.ath
+---
+CHECK_EXPR
+  CHECK_KW "check"
+  WHITESPACE " "
+  L_CURLY "{"
+  CHECK_ARM
+  R_CURLY "}"
+  WHITESPACE "\n"
+error 7: Expected to find a phrase for the check expression
+error 7: expected FAT_ARROW
+error 7: Expected to find a phrase for the check expression result
+

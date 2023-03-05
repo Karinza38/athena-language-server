@@ -386,10 +386,9 @@ fn generate_syntax_kinds(grammar: KindsSrc<'_>) -> String {
         .chain(grammar.contextual_keywords.iter())
         .copied()
         .collect::<Vec<_>>();
-    let all_keywords_idents = all_keywords_values.iter().map(|kw| {
-        let kw = kw.replace("!", "bang").replace("-", "_");
-        format_ident!("{}", kw)
-    });
+    let all_keywords_idents = all_keywords_values
+        .iter()
+        .map(|kw| kw.parse::<proc_macro2::TokenStream>().unwrap());
     let all_keywords = all_keywords_values.iter().map(x).collect::<Vec<_>>();
 
     let literals = grammar
@@ -680,14 +679,7 @@ fn token_name(name: &str) -> String {
 fn token_kind_raw(token: &str) -> proc_macro2::TokenStream {
     if token == "'" {
         return quote! { T!['\''] };
-    } else if token == "!" {
-        return quote! { T![!] };
     }
-    let token = if token == "->" {
-        token.to_owned()
-    } else {
-        token.replace("-", "_").replace("!", "bang")
-    };
     let token = token.parse::<proc_macro2::TokenStream>().unwrap();
     quote! { T![#token] }
 }

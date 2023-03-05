@@ -1,0 +1,18 @@
+---
+source: crates/parser/src/tests.rs
+description: "make-vector foo bar\n"
+input_file: crates/parser/test_data/parser/inline/ok/expr/0028_simple_make_vector_expr.ath
+---
+MAKE_VECTOR_EXPR
+  MAKE_VECTOR_KW "make-vector"
+  WHITESPACE " "
+  IDENT_EXPR
+    IDENTIFIER
+      IDENT "foo"
+      WHITESPACE " "
+  EXPR_PHRASE
+    IDENT_EXPR
+      IDENTIFIER
+        IDENT "bar"
+        WHITESPACE "\n"
+

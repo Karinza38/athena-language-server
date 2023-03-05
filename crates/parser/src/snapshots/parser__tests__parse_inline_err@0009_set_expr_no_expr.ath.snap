@@ -1,0 +1,11 @@
+---
+source: crates/parser/src/tests.rs
+description: "set!\n"
+input_file: crates/parser/test_data/parser/inline/err/expr/0009_set_expr_no_expr.ath
+---
+SET_EXPR
+  SETBANG_KW "set!"
+  WHITESPACE "\n"
+error 5: Expected to find a target expression for the set! expression
+error 5: Expected to find a value (phrase) for the set! expression
+

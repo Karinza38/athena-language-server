@@ -1,0 +1,22 @@
+---
+source: crates/parser/src/tests.rs
+description: "vector-set! foo 0 bar\n"
+input_file: crates/parser/test_data/parser/inline/ok/expr/0030_simple_vector_set_expr.ath
+---
+VECTOR_SET_EXPR
+  VECTOR_SETBANG_KW "vector-set!"
+  WHITESPACE " "
+  IDENT_EXPR
+    IDENTIFIER
+      IDENT "foo"
+      WHITESPACE " "
+  IDENT_EXPR
+    IDENTIFIER
+      IDENT "0"
+      WHITESPACE " "
+  EXPR_PHRASE
+    IDENT_EXPR
+      IDENTIFIER
+        IDENT "bar"
+        WHITESPACE "\n"
+

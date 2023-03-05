@@ -1,0 +1,22 @@
+---
+source: crates/parser/src/tests.rs
+description: "check { foo => }\n"
+input_file: crates/parser/test_data/parser/inline/err/expr/0007_check_expr_no_result_first_arm.ath
+---
+CHECK_EXPR
+  CHECK_KW "check"
+  WHITESPACE " "
+  L_CURLY "{"
+  WHITESPACE " "
+  CHECK_ARM
+    EXPR_PHRASE
+      IDENT_EXPR
+        IDENTIFIER
+          IDENT "foo"
+          WHITESPACE " "
+    FAT_ARROW "=>"
+    WHITESPACE " "
+  R_CURLY "}"
+  WHITESPACE "\n"
+error 15: Expected to find a phrase for the check expression result
+

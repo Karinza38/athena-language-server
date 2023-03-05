@@ -1,0 +1,13 @@
+---
+source: crates/parser/src/tests.rs
+description: "ref foo\n"
+input_file: crates/parser/test_data/parser/inline/ok/expr/0027_simple_ref_expr.ath
+---
+REF_EXPR
+  REF_KW "ref"
+  WHITESPACE " "
+  IDENT_EXPR
+    IDENTIFIER
+      IDENT "foo"
+      WHITESPACE "\n"
+

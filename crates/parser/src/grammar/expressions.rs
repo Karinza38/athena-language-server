@@ -1,7 +1,7 @@
-use super::{identifier, literal};
+use super::{identifier, literal, phrases::phrase};
 use crate::{
     parser::Parser,
-    SyntaxKind::{self, CHAR, IDENT, IDENT_EXPR, STRING, UNIT_EXPR},
+    SyntaxKind::{self, IDENT, IDENT_EXPR, UNIT_EXPR},
     T,
 };
 
@@ -104,7 +104,7 @@ fn application_expr(p: &mut Parser) {
 
     // test(expr) application_expr_no_args
     // (foo)
-    while super::phrases::phrase(p) {
+    while phrase(p) {
         // test(expr) nested_application_expr
         // (foo (bar baz))
     }
@@ -122,7 +122,7 @@ fn list_expr(p: &mut Parser) {
     let m = p.start();
     p.bump(T!['[']);
 
-    while super::phrases::phrase(p) {
+    while phrase(p) {
         // test(expr) nested_list_expr
         // [foo [bar baz]]
     }
@@ -141,7 +141,7 @@ fn and_expr(p: &mut Parser) {
 
     p.bump(T![&&]);
 
-    while super::phrases::phrase(p) {
+    while phrase(p) {
         // test(expr) nested_and_expr
         // (&& bar (&& baz))
     }
@@ -160,7 +160,7 @@ fn or_expr(p: &mut Parser) {
 
     p.bump(T![||]);
 
-    while super::phrases::phrase(p) {
+    while phrase(p) {
         // test(expr) nested_or_expr
         // (|| bar (|| baz))
     }
@@ -179,13 +179,209 @@ fn seq_expr(p: &mut Parser) {
 
     p.bump(T![seq]);
 
-    while super::phrases::phrase(p) {
+    while phrase(p) {
         // test(expr) nested_seq_expr
         // (seq bar (seq baz))
     }
 
     p.expect(T![')']);
     m.complete(p, SyntaxKind::SEQ_EXPR);
+}
+
+fn check_arm(p: &mut Parser) {
+    assert!(p.at(T![|]));
+
+    let m = p.start();
+    p.bump(T![|]);
+
+    if !phrase(p) {
+        // test_err(expr) check_arm_no_expr
+        // check { foo => bar
+        // | => foo }
+        p.error("Expected to find a phrase for the check arm");
+    }
+
+    p.expect(T![=>]);
+
+    if !expr(p) {
+        // test_err(expr) check_arm_no_result
+        // check { foo => bar
+        // | foo => }
+        p.error("Expected to find a expression for the check arm result");
+    }
+
+    m.complete(p, SyntaxKind::CHECK_ARM);
+}
+
+// test(expr) simple_check_expr
+// check { false => true
+//      | else => false
+// }
+fn check_expr(p: &mut Parser) {
+    assert!(p.at(T![check]));
+
+    let m = p.start();
+    p.bump(T![check]);
+
+    p.expect(T!['{']);
+
+    // FIXME: avoid creating an arm node if there is none
+    let arm = p.start();
+
+    if !phrase(p) {
+        // test_err(expr) check_expr_no_arms
+        // check {}
+        p.error("Expected to find a phrase for the check expression");
+    }
+
+    p.expect(T![=>]);
+
+    if !phrase(p) {
+        // test_err(expr) check_expr_no_result_first_arm
+        // check { foo => }
+        p.error("Expected to find a phrase for the check expression result");
+    }
+
+    arm.complete(p, SyntaxKind::CHECK_ARM);
+
+    while p.at(T![|]) {
+        check_arm(p);
+    }
+
+    p.expect(T!['}']);
+    m.complete(p, SyntaxKind::CHECK_EXPR);
+}
+
+// test(expr) simple_cell_expr
+// cell foo
+fn cell_expr(p: &mut Parser) {
+    assert!(p.at(T![cell]));
+
+    let m = p.start();
+    p.bump(T![cell]);
+
+    if !phrase(p) {
+        // test_err(expr) cell_expr_no_phrase
+        // cell
+        p.error("Expected to find a phrase for the cell expression");
+    }
+
+    m.complete(p, SyntaxKind::CELL_EXPR);
+}
+
+// test(expr) simple_set_expr
+// set! foo bar
+fn set_expr(p: &mut Parser) {
+    assert!(p.at(T![set!]));
+
+    let m = p.start();
+    p.bump(T![set!]);
+
+    if !expr(p) {
+        // test_err(expr) set_expr_no_expr
+        // set!
+        p.error("Expected to find a target expression for the set! expression");
+    }
+
+    if !phrase(p) {
+        // test_err(expr) set_expr_no_phrase
+        // set! foo
+        p.error("Expected to find a value (phrase) for the set! expression");
+    }
+
+    m.complete(p, SyntaxKind::SET_EXPR);
+}
+
+// test(expr) simple_ref_expr
+// ref foo
+fn ref_expr(p: &mut Parser) {
+    assert!(p.at(T![ref]));
+
+    let m = p.start();
+    p.bump(T![ref]);
+
+    if !expr(p) {
+        // test_err(expr) ref_expr_no_expr
+        // ref
+        p.error("Expected to find a target expression for the ref expression");
+    }
+
+    m.complete(p, SyntaxKind::REF_EXPR);
+}
+
+// test(expr) simple_make_vector_expr
+// make-vector foo bar
+fn make_vector_expr(p: &mut Parser) {
+    assert!(p.at(T![make - vector]));
+
+    let m = p.start();
+    p.bump(T![make - vector]);
+
+    if !expr(p) {
+        // test_err(expr) make_vector_expr_no_expr
+        // make-vector
+        p.error("Expected to find a target expression for the make_vector expression");
+    }
+
+    if !phrase(p) {
+        // test_err(expr) make_vector_expr_no_phrase
+        // make-vector foo
+        p.error("Expected to find a value (phrase) for the make_vector expression");
+    }
+
+    m.complete(p, SyntaxKind::MAKE_VECTOR_EXPR);
+}
+
+// test(expr) simple_vector_sub_expr
+// vector-sub foo bar
+fn vector_sub_expr(p: &mut Parser) {
+    assert!(p.at(T![vector - sub]));
+
+    let m = p.start();
+    p.bump(T![vector - sub]);
+
+    if !expr(p) {
+        // test_err(expr) vector_sub_expr_no_expr
+        // vector-sub
+        p.error("Expected to find a target expression for the vector-sub expression");
+    }
+
+    if !expr(p) {
+        // test_err(expr) vector_sub_expr_no_second_expr
+        // vector-sub foo
+        p.error("Expected to find a value (expr) for the vector-sub expression");
+    }
+
+    m.complete(p, SyntaxKind::VECTOR_SUB_EXPR);
+}
+
+// test(expr) simple_vector_set_expr
+// vector-set! foo 0 bar
+fn vector_set_expr(p: &mut Parser) {
+    assert!(p.at(T![vector-set!]));
+
+    let m = p.start();
+    p.bump(T![vector-set!]);
+
+    if !expr(p) {
+        // test_err(expr) vector_set_expr_no_expr
+        // vector-set!
+        p.error("Expected to find a target vector expression for the vector-set! expression");
+    }
+
+    if !expr(p) {
+        // test_err(expr) vector_set_expr_no_second_expr
+        // vector-set! foo
+        p.error("Expected to find an index (expr) for the vector-set! expression");
+    }
+
+    if !phrase(p) {
+        // test_err(expr) vector_set_expr_no_phrase
+        // vector-set! foo bar
+        p.error("Expected to find a value (phrase) for the vector-set! expression");
+    }
+
+    m.complete(p, SyntaxKind::VECTOR_SET_EXPR);
 }
 
 // test(expr) simple_string_expr
@@ -217,6 +413,22 @@ pub(crate) fn expr(p: &mut Parser) -> bool {
         lambda_expr(p);
     } else if p.at(T!['[']) {
         list_expr(p);
+    } else if p.at(T![check]) {
+        // FIXME: have to figure out how to handle ambiguity
+        // between check expr and check ded
+        check_expr(p);
+    } else if p.at(T![cell]) {
+        cell_expr(p);
+    } else if p.at(T![set!]) {
+        set_expr(p);
+    } else if p.at(T![ref]) {
+        ref_expr(p);
+    } else if p.at(T![make - vector]) {
+        make_vector_expr(p);
+    } else if p.at(T![vector - sub]) {
+        vector_sub_expr(p);
+    } else if p.at(T![vector-set!]) {
+        vector_set_expr(p);
     } else {
         // todo!();
         return false;

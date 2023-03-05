@@ -1,0 +1,14 @@
+---
+source: crates/parser/src/tests.rs
+description: "set! foo\n"
+input_file: crates/parser/test_data/parser/inline/err/expr/0010_set_expr_no_phrase.ath
+---
+SET_EXPR
+  SETBANG_KW "set!"
+  WHITESPACE " "
+  IDENT_EXPR
+    IDENTIFIER
+      IDENT "foo"
+      WHITESPACE "\n"
+error 9: Expected to find a value (phrase) for the set! expression
+

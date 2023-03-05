@@ -1,0 +1,11 @@
+---
+source: crates/parser/src/tests.rs
+description: "make-vector\n"
+input_file: crates/parser/test_data/parser/inline/err/expr/0013_make_vector_expr_no_expr.ath
+---
+MAKE_VECTOR_EXPR
+  MAKE_VECTOR_KW "make-vector"
+  WHITESPACE "\n"
+error 12: Expected to find a target expression for the make_vector expression
+error 12: Expected to find a value (phrase) for the make_vector expression
+

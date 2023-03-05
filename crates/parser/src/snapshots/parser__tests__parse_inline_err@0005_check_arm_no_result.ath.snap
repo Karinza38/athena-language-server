@@ -1,0 +1,37 @@
+---
+source: crates/parser/src/tests.rs
+description: "check { foo => bar\n| foo => }\n"
+input_file: crates/parser/test_data/parser/inline/err/expr/0005_check_arm_no_result.ath
+---
+CHECK_EXPR
+  CHECK_KW "check"
+  WHITESPACE " "
+  L_CURLY "{"
+  WHITESPACE " "
+  CHECK_ARM
+    EXPR_PHRASE
+      IDENT_EXPR
+        IDENTIFIER
+          IDENT "foo"
+          WHITESPACE " "
+    FAT_ARROW "=>"
+    WHITESPACE " "
+    EXPR_PHRASE
+      IDENT_EXPR
+        IDENTIFIER
+          IDENT "bar"
+          WHITESPACE "\n"
+  CHECK_ARM
+    PIPE "|"
+    WHITESPACE " "
+    EXPR_PHRASE
+      IDENT_EXPR
+        IDENTIFIER
+          IDENT "foo"
+          WHITESPACE " "
+    FAT_ARROW "=>"
+    WHITESPACE " "
+  R_CURLY "}"
+  WHITESPACE "\n"
+error 28: Expected to find a expression for the check arm result
+
