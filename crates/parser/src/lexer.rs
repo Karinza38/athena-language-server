@@ -70,7 +70,6 @@ impl<'i> LexedInput<'i> {
     }
 
     pub fn text_for_range(&self, range: Range<usize>) -> &str {
-        eprintln!("range: {:?}, len = {}", range, self.len());
         assert!(range.start < range.end && range.end <= self.len());
         let start = self.start[range.start] as usize;
         let end = self.start[range.end] as usize;
@@ -89,7 +88,7 @@ impl<'i> LexedInput<'i> {
     }
 
     pub fn text_start(&self, idx: usize) -> usize {
-        assert!(idx < self.len());
+        assert!(idx <= self.len());
         self.start[idx] as usize
     }
 
