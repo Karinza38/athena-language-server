@@ -717,6 +717,16 @@ impl OrExpr {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
+pub struct MetaIdentExpr {
+    pub(crate) syntax: SyntaxNode,
+}
+impl MetaIdentExpr {
+    pub fn meta_ident(&self) -> Option<MetaIdent> {
+        support::child(&self.syntax)
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct CheckArm {
     pub(crate) syntax: SyntaxNode,
 }
@@ -2128,6 +2138,17 @@ impl AstNode for AndExpr {
 impl AstNode for OrExpr {
     fn can_cast(kind: SyntaxKind) -> bool {
         kind == OR_EXPR
+    }
+    fn cast(syntax: SyntaxNode) -> Option<Self> {
+        if Self::can_cast(syntax.kind()) { Some(Self { syntax }) } else { None }
+    }
+    fn syntax(&self) -> &SyntaxNode {
+        &self.syntax
+    }
+}
+impl AstNode for MetaIdentExpr {
+    fn can_cast(kind: SyntaxKind) -> bool {
+        kind == META_IDENT_EXPR
     }
     fn cast(syntax: SyntaxNode) -> Option<Self> {
         if Self::can_cast(syntax.kind()) { Some(Self { syntax }) } else { None }
@@ -3570,6 +3591,11 @@ impl std::fmt::Display for AndExpr {
     }
 }
 impl std::fmt::Display for OrExpr {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        std::fmt::Display::fmt(self.syntax(), f)
+    }
+}
+impl std::fmt::Display for MetaIdentExpr {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         std::fmt::Display::fmt(self.syntax(), f)
     }

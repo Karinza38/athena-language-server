@@ -1,0 +1,27 @@
+---
+source: crates/parser/src/tests.rs
+description: "(|| bar (|| baz))\n"
+input_file: crates/parser/test_data/parser/inline/ok/expr/0018_nested_or_expr.ath
+---
+OR_EXPR
+  L_PAREN "("
+  PIPE2 "||"
+  WHITESPACE " "
+  EXPR_PHRASE
+    IDENT_EXPR
+      IDENTIFIER
+        IDENT "bar"
+        WHITESPACE " "
+  EXPR_PHRASE
+    OR_EXPR
+      L_PAREN "("
+      PIPE2 "||"
+      WHITESPACE " "
+      EXPR_PHRASE
+        IDENT_EXPR
+          IDENTIFIER
+            IDENT "baz"
+      R_PAREN ")"
+  R_PAREN ")"
+  WHITESPACE "\n"
+

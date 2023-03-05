@@ -495,12 +495,6 @@ fn generate_syntax_kinds(grammar: KindsSrc<'_>) -> String {
     sourcegen::add_preamble("sourcegen_ast", sourcegen::reformat(ast.to_string()))
 }
 
-fn print_lit(s: &str) {
-    for b in s.bytes() {
-        print!("{}", char::from(b));
-    }
-}
-
 fn generate_lexer(grammar: &AstSrc) -> String {
     let mut logos_rule = Vec::new();
     let mut variant_names = Vec::new();

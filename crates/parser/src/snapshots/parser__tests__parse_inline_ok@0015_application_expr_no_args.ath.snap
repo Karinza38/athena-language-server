@@ -1,0 +1,13 @@
+---
+source: crates/parser/src/tests.rs
+description: "(foo)\n"
+input_file: crates/parser/test_data/parser/inline/ok/expr/0015_application_expr_no_args.ath
+---
+APPLICATION_EXPR
+  L_PAREN "("
+  IDENT_EXPR
+    IDENTIFIER
+      IDENT "foo"
+  R_PAREN ")"
+  WHITESPACE "\n"
+

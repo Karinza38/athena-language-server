@@ -1,0 +1,26 @@
+---
+source: crates/parser/src/tests.rs
+description: "(foo (bar baz))\n"
+input_file: crates/parser/test_data/parser/inline/ok/expr/0013_nested_application_expr.ath
+---
+APPLICATION_EXPR
+  L_PAREN "("
+  IDENT_EXPR
+    IDENTIFIER
+      IDENT "foo"
+      WHITESPACE " "
+  EXPR_PHRASE
+    APPLICATION_EXPR
+      L_PAREN "("
+      IDENT_EXPR
+        IDENTIFIER
+          IDENT "bar"
+          WHITESPACE " "
+      EXPR_PHRASE
+        IDENT_EXPR
+          IDENTIFIER
+            IDENT "baz"
+      R_PAREN ")"
+  R_PAREN ")"
+  WHITESPACE "\n"
+

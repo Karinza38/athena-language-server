@@ -1,4 +1,4 @@
-use crate::{event::Event, input::Input, SyntaxKind, token_set::TokenSet};
+use crate::{event::Event, input::Input, token_set::TokenSet, SyntaxKind};
 use drop_bomb::DropBomb;
 
 pub(crate) struct Parser<'i> {
@@ -144,7 +144,9 @@ impl Marker {
 }
 
 pub(crate) struct CompletedMarker {
+    #[allow(dead_code)]
     pos: u32,
+    #[allow(dead_code)]
     kind: SyntaxKind,
 }
 
@@ -153,6 +155,7 @@ impl CompletedMarker {
         Self { pos, kind }
     }
 
+    #[allow(dead_code)]
     /// This method allows to create a new node which starts
     /// *before* the current one. That is, parser could start
     /// node `A`, then complete it, and then after parsing the
@@ -178,6 +181,7 @@ impl CompletedMarker {
         new_pos
     }
 
+    #[allow(dead_code)]
     /// Extends this completed marker *to the left* up to `m`.
     pub(crate) fn extend_to(self, p: &mut Parser<'_>, mut m: Marker) -> CompletedMarker {
         m.bomb.defuse();
@@ -191,6 +195,7 @@ impl CompletedMarker {
         self
     }
 
+    #[allow(dead_code)]
     pub(crate) fn kind(&self) -> SyntaxKind {
         self.kind
     }

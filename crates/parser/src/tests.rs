@@ -6,8 +6,6 @@ use std::{
     path::{Path, PathBuf},
 };
 
-// use expect_test::expect_file;
-
 use insta::assert_snapshot;
 
 use crate::{EntryPoint, LexedInput};
@@ -75,8 +73,8 @@ fn parse_err() {
 fn parse_inline_ok() {
     insta::glob!("../test_data", "parser/inline/ok/*/*.ath", |path| {
         let case = TestCase::read(path);
-        eprintln!("running test case: {case:?}");
-        let (actual, errors) = parse(EntryPoint::Expr, &case.text);
+        eprintln!("running test: {}", case.ath.display());
+        let (actual, errors) = parse(case.entry, &case.text);
         assert!(
             !errors,
             "errors in an OK file {}:\n{actual}",
@@ -88,15 +86,16 @@ fn parse_inline_ok() {
 
 #[test]
 fn parse_inline_err() {
-    for case in TestCase::list("parser/inline/err") {
-        let (actual, errors) = parse(EntryPoint::SourceFile, &case.text);
+    insta::glob!("../test_data", "parser/inline/err/*/*.ath", |path| {
+        let case = TestCase::read(path);
+        let (actual, errors) = parse(case.entry, &case.text);
         assert!(
             errors,
             "no errors in an ERR file {}:\n{actual}",
             case.ath.display()
         );
-        assert_snapshot!(actual)
-    }
+        insta::with_settings!({description => &case.text, omit_expression => true }, { assert_snapshot!(actual) });
+    });
 }
 
 fn parse(entry: EntryPoint, text: &str) -> (String, bool) {
@@ -176,11 +175,7 @@ impl TestCase {
         if path.extension().unwrap_or_default() == "ath" {
             let ath = path.into();
             let text = fs::read_to_string(&ath).unwrap();
-            TestCase {
-                ath,
-                text,
-                entry: EntryPoint::SourceFile,
-            }
+            TestCase { ath, text, entry }
         } else {
             panic!("unknown file extension");
         }
@@ -210,7 +205,6 @@ impl TestCase {
             }
             if path.extension().unwrap_or_default() == "ath" {
                 let ath = path;
-                let ast = ath.with_extension("ast");
                 let text = fs::read_to_string(&ath).unwrap();
                 res.push(TestCase {
                     ath,

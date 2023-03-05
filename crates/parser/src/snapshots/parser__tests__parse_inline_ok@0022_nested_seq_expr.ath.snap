@@ -1,0 +1,27 @@
+---
+source: crates/parser/src/tests.rs
+description: "(seq bar (seq baz))\n"
+input_file: crates/parser/test_data/parser/inline/ok/expr/0022_nested_seq_expr.ath
+---
+SEQ_EXPR
+  L_PAREN "("
+  SEQ_KW "seq"
+  WHITESPACE " "
+  EXPR_PHRASE
+    IDENT_EXPR
+      IDENTIFIER
+        IDENT "bar"
+        WHITESPACE " "
+  EXPR_PHRASE
+    SEQ_EXPR
+      L_PAREN "("
+      SEQ_KW "seq"
+      WHITESPACE " "
+      EXPR_PHRASE
+        IDENT_EXPR
+          IDENTIFIER
+            IDENT "baz"
+      R_PAREN ")"
+  R_PAREN ")"
+  WHITESPACE "\n"
+

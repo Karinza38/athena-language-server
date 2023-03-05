@@ -1,4 +1,5 @@
 mod expressions;
+mod phrases;
 mod sorts;
 
 use crate::{parser::Parser, token_set::TokenSet, SyntaxKind, T};
@@ -10,6 +11,19 @@ pub(crate) mod entry {
     pub(crate) fn expr(p: &mut Parser) {
         let m = p.start();
         super::expressions::expr(p);
+        if p.at(SyntaxKind::EOF) {
+            m.abandon(p);
+            return;
+        }
+        while !p.at(SyntaxKind::EOF) {
+            p.bump_any();
+        }
+        m.complete(p, SyntaxKind::ERROR);
+    }
+
+    pub(crate) fn phrase(p: &mut Parser) {
+        let m = p.start();
+        super::phrases::phrase(p);
         if p.at(SyntaxKind::EOF) {
             m.abandon(p);
             return;

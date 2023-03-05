@@ -39,7 +39,6 @@ impl<'i> LexedInput<'i> {
         let mut builder = Builder::new(self, sink);
 
         for event in output.steps() {
-            eprintln!("event: {:#?}", event);
             match event {
                 crate::output::Step::Token { kind } => builder.token(*kind),
                 crate::output::Step::Enter { kind } => builder.enter(*kind),
@@ -127,7 +126,6 @@ impl<'i, 'o> Builder<'i, 'o> {
     }
 
     fn do_token(&mut self, kind: SyntaxKind) {
-        eprintln!("do_token: {kind:?}");
         let text = self.lexed.text_for_range(self.pos..self.pos + 1);
         self.pos += 1;
         (self.sink)(StrStep::Token { kind, text });

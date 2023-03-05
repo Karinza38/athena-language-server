@@ -134,15 +134,15 @@ DedPhrase =
     Ded
 
 Expr =
-    IdentExpr
-    | LiteralExpr
-    | UnitExpr
-    | TermVarExpr
-    | MetaIdent
+    IdentExpr // ✅
+    | LiteralExpr // ✅
+    | UnitExpr // ✅
+    | TermVarExpr // ✅
+    | MetaIdent // ✅
     | CheckExpr
-    | LambdaExpr
-    | ApplicationExpr
-    | ListExpr
+    | LambdaExpr // ✅
+    | ApplicationExpr // ✅
+    | ListExpr // ✅
     | MethodExpr
     | LetExpr
     | LetRecExpr
@@ -155,9 +155,9 @@ Expr =
     | MakeVectorExpr
     | VectorSubExpr
     | VectorSetExpr
-    | SeqExpr
-    | AndExpr
-    | OrExpr
+    | SeqExpr // ✅
+    | AndExpr // ✅
+    | OrExpr // ✅
 
 IdentExpr =
     Identifier
@@ -167,6 +167,9 @@ LiteralExpr =
 
 UnitExpr =
     Unit
+
+MetaIdentExpr =
+    MetaIdent
 
 TermVarExpr =
     '?' Identifier (':' Sort)?

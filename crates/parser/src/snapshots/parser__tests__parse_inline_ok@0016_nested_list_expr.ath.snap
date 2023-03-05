@@ -1,0 +1,28 @@
+---
+source: crates/parser/src/tests.rs
+description: "[foo [bar baz]]\n"
+input_file: crates/parser/test_data/parser/inline/ok/expr/0016_nested_list_expr.ath
+---
+LIST_EXPR
+  L_BRACK "["
+  EXPR_PHRASE
+    IDENT_EXPR
+      IDENTIFIER
+        IDENT "foo"
+        WHITESPACE " "
+  EXPR_PHRASE
+    LIST_EXPR
+      L_BRACK "["
+      EXPR_PHRASE
+        IDENT_EXPR
+          IDENTIFIER
+            IDENT "bar"
+            WHITESPACE " "
+      EXPR_PHRASE
+        IDENT_EXPR
+          IDENTIFIER
+            IDENT "baz"
+      R_BRACK "]"
+  R_BRACK "]"
+  WHITESPACE "\n"
+

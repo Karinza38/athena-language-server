@@ -1,0 +1,10 @@
+---
+source: crates/parser/src/tests.rs
+description: "\"hello world\"\n"
+input_file: crates/parser/test_data/parser/inline/ok/expr/0014_simple_string_expr.ath
+---
+LITERAL_EXPR
+  LITERAL
+    STRING "\"hello world\""
+    WHITESPACE "\n"
+

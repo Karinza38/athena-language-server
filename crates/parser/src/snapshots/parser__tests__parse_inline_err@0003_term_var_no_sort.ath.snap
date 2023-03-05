@@ -1,0 +1,14 @@
+---
+source: crates/parser/src/tests.rs
+description: "?foo :\n"
+input_file: crates/parser/test_data/parser/inline/err/expr/0003_term_var_no_sort.ath
+---
+TERM_VAR_EXPR
+  QUESTION "?"
+  IDENTIFIER
+    IDENT "foo"
+    WHITESPACE " "
+  COLON ":"
+  WHITESPACE "\n"
+error 7: Expected to find a sort for the term variable
+
