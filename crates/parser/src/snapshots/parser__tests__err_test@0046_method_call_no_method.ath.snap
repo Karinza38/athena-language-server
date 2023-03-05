@@ -1,0 +1,13 @@
+---
+source: crates/parser/src/tests.rs
+description: "(apply-method )\n"
+input_file: crates/parser/test_data/parser/inline/err/ded/0046_method_call_no_method.ath
+---
+METHOD_CALL_DED
+  L_PAREN "("
+  APPLY_METHOD_KW "apply-method"
+  WHITESPACE " "
+  R_PAREN ")"
+  WHITESPACE "\n"
+error 14: expected method expression to apply
+

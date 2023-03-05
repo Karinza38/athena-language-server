@@ -18,9 +18,16 @@ impl TokenSet {
         Self(res)
     }
 
-    #[allow(dead_code)]
     pub(crate) const fn union(self, other: TokenSet) -> TokenSet {
         TokenSet(self.0 | other.0)
+    }
+
+    pub(crate) const fn intersect(self, other: TokenSet) -> TokenSet {
+        TokenSet(self.0 & other.0)
+    }
+
+    pub(crate) const fn subtract(self, other: TokenSet) -> TokenSet {
+        TokenSet(self.0 & !other.0)
     }
 
     pub(crate) const fn contains(self, kind: SyntaxKind) -> bool {

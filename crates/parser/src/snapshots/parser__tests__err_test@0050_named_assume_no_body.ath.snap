@@ -1,0 +1,21 @@
+---
+source: crates/parser/src/tests.rs
+description: "assume a := b\n"
+input_file: crates/parser/test_data/parser/inline/err/ded/0050_named_assume_no_body.ath
+---
+NAMED_ASSUME_DED
+  ASSUME_KW "assume"
+  WHITESPACE " "
+  ASSUME_PART
+    IDENTIFIER
+      IDENT "a"
+      WHITESPACE " "
+    COLON_EQ ":="
+    WHITESPACE " "
+    EXPR_PHRASE
+      IDENT_EXPR
+        IDENTIFIER
+          IDENT "b"
+          WHITESPACE "\n"
+error 14: expected body for assumption
+

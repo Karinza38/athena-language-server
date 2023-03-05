@@ -547,6 +547,8 @@ fn let_rec_part(p: &mut Parser, leading_semi: bool) {
     m.complete(p, SyntaxKind::LET_PART);
 }
 
+// test(expr) simple_let_rec_expr
+// letrec { foo := (hotline miami) }
 fn let_rec_expr(p: &mut Parser) {
     assert!(p.at(T![letrec]));
 
@@ -574,73 +576,10 @@ fn let_rec_expr(p: &mut Parser) {
     m.complete(p, SyntaxKind::LET_REC_EXPR);
 }
 
-fn match_arm(p: &mut Parser, leading_pipe: bool) {
-    let m = if leading_pipe {
-        assert!(p.at(T![|]));
-
-        let m = p.start();
-        p.bump(T![|]);
-        m
-    } else {
-        // FIXME: Consider this assertion?
-        // assert!(p.at_one_of(super::patterns::PAT_START_SET));
-        p.start()
-    };
-
-    if !pat(p) {
-        // test_err(expr) match_arm_no_pat
-        // match foo { => bar }
-        p.error("Expected to find a pattern for the match arm");
-    }
-
-    p.expect(T![=>]);
-
-    if !expr(p) {
-        // test_err(expr) match_arm_no_expr
-        // match foo { bar => }
-        p.error("Expected to find an expression for the match arm");
-    }
-
-    m.complete(p, SyntaxKind::MATCH_ARM);
-}
-
 // test(expr) simple_match_expr
 // match foo { bar => (baz boo) }
 fn match_expr(p: &mut Parser) {
-    assert!(p.at(T![match]));
-
-    let m = p.start();
-    p.bump(T![match]);
-
-    if !phrase(p) {
-        // test_err(expr) match_expr_no_scrutinee
-        // match { foo => bar }
-        p.error("Expected to find a scrutinee (phrase) for the match expression");
-    }
-
-    p.expect(T!['{']);
-
-    if !p.at_one_of(super::patterns::PAT_START_SET) {
-        // test_err(expr) match_expr_no_arm
-        // match foo {  }
-        if !p.at(T![=>]) {
-            p.error("Expected at least one arm in the match expression");
-        } else {
-            match_arm(p, false);
-        }
-    } else {
-        match_arm(p, false);
-    }
-
-    while p.at(T![|]) {
-        // test(expr) match_expr_multiple_arms
-        // match foo { bar => baz | qux => (quux "cool") }
-        match_arm(p, true);
-    }
-
-    p.expect(T!['}']);
-
-    m.complete(p, SyntaxKind::MATCH_EXPR);
+    super::phrases::match_expr_or_ded(p, Some(super::phrases::ExprOrDed::Expr));
 }
 
 pub(crate) const EXPR_START_SET: TokenSet = TokenSet::new(&[
@@ -666,10 +605,13 @@ pub(crate) const EXPR_START_SET: TokenSet = TokenSet::new(&[
 ])
 .union(LIT_SET);
 
+pub(crate) const EXPR_AFTER_LPAREN_SET: TokenSet =
+    TokenSet::new(&[T![')'], T![&&], T![||], T![seq]]).union(EXPR_START_SET);
+
 // test(expr) simple_string_expr
 // "hello world"
 pub(crate) fn expr(p: &mut Parser) -> bool {
-    eprintln!("parsing expr: {:?}", p.current());
+    eprintln!("parsing expr: {:?} {:?}", p.current(), p.nth(1));
 
     if p.at(IDENT) {
         ident_expr(p);

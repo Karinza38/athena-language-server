@@ -1,0 +1,35 @@
+---
+source: crates/parser/src/tests.rs
+description: "assume A assume B (!claim A)\n"
+input_file: crates/parser/test_data/parser/inline/ok/ded/0060_assume_nested.ath
+---
+ASSUME_DED
+  ASSUME_KW "assume"
+  WHITESPACE " "
+  EXPR_PHRASE
+    IDENT_EXPR
+      IDENTIFIER
+        IDENT "A"
+        WHITESPACE " "
+  ASSUME_DED
+    ASSUME_KW "assume"
+    WHITESPACE " "
+    EXPR_PHRASE
+      IDENT_EXPR
+        IDENTIFIER
+          IDENT "B"
+          WHITESPACE " "
+    BANG_METHOD_CALL_DED
+      L_PAREN "("
+      BANG "!"
+      IDENT_EXPR
+        IDENTIFIER
+          IDENT "claim"
+          WHITESPACE " "
+      EXPR_PHRASE
+        IDENT_EXPR
+          IDENTIFIER
+            IDENT "A"
+      R_PAREN ")"
+      WHITESPACE "\n"
+

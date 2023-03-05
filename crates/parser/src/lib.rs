@@ -35,6 +35,7 @@ impl EntryPoint {
             EntryPoint::Expr => grammar::entry::expr,
             EntryPoint::Phrase => grammar::entry::phrase,
             EntryPoint::Pat => grammar::entry::pat,
+            EntryPoint::Ded => grammar::entry::ded,
             _ => todo!("{self:?}"),
         };
         let mut p = parser::Parser::new(input);

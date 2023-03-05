@@ -1,0 +1,20 @@
+---
+source: crates/parser/src/tests.rs
+description: "(apply-method claim A)\n"
+input_file: crates/parser/test_data/parser/inline/ok/ded/0061_apply_method_call_ded.ath
+---
+METHOD_CALL_DED
+  L_PAREN "("
+  APPLY_METHOD_KW "apply-method"
+  WHITESPACE " "
+  IDENT_EXPR
+    IDENTIFIER
+      IDENT "claim"
+      WHITESPACE " "
+  EXPR_PHRASE
+    IDENT_EXPR
+      IDENTIFIER
+        IDENT "A"
+  R_PAREN ")"
+  WHITESPACE "\n"
+

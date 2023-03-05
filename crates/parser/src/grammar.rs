@@ -1,3 +1,4 @@
+mod deductions;
 mod expressions;
 mod patterns;
 mod phrases;
@@ -38,6 +39,19 @@ pub(crate) mod entry {
     pub(crate) fn pat(p: &mut Parser) {
         let m = p.start();
         super::patterns::pat(p);
+        if p.at(SyntaxKind::EOF) {
+            m.abandon(p);
+            return;
+        }
+        while !p.at(SyntaxKind::EOF) {
+            p.bump_any();
+        }
+        m.complete(p, SyntaxKind::ERROR);
+    }
+
+    pub(crate) fn ded(p: &mut Parser) {
+        let m = p.start();
+        super::deductions::ded(p);
         if p.at(SyntaxKind::EOF) {
             m.abandon(p);
             return;

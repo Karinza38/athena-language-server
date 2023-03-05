@@ -1,0 +1,1 @@
+assume A := (!claim B); C := D (!claim A)

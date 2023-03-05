@@ -1,0 +1,17 @@
+---
+source: crates/parser/src/tests.rs
+description: "assume a :=\n"
+input_file: crates/parser/test_data/parser/inline/err/ded/0049_assume_part_no_phrase.ath
+---
+NAMED_ASSUME_DED
+  ASSUME_KW "assume"
+  WHITESPACE " "
+  ASSUME_PART
+    IDENTIFIER
+      IDENT "a"
+      WHITESPACE " "
+    COLON_EQ ":="
+    WHITESPACE "\n"
+error 12: expected phrase in assume binding
+error 12: expected body for assumption
+

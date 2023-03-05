@@ -112,12 +112,14 @@ fn parse_err() {
 fn parse_inline_ok() {
     test_glob!(ok "inline/ok/expr");
     test_glob!(ok "inline/ok/pat");
+    test_glob!(ok "inline/ok/ded");
 }
 
 #[test]
 fn parse_inline_err() {
     test_glob!(err "inline/err/expr");
     test_glob!(err "inline/err/pat");
+    test_glob!(err "inline/err/ded");
 }
 
 fn parse(entry: EntryPoint, text: &str) -> (String, bool) {
@@ -193,6 +195,7 @@ impl TestCase {
             "expr" => EntryPoint::Expr,
             "file" => EntryPoint::SourceFile,
             "pat" => EntryPoint::Pat,
+            "ded" => EntryPoint::Ded,
             _ => panic!("unknown entry point"),
         };
         if path.extension().unwrap_or_default() == "ath" {
@@ -219,6 +222,8 @@ impl TestCase {
                 let entry = match path.file_name().unwrap().to_str().unwrap() {
                     "expr" => EntryPoint::Expr,
                     "file" => EntryPoint::SourceFile,
+                    "pat" => EntryPoint::Pat,
+                    "ded" => EntryPoint::Ded,
                     _ => panic!("unknown entry point"),
                 };
                 for case in Self::list(path.to_str().unwrap()) {

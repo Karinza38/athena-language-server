@@ -1,0 +1,11 @@
+---
+source: crates/parser/src/tests.rs
+description: "assume\n"
+input_file: crates/parser/test_data/parser/inline/err/ded/0047_assume_no_assumption.ath
+---
+ASSUME_DED
+  ASSUME_KW "assume"
+  WHITESPACE "\n"
+error 7: expected assumption
+error 7: expected body for assumption
+

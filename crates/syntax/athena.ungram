@@ -245,17 +245,17 @@ OrExpr =
 //************//
 
 Ded = 
-    MethodCallDed
-    | BangMethodCallDed
-    | AssumeDed
-    | NamedAssumeDed
+    MethodCallDed // ✅
+    | BangMethodCallDed // ✅
+    | AssumeDed // ✅
+    | NamedAssumeDed // ✅
     | ProofByContraDed
     | UniversalGeneralDed
     | ExistentialInstantDed
     | InductDed
     | CasesDed
     | CheckDed
-    | MatchDed
+    | MatchDed // ✅
     | LetDed
     | LetRecDed
     | TryDed
@@ -300,7 +300,7 @@ RestrictedPat =
     | RestrictedNamedPat
 
 InductDed =
-    'by-induction' Phrase '{'RestrictedMatchDed* '}'
+    'by-induction' Phrase '{' RestrictedMatchDed* '}'
 
 RestrictedMatchDed =
     '|' RestrictedPat '=>' Ded
