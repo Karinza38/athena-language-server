@@ -1,0 +1,12 @@
+---
+source: crates/parser/src/tests.rs
+description: "foo:\n"
+input_file: crates/parser/test_data/parser/inline/err/pat/0019_annotated_ident_pat_no_sort.ath
+---
+ANNOTATED_IDENT_PAT
+  IDENTIFIER
+    IDENT "foo"
+  COLON ":"
+  WHITESPACE "\n"
+error 5: expected a sort annotation
+

@@ -1,0 +1,10 @@
+---
+source: crates/parser/src/tests.rs
+description: "foopat\n"
+input_file: crates/parser/test_data/parser/inline/ok/pat/0031_simple_ident_pat.ath
+---
+IDENT_PAT
+  IDENTIFIER
+    IDENT "foopat"
+    WHITESPACE "\n"
+

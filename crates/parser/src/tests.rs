@@ -69,33 +69,54 @@ fn parse_err() {
     }
 }
 
+macro_rules! test_glob {
+    (ok $glob: expr) => {
+        insta::glob!("../test_data", &format!("parser/{}/*.ath", $glob), |path| {
+            ok_test(path);
+        });
+    };
+    (err $glob: expr) => {
+        insta::glob!("../test_data", &format!("parser/{}/*.ath", $glob), |path| {
+            err_test(path);
+        });
+    };
+}
+
+fn ok_test(p: &Path) {
+    let case = TestCase::read(p);
+    eprintln!("running test: {}", case.ath.display());
+    let (actual, errors) = parse(case.entry, &case.text);
+    assert!(
+        !errors,
+        "errors in an OK file {}:\n{actual}",
+        case.ath.display()
+    );
+    insta::
+    
+    with_settings!({description => &case.text, omit_expression => true }, { assert_snapshot!(actual) });
+}
+
+fn err_test(p: &Path) {
+    let case = TestCase::read(p);
+    let (actual, errors) = parse(case.entry, &case.text);
+    assert!(
+        errors,
+        "no errors in an ERR file {}:\n{actual}",
+        case.ath.display()
+    );
+    insta::with_settings!({description => &case.text, omit_expression => true }, { assert_snapshot!(actual) });
+}
+
 #[test]
 fn parse_inline_ok() {
-    insta::glob!("../test_data", "parser/inline/ok/*/*.ath", |path| {
-        let case = TestCase::read(path);
-        eprintln!("running test: {}", case.ath.display());
-        let (actual, errors) = parse(case.entry, &case.text);
-        assert!(
-            !errors,
-            "errors in an OK file {}:\n{actual}",
-            case.ath.display()
-        );
-        insta::with_settings!({description => &case.text, omit_expression => true }, { assert_snapshot!(actual) });
-    });
+    test_glob!(ok "inline/ok/expr");
+    test_glob!(ok "inline/ok/pat");
 }
 
 #[test]
 fn parse_inline_err() {
-    insta::glob!("../test_data", "parser/inline/err/*/*.ath", |path| {
-        let case = TestCase::read(path);
-        let (actual, errors) = parse(case.entry, &case.text);
-        assert!(
-            errors,
-            "no errors in an ERR file {}:\n{actual}",
-            case.ath.display()
-        );
-        insta::with_settings!({description => &case.text, omit_expression => true }, { assert_snapshot!(actual) });
-    });
+    test_glob!(err "inline/err/expr");
+    test_glob!(err "inline/err/pat");
 }
 
 fn parse(entry: EntryPoint, text: &str) -> (String, bool) {
@@ -170,6 +191,7 @@ impl TestCase {
         {
             "expr" => EntryPoint::Expr,
             "file" => EntryPoint::SourceFile,
+            "pat" => EntryPoint::Pat,
             _ => panic!("unknown entry point"),
         };
         if path.extension().unwrap_or_default() == "ath" {

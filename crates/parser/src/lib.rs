@@ -34,6 +34,7 @@ impl EntryPoint {
         let parse: fn(&mut parser::Parser<'_>) = match self {
             EntryPoint::Expr => grammar::entry::expr,
             EntryPoint::Phrase => grammar::entry::phrase,
+            EntryPoint::Pat => grammar::entry::pat,
             _ => todo!("{self:?}"),
         };
         let mut p = parser::Parser::new(input);

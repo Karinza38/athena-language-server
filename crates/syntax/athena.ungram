@@ -343,8 +343,8 @@ TryDedPart =
 //**********//
 
 Pat =
-    IdentPat
-    | AnnotatedIdentPat
+    IdentPat // ✅
+    | AnnotatedIdentPat // ✅
     | VarPat
     | MetaIdentPat
     | LiteralPat

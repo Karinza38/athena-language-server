@@ -1,0 +1,14 @@
+---
+source: crates/parser/src/tests.rs
+description: "foo:Int\n"
+input_file: crates/parser/test_data/parser/inline/ok/pat/0032_simple_annotated_ident_pat.ath
+---
+ANNOTATED_IDENT_PAT
+  IDENTIFIER
+    IDENT "foo"
+  COLON ":"
+  IDENT_SORT
+    IDENTIFIER
+      IDENT "Int"
+      WHITESPACE "\n"
+

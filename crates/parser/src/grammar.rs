@@ -1,4 +1,5 @@
 mod expressions;
+mod patterns;
 mod phrases;
 mod sorts;
 
@@ -24,6 +25,19 @@ pub(crate) mod entry {
     pub(crate) fn phrase(p: &mut Parser) {
         let m = p.start();
         super::phrases::phrase(p);
+        if p.at(SyntaxKind::EOF) {
+            m.abandon(p);
+            return;
+        }
+        while !p.at(SyntaxKind::EOF) {
+            p.bump_any();
+        }
+        m.complete(p, SyntaxKind::ERROR);
+    }
+
+    pub(crate) fn pat(p: &mut Parser) {
+        let m = p.start();
+        super::patterns::pat(p);
         if p.at(SyntaxKind::EOF) {
             m.abandon(p);
             return;
