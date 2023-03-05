@@ -11,11 +11,19 @@ use std::{
 fn sourcegen_parser_tests() {
     let grammar_dir = sourcegen::project_root().join(Path::new("crates/parser/src/grammar"));
     let tests = tests_from_dir(&grammar_dir);
+    let mut up_to_date = true;
+    install_tests(
+        &tests.ok,
+        "crates/parser/test_data/parser/inline/ok",
+        &mut up_to_date,
+    );
+    install_tests(
+        &tests.err,
+        "crates/parser/test_data/parser/inline/err",
+        &mut up_to_date,
+    );
 
-    install_tests(&tests.ok, "crates/parser/test_data/parser/inline/ok");
-    install_tests(&tests.err, "crates/parser/test_data/parser/inline/err");
-
-    fn install_tests(tests: &HashMap<String, Test>, into: &str) {
+    fn install_tests(tests: &HashMap<String, Test>, into: &str, up_to_date: &mut bool) {
         let tests_dir = sourcegen::project_root().join(into);
         if !tests_dir.is_dir() {
             fs::create_dir_all(&tests_dir).unwrap();
@@ -27,7 +35,6 @@ fn sourcegen_parser_tests() {
         }
 
         let mut new_idx = existing.len() + 1;
-        let mut up_to_date = true;
         for (name, test) in tests {
             let path = match existing.get(name) {
                 Some((path, _test)) => path.clone(),
@@ -37,11 +44,12 @@ fn sourcegen_parser_tests() {
                     tests_dir.join(&test.entry).join(file_name)
                 }
             };
-            up_to_date = up_to_date && sourcegen::ensure_file_contents(&path, &test.text);
+            *up_to_date = *up_to_date && sourcegen::ensure_file_contents(&path, &test.text);
         }
-        if !up_to_date {
-            sourcegen::fail_sourcegen_test();
-        }
+    }
+
+    if !up_to_date {
+        sourcegen::fail_sourcegen_test();
     }
 }
 

@@ -1,0 +1,32 @@
+---
+source: crates/parser/src/tests.rs
+description: "let { foo := (hotline miami) }\n"
+input_file: crates/parser/test_data/parser/inline/ok/expr/0037_simple_let_expr.ath
+---
+LET_EXPR
+  LET_KW "let"
+  WHITESPACE " "
+  L_CURLY "{"
+  WHITESPACE " "
+  LET_PART
+    IDENT_PAT
+      IDENTIFIER
+        IDENT "foo"
+        WHITESPACE " "
+    COLON_EQ ":="
+    WHITESPACE " "
+    APPLICATION_EXPR
+      L_PAREN "("
+      IDENT_EXPR
+        IDENTIFIER
+          IDENT "hotline"
+          WHITESPACE " "
+      EXPR_PHRASE
+        IDENT_EXPR
+          IDENTIFIER
+            IDENT "miami"
+      R_PAREN ")"
+      WHITESPACE " "
+  R_CURLY "}"
+  WHITESPACE "\n"
+

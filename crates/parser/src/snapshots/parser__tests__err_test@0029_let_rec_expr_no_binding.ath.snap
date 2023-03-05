@@ -1,0 +1,14 @@
+---
+source: crates/parser/src/tests.rs
+description: "letrec {  }\n"
+input_file: crates/parser/test_data/parser/inline/err/expr/0029_let_rec_expr_no_binding.ath
+---
+LET_REC_EXPR
+  LETREC_KW "letrec"
+  WHITESPACE " "
+  L_CURLY "{"
+  WHITESPACE "  "
+  R_CURLY "}"
+  WHITESPACE "\n"
+error 10: Expected to find at least one binding for the letrec expression
+

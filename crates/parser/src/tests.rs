@@ -43,32 +43,6 @@ fn lex(text: &str) -> String {
     res
 }
 
-#[test]
-fn parse_ok() {
-    for case in TestCase::list("parser/ok") {
-        let (actual, errors) = parse(EntryPoint::SourceFile, &case.text);
-        assert!(
-            !errors,
-            "errors in an OK file {}:\n{actual}",
-            case.ath.display()
-        );
-        assert_snapshot!(actual)
-    }
-}
-
-#[test]
-fn parse_err() {
-    for case in TestCase::list("parser/err") {
-        let (actual, errors) = parse(EntryPoint::SourceFile, &case.text);
-        assert!(
-            errors,
-            "no errors in an ERR file {}:\n{actual}",
-            case.ath.display()
-        );
-        assert_snapshot!(actual)
-    }
-}
-
 macro_rules! test_glob {
     (ok $glob: expr) => {
         insta::glob!("../test_data", &format!("parser/{}/*.ath", $glob), |path| {
@@ -105,6 +79,32 @@ fn err_test(p: &Path) {
         case.ath.display()
     );
     insta::with_settings!({description => &case.text, omit_expression => true }, { assert_snapshot!(actual) });
+}
+
+#[test]
+fn parse_ok() {
+    for case in TestCase::list("parser/ok") {
+        let (actual, errors) = parse(EntryPoint::SourceFile, &case.text);
+        assert!(
+            !errors,
+            "errors in an OK file {}:\n{actual}",
+            case.ath.display()
+        );
+        assert_snapshot!(actual)
+    }
+}
+
+#[test]
+fn parse_err() {
+    for case in TestCase::list("parser/err") {
+        let (actual, errors) = parse(EntryPoint::SourceFile, &case.text);
+        assert!(
+            errors,
+            "no errors in an ERR file {}:\n{actual}",
+            case.ath.display()
+        );
+        assert_snapshot!(actual)
+    }
 }
 
 #[test]

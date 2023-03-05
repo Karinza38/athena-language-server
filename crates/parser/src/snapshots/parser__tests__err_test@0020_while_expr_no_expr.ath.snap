@@ -1,0 +1,11 @@
+---
+source: crates/parser/src/tests.rs
+description: "while\n"
+input_file: crates/parser/test_data/parser/inline/err/expr/0020_while_expr_no_expr.ath
+---
+WHILE_EXPR
+  WHILE_KW "while"
+  WHITESPACE "\n"
+error 6: Expected to find a condition (phrase) for the while expression
+error 6: Expected to find a body (expr) for the while expression
+

@@ -1,0 +1,50 @@
+---
+source: crates/parser/src/tests.rs
+description: "match foo { bar => baz | qux => (quux \"cool\") }\n"
+input_file: crates/parser/test_data/parser/inline/ok/expr/0039_match_expr_multiple_arms.ath
+---
+MATCH_EXPR
+  MATCH_KW "match"
+  WHITESPACE " "
+  EXPR_PHRASE
+    IDENT_EXPR
+      IDENTIFIER
+        IDENT "foo"
+        WHITESPACE " "
+  L_CURLY "{"
+  WHITESPACE " "
+  MATCH_ARM
+    IDENT_PAT
+      IDENTIFIER
+        IDENT "bar"
+        WHITESPACE " "
+    FAT_ARROW "=>"
+    WHITESPACE " "
+    IDENT_EXPR
+      IDENTIFIER
+        IDENT "baz"
+        WHITESPACE " "
+  MATCH_ARM
+    PIPE "|"
+    WHITESPACE " "
+    IDENT_PAT
+      IDENTIFIER
+        IDENT "qux"
+        WHITESPACE " "
+    FAT_ARROW "=>"
+    WHITESPACE " "
+    APPLICATION_EXPR
+      L_PAREN "("
+      IDENT_EXPR
+        IDENTIFIER
+          IDENT "quux"
+          WHITESPACE " "
+      EXPR_PHRASE
+        LITERAL_EXPR
+          LITERAL
+            STRING "\"cool\""
+      R_PAREN ")"
+      WHITESPACE " "
+  R_CURLY "}"
+  WHITESPACE "\n"
+

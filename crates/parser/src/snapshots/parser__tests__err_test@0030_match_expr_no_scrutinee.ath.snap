@@ -1,0 +1,25 @@
+---
+source: crates/parser/src/tests.rs
+description: "match { foo => bar }\n"
+input_file: crates/parser/test_data/parser/inline/err/expr/0030_match_expr_no_scrutinee.ath
+---
+MATCH_EXPR
+  MATCH_KW "match"
+  WHITESPACE " "
+  L_CURLY "{"
+  WHITESPACE " "
+  MATCH_ARM
+    IDENT_PAT
+      IDENTIFIER
+        IDENT "foo"
+        WHITESPACE " "
+    FAT_ARROW "=>"
+    WHITESPACE " "
+    IDENT_EXPR
+      IDENTIFIER
+        IDENT "bar"
+        WHITESPACE " "
+  R_CURLY "}"
+  WHITESPACE "\n"
+error 6: Expected to find a scrutinee (phrase) for the match expression
+

@@ -1,0 +1,14 @@
+---
+source: crates/parser/src/tests.rs
+description: "try {  }\n"
+input_file: crates/parser/test_data/parser/inline/err/expr/0022_try_expr_no_arm.ath
+---
+TRY_EXPR
+  TRY_KW "try"
+  WHITESPACE " "
+  L_CURLY "{"
+  WHITESPACE "  "
+  R_CURLY "}"
+  WHITESPACE "\n"
+error 7: Expected to find at least one arm for the try expression
+

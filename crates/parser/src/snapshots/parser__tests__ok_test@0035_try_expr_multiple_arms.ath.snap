@@ -1,0 +1,40 @@
+---
+source: crates/parser/src/tests.rs
+description: "try { foo | bar | (func baz) }\n"
+input_file: crates/parser/test_data/parser/inline/ok/expr/0035_try_expr_multiple_arms.ath
+---
+TRY_EXPR
+  TRY_KW "try"
+  WHITESPACE " "
+  L_CURLY "{"
+  WHITESPACE " "
+  TRY_ARM
+    IDENT_EXPR
+      IDENTIFIER
+        IDENT "foo"
+        WHITESPACE " "
+  TRY_ARM
+    PIPE "|"
+    WHITESPACE " "
+    IDENT_EXPR
+      IDENTIFIER
+        IDENT "bar"
+        WHITESPACE " "
+  TRY_ARM
+    PIPE "|"
+    WHITESPACE " "
+    APPLICATION_EXPR
+      L_PAREN "("
+      IDENT_EXPR
+        IDENTIFIER
+          IDENT "func"
+          WHITESPACE " "
+      EXPR_PHRASE
+        IDENT_EXPR
+          IDENTIFIER
+            IDENT "baz"
+      R_PAREN ")"
+      WHITESPACE " "
+  R_CURLY "}"
+  WHITESPACE "\n"
+

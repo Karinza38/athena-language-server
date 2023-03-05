@@ -1,0 +1,21 @@
+---
+source: crates/parser/src/tests.rs
+description: "let { foo :=   }\n"
+input_file: crates/parser/test_data/parser/inline/err/expr/0025_let_part_no_expr.ath
+---
+LET_EXPR
+  LET_KW "let"
+  WHITESPACE " "
+  L_CURLY "{"
+  WHITESPACE " "
+  LET_PART
+    IDENT_PAT
+      IDENTIFIER
+        IDENT "foo"
+        WHITESPACE " "
+    COLON_EQ ":="
+    WHITESPACE "   "
+  R_CURLY "}"
+  WHITESPACE "\n"
+error 15: Expected to find an expression for the let binding
+

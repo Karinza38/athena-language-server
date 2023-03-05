@@ -1,0 +1,20 @@
+---
+source: crates/parser/src/tests.rs
+description: "letrec { foo :=   }\n"
+input_file: crates/parser/test_data/parser/inline/err/expr/0028_let_rec_part_no_expr.ath
+---
+LET_REC_EXPR
+  LETREC_KW "letrec"
+  WHITESPACE " "
+  L_CURLY "{"
+  WHITESPACE " "
+  LET_PART
+    IDENTIFIER
+      IDENT "foo"
+      WHITESPACE " "
+    COLON_EQ ":="
+    WHITESPACE "   "
+  R_CURLY "}"
+  WHITESPACE "\n"
+error 18: Expected to find an expression for the letrec binding
+

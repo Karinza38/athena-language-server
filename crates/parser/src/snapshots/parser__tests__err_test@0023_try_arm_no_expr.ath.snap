@@ -1,0 +1,22 @@
+---
+source: crates/parser/src/tests.rs
+description: "try { foo |  }\n"
+input_file: crates/parser/test_data/parser/inline/err/expr/0023_try_arm_no_expr.ath
+---
+TRY_EXPR
+  TRY_KW "try"
+  WHITESPACE " "
+  L_CURLY "{"
+  WHITESPACE " "
+  TRY_ARM
+    IDENT_EXPR
+      IDENTIFIER
+        IDENT "foo"
+        WHITESPACE " "
+  TRY_ARM
+    PIPE "|"
+    WHITESPACE "  "
+  R_CURLY "}"
+  WHITESPACE "\n"
+error 13: Expected to find an expression for the try arm
+

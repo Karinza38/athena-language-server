@@ -1,6 +1,7 @@
-use super::{identifier, literal, phrases::phrase};
+use super::{identifier, literal, patterns::pat, phrases::phrase, LIT_SET};
 use crate::{
     parser::Parser,
+    token_set::TokenSet,
     SyntaxKind::{self, IDENT, IDENT_EXPR, UNIT_EXPR},
     T,
 };
@@ -384,6 +385,287 @@ fn vector_set_expr(p: &mut Parser) {
     m.complete(p, SyntaxKind::VECTOR_SET_EXPR);
 }
 
+// test(expr) simple_while_expr
+// while true (print "hello world")
+fn while_expr(p: &mut Parser) {
+    assert!(p.at(T![while]));
+
+    let m = p.start();
+    p.bump(T![while]);
+
+    if !phrase(p) {
+        // test_err(expr) while_expr_no_expr
+        // while
+        p.error("Expected to find a condition (phrase) for the while expression");
+    }
+
+    if !expr(p) {
+        // test_err(expr) while_expr_no_phrase
+        // while foo
+        p.error("Expected to find a body (expr) for the while expression");
+    }
+
+    m.complete(p, SyntaxKind::WHILE_EXPR);
+}
+
+fn try_arm(p: &mut Parser, leading_pipe: bool) {
+    let m = if leading_pipe {
+        assert!(p.at(T![|]));
+
+        let m = p.start();
+        p.bump(T![|]);
+        m
+    } else {
+        assert!(p.at_one_of(EXPR_START_SET));
+        p.start()
+    };
+
+    if !expr(p) {
+        // test_err(expr) try_arm_no_expr
+        // try { foo |  }
+        p.error("Expected to find an expression for the try arm");
+    }
+
+    m.complete(p, SyntaxKind::TRY_ARM);
+}
+
+// test(expr) simple_try_expr
+// try { foo }
+fn try_expr(p: &mut Parser) {
+    assert!(p.at(T![try]));
+
+    let m = p.start();
+    p.bump(T![try]);
+
+    p.expect(T!['{']);
+
+    if !p.at_one_of(EXPR_START_SET) {
+        // test_err(expr) try_expr_no_arm
+        // try {  }
+        p.error("Expected to find at least one arm for the try expression");
+    } else {
+        try_arm(p, false);
+    }
+
+    while p.at(T![|]) {
+        // test(expr) try_expr_multiple_arms
+        // try { foo | bar | (func baz) }
+        try_arm(p, true);
+    }
+
+    p.expect(T!['}']);
+
+    m.complete(p, SyntaxKind::TRY_EXPR);
+}
+
+fn let_part(p: &mut Parser, leading_semi: bool) {
+    let m = if leading_semi {
+        assert!(p.at(T![;]));
+
+        let m = p.start();
+        p.bump(T![;]);
+        m
+    } else {
+        assert!(p.at_one_of(EXPR_START_SET));
+        p.start()
+    };
+
+    if !pat(p) {
+        // test_err(expr) let_part_no_pat
+        // let { a := b; := c }
+        p.error("Expected to find a pattern for the let binding");
+    }
+
+    p.expect(T![:=]);
+
+    if !expr(p) {
+        // test_err(expr) let_part_no_expr
+        // let { foo :=   }
+        p.error("Expected to find an expression for the let binding");
+    }
+
+    m.complete(p, SyntaxKind::LET_PART);
+}
+
+// test(expr) simple_let_expr
+// let { foo := (hotline miami) }
+fn let_expr(p: &mut Parser) {
+    assert!(p.at(T![let]));
+
+    let m = p.start();
+    p.bump(T![let]);
+
+    p.expect(T!['{']);
+
+    if !p.at_one_of(super::patterns::PAT_START_SET) {
+        // test_err(expr) let_expr_no_part
+        // let {  }
+        p.error("Expected to find at least one binding for the let expression");
+    } else {
+        let_part(p, false);
+    }
+
+    while p.at(T![;]) {
+        // test(expr) let_expr_multiple_parts
+        // let { foo := bar ; baz := (myfun "cool") }
+        let_part(p, true);
+    }
+
+    p.expect(T!['}']);
+
+    m.complete(p, SyntaxKind::LET_EXPR);
+}
+
+fn let_rec_part(p: &mut Parser, leading_semi: bool) {
+    let m = if leading_semi {
+        assert!(p.at(T![;]));
+
+        let m = p.start();
+        p.bump(T![;]);
+        m
+    } else {
+        assert!(p.at(IDENT));
+        p.start()
+    };
+
+    if !p.at(IDENT) {
+        // test_err(expr) let_rec_part_no_pat
+        // letrec { a := b; := c }
+        p.error("Expected to find an identifier for the letrec binding");
+    } else {
+        identifier(p);
+    }
+
+    p.expect(T![:=]);
+
+    if !expr(p) {
+        // test_err(expr) let_rec_part_no_expr
+        // letrec { foo :=   }
+        p.error("Expected to find an expression for the letrec binding");
+    }
+
+    m.complete(p, SyntaxKind::LET_PART);
+}
+
+fn let_rec_expr(p: &mut Parser) {
+    assert!(p.at(T![letrec]));
+
+    let m = p.start();
+    p.bump(T![letrec]);
+
+    p.expect(T!['{']);
+
+    if !p.at(IDENT) {
+        // test_err(expr) let_rec_expr_no_binding
+        // letrec {  }
+        p.error("Expected to find at least one binding for the letrec expression");
+    } else {
+        let_rec_part(p, false);
+    }
+
+    while p.at(T![;]) {
+        // test(expr) letrec_expr_multiple_bindings
+        // letrec { foo := bar ; baz := (myfun "cool") }
+        let_rec_part(p, true);
+    }
+
+    p.expect(T!['}']);
+
+    m.complete(p, SyntaxKind::LET_REC_EXPR);
+}
+
+fn match_arm(p: &mut Parser, leading_pipe: bool) {
+    let m = if leading_pipe {
+        assert!(p.at(T![|]));
+
+        let m = p.start();
+        p.bump(T![|]);
+        m
+    } else {
+        // FIXME: Consider this assertion?
+        // assert!(p.at_one_of(super::patterns::PAT_START_SET));
+        p.start()
+    };
+
+    if !pat(p) {
+        // test_err(expr) match_arm_no_pat
+        // match foo { => bar }
+        p.error("Expected to find a pattern for the match arm");
+    }
+
+    p.expect(T![=>]);
+
+    if !expr(p) {
+        // test_err(expr) match_arm_no_expr
+        // match foo { bar => }
+        p.error("Expected to find an expression for the match arm");
+    }
+
+    m.complete(p, SyntaxKind::MATCH_ARM);
+}
+
+// test(expr) simple_match_expr
+// match foo { bar => (baz boo) }
+fn match_expr(p: &mut Parser) {
+    assert!(p.at(T![match]));
+
+    let m = p.start();
+    p.bump(T![match]);
+
+    if !phrase(p) {
+        // test_err(expr) match_expr_no_scrutinee
+        // match { foo => bar }
+        p.error("Expected to find a scrutinee (phrase) for the match expression");
+    }
+
+    p.expect(T!['{']);
+
+    if !p.at_one_of(super::patterns::PAT_START_SET) {
+        // test_err(expr) match_expr_no_arm
+        // match foo {  }
+        if !p.at(T![=>]) {
+            p.error("Expected at least one arm in the match expression");
+        } else {
+            match_arm(p, false);
+        }
+    } else {
+        match_arm(p, false);
+    }
+
+    while p.at(T![|]) {
+        // test(expr) match_expr_multiple_arms
+        // match foo { bar => baz | qux => (quux "cool") }
+        match_arm(p, true);
+    }
+
+    p.expect(T!['}']);
+
+    m.complete(p, SyntaxKind::MATCH_EXPR);
+}
+
+pub(crate) const EXPR_START_SET: TokenSet = TokenSet::new(&[
+    IDENT,
+    T!['('],
+    T![?],
+    T!['\''],
+    T![lambda],
+    T!['['],
+    T![check],
+    T![cell],
+    T![set!],
+    T![ref],
+    T![make - vector],
+    T![vector - sub],
+    T![vector-set!],
+    T![while],
+    T![try],
+    T![let],
+    T![letrec],
+    T![match],
+    T![method],
+])
+.union(LIT_SET);
+
 // test(expr) simple_string_expr
 // "hello world"
 pub(crate) fn expr(p: &mut Parser) -> bool {
@@ -429,6 +711,22 @@ pub(crate) fn expr(p: &mut Parser) -> bool {
         vector_sub_expr(p);
     } else if p.at(T![vector-set!]) {
         vector_set_expr(p);
+    } else if p.at(T![while]) {
+        while_expr(p);
+    } else if p.at(T![try]) {
+        try_expr(p);
+    } else if p.at(T![let]) {
+        // FIXME: have to figure out how to handle ambiguity
+        // between let expr and let ded
+        let_expr(p);
+    } else if p.at(T![letrec]) {
+        // FIXME: have to figure out how to handle ambiguity
+        // between letrec expr and letrec ded
+        let_rec_expr(p);
+    } else if p.at(T![match]) {
+        // FIXME: have to figure out how to handle ambiguity
+        // between match expr and match ded
+        match_expr(p);
     } else {
         // todo!();
         return false;

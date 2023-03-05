@@ -1,0 +1,45 @@
+---
+source: crates/parser/src/tests.rs
+description: "let { foo := bar ; baz := (myfun \"cool\") }\n"
+input_file: crates/parser/test_data/parser/inline/ok/expr/0036_let_expr_multiple_parts.ath
+---
+LET_EXPR
+  LET_KW "let"
+  WHITESPACE " "
+  L_CURLY "{"
+  WHITESPACE " "
+  LET_PART
+    IDENT_PAT
+      IDENTIFIER
+        IDENT "foo"
+        WHITESPACE " "
+    COLON_EQ ":="
+    WHITESPACE " "
+    IDENT_EXPR
+      IDENTIFIER
+        IDENT "bar"
+        WHITESPACE " "
+  LET_PART
+    SEMI ";"
+    WHITESPACE " "
+    IDENT_PAT
+      IDENTIFIER
+        IDENT "baz"
+        WHITESPACE " "
+    COLON_EQ ":="
+    WHITESPACE " "
+    APPLICATION_EXPR
+      L_PAREN "("
+      IDENT_EXPR
+        IDENTIFIER
+          IDENT "myfun"
+          WHITESPACE " "
+      EXPR_PHRASE
+        LITERAL_EXPR
+          LITERAL
+            STRING "\"cool\""
+      R_PAREN ")"
+      WHITESPACE " "
+  R_CURLY "}"
+  WHITESPACE "\n"
+

@@ -1,0 +1,15 @@
+---
+source: crates/parser/src/tests.rs
+description: "while foo\n"
+input_file: crates/parser/test_data/parser/inline/err/expr/0021_while_expr_no_phrase.ath
+---
+WHILE_EXPR
+  WHILE_KW "while"
+  WHITESPACE " "
+  EXPR_PHRASE
+    IDENT_EXPR
+      IDENTIFIER
+        IDENT "foo"
+        WHITESPACE "\n"
+error 10: Expected to find a body (expr) for the while expression
+

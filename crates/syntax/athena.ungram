@@ -144,14 +144,14 @@ Expr =
     | ApplicationExpr // ✅
     | ListExpr // ✅
     | MethodExpr
-    | LetExpr
-    | LetRecExpr
-    | MatchExpr
-    | TryExpr
+    | LetExpr // ✅
+    | LetRecExpr // ✅
+    | MatchExpr // ✅
+    | TryExpr // ✅
     | CellExpr // ✅
     | SetExpr // ✅
     | RefExpr // ✅
-    | WhileExpr
+    | WhileExpr // ✅
     | MakeVectorExpr // ✅
     | VectorSubExpr // ✅
     | VectorSetExpr // ✅
