@@ -1,6 +1,5 @@
 use super::{
     identifier, literal,
-    patterns::pat,
     phrases::{phrase, ExprOrDed},
     LIT_SET,
 };
@@ -403,122 +402,12 @@ fn try_expr(p: &mut Parser) {
     m.complete(p, SyntaxKind::TRY_EXPR);
 }
 
-fn let_part(p: &mut Parser, leading_semi: bool) {
-    let m = if leading_semi {
-        assert!(p.at(T![;]));
-
-        let m = p.start();
-        p.bump(T![;]);
-        m
-    } else {
-        assert!(p.at_one_of(EXPR_START_SET));
-        p.start()
-    };
-
-    if !pat(p) {
-        // test_err(expr) let_part_no_pat
-        // let { a := b; := c }
-        p.error("Expected to find a pattern for the let binding");
-    }
-
-    p.expect(T![:=]);
-
-    if !expr(p) {
-        // test_err(expr) let_part_no_expr
-        // let { foo :=   }
-        p.error("Expected to find an expression for the let binding");
-    }
-
-    m.complete(p, SyntaxKind::LET_PART);
-}
-
-// test(expr) simple_let_expr
-// let { foo := (hotline miami) }
 fn let_expr(p: &mut Parser) {
-    assert!(p.at(T![let]));
-
-    let m = p.start();
-    p.bump(T![let]);
-
-    p.expect(T!['{']);
-
-    if !p.at_one_of(super::patterns::PAT_START_SET) {
-        // test_err(expr) let_expr_no_part
-        // let {  }
-        p.error("Expected to find at least one binding for the let expression");
-    } else {
-        let_part(p, false);
-    }
-
-    while p.at(T![;]) {
-        // test(expr) let_expr_multiple_parts
-        // let { foo := bar ; baz := (myfun "cool") }
-        let_part(p, true);
-    }
-
-    p.expect(T!['}']);
-
-    m.complete(p, SyntaxKind::LET_EXPR);
+    super::phrases::let_expr_or_ded(p, Some(super::phrases::ExprOrDed::Expr));
 }
 
-fn let_rec_part(p: &mut Parser, leading_semi: bool) {
-    let m = if leading_semi {
-        assert!(p.at(T![;]));
-
-        let m = p.start();
-        p.bump(T![;]);
-        m
-    } else {
-        assert!(p.at(IDENT));
-        p.start()
-    };
-
-    if !p.at(IDENT) {
-        // test_err(expr) let_rec_part_no_pat
-        // letrec { a := b; := c }
-        p.error("Expected to find an identifier for the letrec binding");
-    } else {
-        identifier(p);
-    }
-
-    p.expect(T![:=]);
-
-    if !expr(p) {
-        // test_err(expr) let_rec_part_no_expr
-        // letrec { foo :=   }
-        p.error("Expected to find an expression for the letrec binding");
-    }
-
-    m.complete(p, SyntaxKind::LET_PART);
-}
-
-// test(expr) simple_let_rec_expr
-// letrec { foo := (hotline miami) }
 fn let_rec_expr(p: &mut Parser) {
-    assert!(p.at(T![letrec]));
-
-    let m = p.start();
-    p.bump(T![letrec]);
-
-    p.expect(T!['{']);
-
-    if !p.at(IDENT) {
-        // test_err(expr) let_rec_expr_no_binding
-        // letrec {  }
-        p.error("Expected to find at least one binding for the letrec expression");
-    } else {
-        let_rec_part(p, false);
-    }
-
-    while p.at(T![;]) {
-        // test(expr) letrec_expr_multiple_bindings
-        // letrec { foo := bar ; baz := (myfun "cool") }
-        let_rec_part(p, true);
-    }
-
-    p.expect(T!['}']);
-
-    m.complete(p, SyntaxKind::LET_REC_EXPR);
+    super::phrases::let_rec_expr_or_ded(p, Some(super::phrases::ExprOrDed::Expr));
 }
 
 // test(expr) simple_match_expr

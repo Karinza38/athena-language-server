@@ -1,6 +1,6 @@
 ---
 source: crates/parser/src/tests.rs
-description: "let { foo := bar ; baz := (myfun \"cool\") }\n"
+description: "let { foo := bar ; baz := (myfun \"cool\") } qwer\n"
 input_file: crates/parser/test_data/parser/inline/ok/expr/0036_let_expr_multiple_parts.ath
 ---
 LET_EXPR
@@ -41,5 +41,9 @@ LET_EXPR
       R_PAREN ")"
       WHITESPACE " "
   R_CURLY "}"
-  WHITESPACE "\n"
+  WHITESPACE " "
+  IDENT_EXPR
+    IDENTIFIER
+      IDENT "qwer"
+      WHITESPACE "\n"
 

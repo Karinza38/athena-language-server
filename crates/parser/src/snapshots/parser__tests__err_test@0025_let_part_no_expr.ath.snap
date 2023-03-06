@@ -1,6 +1,6 @@
 ---
 source: crates/parser/src/tests.rs
-description: "let { foo :=   }\n"
+description: "let { foo :=   } a\n"
 input_file: crates/parser/test_data/parser/inline/err/expr/0025_let_part_no_expr.ath
 ---
 LET_EXPR
@@ -16,6 +16,10 @@ LET_EXPR
     COLON_EQ ":="
     WHITESPACE "   "
   R_CURLY "}"
-  WHITESPACE "\n"
+  WHITESPACE " "
+  IDENT_EXPR
+    IDENTIFIER
+      IDENT "a"
+      WHITESPACE "\n"
 error 15: Expected to find an expression for the let binding
 

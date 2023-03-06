@@ -1,9 +1,9 @@
 ---
 source: crates/parser/src/tests.rs
-description: "let { a := b; := c } a\n"
-input_file: crates/parser/test_data/parser/inline/err/expr/0026_let_part_no_pat.ath
+description: "let { a := b; c := d }\n"
+input_file: crates/parser/test_data/parser/inline/err/ded/0054_let_ded_no_body.ath
 ---
-LET_EXPR
+LET_DED
   LET_KW "let"
   WHITESPACE " "
   L_CURLY "{"
@@ -21,17 +21,17 @@ LET_EXPR
   LET_PART
     SEMI ";"
     WHITESPACE " "
+    IDENT_PAT
+      IDENTIFIER
+        IDENT "c"
+        WHITESPACE " "
     COLON_EQ ":="
     WHITESPACE " "
     IDENT_EXPR
       IDENTIFIER
-        IDENT "c"
+        IDENT "d"
         WHITESPACE " "
   R_CURLY "}"
-  WHITESPACE " "
-  IDENT_EXPR
-    IDENTIFIER
-      IDENT "a"
-      WHITESPACE "\n"
-error 14: Expected to find a pattern for the let binding
+  WHITESPACE "\n"
+error 23: Expected a let body
 

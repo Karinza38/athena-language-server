@@ -1,6 +1,6 @@
 ---
 source: crates/parser/src/tests.rs
-description: "let {  }\n"
+description: "let {  } foo\n"
 input_file: crates/parser/test_data/parser/inline/err/expr/0024_let_expr_no_part.ath
 ---
 LET_EXPR
@@ -9,6 +9,10 @@ LET_EXPR
   L_CURLY "{"
   WHITESPACE "  "
   R_CURLY "}"
-  WHITESPACE "\n"
+  WHITESPACE " "
+  IDENT_EXPR
+    IDENTIFIER
+      IDENT "foo"
+      WHITESPACE "\n"
 error 7: Expected to find at least one binding for the let expression
 

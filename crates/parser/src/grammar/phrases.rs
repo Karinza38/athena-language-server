@@ -2,12 +2,14 @@ use crate::{
     grammar::{deductions::DED_AFTER_LPAREN_SET, expressions::EXPR_AFTER_LPAREN_SET},
     parser::Parser,
     token_set::TokenSet,
-    SyntaxKind, T,
+    SyntaxKind::{self, IDENT},
+    T,
 };
 
 use super::{
     deductions::{ded, DED_START_SET},
     expressions::{expr, EXPR_START_SET},
+    identifier,
     patterns::pat,
 };
 
@@ -259,6 +261,179 @@ pub(crate) fn check_expr_or_ded(p: &mut Parser, want: Option<ExprOrDed>) -> Expr
     res
 }
 
+fn let_part(p: &mut Parser, leading_semi: bool) {
+    let m = if leading_semi {
+        assert!(p.at(T![;]));
+
+        let m = p.start();
+        p.bump(T![;]);
+        m
+    } else {
+        assert!(p.at_one_of(EXPR_START_SET));
+        p.start()
+    };
+
+    if !pat(p) {
+        // test_err(expr) let_part_no_pat
+        // let { a := b; := c } a
+        p.error("Expected to find a pattern for the let binding");
+    }
+
+    p.expect(T![:=]);
+
+    if !expr(p) {
+        // test_err(expr) let_part_no_expr
+        // let { foo :=   } a
+        p.error("Expected to find an expression for the let binding");
+    }
+
+    m.complete(p, SyntaxKind::LET_PART);
+}
+
+// test(expr) simple_let_expr
+// let { foo := (hotline miami) } foo
+pub(crate) fn let_expr_or_ded(p: &mut Parser, want: Option<ExprOrDed>) -> ExprOrDed {
+    assert!(p.at(T![let]));
+
+    let m = p.start();
+    p.bump(T![let]);
+
+    p.expect(T!['{']);
+
+    if !p.at_one_of(super::patterns::PAT_START_SET) {
+        // test_err(expr) let_expr_no_part
+        // let {  } foo
+        p.error("Expected to find at least one binding for the let expression");
+    } else {
+        let_part(p, false);
+    }
+
+    while p.at(T![;]) {
+        // test(expr) let_expr_multiple_parts
+        // let { foo := bar ; baz := (myfun "cool") } qwer
+        let_part(p, true);
+    }
+
+    p.expect(T!['}']);
+
+    let res = match expr_or_ded(p) {
+        Some(res) => res,
+        None => {
+            // test_err(expr) let_expr_no_body
+            // let { a := b; c := d }
+
+            // test_err(ded) let_ded_no_body
+            // let { a := b; c := d }
+
+            p.error("Expected a let body");
+            want.unwrap_or(ExprOrDed::Ambig)
+        }
+    };
+
+    expr_or_ded_fallback(
+        p,
+        m,
+        |eod| match eod {
+            ExprOrDed::Expr => SyntaxKind::LET_EXPR,
+            ExprOrDed::Ded => SyntaxKind::LET_DED,
+            ExprOrDed::Ambig => SyntaxKind::LET_EXPR,
+        },
+        want,
+        res,
+    );
+
+    res
+}
+
+fn let_rec_part(p: &mut Parser, leading_semi: bool) {
+    let m = if leading_semi {
+        assert!(p.at(T![;]));
+
+        let m = p.start();
+        p.bump(T![;]);
+        m
+    } else {
+        assert!(p.at(IDENT));
+        p.start()
+    };
+
+    if !p.at(IDENT) {
+        // test_err(expr) let_rec_part_no_pat
+        // letrec { a := b; := c } foo
+        p.error("Expected to find an identifier for the letrec binding");
+    } else {
+        identifier(p);
+    }
+
+    p.expect(T![:=]);
+
+    if !expr(p) {
+        // test_err(expr) let_rec_part_no_expr
+        // letrec { foo :=   } foo
+        p.error("Expected to find an expression for the letrec binding");
+    }
+
+    m.complete(p, SyntaxKind::LET_REC_PART);
+}
+
+// test(expr) simple_let_rec_expr
+// letrec { foo := (hotline miami) } foo
+pub(crate) fn let_rec_expr_or_ded(p: &mut Parser, want: Option<ExprOrDed>) -> ExprOrDed {
+    assert!(p.at(T![letrec]));
+
+    let m = p.start();
+    p.bump(T![letrec]);
+
+    p.expect(T!['{']);
+
+    if !p.at(IDENT) {
+        // test_err(expr) let_rec_expr_no_binding
+        // letrec {  } foo
+
+        // test_err(ded) let_rec_ded_no_binding
+        // letrec {  } (!claim A)
+        p.error("Expected to find at least one binding for the letrec expression");
+    } else {
+        let_rec_part(p, false);
+    }
+
+    while p.at(T![;]) {
+        // test(expr) letrec_expr_multiple_bindings
+        // letrec { foo := bar ; baz := (myfun "cool") } foo
+        let_rec_part(p, true);
+    }
+
+    p.expect(T!['}']);
+
+    let res = match expr_or_ded(p) {
+        Some(res) => res,
+        None => {
+            // test_err(expr) let_rec_expr_no_body
+            // letrec { a := b; c := d }
+
+            // test_err(ded) let_rec_ded_no_body
+            // letrec { a := b; c := d }
+
+            p.error("Expected a letrec body");
+            want.unwrap_or(ExprOrDed::Ambig)
+        }
+    };
+
+    expr_or_ded_fallback(
+        p,
+        m,
+        |eod| match eod {
+            ExprOrDed::Expr => SyntaxKind::LET_REC_EXPR,
+            ExprOrDed::Ded => SyntaxKind::LET_REC_DED,
+            ExprOrDed::Ambig => SyntaxKind::LET_REC_EXPR,
+        },
+        want,
+        res,
+    );
+
+    res
+}
+
 fn expr_or_ded(p: &mut Parser) -> Option<ExprOrDed> {
     if p.at_one_of(EXPR_START_SET.subtract(DED_START_SET)) {
         if !expr(p) {
@@ -288,6 +463,12 @@ fn expr_or_ded(p: &mut Parser) -> Option<ExprOrDed> {
                     return Some(ExprOrDed::Ambig);
                 }
                 return Some(ExprOrDed::Expr);
+            }
+            (T![let], _) => {
+                return Some(let_expr_or_ded(p, None));
+            }
+            (T![letrec], _) => {
+                return Some(let_rec_expr_or_ded(p, None));
             }
             _ => {
                 p.error("Ambiguous phrase start");

@@ -1,9 +1,9 @@
 ---
 source: crates/parser/src/tests.rs
-description: "letrec { a := b; := c } foo\n"
-input_file: crates/parser/test_data/parser/inline/err/expr/0027_let_rec_part_no_pat.ath
+description: "letrec { a := b; c := d }\n"
+input_file: crates/parser/test_data/parser/inline/err/ded/0053_let_rec_ded_no_body.ath
 ---
-LET_REC_EXPR
+LET_REC_DED
   LETREC_KW "letrec"
   WHITESPACE " "
   L_CURLY "{"
@@ -20,17 +20,16 @@ LET_REC_EXPR
   LET_REC_PART
     SEMI ";"
     WHITESPACE " "
+    IDENTIFIER
+      IDENT "c"
+      WHITESPACE " "
     COLON_EQ ":="
     WHITESPACE " "
     IDENT_EXPR
       IDENTIFIER
-        IDENT "c"
+        IDENT "d"
         WHITESPACE " "
   R_CURLY "}"
-  WHITESPACE " "
-  IDENT_EXPR
-    IDENTIFIER
-      IDENT "foo"
-      WHITESPACE "\n"
-error 17: Expected to find an identifier for the letrec binding
+  WHITESPACE "\n"
+error 26: Expected a letrec body
 

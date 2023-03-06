@@ -1,6 +1,6 @@
 ---
 source: crates/parser/src/tests.rs
-description: "letrec {  }\n"
+description: "letrec {  } foo\n"
 input_file: crates/parser/test_data/parser/inline/err/expr/0029_let_rec_expr_no_binding.ath
 ---
 LET_REC_EXPR
@@ -9,6 +9,10 @@ LET_REC_EXPR
   L_CURLY "{"
   WHITESPACE "  "
   R_CURLY "}"
-  WHITESPACE "\n"
+  WHITESPACE " "
+  IDENT_EXPR
+    IDENTIFIER
+      IDENT "foo"
+      WHITESPACE "\n"
 error 10: Expected to find at least one binding for the letrec expression
 

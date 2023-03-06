@@ -1,1 +1,1 @@
-letrec { foo := (hotline miami) }
+letrec { foo := (hotline miami) } foo

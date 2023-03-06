@@ -254,10 +254,10 @@ Ded =
     | ExistentialInstantDed
     | InductDed
     | CasesDed
-    | CheckDed
+    | CheckDed // ✅
     | MatchDed // ✅
-    | LetDed
-    | LetRecDed
+    | LetDed // ✅
+    | LetRecDed // ✅
     | TryDed
 
 MethodCallDed =
@@ -333,9 +333,9 @@ LetRecPart =
     ';'? Identifier ':=' Expr
 
 TryDed =
-    'try' '{' Ded TryDedPart* '}'
+    'try' '{' Ded TryDedArm* '}'
 
-TryDedPart =
+TryDedArm =
     '|' Ded
 
 //**********//

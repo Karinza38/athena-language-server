@@ -134,6 +134,14 @@ fn check_ded(p: &mut Parser) {
     super::phrases::check_expr_or_ded(p, Some(super::phrases::ExprOrDed::Ded));
 }
 
+fn let_ded(p: &mut Parser) {
+    super::phrases::let_expr_or_ded(p, Some(super::phrases::ExprOrDed::Ded));
+}
+
+fn let_rec_ded(p: &mut Parser) {
+    super::phrases::let_rec_expr_or_ded(p, Some(super::phrases::ExprOrDed::Ded));
+}
+
 pub(crate) const DED_START_SET: TokenSet =
     TokenSet::new(&[T!['('], T![assume], T![match], T![check]]);
 
@@ -160,6 +168,10 @@ pub(crate) fn ded(p: &mut Parser) -> bool {
         match_ded(p);
     } else if p.at(T![check]) {
         check_ded(p);
+    } else if p.at(T![let]) {
+        let_ded(p);
+    } else if p.at(T![letrec]) {
+        let_rec_ded(p);
     } else {
         return false;
     }

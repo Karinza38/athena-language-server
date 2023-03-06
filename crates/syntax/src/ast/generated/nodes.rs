@@ -1112,7 +1112,7 @@ impl TryDed {
     pub fn ded(&self) -> Option<Ded> {
         support::child(&self.syntax)
     }
-    pub fn try_ded_parts(&self) -> AstChildren<TryDedPart> {
+    pub fn try_ded_arms(&self) -> AstChildren<TryDedArm> {
         support::children(&self.syntax)
     }
     pub fn r_curly_token(&self) -> Option<SyntaxToken> {
@@ -1267,10 +1267,10 @@ impl MatchDedArm {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
-pub struct TryDedPart {
+pub struct TryDedArm {
     pub(crate) syntax: SyntaxNode,
 }
-impl TryDedPart {
+impl TryDedArm {
     pub fn pipe_token(&self) -> Option<SyntaxToken> {
         support::token(&self.syntax, T![|])
     }
@@ -2454,9 +2454,9 @@ impl AstNode for MatchDedArm {
         &self.syntax
     }
 }
-impl AstNode for TryDedPart {
+impl AstNode for TryDedArm {
     fn can_cast(kind: SyntaxKind) -> bool {
-        kind == TRY_DED_PART
+        kind == TRY_DED_ARM
     }
     fn cast(syntax: SyntaxNode) -> Option<Self> {
         if Self::can_cast(syntax.kind()) { Some(Self { syntax }) } else { None }
@@ -3735,7 +3735,7 @@ impl std::fmt::Display for MatchDedArm {
         std::fmt::Display::fmt(self.syntax(), f)
     }
 }
-impl std::fmt::Display for TryDedPart {
+impl std::fmt::Display for TryDedArm {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         std::fmt::Display::fmt(self.syntax(), f)
     }

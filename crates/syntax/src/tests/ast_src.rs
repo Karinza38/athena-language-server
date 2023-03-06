@@ -143,7 +143,7 @@ pub(crate) const KINDS_SRC: KindsSrc<'_> = KindsSrc {
         "LET_DED",
         "LET_REC_DED",
         "TRY_DED",
-        "TRY_DED_PART",
+        "TRY_DED_ARM",
         "MATCH_DED_ARM",
         "CHECK_DED_ARM",
         "RESTRICTED_MATCH_DED",

@@ -1,1 +1,1 @@
-letrec { foo := bar ; baz := (myfun "cool") }
+letrec { foo := bar ; baz := (myfun "cool") } foo

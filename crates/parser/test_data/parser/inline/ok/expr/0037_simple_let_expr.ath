@@ -1,1 +1,1 @@
-let { foo := (hotline miami) }
+let { foo := (hotline miami) } foo

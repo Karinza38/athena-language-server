@@ -1,1 +1,1 @@
-letrec { a := b; := c }
+letrec { a := b; := c } foo
