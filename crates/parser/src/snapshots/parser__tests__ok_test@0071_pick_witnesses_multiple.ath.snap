@@ -1,0 +1,33 @@
+---
+source: crates/parser/src/tests.rs
+description: "pick-witnesses a b c for (!claim a)\n"
+input_file: crates/parser/test_data/parser/inline/ok/ded/0071_pick_witnesses_multiple.ath
+---
+PICK_WITNESSES_DED
+  PICK_WITNESSES_KW "pick-witnesses"
+  WHITESPACE " "
+  IDENTIFIER
+    IDENT "a"
+    WHITESPACE " "
+  IDENTIFIER
+    IDENT "b"
+    WHITESPACE " "
+  IDENTIFIER
+    IDENT "c"
+    WHITESPACE " "
+  FOR_KW "for"
+  WHITESPACE " "
+  BANG_METHOD_CALL_DED
+    L_PAREN "("
+    BANG "!"
+    IDENT_EXPR
+      IDENTIFIER
+        IDENT "claim"
+        WHITESPACE " "
+    EXPR_PHRASE
+      IDENT_EXPR
+        IDENTIFIER
+          IDENT "a"
+    R_PAREN ")"
+    WHITESPACE "\n"
+

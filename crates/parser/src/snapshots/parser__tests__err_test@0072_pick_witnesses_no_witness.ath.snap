@@ -1,0 +1,12 @@
+---
+source: crates/parser/src/tests.rs
+description: "pick-witnesses\n"
+input_file: crates/parser/test_data/parser/inline/err/ded/0072_pick_witnesses_no_witness.ath
+---
+PICK_WITNESSES_DED
+  PICK_WITNESSES_KW "pick-witnesses"
+  WHITESPACE "\n"
+error 15: expected at least one witness name in pick witnesses binding
+error 15: expected FOR_KW
+error 15: expected body for pick witnesses
+

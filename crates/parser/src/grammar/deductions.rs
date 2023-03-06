@@ -253,6 +253,62 @@ fn with_witness_ded(p: &mut Parser) {
     m.complete(p, SyntaxKind::WITH_WITNESS_DED);
 }
 
+fn pick_witness_ded(p: &mut Parser) {
+    assert!(p.at(T![pick - witness]));
+
+    let m = p.start();
+    p.bump(T![pick - witness]);
+
+    if !p.at(IDENT) {
+        // test_err(ded) pick_witness_no_witness
+        // pick-witness
+        p.error("expected witness name in pick witness binding");
+    } else {
+        identifier(p);
+    }
+
+    p.expect(T![for]);
+
+    if !ded(p) {
+        // test_err(ded) pick_witness_no_body
+        // pick-witness a for
+        p.error("expected body for pick witness");
+    }
+
+    m.complete(p, SyntaxKind::PICK_WITNESS_DED);
+}
+
+fn pick_witnesses_ded(p: &mut Parser) {
+    assert!(p.at(T![pick - witnesses]));
+
+    let m = p.start();
+    p.bump(T![pick - witnesses]);
+
+    if !p.at(IDENT) {
+        // test_err(ded) pick_witnesses_no_witness
+        // pick-witnesses
+        p.error("expected at least one witness name in pick witnesses binding");
+    } else {
+        identifier(p);
+    }
+
+    while p.at(IDENT) {
+        // test(ded) pick_witnesses_multiple
+        // pick-witnesses a b c for (!claim a)
+        identifier(p);
+    }
+
+    p.expect(T![for]);
+
+    if !ded(p) {
+        // test_err(ded) pick_witnesses_no_body
+        // pick-witnesses a for
+        p.error("expected body for pick witnesses");
+    }
+
+    m.complete(p, SyntaxKind::PICK_WITNESSES_DED);
+}
+
 pub(crate) const DED_START_SET: TokenSet = TokenSet::new(&[
     T!['('],
     T![assume],
@@ -265,6 +321,8 @@ pub(crate) const DED_START_SET: TokenSet = TokenSet::new(&[
     T![generalize - over],
     T![pick - any],
     T![with - witness],
+    T![pick - witness],
+    T![pick - witnesses],
 ]);
 
 pub(crate) const DED_AFTER_LPAREN_SET: TokenSet = TokenSet::new(&[T![apply - method], T![!]]);
@@ -304,6 +362,10 @@ pub(crate) fn ded(p: &mut Parser) -> bool {
         pick_any_ded(p);
     } else if p.at(T![with - witness]) {
         with_witness_ded(p);
+    } else if p.at(T![pick - witness]) {
+        pick_witness_ded(p);
+    } else if p.at(T![pick - witnesses]) {
+        pick_witnesses_ded(p);
     } else {
         return false;
     }

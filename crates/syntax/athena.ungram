@@ -253,8 +253,8 @@ Ded =
     | GeneralizeOverDed // ✅
     | PickAnyDed // ✅
     | WithWitnessDed // ✅
-    | PickWitnessDed
-    | PickWitnessesDed
+    | PickWitnessDed // ✅
+    | PickWitnessesDed // ✅
     | InductDed
     | CasesDed
     | CheckDed // ✅

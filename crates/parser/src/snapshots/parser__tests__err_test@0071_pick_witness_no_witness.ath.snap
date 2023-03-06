@@ -1,0 +1,12 @@
+---
+source: crates/parser/src/tests.rs
+description: "pick-witness\n"
+input_file: crates/parser/test_data/parser/inline/err/ded/0071_pick_witness_no_witness.ath
+---
+PICK_WITNESS_DED
+  PICK_WITNESS_KW "pick-witness"
+  WHITESPACE "\n"
+error 13: expected witness name in pick witness binding
+error 13: expected FOR_KW
+error 13: expected body for pick witness
+
