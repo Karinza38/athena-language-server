@@ -1,0 +1,34 @@
+---
+source: crates/parser/src/tests.rs
+description: "datatype-cases { a => (!claim a) }\n"
+input_file: crates/parser/test_data/parser/inline/err/ded/0077_cases_no_phrase.ath
+---
+CASES_DED
+  DATATYPE_CASES_KW "datatype-cases"
+  WHITESPACE " "
+  L_CURLY "{"
+  WHITESPACE " "
+  RESTRICTED_MATCH_DED
+    IDENT_PAT
+      IDENTIFIER
+        IDENT "a"
+        WHITESPACE " "
+    FAT_ARROW "=>"
+    WHITESPACE " "
+    BANG_METHOD_CALL_DED
+      L_PAREN "("
+      BANG "!"
+      IDENT_EXPR
+        IDENTIFIER
+          IDENT "claim"
+          WHITESPACE " "
+      EXPR_PHRASE
+        IDENT_EXPR
+          IDENTIFIER
+            IDENT "a"
+      R_PAREN ")"
+      WHITESPACE " "
+  R_CURLY "}"
+  WHITESPACE "\n"
+error 15: expected phrase in datatype-cases deduction
+

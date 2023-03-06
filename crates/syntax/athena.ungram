@@ -255,8 +255,8 @@ Ded =
     | WithWitnessDed // ✅
     | PickWitnessDed // ✅
     | PickWitnessesDed // ✅
-    | InductDed
-    | CasesDed
+    | InductDed // ✅
+    | CasesDed // ✅
     | CheckDed // ✅
     | MatchDed // ✅
     | LetDed // ✅
@@ -312,7 +312,7 @@ InductDed =
     'by-induction' Phrase '{' RestrictedMatchDed* '}'
 
 RestrictedMatchDed =
-    '|' RestrictedPat '=>' Ded
+    '|'? RestrictedPat '=>' Ded
 
 CasesDed =
     'datatype-cases' Phrase '{' RestrictedMatchDed* '}'

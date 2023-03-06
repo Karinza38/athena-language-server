@@ -6,7 +6,7 @@ use crate::{
     T,
 };
 
-use super::identifier;
+use super::{identifier, patterns};
 
 fn method_call_ded(p: &mut Parser, kind: SyntaxKind) -> Marker {
     assert!(p.at(T!['(']) && p.peek_at(kind));
@@ -309,6 +309,163 @@ fn pick_witnesses_ded(p: &mut Parser) {
     m.complete(p, SyntaxKind::PICK_WITNESSES_DED);
 }
 
+// test(ded) restricted_apply_pat
+// by-induction a { (foo bar) => (!claim bar) }
+fn restricted_apply_pat(p: &mut Parser) {
+    assert!(p.at(T!['(']));
+
+    let m = p.start();
+    p.bump(T!['(']);
+
+    if !p.at(IDENT) {
+        p.error("expected identifier in restricted apply pattern");
+    } else {
+        identifier(p);
+    }
+
+    restricted_pat(p);
+
+    while !p.at(T![')']) {
+        restricted_pat(p);
+    }
+
+    p.expect(T![')']);
+
+    m.complete(p, SyntaxKind::RESTRICTED_APPLY_PAT);
+}
+
+// test(ded) restricted_named_pat
+// by-induction a { (foo as bar) => (!claim bar) }
+fn restricted_named_pat(p: &mut Parser) {
+    assert!(p.at(T!['(']));
+
+    let m = p.start();
+    p.bump(T!['(']);
+
+    if !p.at(IDENT) {
+        // test_err(ded) restricted_named_pat_no_ident
+        // by-induction a { ( as bar) => (!claim bar) }
+        p.error("expected identifier in restricted named pattern");
+    } else {
+        identifier(p);
+    }
+
+    p.expect(T![as]);
+
+    restricted_pat(p);
+
+    p.expect(T![')']);
+
+    m.complete(p, SyntaxKind::RESTRICTED_NAMED_PAT);
+}
+
+fn restricted_pat(p: &mut Parser) {
+    if p.at(IDENT) {
+        if p.peek_at(T![:]) {
+            patterns::annotated_ident_pat(p);
+        } else {
+            patterns::ident_pat(p);
+        }
+    } else if p.at(T!['(']) {
+        if p.peek_at(T![as]) || p.nth_at(2, T![as]) {
+            restricted_named_pat(p);
+        } else {
+            restricted_apply_pat(p);
+        }
+    } else {
+        p.error("failed to parse restricted pattern");
+    }
+}
+
+fn restricted_match_arm(p: &mut Parser, leading_pipe: bool) {
+    let m = if leading_pipe {
+        assert!(p.at(T![|]));
+        let m = p.start();
+        p.bump(T![|]);
+        m
+    } else {
+        p.start()
+    };
+
+    restricted_pat(p);
+
+    p.expect(T![=>]);
+
+    if !ded(p) {
+        p.error("expected body for restricted match arm");
+    }
+
+    m.complete(p, SyntaxKind::RESTRICTED_MATCH_DED);
+}
+
+// test(ded) induct_ded
+// by-induction foo { a => (!claim a) }
+fn induct_ded(p: &mut Parser) {
+    assert!(p.at(T![by - induction]));
+
+    let m = p.start();
+    p.bump(T![by - induction]);
+
+    if !phrase(p) {
+        // test_err(ded) induct_no_phrase
+        // by-induction { a => (!claim a) }
+        p.error("expected phrase in by-induction deduction");
+    }
+
+    p.expect(T!['{']);
+
+    if p.at(T!['}']) {
+        // test_err(ded) induct_empty
+        // by-induction a {}
+        p.error("expected at least one case in by-induction");
+    } else {
+        restricted_match_arm(p, false);
+    }
+
+    while p.at(T![|]) {
+        // test(ded) induct_multiple
+        // by-induction a { a => (!claim a) | b => (!claim b) }
+        restricted_match_arm(p, true);
+    }
+
+    p.expect(T!['}']);
+    m.complete(p, SyntaxKind::INDUCT_DED);
+}
+
+// test(ded) cases_ded
+// datatype-cases a { foo => (!claim foo) }
+fn cases_ded(p: &mut Parser) {
+    assert!(p.at(T![datatype - cases]));
+
+    let m = p.start();
+    p.bump(T![datatype - cases]);
+
+    if !phrase(p) {
+        // test_err(ded) cases_no_phrase
+        // datatype-cases { a => (!claim a) }
+        p.error("expected phrase in datatype-cases deduction");
+    }
+
+    p.expect(T!['{']);
+
+    if p.at(T!['}']) {
+        // test_err(ded) cases_empty
+        // datatype-cases a {}
+        p.error("expected at least one case in datatype-cases");
+    } else {
+        restricted_match_arm(p, false);
+    }
+
+    while p.at(T![|]) {
+        // test(ded) cases_multiple
+        // datatype-cases a { a => (!claim a) | b => (!claim b) }
+        restricted_match_arm(p, true);
+    }
+
+    p.expect(T!['}']);
+    m.complete(p, SyntaxKind::CASES_DED);
+}
+
 pub(crate) const DED_START_SET: TokenSet = TokenSet::new(&[
     T!['('],
     T![assume],
@@ -323,6 +480,8 @@ pub(crate) const DED_START_SET: TokenSet = TokenSet::new(&[
     T![with - witness],
     T![pick - witness],
     T![pick - witnesses],
+    T![by - induction],
+    T![datatype - cases],
 ]);
 
 pub(crate) const DED_AFTER_LPAREN_SET: TokenSet = TokenSet::new(&[T![apply - method], T![!]]);
@@ -366,6 +525,10 @@ pub(crate) fn ded(p: &mut Parser) -> bool {
         pick_witness_ded(p);
     } else if p.at(T![pick - witnesses]) {
         pick_witnesses_ded(p);
+    } else if p.at(T![by - induction]) {
+        induct_ded(p);
+    } else if p.at(T![datatype - cases]) {
+        cases_ded(p);
     } else {
         return false;
     }

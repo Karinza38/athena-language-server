@@ -1,0 +1,1 @@
+by-induction foo { a => (!claim a) }

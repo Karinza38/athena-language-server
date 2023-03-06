@@ -10,7 +10,7 @@ use super::{identifier, LIT_SET};
 
 // test(pat) simple_ident_pat
 // foopat
-fn ident_pat(p: &mut Parser) {
+pub(crate) fn ident_pat(p: &mut Parser) {
     assert!(p.at(IDENT));
 
     let m = p.start();
@@ -20,7 +20,7 @@ fn ident_pat(p: &mut Parser) {
 
 // test(pat) simple_annotated_ident_pat
 // foo:Int
-fn annotated_ident_pat(p: &mut Parser) {
+pub(crate) fn annotated_ident_pat(p: &mut Parser) {
     assert!(p.at(IDENT));
     assert!(p.peek_at(T![:]));
 

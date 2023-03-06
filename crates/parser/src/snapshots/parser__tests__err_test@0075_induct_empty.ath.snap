@@ -1,0 +1,18 @@
+---
+source: crates/parser/src/tests.rs
+description: "by-induction a {}\n"
+input_file: crates/parser/test_data/parser/inline/err/ded/0075_induct_empty.ath
+---
+INDUCT_DED
+  BY_INDUCTION_KW "by-induction"
+  WHITESPACE " "
+  EXPR_PHRASE
+    IDENT_EXPR
+      IDENTIFIER
+        IDENT "a"
+        WHITESPACE " "
+  L_CURLY "{"
+  R_CURLY "}"
+  WHITESPACE "\n"
+error 16: expected at least one case in by-induction
+
