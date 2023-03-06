@@ -1,9 +1,9 @@
 ---
 source: crates/parser/src/tests.rs
 description: "try {  }\n"
-input_file: crates/parser/test_data/parser/inline/err/expr/0022_try_expr_no_arm.ath
+input_file: crates/parser/test_data/parser/inline/err/ded/0059_try_ded_no_arm.ath
 ---
-TRY_EXPR
+TRY_DED
   TRY_KW "try"
   WHITESPACE " "
   L_CURLY "{"

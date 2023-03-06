@@ -1,0 +1,59 @@
+---
+source: crates/parser/src/tests.rs
+description: "try {  (!claim A) | (!claim B) | (!claim C) }\n"
+input_file: crates/parser/test_data/parser/inline/ok/ded/0067_try_ded_multiple_arms.ath
+---
+TRY_DED
+  TRY_KW "try"
+  WHITESPACE " "
+  L_CURLY "{"
+  WHITESPACE "  "
+  TRY_DED_ARM
+    BANG_METHOD_CALL_DED
+      L_PAREN "("
+      BANG "!"
+      IDENT_EXPR
+        IDENTIFIER
+          IDENT "claim"
+          WHITESPACE " "
+      EXPR_PHRASE
+        IDENT_EXPR
+          IDENTIFIER
+            IDENT "A"
+      R_PAREN ")"
+      WHITESPACE " "
+  TRY_DED_ARM
+    PIPE "|"
+    WHITESPACE " "
+    BANG_METHOD_CALL_DED
+      L_PAREN "("
+      BANG "!"
+      IDENT_EXPR
+        IDENTIFIER
+          IDENT "claim"
+          WHITESPACE " "
+      EXPR_PHRASE
+        IDENT_EXPR
+          IDENTIFIER
+            IDENT "B"
+      R_PAREN ")"
+      WHITESPACE " "
+  TRY_DED_ARM
+    PIPE "|"
+    WHITESPACE " "
+    BANG_METHOD_CALL_DED
+      L_PAREN "("
+      BANG "!"
+      IDENT_EXPR
+        IDENTIFIER
+          IDENT "claim"
+          WHITESPACE " "
+      EXPR_PHRASE
+        IDENT_EXPR
+          IDENTIFIER
+            IDENT "C"
+      R_PAREN ")"
+      WHITESPACE " "
+  R_CURLY "}"
+  WHITESPACE "\n"
+

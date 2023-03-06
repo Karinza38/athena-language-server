@@ -352,54 +352,8 @@ fn while_expr(p: &mut Parser) {
     m.complete(p, SyntaxKind::WHILE_EXPR);
 }
 
-fn try_arm(p: &mut Parser, leading_pipe: bool) {
-    let m = if leading_pipe {
-        assert!(p.at(T![|]));
-
-        let m = p.start();
-        p.bump(T![|]);
-        m
-    } else {
-        assert!(p.at_one_of(EXPR_START_SET));
-        p.start()
-    };
-
-    if !expr(p) {
-        // test_err(expr) try_arm_no_expr
-        // try { foo |  }
-        p.error("Expected to find an expression for the try arm");
-    }
-
-    m.complete(p, SyntaxKind::TRY_ARM);
-}
-
-// test(expr) simple_try_expr
-// try { foo }
 fn try_expr(p: &mut Parser) {
-    assert!(p.at(T![try]));
-
-    let m = p.start();
-    p.bump(T![try]);
-
-    p.expect(T!['{']);
-
-    if !p.at_one_of(EXPR_START_SET) {
-        // test_err(expr) try_expr_no_arm
-        // try {  }
-        p.error("Expected to find at least one arm for the try expression");
-    } else {
-        try_arm(p, false);
-    }
-
-    while p.at(T![|]) {
-        // test(expr) try_expr_multiple_arms
-        // try { foo | bar | (func baz) }
-        try_arm(p, true);
-    }
-
-    p.expect(T!['}']);
-
-    m.complete(p, SyntaxKind::TRY_EXPR);
+    super::phrases::try_expr_or_ded(p, Some(super::phrases::ExprOrDed::Expr));
 }
 
 fn let_expr(p: &mut Parser) {

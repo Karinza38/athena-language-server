@@ -1109,9 +1109,6 @@ impl TryDed {
     pub fn l_curly_token(&self) -> Option<SyntaxToken> {
         support::token(&self.syntax, T!['{'])
     }
-    pub fn ded(&self) -> Option<Ded> {
-        support::child(&self.syntax)
-    }
     pub fn try_ded_arms(&self) -> AstChildren<TryDedArm> {
         support::children(&self.syntax)
     }

@@ -258,7 +258,7 @@ Ded =
     | MatchDed // ✅
     | LetDed // ✅
     | LetRecDed // ✅
-    | TryDed
+    | TryDed // ✅
 
 MethodCallDed =
     '(' 'apply-method' Expr Phrase* ')'
@@ -333,10 +333,10 @@ LetRecPart =
     ';'? Identifier ':=' Expr
 
 TryDed =
-    'try' '{' Ded TryDedArm* '}'
+    'try' '{' TryDedArm* '}'
 
 TryDedArm =
-    '|' Ded
+    '|'? Ded
 
 //**********//
 // Patterns //

@@ -434,6 +434,96 @@ pub(crate) fn let_rec_expr_or_ded(p: &mut Parser, want: Option<ExprOrDed>) -> Ex
     res
 }
 
+fn try_arm(p: &mut Parser, leading_pipe: bool, want: Option<ExprOrDed>) -> ExprOrDed {
+    let m = if leading_pipe {
+        assert!(p.at(T![|]));
+
+        let m = p.start();
+        p.bump(T![|]);
+        m
+    } else {
+        p.start()
+    };
+
+    let res = match expr_or_ded(p) {
+        Some(res) => res,
+        None => {
+            // test_err(expr) try_arm_no_expr
+            // try { foo |  }
+
+            // test_err(ded) try_ded_no_ded
+            // try { (!claim A) |  }
+            p.error("Expected to find an expression for the try arm");
+            want.unwrap_or(ExprOrDed::Ambig)
+        }
+    };
+
+    expr_or_ded_fallback(
+        p,
+        m,
+        |eod| match eod {
+            ExprOrDed::Expr => SyntaxKind::TRY_ARM,
+            ExprOrDed::Ded => SyntaxKind::TRY_DED_ARM,
+            ExprOrDed::Ambig => SyntaxKind::TRY_ARM,
+        },
+        want,
+        res,
+    );
+
+    res
+}
+
+// test(expr) simple_try_expr
+// try { foo }
+
+// test(ded) simple_try_ded
+// try {  (!claim A) }
+pub(crate) fn try_expr_or_ded(p: &mut Parser, want: Option<ExprOrDed>) -> ExprOrDed {
+    assert!(p.at(T![try]));
+
+    let m = p.start();
+    p.bump(T![try]);
+
+    p.expect(T!['{']);
+
+    let res = if p.at(T!['}']) {
+        // test_err(expr) try_expr_no_arm
+        // try {  }
+
+        // test_err(ded) try_ded_no_arm
+        // try {  }
+        p.error("Expected to find at least one arm for the try block");
+        want.unwrap_or(ExprOrDed::Ambig)
+    } else {
+        try_arm(p, false, want)
+    };
+
+    while p.at(T![|]) {
+        // test(expr) try_expr_multiple_arms
+        // try { foo | bar | (func baz) }
+
+        // test(ded) try_ded_multiple_arms
+        // try {  (!claim A) | (!claim B) | (!claim C) }
+        try_arm(p, true, want);
+    }
+
+    p.expect(T!['}']);
+
+    expr_or_ded_fallback(
+        p,
+        m,
+        |eod| match eod {
+            ExprOrDed::Expr => SyntaxKind::TRY_EXPR,
+            ExprOrDed::Ded => SyntaxKind::TRY_DED,
+            ExprOrDed::Ambig => SyntaxKind::TRY_EXPR,
+        },
+        want,
+        res,
+    );
+
+    res
+}
+
 fn expr_or_ded(p: &mut Parser) -> Option<ExprOrDed> {
     if p.at_one_of(EXPR_START_SET.subtract(DED_START_SET)) {
         if !expr(p) {
