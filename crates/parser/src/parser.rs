@@ -1,3 +1,5 @@
+use std::cell::Cell;
+
 use crate::{event::Event, input::Input, token_set::TokenSet, SyntaxKind, T};
 use drop_bomb::DropBomb;
 
@@ -5,7 +7,10 @@ pub(crate) struct Parser<'i> {
     input: &'i Input,
     pos: usize,
     events: Vec<Event>,
+    steps: Cell<u32>,
 }
+
+const STEP_LIMIT: u32 = 100_000;
 
 impl<'i> Parser<'i> {
     pub(crate) fn new(input: &'i Input) -> Self {
@@ -13,6 +18,7 @@ impl<'i> Parser<'i> {
             input,
             pos: 0,
             events: Vec::new(),
+            steps: Cell::new(0),
         }
     }
 
@@ -101,6 +107,12 @@ impl<'i> Parser<'i> {
 
     /// Lookahead `n` tokens
     pub(crate) fn nth(&self, n: usize) -> SyntaxKind {
+        let steps = self.steps.get();
+        if steps > STEP_LIMIT {
+            panic!("step limit exceeded");
+        }
+        self.steps.set(steps + 1);
+
         self.input.kind(self.pos + n)
     }
 

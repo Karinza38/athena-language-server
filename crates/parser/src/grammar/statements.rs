@@ -25,6 +25,9 @@ fn dir_stmt(p: &mut Parser) {
 pub(crate) const STMT_START_SET: TokenSet = DIR_START_SET.union(PHRASE_START_SET);
 
 pub(crate) fn stmt(p: &mut Parser) -> bool {
+    #[cfg(test)]
+    eprintln!("stmt: {:?} {:?} {:?}", p.current(), p.nth(1), p.nth(2));
+
     if p.at_one_of(DIR_START_SET) {
         dir_stmt(p);
     } else if p.at_one_of(PHRASE_START_SET) {
