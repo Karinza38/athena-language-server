@@ -44,9 +44,9 @@ Unit =
 //*******//
 
 Sort =
-    VarSort
-    | IdentSort 
-    | CompoundSort
+    VarSort // ✅
+    | IdentSort // ✅
+    | CompoundSort // ✅
 
 IdentSort =
     Identifier

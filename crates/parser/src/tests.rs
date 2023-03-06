@@ -182,22 +182,27 @@ struct TestCase {
     text: String,
 }
 
+fn entry_point_from_str(s: &str) -> EntryPoint {
+    match s {
+        "expr" => EntryPoint::Expr,
+        "file" => EntryPoint::SourceFile,
+        "pat" => EntryPoint::Pat,
+        "ded" => EntryPoint::Ded,
+        "dir" => EntryPoint::Dir,
+        _ => panic!("unknown entry point"),
+    }
+}
+
 impl TestCase {
     fn read(path: &Path) -> TestCase {
-        let entry = match path
-            .parent()
-            .unwrap()
-            .file_name()
-            .unwrap()
-            .to_str()
-            .unwrap()
-        {
-            "expr" => EntryPoint::Expr,
-            "file" => EntryPoint::SourceFile,
-            "pat" => EntryPoint::Pat,
-            "ded" => EntryPoint::Ded,
-            _ => panic!("unknown entry point"),
-        };
+        let entry = entry_point_from_str(
+            path.parent()
+                .unwrap()
+                .file_name()
+                .unwrap()
+                .to_str()
+                .unwrap(),
+        );
         if path.extension().unwrap_or_default() == "ath" {
             let ath = path.into();
             let text = fs::read_to_string(&ath).unwrap();
@@ -219,13 +224,7 @@ impl TestCase {
             let file = file.unwrap();
             let path = file.path();
             if path.is_dir() {
-                let entry = match path.file_name().unwrap().to_str().unwrap() {
-                    "expr" => EntryPoint::Expr,
-                    "file" => EntryPoint::SourceFile,
-                    "pat" => EntryPoint::Pat,
-                    "ded" => EntryPoint::Ded,
-                    _ => panic!("unknown entry point"),
-                };
+                let entry = entry_point_from_str(path.file_name().unwrap().to_str().unwrap());
                 for case in Self::list(path.to_str().unwrap()) {
                     res.push(TestCase { entry, ..case })
                 }
