@@ -1,0 +1,29 @@
+---
+source: crates/parser/src/tests.rs
+description: "pick-any : Int (!claim A)\n"
+input_file: crates/parser/test_data/parser/inline/err/ded/0065_pick_any_no_ident.ath
+---
+PICK_ANY_DED
+  PICK_ANY_KW "pick-any"
+  WHITESPACE " "
+  COLON ":"
+  WHITESPACE " "
+  IDENT_SORT
+    IDENTIFIER
+      IDENT "Int"
+      WHITESPACE " "
+  BANG_METHOD_CALL_DED
+    L_PAREN "("
+    BANG "!"
+    IDENT_EXPR
+      IDENTIFIER
+        IDENT "claim"
+        WHITESPACE " "
+    EXPR_PHRASE
+      IDENT_EXPR
+        IDENTIFIER
+          IDENT "A"
+    R_PAREN ")"
+    WHITESPACE "\n"
+error 9: expected identifier in pick any binding
+

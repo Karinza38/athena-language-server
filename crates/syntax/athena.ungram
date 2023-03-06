@@ -250,9 +250,11 @@ Ded =
     | AssumeDed // ✅
     | NamedAssumeDed // ✅
     | ProofByContraDed // ✅
-    | GeneralizeOverDed
-    | PickAnyDed
-    | ExistentialInstantDed
+    | GeneralizeOverDed // ✅
+    | PickAnyDed // ✅
+    | WithWitnessDed // ✅
+    | PickWitnessDed
+    | PickWitnessesDed
     | InductDed
     | CasesDed
     | CheckDed // ✅
@@ -285,10 +287,14 @@ GeneralizeOverDed =
 PickAnyDed =
     'pick-any' Identifier (':' Sort)? Ded
 
-ExistentialInstantDed =
+WithWitnessDed =
     'with-witness' Expr Phrase Ded
-    | 'pick-witness' Identifier 'for' Ded
-    | 'pick-witnesses' Identifier Identifier* 'for' Ded
+
+PickWitnessDed =
+    'pick-witness' Identifier 'for' Ded
+
+PickWitnessesDed =
+    'pick-witnesses' Identifier Identifier* 'for' Ded
 
 RestrictedApplyPat =
     '(' Identifier RestrictedPat RestrictedPat* ')'

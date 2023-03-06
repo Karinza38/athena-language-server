@@ -1,0 +1,36 @@
+---
+source: crates/parser/src/tests.rs
+description: "pick-any a : assume B (!claim B)\n"
+input_file: crates/parser/test_data/parser/inline/err/ded/0064_pick_any_no_sory.ath
+---
+PICK_ANY_DED
+  PICK_ANY_KW "pick-any"
+  WHITESPACE " "
+  IDENTIFIER
+    IDENT "a"
+    WHITESPACE " "
+  COLON ":"
+  WHITESPACE " "
+  ASSUME_DED
+    ASSUME_KW "assume"
+    WHITESPACE " "
+    EXPR_PHRASE
+      IDENT_EXPR
+        IDENTIFIER
+          IDENT "B"
+          WHITESPACE " "
+    BANG_METHOD_CALL_DED
+      L_PAREN "("
+      BANG "!"
+      IDENT_EXPR
+        IDENTIFIER
+          IDENT "claim"
+          WHITESPACE " "
+      EXPR_PHRASE
+        IDENT_EXPR
+          IDENTIFIER
+            IDENT "B"
+      R_PAREN ")"
+      WHITESPACE "\n"
+error 13: expected sort in pick any binding
+

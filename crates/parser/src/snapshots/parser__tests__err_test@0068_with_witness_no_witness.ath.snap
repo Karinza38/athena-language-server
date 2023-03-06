@@ -1,0 +1,12 @@
+---
+source: crates/parser/src/tests.rs
+description: "with-witness\n"
+input_file: crates/parser/test_data/parser/inline/err/ded/0068_with_witness_no_witness.ath
+---
+WITH_WITNESS_DED
+  WITH_WITNESS_KW "with-witness"
+  WHITESPACE "\n"
+error 13: expected witness expression in with witness deduction
+error 13: expected phrase in with witness binding
+error 13: expected body for with witness
+

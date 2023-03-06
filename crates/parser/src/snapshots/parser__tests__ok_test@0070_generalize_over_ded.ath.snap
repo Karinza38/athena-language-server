@@ -1,0 +1,26 @@
+---
+source: crates/parser/src/tests.rs
+description: "generalize-over A (!claim A)\n"
+input_file: crates/parser/test_data/parser/inline/ok/ded/0070_generalize_over_ded.ath
+---
+GENERALIZE_OVER_DED
+  GENERALIZE_OVER_KW "generalize-over"
+  WHITESPACE " "
+  IDENT_EXPR
+    IDENTIFIER
+      IDENT "A"
+      WHITESPACE " "
+  BANG_METHOD_CALL_DED
+    L_PAREN "("
+    BANG "!"
+    IDENT_EXPR
+      IDENTIFIER
+        IDENT "claim"
+        WHITESPACE " "
+    EXPR_PHRASE
+      IDENT_EXPR
+        IDENTIFIER
+          IDENT "A"
+    R_PAREN ")"
+    WHITESPACE "\n"
+

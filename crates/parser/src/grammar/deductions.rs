@@ -1,5 +1,5 @@
 use crate::{
-    grammar::{expressions::expr, phrases::phrase},
+    grammar::{expressions::expr, phrases::phrase, sorts::sort},
     parser::{Marker, Parser},
     token_set::TokenSet,
     SyntaxKind::{self, IDENT},
@@ -169,6 +169,90 @@ fn proof_by_contra_ded(p: &mut Parser) {
     m.complete(p, SyntaxKind::PROOF_BY_CONTRA_DED);
 }
 
+// test(ded) generalize_over_ded
+// generalize-over A (!claim A)
+fn generalize_over_ded(p: &mut Parser) {
+    assert!(p.at(T![generalize - over]));
+
+    let m = p.start();
+    p.bump(T![generalize - over]);
+
+    if !expr(p) {
+        // test_err(ded) generalize_over_no_expr
+        // generalize-over
+        p.error("expected expression in generalize over binding");
+    }
+
+    if !ded(p) {
+        // test_err(ded) generalize_over_no_body
+        // generalize-over a
+        p.error("expected body for generalize over");
+    }
+
+    m.complete(p, SyntaxKind::GENERALIZE_OVER_DED);
+}
+
+// test(ded) pick_any_ded
+// pick-any a : Int (!claim A)
+fn pick_any_ded(p: &mut Parser) {
+    assert!(p.at(T![pick - any]));
+
+    let m = p.start();
+    p.bump(T![pick - any]);
+
+    if !p.at(IDENT) {
+        // test_err(ded) pick_any_no_ident
+        // pick-any : Int (!claim A)
+        p.error("expected identifier in pick any binding");
+    } else {
+        identifier(p);
+    }
+
+    if p.at(T![:]) {
+        p.bump(T![:]);
+        if !sort(p) {
+            // test_err(ded) pick_any_no_sory
+            // pick-any a : assume B (!claim B)
+            p.error("expected sort in pick any binding");
+        }
+    }
+
+    if !ded(p) {
+        // test_err(ded) pick_any_no_body
+        // pick-any a : Int
+        p.error("expected body for pick any");
+    }
+
+    m.complete(p, SyntaxKind::PICK_ANY_DED);
+}
+
+fn with_witness_ded(p: &mut Parser) {
+    assert!(p.at(T![with - witness]));
+
+    let m = p.start();
+    p.bump(T![with - witness]);
+
+    if !expr(p) {
+        // test_err(ded) with_witness_no_witness
+        // with-witness
+        p.error("expected witness expression in with witness deduction");
+    }
+
+    if !phrase(p) {
+        // test_err(ded) with_witness_no_phrase
+        // with-witness a
+        p.error("expected phrase in with witness binding");
+    }
+
+    if !ded(p) {
+        // test_err(ded) with_witness_no_body
+        // with-witness a b
+        p.error("expected body for with witness");
+    }
+
+    m.complete(p, SyntaxKind::WITH_WITNESS_DED);
+}
+
 pub(crate) const DED_START_SET: TokenSet = TokenSet::new(&[
     T!['('],
     T![assume],
@@ -177,6 +261,10 @@ pub(crate) const DED_START_SET: TokenSet = TokenSet::new(&[
     T![let],
     T![letrec],
     T![try],
+    T![suppose - absurd],
+    T![generalize - over],
+    T![pick - any],
+    T![with - witness],
 ]);
 
 pub(crate) const DED_AFTER_LPAREN_SET: TokenSet = TokenSet::new(&[T![apply - method], T![!]]);
@@ -210,6 +298,12 @@ pub(crate) fn ded(p: &mut Parser) -> bool {
         try_ded(p);
     } else if p.at(T![suppose - absurd]) {
         proof_by_contra_ded(p);
+    } else if p.at(T![generalize - over]) {
+        generalize_over_ded(p);
+    } else if p.at(T![pick - any]) {
+        pick_any_ded(p);
+    } else if p.at(T![with - witness]) {
+        with_witness_ded(p);
     } else {
         return false;
     }

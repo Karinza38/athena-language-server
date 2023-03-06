@@ -946,10 +946,10 @@ impl PickAnyDed {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
-pub struct ExistentialInstantDed {
+pub struct WithWitnessDed {
     pub(crate) syntax: SyntaxNode,
 }
-impl ExistentialInstantDed {
+impl WithWitnessDed {
     pub fn with_witness_token(&self) -> Option<SyntaxToken> {
         support::token(&self.syntax, T![with - witness])
     }
@@ -962,6 +962,13 @@ impl ExistentialInstantDed {
     pub fn ded(&self) -> Option<Ded> {
         support::child(&self.syntax)
     }
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+pub struct PickWitnessDed {
+    pub(crate) syntax: SyntaxNode,
+}
+impl PickWitnessDed {
     pub fn pick_witness_token(&self) -> Option<SyntaxToken> {
         support::token(&self.syntax, T![pick - witness])
     }
@@ -971,11 +978,30 @@ impl ExistentialInstantDed {
     pub fn for_token(&self) -> Option<SyntaxToken> {
         support::token(&self.syntax, T![for])
     }
+    pub fn ded(&self) -> Option<Ded> {
+        support::child(&self.syntax)
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+pub struct PickWitnessesDed {
+    pub(crate) syntax: SyntaxNode,
+}
+impl PickWitnessesDed {
     pub fn pick_witnesses_token(&self) -> Option<SyntaxToken> {
         support::token(&self.syntax, T![pick - witnesses])
     }
+    pub fn identifier(&self) -> Option<Identifier> {
+        support::child(&self.syntax)
+    }
     pub fn identifiers(&self) -> AstChildren<Identifier> {
         support::children(&self.syntax)
+    }
+    pub fn for_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T![for])
+    }
+    pub fn ded(&self) -> Option<Ded> {
+        support::child(&self.syntax)
     }
 }
 
@@ -1647,7 +1673,9 @@ pub enum Ded {
     ProofByContraDed(ProofByContraDed),
     GeneralizeOverDed(GeneralizeOverDed),
     PickAnyDed(PickAnyDed),
-    ExistentialInstantDed(ExistentialInstantDed),
+    WithWitnessDed(WithWitnessDed),
+    PickWitnessDed(PickWitnessDed),
+    PickWitnessesDed(PickWitnessesDed),
     InductDed(InductDed),
     CasesDed(CasesDed),
     CheckDed(CheckDed),
@@ -2297,9 +2325,31 @@ impl AstNode for PickAnyDed {
         &self.syntax
     }
 }
-impl AstNode for ExistentialInstantDed {
+impl AstNode for WithWitnessDed {
     fn can_cast(kind: SyntaxKind) -> bool {
-        kind == EXISTENTIAL_INSTANT_DED
+        kind == WITH_WITNESS_DED
+    }
+    fn cast(syntax: SyntaxNode) -> Option<Self> {
+        if Self::can_cast(syntax.kind()) { Some(Self { syntax }) } else { None }
+    }
+    fn syntax(&self) -> &SyntaxNode {
+        &self.syntax
+    }
+}
+impl AstNode for PickWitnessDed {
+    fn can_cast(kind: SyntaxKind) -> bool {
+        kind == PICK_WITNESS_DED
+    }
+    fn cast(syntax: SyntaxNode) -> Option<Self> {
+        if Self::can_cast(syntax.kind()) { Some(Self { syntax }) } else { None }
+    }
+    fn syntax(&self) -> &SyntaxNode {
+        &self.syntax
+    }
+}
+impl AstNode for PickWitnessesDed {
+    fn can_cast(kind: SyntaxKind) -> bool {
+        kind == PICK_WITNESSES_DED
     }
     fn cast(syntax: SyntaxNode) -> Option<Self> {
         if Self::can_cast(syntax.kind()) { Some(Self { syntax }) } else { None }
@@ -3176,9 +3226,19 @@ impl From<PickAnyDed> for Ded {
         Ded::PickAnyDed(node)
     }
 }
-impl From<ExistentialInstantDed> for Ded {
-    fn from(node: ExistentialInstantDed) -> Ded {
-        Ded::ExistentialInstantDed(node)
+impl From<WithWitnessDed> for Ded {
+    fn from(node: WithWitnessDed) -> Ded {
+        Ded::WithWitnessDed(node)
+    }
+}
+impl From<PickWitnessDed> for Ded {
+    fn from(node: PickWitnessDed) -> Ded {
+        Ded::PickWitnessDed(node)
+    }
+}
+impl From<PickWitnessesDed> for Ded {
+    fn from(node: PickWitnessesDed) -> Ded {
+        Ded::PickWitnessesDed(node)
     }
 }
 impl From<InductDed> for Ded {
@@ -3220,9 +3280,9 @@ impl AstNode for Ded {
     fn can_cast(kind: SyntaxKind) -> bool {
         matches!(
             kind, METHOD_CALL_DED | BANG_METHOD_CALL_DED | ASSUME_DED | NAMED_ASSUME_DED
-            | PROOF_BY_CONTRA_DED | GENERALIZE_OVER_DED | PICK_ANY_DED |
-            EXISTENTIAL_INSTANT_DED | INDUCT_DED | CASES_DED | CHECK_DED | MATCH_DED |
-            LET_DED | LET_REC_DED | TRY_DED
+            | PROOF_BY_CONTRA_DED | GENERALIZE_OVER_DED | PICK_ANY_DED | WITH_WITNESS_DED
+            | PICK_WITNESS_DED | PICK_WITNESSES_DED | INDUCT_DED | CASES_DED | CHECK_DED
+            | MATCH_DED | LET_DED | LET_REC_DED | TRY_DED
         )
     }
     fn cast(syntax: SyntaxNode) -> Option<Self> {
@@ -3234,9 +3294,9 @@ impl AstNode for Ded {
             PROOF_BY_CONTRA_DED => Ded::ProofByContraDed(ProofByContraDed { syntax }),
             GENERALIZE_OVER_DED => Ded::GeneralizeOverDed(GeneralizeOverDed { syntax }),
             PICK_ANY_DED => Ded::PickAnyDed(PickAnyDed { syntax }),
-            EXISTENTIAL_INSTANT_DED => {
-                Ded::ExistentialInstantDed(ExistentialInstantDed { syntax })
-            }
+            WITH_WITNESS_DED => Ded::WithWitnessDed(WithWitnessDed { syntax }),
+            PICK_WITNESS_DED => Ded::PickWitnessDed(PickWitnessDed { syntax }),
+            PICK_WITNESSES_DED => Ded::PickWitnessesDed(PickWitnessesDed { syntax }),
             INDUCT_DED => Ded::InductDed(InductDed { syntax }),
             CASES_DED => Ded::CasesDed(CasesDed { syntax }),
             CHECK_DED => Ded::CheckDed(CheckDed { syntax }),
@@ -3257,7 +3317,9 @@ impl AstNode for Ded {
             Ded::ProofByContraDed(it) => &it.syntax,
             Ded::GeneralizeOverDed(it) => &it.syntax,
             Ded::PickAnyDed(it) => &it.syntax,
-            Ded::ExistentialInstantDed(it) => &it.syntax,
+            Ded::WithWitnessDed(it) => &it.syntax,
+            Ded::PickWitnessDed(it) => &it.syntax,
+            Ded::PickWitnessesDed(it) => &it.syntax,
             Ded::InductDed(it) => &it.syntax,
             Ded::CasesDed(it) => &it.syntax,
             Ded::CheckDed(it) => &it.syntax,
@@ -3684,7 +3746,17 @@ impl std::fmt::Display for PickAnyDed {
         std::fmt::Display::fmt(self.syntax(), f)
     }
 }
-impl std::fmt::Display for ExistentialInstantDed {
+impl std::fmt::Display for WithWitnessDed {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        std::fmt::Display::fmt(self.syntax(), f)
+    }
+}
+impl std::fmt::Display for PickWitnessDed {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        std::fmt::Display::fmt(self.syntax(), f)
+    }
+}
+impl std::fmt::Display for PickWitnessesDed {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         std::fmt::Display::fmt(self.syntax(), f)
     }

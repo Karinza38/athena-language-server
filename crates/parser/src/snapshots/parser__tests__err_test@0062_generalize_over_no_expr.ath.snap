@@ -1,0 +1,11 @@
+---
+source: crates/parser/src/tests.rs
+description: "generalize-over\n"
+input_file: crates/parser/test_data/parser/inline/err/ded/0062_generalize_over_no_expr.ath
+---
+GENERALIZE_OVER_DED
+  GENERALIZE_OVER_KW "generalize-over"
+  WHITESPACE "\n"
+error 16: expected expression in generalize over binding
+error 16: expected body for generalize over
+
