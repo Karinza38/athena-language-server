@@ -1,3 +1,5 @@
+mod semantic_tokens;
+
 use tower_lsp::{
     async_trait,
     jsonrpc::Result,
