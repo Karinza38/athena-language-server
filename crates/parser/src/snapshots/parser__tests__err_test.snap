@@ -1,0 +1,15 @@
+---
+source: crates/parser/src/tests.rs
+description: "(! )\n"
+input_file: crates/parser/test_data/parser/inline/err/stmt/0088_phrase_stmt_err.ath
+---
+PHRASE_STMT
+  DED_PHRASE
+    BANG_METHOD_CALL_DED
+      L_PAREN "("
+      BANG "!"
+      WHITESPACE " "
+      R_PAREN ")"
+      WHITESPACE "\n"
+error 3: expected method expression to apply
+

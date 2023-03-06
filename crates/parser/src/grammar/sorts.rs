@@ -2,7 +2,7 @@ use crate::{parser::Parser, token_set::TokenSet, SyntaxKind, T};
 
 // test(expr) simple_ident_sort
 // ?x: bar
-fn ident_sort(p: &mut Parser) {
+pub(crate) fn ident_sort(p: &mut Parser) {
     assert!(p.at(SyntaxKind::IDENT));
 
     let m = p.start();

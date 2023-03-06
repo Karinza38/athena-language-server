@@ -62,8 +62,8 @@ CompoundSort =
 //************//
 
 Stmt =
-    DirStmt
-    | PhraseStmt
+    DirStmt // ✅
+    | PhraseStmt // ✅
 
 PhraseStmt =
     Phrase
@@ -79,7 +79,7 @@ Dir =
     ModuleDir // ✅
     | DomainDir // ✅
     | DomainsDir // ✅
-    | DeclareDir
+    | DeclareDir // ✅
     | DefineDir // ✅
     | DefineProcDir // ✅
     | DefineMultiDir // ✅
@@ -102,7 +102,7 @@ CompoundSortDecl =
     '(' SortDecl* ')'
 
 DeclareDir =
-    'declare' Identifier* ':' SortVarsDecl? FuncSorts '->' return_sort:SortDecl
+    'declare' (Identifier (',' Identifier)*) ':' SortVarsDecl? FuncSorts '->' return_sort:SortDecl
 
 FuncSorts =
     '[' SortDecl* ']'

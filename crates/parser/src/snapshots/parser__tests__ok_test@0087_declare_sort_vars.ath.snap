@@ -1,0 +1,40 @@
+---
+source: crates/parser/src/tests.rs
+description: "declare foo : (A) [A] -> (List A)\n"
+input_file: crates/parser/test_data/parser/inline/ok/dir/0087_declare_sort_vars.ath
+---
+DECLARE_DIR
+  DECLARE_KW "declare"
+  WHITESPACE " "
+  IDENTIFIER
+    IDENT "foo"
+    WHITESPACE " "
+  COLON ":"
+  WHITESPACE " "
+  SORT_VARS_DECL
+    L_PAREN "("
+    IDENTIFIER
+      IDENT "A"
+    R_PAREN ")"
+    WHITESPACE " "
+  FUNC_SORTS
+    L_BRACK "["
+    IDENT_SORT
+      IDENTIFIER
+        IDENT "A"
+    R_BRACK "]"
+    WHITESPACE " "
+  THIN_ARROW "->"
+  WHITESPACE " "
+  COMPOUND_SORT_DECL
+    L_PAREN "("
+    IDENT_SORT
+      IDENTIFIER
+        IDENT "List"
+        WHITESPACE " "
+    IDENT_SORT
+      IDENTIFIER
+        IDENT "A"
+    R_PAREN ")"
+    WHITESPACE "\n"
+

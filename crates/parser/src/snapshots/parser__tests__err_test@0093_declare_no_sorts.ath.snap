@@ -1,0 +1,21 @@
+---
+source: crates/parser/src/tests.rs
+description: "declare foo : -> Int\n"
+input_file: crates/parser/test_data/parser/inline/err/dir/0093_declare_no_sorts.ath
+---
+DECLARE_DIR
+  DECLARE_KW "declare"
+  WHITESPACE " "
+  IDENTIFIER
+    IDENT "foo"
+    WHITESPACE " "
+  COLON ":"
+  WHITESPACE " "
+  THIN_ARROW "->"
+  WHITESPACE " "
+  IDENT_SORT
+    IDENTIFIER
+      IDENT "Int"
+      WHITESPACE "\n"
+error 14: expected function argument sorts
+

@@ -180,6 +180,101 @@ fn define_multi(p: &mut Parser) {
     m.complete(p, SyntaxKind::DEFINE_MULTI_DIR);
 }
 
+fn func_sorts(p: &mut Parser) {
+    assert!(p.at(T!['[']));
+
+    let m = p.start();
+    p.bump(T!['[']);
+
+    while !p.at(T![']']) && !p.at_end() {
+        if !sort_decl(p) {
+            p.error("expected a sort declaration");
+        }
+    }
+
+    p.expect(T![']']);
+
+    m.complete(p, SyntaxKind::FUNC_SORTS);
+}
+
+fn sort_vars_decl(p: &mut Parser) {
+    assert!(p.at(T!['(']));
+
+    let m = p.start();
+    p.bump(T!['(']);
+
+    if !p.at(IDENT) {
+        // test_err(dir) sort_vars_no_name
+        // declare foo : ( ) [] -> Int
+        p.error("expected sort variable name");
+    } else {
+        identifier(p);
+    }
+
+    while p.at(T![,]) {
+        p.bump(T![,]);
+        super::sorts::ident_sort(p);
+    }
+
+    p.expect(T![')']);
+
+    m.complete(p, SyntaxKind::SORT_VARS_DECL);
+}
+
+// test(dir) declare_directive
+// declare foo : [Int] -> Int
+fn declare_dir(p: &mut Parser) {
+    assert!(p.at(T![declare]));
+
+    let m = p.start();
+    p.bump(T![declare]);
+
+    if !p.at(IDENT) {
+        // test_err(dir) declare_no_name
+        // declare : [Int] -> Int
+        p.error("expected function symbol name");
+    } else {
+        identifier(p);
+    }
+
+    while p.at(T![,]) {
+        p.bump(T![,]);
+        if !p.at(IDENT) {
+            // test_err(dir) declare_no_second_name
+            // declare foo, : [Int] -> Int
+            p.error("expected function symbol name, or trailing commas are not permitted");
+        } else {
+            identifier(p);
+        }
+    }
+
+    p.expect(T![:]);
+
+    if p.at(T!['(']) {
+        // test(dir) declare_sort_vars
+        // declare foo : (A) [A] -> (List A)
+        sort_vars_decl(p);
+    }
+
+    if p.at(T!['[']) {
+        func_sorts(p);
+    } else {
+        // test_err(dir) declare_no_sorts
+        // declare foo : -> Int
+        p.error("expected function argument sorts");
+    }
+
+    p.expect(T![->]);
+
+    if !sort_decl(p) {
+        // test_err(dir) declare_no_ret_sort
+        // declare foo : [Int] ->
+        p.error("expected function return sort");
+    }
+
+    m.complete(p, SyntaxKind::DECLARE_DIR);
+}
+
 pub(crate) const DIR_START_SET: TokenSet =
     TokenSet::new(&[T![module], T![domain], T![domains], T![define], T![declare]]);
 
@@ -198,6 +293,8 @@ pub(crate) fn dir(p: &mut Parser) -> bool {
         } else {
             define_dir(p);
         }
+    } else if p.at(T![declare]) {
+        declare_dir(p);
     } else {
         return false;
     }

@@ -1,0 +1,24 @@
+---
+source: crates/parser/src/tests.rs
+description: "declare foo : [Int] ->\n"
+input_file: crates/parser/test_data/parser/inline/err/dir/0092_declare_no_ret_sort.ath
+---
+DECLARE_DIR
+  DECLARE_KW "declare"
+  WHITESPACE " "
+  IDENTIFIER
+    IDENT "foo"
+    WHITESPACE " "
+  COLON ":"
+  WHITESPACE " "
+  FUNC_SORTS
+    L_BRACK "["
+    IDENT_SORT
+      IDENTIFIER
+        IDENT "Int"
+    R_BRACK "]"
+    WHITESPACE " "
+  THIN_ARROW "->"
+  WHITESPACE "\n"
+error 23: expected function return sort
+

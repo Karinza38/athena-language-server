@@ -1,0 +1,25 @@
+---
+source: crates/parser/src/tests.rs
+description: "declare : [Int] -> Int\n"
+input_file: crates/parser/test_data/parser/inline/err/dir/0090_declare_no_name.ath
+---
+DECLARE_DIR
+  DECLARE_KW "declare"
+  WHITESPACE " "
+  COLON ":"
+  WHITESPACE " "
+  FUNC_SORTS
+    L_BRACK "["
+    IDENT_SORT
+      IDENTIFIER
+        IDENT "Int"
+    R_BRACK "]"
+    WHITESPACE " "
+  THIN_ARROW "->"
+  WHITESPACE " "
+  IDENT_SORT
+    IDENTIFIER
+      IDENT "Int"
+      WHITESPACE "\n"
+error 8: expected function symbol name
+
