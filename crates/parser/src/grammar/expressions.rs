@@ -399,6 +399,7 @@ pub(crate) const EXPR_AFTER_LPAREN_SET: TokenSet =
 // test(expr) simple_string_expr
 // "hello world"
 pub(crate) fn expr(p: &mut Parser) -> bool {
+    #[cfg(test)]
     eprintln!("parsing expr: {:?} {:?}", p.current(), p.nth(1));
 
     if p.at(IDENT) {

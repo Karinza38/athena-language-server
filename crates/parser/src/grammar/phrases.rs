@@ -81,19 +81,15 @@ fn expr_or_ded_fallback(
 
     match want {
         Some(ExprOrDed::Expr) => {
-            eprintln!("expr_or_ded_fallback: want is Expr");
             m.complete(p, to_node(ExprOrDed::Expr));
         }
         Some(ExprOrDed::Ded) => {
-            eprintln!("expr_or_ded_fallback: want is Ded");
             m.complete(p, to_node(ExprOrDed::Ded));
         }
         Some(ExprOrDed::Ambig) => {
-            eprintln!("expr_or_ded_fallback: want is Ambig");
-            m.complete(p, node_from_res);
+            unreachable!("should never want an ambiguous expression or deduction");
         }
         None => {
-            eprintln!("expr_or_ded_fallback: want is None");
             m.complete(p, node_from_res);
         }
     }
@@ -536,6 +532,7 @@ fn expr_or_ded(p: &mut Parser) -> Option<ExprOrDed> {
         }
         return Some(ExprOrDed::Ded);
     } else if p.at_one_of(AMBIG_START) {
+        #[cfg(test)]
         eprintln!("Ambiguous phrase start: {:?}", p.current());
         match (p.current(), p.nth(1)) {
             (T![match], _) => {

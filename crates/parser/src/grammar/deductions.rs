@@ -487,6 +487,7 @@ pub(crate) const DED_START_SET: TokenSet = TokenSet::new(&[
 pub(crate) const DED_AFTER_LPAREN_SET: TokenSet = TokenSet::new(&[T![apply - method], T![!]]);
 
 pub(crate) fn ded(p: &mut Parser) -> bool {
+    #[cfg(test)]
     eprintln!("ded: {:?} {:?}", p.current(), p.nth(1));
     if p.at(T!['(']) {
         if p.peek_at(T![apply - method]) {

@@ -2,7 +2,7 @@ use crate::grammar::identifier;
 use crate::grammar::patterns::pat;
 use crate::grammar::phrases::phrase;
 use crate::grammar::sorts::{sort_decl, SORT_DECL_START};
-use crate::grammar::statements::stmt;
+use crate::grammar::statements::{stmt, STMT_START_SET};
 use crate::parser::Parser;
 use crate::token_set::TokenSet;
 use crate::{
@@ -33,7 +33,12 @@ fn module_dir(p: &mut Parser) {
     // test_err(dir) module_no_rbrace
     // module foo {
     while !p.at(T!['}']) && !p.at_end() {
-        stmt(p);
+        if !stmt(p) {
+            p.err_recover(
+                "unexpected input, expected statement in module body",
+                STMT_START_SET,
+            );
+        }
     }
 
     p.expect(T!['}']);

@@ -1,15 +1,59 @@
 ---
 source: crates/parser/src/tests.rs
-description: "(! )\n"
-input_file: crates/parser/test_data/parser/inline/err/stmt/0088_phrase_stmt_err.ath
+description: "module Foo {\n   domain Bar ]][]\n   declare Func: [Bar] -> Bar\n}\n"
+input_file: crates/parser/test_data/parser/inline/err/file/0095_source_error_with_extra_junk.ath
 ---
-PHRASE_STMT
-  DED_PHRASE
-    BANG_METHOD_CALL_DED
-      L_PAREN "("
-      BANG "!"
+SOURCE_FILE
+  DIR_STMT
+    MODULE_DIR
+      MODULE_KW "module"
       WHITESPACE " "
-      R_PAREN ")"
+      IDENTIFIER
+        IDENT "Foo"
+        WHITESPACE " "
+      L_CURLY "{"
+      WHITESPACE "\n   "
+      DIR_STMT
+        DOMAIN_DIR
+          DOMAIN_KW "domain"
+          WHITESPACE " "
+          IDENT_SORT
+            IDENTIFIER
+              IDENT "Bar"
+              WHITESPACE " "
+      ERROR
+        R_BRACK "]"
+      ERROR
+        R_BRACK "]"
+      PHRASE_STMT
+        EXPR_PHRASE
+          LIST_EXPR
+            L_BRACK "["
+            R_BRACK "]"
+            WHITESPACE "\n   "
+      DIR_STMT
+        DECLARE_DIR
+          DECLARE_KW "declare"
+          WHITESPACE " "
+          IDENTIFIER
+            IDENT "Func"
+          COLON ":"
+          WHITESPACE " "
+          FUNC_SORTS
+            L_BRACK "["
+            IDENT_SORT
+              IDENTIFIER
+                IDENT "Bar"
+            R_BRACK "]"
+            WHITESPACE " "
+          THIN_ARROW "->"
+          WHITESPACE " "
+          IDENT_SORT
+            IDENTIFIER
+              IDENT "Bar"
+              WHITESPACE "\n"
+      R_CURLY "}"
       WHITESPACE "\n"
-error 3: expected method expression to apply
+error 27: unexpected input, expected statement in module body
+error 28: unexpected input, expected statement in module body
 
