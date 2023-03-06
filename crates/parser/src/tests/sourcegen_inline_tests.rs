@@ -44,7 +44,8 @@ fn sourcegen_parser_tests() {
                     tests_dir.join(&test.entry).join(file_name)
                 }
             };
-            *up_to_date = *up_to_date && sourcegen::ensure_file_contents(&path, &test.text);
+            let file_up_to_date = sourcegen::ensure_file_contents(&path, &test.text);
+            *up_to_date = file_up_to_date && *up_to_date;
         }
     }
 

@@ -1,0 +1,14 @@
+---
+source: crates/parser/src/tests.rs
+description: "conclude A\n"
+input_file: crates/parser/test_data/parser/inline/err/ded/0096_conclude_no_phrase.ath
+---
+CONCLUDE_DED
+  CONCLUDE_KW "conclude"
+  WHITESPACE " "
+  IDENT_EXPR
+    IDENTIFIER
+      IDENT "A"
+      WHITESPACE "\n"
+error 11: expected phrase in conclude deduction
+

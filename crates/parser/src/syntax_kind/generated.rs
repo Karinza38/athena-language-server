@@ -123,6 +123,7 @@ pub enum SyntaxKind {
     SEQ_EXPR,
     AND_EXPR,
     OR_EXPR,
+    CONCLUDE_DED,
     METHOD_CALL_DED,
     BANG_METHOD_CALL_DED,
     ASSUME_DED,

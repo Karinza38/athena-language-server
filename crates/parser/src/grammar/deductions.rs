@@ -466,6 +466,30 @@ fn cases_ded(p: &mut Parser) {
     m.complete(p, SyntaxKind::CASES_DED);
 }
 
+// test(ded) conclude_ded
+// conclude A
+//  (!claim A)
+fn conclude_ded(p: &mut Parser) {
+    assert!(p.at(T![conclude]));
+
+    let m = p.start();
+    p.bump(T![conclude]);
+
+    if !expr(p) {
+        // test_err(ded) conclude_no_expr
+        // conclude
+        p.error("expected expression yielding a sentence in conclude deduction");
+    }
+
+    if !phrase(p) {
+        // test_err(ded) conclude_no_phrase
+        // conclude A
+        p.error("expected phrase in conclude deduction");
+    }
+
+    m.complete(p, SyntaxKind::CONCLUDE_DED);
+}
+
 pub(crate) const DED_START_SET: TokenSet = TokenSet::new(&[
     T!['('],
     T![assume],
@@ -482,6 +506,7 @@ pub(crate) const DED_START_SET: TokenSet = TokenSet::new(&[
     T![pick - witnesses],
     T![by - induction],
     T![datatype - cases],
+    T![conclude],
 ]);
 
 pub(crate) const DED_AFTER_LPAREN_SET: TokenSet = TokenSet::new(&[T![apply - method], T![!]]);
@@ -489,49 +514,68 @@ pub(crate) const DED_AFTER_LPAREN_SET: TokenSet = TokenSet::new(&[T![apply - met
 pub(crate) fn ded(p: &mut Parser) -> bool {
     #[cfg(test)]
     eprintln!("ded: {:?} {:?}", p.current(), p.nth(1));
-    if p.at(T!['(']) {
-        if p.peek_at(T![apply - method]) {
-            apply_method_call_ded(p);
-        } else if p.peek_at(T![!]) {
-            bang_method_call_ded(p);
-        } else {
-            return false;
+    match p.current() {
+        T!['('] => {
+            if p.peek_at(T![apply - method]) {
+                apply_method_call_ded(p);
+            } else if p.peek_at(T![!]) {
+                bang_method_call_ded(p);
+            } else {
+                return false;
+            }
         }
-    } else if p.at(T![assume]) {
-        // might need to be smarter to handle missing identifier
-        if p.peek_at(IDENT) && p.nth_at(2, T![:=]) {
-            named_assume_ded(p);
-        } else {
-            assume_ded(p);
+        T![assume] => {
+            // might need to be smarter to handle missing identifier
+            if p.peek_at(IDENT) && p.nth_at(2, T![:=]) {
+                named_assume_ded(p);
+            } else {
+                assume_ded(p);
+            }
         }
-    } else if p.at(T![match]) {
-        match_ded(p);
-    } else if p.at(T![check]) {
-        check_ded(p);
-    } else if p.at(T![let]) {
-        let_ded(p);
-    } else if p.at(T![letrec]) {
-        let_rec_ded(p);
-    } else if p.at(T![try]) {
-        try_ded(p);
-    } else if p.at(T![suppose - absurd]) {
-        proof_by_contra_ded(p);
-    } else if p.at(T![generalize - over]) {
-        generalize_over_ded(p);
-    } else if p.at(T![pick - any]) {
-        pick_any_ded(p);
-    } else if p.at(T![with - witness]) {
-        with_witness_ded(p);
-    } else if p.at(T![pick - witness]) {
-        pick_witness_ded(p);
-    } else if p.at(T![pick - witnesses]) {
-        pick_witnesses_ded(p);
-    } else if p.at(T![by - induction]) {
-        induct_ded(p);
-    } else if p.at(T![datatype - cases]) {
-        cases_ded(p);
-    } else {
-        return false;
+        T![match] => {
+            match_ded(p);
+        }
+        T![check] => {
+            check_ded(p);
+        }
+        T![let] => {
+            let_ded(p);
+        }
+        T![letrec] => {
+            let_rec_ded(p);
+        }
+        T![try] => {
+            try_ded(p);
+        }
+        T![suppose - absurd] => {
+            proof_by_contra_ded(p);
+        }
+        T![generalize - over] => {
+            generalize_over_ded(p);
+        }
+        T![pick - any] => {
+            pick_any_ded(p);
+        }
+        T![with - witness] => {
+            with_witness_ded(p);
+        }
+        T![pick - witness] => {
+            pick_witness_ded(p);
+        }
+        T![pick - witnesses] => {
+            pick_witnesses_ded(p);
+        }
+        T![by - induction] => {
+            induct_ded(p);
+        }
+        T![datatype - cases] => {
+            cases_ded(p);
+        }
+        T![conclude] => {
+            conclude_ded(p);
+        }
+        _ => return false,
     }
+
     true
 }

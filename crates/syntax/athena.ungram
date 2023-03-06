@@ -269,6 +269,7 @@ Ded =
     | LetDed // ✅
     | LetRecDed // ✅
     | TryDed // ✅
+    | ConcludeDed
 
 ConcludeDed =
     'conclude' Expr Ded

@@ -96,6 +96,8 @@ pub(crate) enum LexerToken {
     Ampamp(usize),
     #[token("||", |lex|lex.slice().len())]
     Pipepipe(usize),
+    #[token("conclude", |lex|lex.slice().len())]
+    Conclude(usize),
     #[token("apply-method", |lex|lex.slice().len())]
     ApplyMethod(usize),
     #[token("!", |lex|lex.slice().len())]
@@ -210,6 +212,7 @@ impl LexerToken {
             Self::Seq(..) => T![seq],
             Self::Ampamp(..) => T![&&],
             Self::Pipepipe(..) => T![||],
+            Self::Conclude(..) => T![conclude],
             Self::ApplyMethod(..) => T![apply - method],
             Self::Bang(..) => T![!],
             Self::Assume(..) => T![assume],
@@ -292,6 +295,7 @@ impl LexerToken {
             Self::Seq(len) => len,
             Self::Ampamp(len) => len,
             Self::Pipepipe(len) => len,
+            Self::Conclude(len) => len,
             Self::ApplyMethod(len) => len,
             Self::Bang(len) => len,
             Self::Assume(len) => len,

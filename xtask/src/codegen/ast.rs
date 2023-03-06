@@ -23,10 +23,8 @@ pub(super) fn sourcegen_ast() -> Result<(), Error> {
     let syntax_kinds = generate_syntax_kinds(&kinds_src);
     let syntax_kinds_file =
         sourcegen::project_root().join("crates/parser/src/syntax_kind/generated.rs");
-    let mut up_to_date = true;
 
-    up_to_date =
-        up_to_date && sourcegen::ensure_file_contents(syntax_kinds_file.as_path(), &syntax_kinds);
+    sourcegen::ensure_file_contents(syntax_kinds_file.as_path(), &syntax_kinds);
 
     let grammar = include_str!(concat!(
         env!("CARGO_MANIFEST_DIR"),
@@ -40,21 +38,15 @@ pub(super) fn sourcegen_ast() -> Result<(), Error> {
     let ast_tokens = generate_tokens(&ast);
     let ast_tokens_file =
         sourcegen::project_root().join("crates/syntax/src/ast/generated/tokens.rs");
-    up_to_date =
-        up_to_date && sourcegen::ensure_file_contents(ast_tokens_file.as_path(), &ast_tokens);
+    sourcegen::ensure_file_contents(ast_tokens_file.as_path(), &ast_tokens);
 
     let ast_nodes = generate_nodes(&kinds_src, &ast);
     let ast_nodes_file = sourcegen::project_root().join("crates/syntax/src/ast/generated/nodes.rs");
-    up_to_date =
-        up_to_date && sourcegen::ensure_file_contents(ast_nodes_file.as_path(), &ast_nodes);
+    sourcegen::ensure_file_contents(ast_nodes_file.as_path(), &ast_nodes);
 
     let lexer = generate_lexer(&ast);
     let lexer_file = sourcegen::project_root().join("crates/parser/src/lexer/generated.rs");
-    up_to_date = up_to_date && sourcegen::ensure_file_contents(lexer_file.as_path(), &lexer);
-
-    if !up_to_date {
-        eprintln!("generated code is out of date, commit the changes");
-    }
+    sourcegen::ensure_file_contents(lexer_file.as_path(), &lexer);
 
     Ok(())
 }
