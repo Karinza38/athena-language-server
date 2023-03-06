@@ -75,6 +75,7 @@ KindsSrc(
         "declare",
         "domain",
         "domains",
+        "load",
     ],
     contextual_keywords: [],
     literals: ["INT_NUMBER", "STRING", "CHAR"],
@@ -177,6 +178,7 @@ KindsSrc(
         "DOMAINS_DIR",
         "DECLARE_DIR",
         "MODULE_DIR",
+        "LOAD_DIR",
         // Statements
         "DIR_STMT",
         "PHRASE_STMT",

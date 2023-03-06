@@ -280,6 +280,31 @@ fn declare_dir(p: &mut Parser) {
     m.complete(p, SyntaxKind::DECLARE_DIR);
 }
 
+// test(dir) load_dir
+// load "list.ath"
+fn load_dir(p: &mut Parser) {
+    assert!(p.at(T![load]));
+
+    let m = p.start();
+    p.bump(T![load]);
+
+    if !p.at(SyntaxKind::STRING) {
+        // test_err(dir) load_no_string
+        // load
+
+        // test_err(dir) load_something_else
+        // load 123
+        p.error("expected string literal");
+        if !p.at_one_of(STMT_START_SET) {
+            p.bump_any();
+        }
+    } else {
+        p.bump(SyntaxKind::STRING);
+    }
+
+    m.complete(p, SyntaxKind::LOAD_DIR);
+}
+
 pub(crate) const DIR_START_SET: TokenSet =
     TokenSet::new(&[T![module], T![domain], T![domains], T![define], T![declare]]);
 
@@ -300,6 +325,8 @@ pub(crate) fn dir(p: &mut Parser) -> bool {
         }
     } else if p.at(T![declare]) {
         declare_dir(p);
+    } else if p.at(T![load]) {
+        load_dir(p);
     } else {
         return false;
     }

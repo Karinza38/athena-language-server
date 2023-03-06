@@ -1,0 +1,13 @@
+---
+source: crates/parser/src/tests.rs
+description: "load 123\n"
+input_file: crates/parser/test_data/parser/inline/err/dir/0099_load_something_else.ath
+---
+ERROR
+  LOAD_DIR
+    LOAD_KW "load"
+    WHITESPACE " "
+  IDENT "123"
+  WHITESPACE "\n"
+error 5: expected string literal
+

@@ -82,6 +82,7 @@ pub enum SyntaxKind {
     DECLARE_KW,
     DOMAIN_KW,
     DOMAINS_KW,
+    LOAD_KW,
     INT_NUMBER,
     STRING,
     CHAR,
@@ -179,6 +180,7 @@ pub enum SyntaxKind {
     DOMAINS_DIR,
     DECLARE_DIR,
     MODULE_DIR,
+    LOAD_DIR,
     DIR_STMT,
     PHRASE_STMT,
     #[doc(hidden)]
@@ -199,7 +201,7 @@ impl SyntaxKind {
             | SOME_VECTOR_KW | SOME_PROC_KW | SOME_METHOD_KW | SOME_SYMBOL_KW |
             SOME_TABLE_KW | SOME_MAP_KW | SOME_SUB_KW | SOME_CHAR_KW | SPLIT_KW |
             WHERE_KW | LIST_OF_KW | VAL_OF_KW | AS_KW | BIND_KW | FOR_KW | DEFINE_KW |
-            MODULE_KW | DECLARE_KW | DOMAIN_KW | DOMAINS_KW
+            MODULE_KW | DECLARE_KW | DOMAIN_KW | DOMAINS_KW | LOAD_KW
         )
     }
     pub fn is_punct(self) -> bool {
@@ -268,6 +270,7 @@ impl SyntaxKind {
             "declare" => DECLARE_KW,
             "domain" => DOMAIN_KW,
             "domains" => DOMAINS_KW,
+            "load" => LOAD_KW,
             _ => return None,
         };
         Some(kw)
@@ -522,6 +525,9 @@ macro_rules! T {
     };
     [domains] => {
         $crate ::SyntaxKind::DOMAINS_KW
+    };
+    [load] => {
+        $crate ::SyntaxKind::LOAD_KW
     };
     [lifetime_ident] => {
         $crate ::SyntaxKind::LIFETIME_IDENT

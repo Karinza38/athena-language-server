@@ -267,6 +267,16 @@ impl DefineMultiDir {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
+pub struct LoadDir {
+    pub(crate) syntax: SyntaxNode,
+}
+impl LoadDir {
+    pub fn load_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T![load])
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct CompoundSortDecl {
     pub(crate) syntax: SyntaxNode,
 }
@@ -1635,6 +1645,7 @@ pub enum Dir {
     DefineDir(DefineDir),
     DefineProcDir(DefineProcDir),
     DefineMultiDir(DefineMultiDir),
+    LoadDir(LoadDir),
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
@@ -1904,6 +1915,17 @@ impl AstNode for DefineProcDir {
 impl AstNode for DefineMultiDir {
     fn can_cast(kind: SyntaxKind) -> bool {
         kind == DEFINE_MULTI_DIR
+    }
+    fn cast(syntax: SyntaxNode) -> Option<Self> {
+        if Self::can_cast(syntax.kind()) { Some(Self { syntax }) } else { None }
+    }
+    fn syntax(&self) -> &SyntaxNode {
+        &self.syntax
+    }
+}
+impl AstNode for LoadDir {
+    fn can_cast(kind: SyntaxKind) -> bool {
+        kind == LOAD_DIR
     }
     fn cast(syntax: SyntaxNode) -> Option<Self> {
         if Self::can_cast(syntax.kind()) { Some(Self { syntax }) } else { None }
@@ -2866,11 +2888,16 @@ impl From<DefineMultiDir> for Dir {
         Dir::DefineMultiDir(node)
     }
 }
+impl From<LoadDir> for Dir {
+    fn from(node: LoadDir) -> Dir {
+        Dir::LoadDir(node)
+    }
+}
 impl AstNode for Dir {
     fn can_cast(kind: SyntaxKind) -> bool {
         matches!(
             kind, MODULE_DIR | DOMAIN_DIR | DOMAINS_DIR | DECLARE_DIR | DEFINE_DIR |
-            DEFINE_PROC_DIR | DEFINE_MULTI_DIR
+            DEFINE_PROC_DIR | DEFINE_MULTI_DIR | LOAD_DIR
         )
     }
     fn cast(syntax: SyntaxNode) -> Option<Self> {
@@ -2882,6 +2909,7 @@ impl AstNode for Dir {
             DEFINE_DIR => Dir::DefineDir(DefineDir { syntax }),
             DEFINE_PROC_DIR => Dir::DefineProcDir(DefineProcDir { syntax }),
             DEFINE_MULTI_DIR => Dir::DefineMultiDir(DefineMultiDir { syntax }),
+            LOAD_DIR => Dir::LoadDir(LoadDir { syntax }),
             _ => return None,
         };
         Some(res)
@@ -2895,6 +2923,7 @@ impl AstNode for Dir {
             Dir::DefineDir(it) => &it.syntax,
             Dir::DefineProcDir(it) => &it.syntax,
             Dir::DefineMultiDir(it) => &it.syntax,
+            Dir::LoadDir(it) => &it.syntax,
         }
     }
 }
@@ -3598,6 +3627,11 @@ impl std::fmt::Display for DefineProcDir {
     }
 }
 impl std::fmt::Display for DefineMultiDir {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        std::fmt::Display::fmt(self.syntax(), f)
+    }
+}
+impl std::fmt::Display for LoadDir {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         std::fmt::Display::fmt(self.syntax(), f)
     }

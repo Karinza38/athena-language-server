@@ -90,7 +90,7 @@ Dir =
     | DefineDir // ✅
     | DefineProcDir // ✅
     | DefineMultiDir // ✅
-
+    | LoadDir
 
 ModuleDir =
     'module' Identifier '{' Stmt* '}'
@@ -125,6 +125,9 @@ DefineProcDir =
 
 DefineMultiDir =
     'define' '[' Pat* ']' ':=' '[' Phrase* ']'
+
+LoadDir =
+    'load' 'string'
 
 //****************************//
 // Expressions and Deductions //

@@ -56,6 +56,8 @@ pub(crate) enum LexerToken {
     Define(usize),
     #[token(":=", |lex|lex.slice().len())]
     ColonEq(usize),
+    #[token("load", |lex|lex.slice().len())]
+    Load(usize),
     #[token("?", |lex|lex.slice().len())]
     QuestionMark(usize),
     #[token("check", |lex|lex.slice().len())]
@@ -192,6 +194,7 @@ impl LexerToken {
             Self::RBrack(..) => T![']'],
             Self::Define(..) => T![define],
             Self::ColonEq(..) => T![:=],
+            Self::Load(..) => T![load],
             Self::QuestionMark(..) => T![?],
             Self::Check(..) => T![check],
             Self::Pipe(..) => T![|],
@@ -275,6 +278,7 @@ impl LexerToken {
             Self::RBrack(len) => len,
             Self::Define(len) => len,
             Self::ColonEq(len) => len,
+            Self::Load(len) => len,
             Self::QuestionMark(len) => len,
             Self::Check(len) => len,
             Self::Pipe(len) => len,

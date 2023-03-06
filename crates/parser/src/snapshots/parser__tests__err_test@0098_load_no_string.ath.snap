@@ -1,0 +1,10 @@
+---
+source: crates/parser/src/tests.rs
+description: "load\n"
+input_file: crates/parser/test_data/parser/inline/err/dir/0098_load_no_string.ath
+---
+LOAD_DIR
+  LOAD_KW "load"
+  WHITESPACE "\n"
+error 5: expected string literal
+
