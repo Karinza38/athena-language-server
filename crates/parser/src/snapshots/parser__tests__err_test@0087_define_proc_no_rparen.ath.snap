@@ -1,0 +1,27 @@
+---
+source: crates/parser/src/tests.rs
+description: "define (foo := lambda () true\n"
+input_file: crates/parser/test_data/parser/inline/err/dir/0087_define_proc_no_rparen.ath
+---
+DEFINE_PROC_DIR
+  DEFINE_KW "define"
+  WHITESPACE " "
+  L_PAREN "("
+  IDENTIFIER
+    IDENT "foo"
+    WHITESPACE " "
+  COLON_EQ ":="
+  WHITESPACE " "
+  EXPR_PHRASE
+    LAMBDA_EXPR
+      LAMBDA_KW "lambda"
+      WHITESPACE " "
+      L_PAREN "("
+      R_PAREN ")"
+      WHITESPACE " "
+      IDENT_EXPR
+        IDENTIFIER
+          IDENT "true"
+          WHITESPACE "\n"
+error 12: expected R_PAREN
+

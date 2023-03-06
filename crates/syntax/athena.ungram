@@ -76,13 +76,13 @@ DirStmt =
 //************//
 
 Dir =
-    ModuleDir
-    | DomainDir
-    | DomainsDir
+    ModuleDir // ✅
+    | DomainDir // ✅
+    | DomainsDir // ✅
     | DeclareDir
-    | DefineDir
-    | DefineProcDir
-    | DefineMultiDir
+    | DefineDir // ✅
+    | DefineProcDir // ✅
+    | DefineMultiDir // ✅
 
 
 ModuleDir =

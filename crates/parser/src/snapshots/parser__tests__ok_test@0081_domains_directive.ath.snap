@@ -1,0 +1,18 @@
+---
+source: crates/parser/src/tests.rs
+description: "domains Bar, Baz\n"
+input_file: crates/parser/test_data/parser/inline/ok/dir/0081_domains_directive.ath
+---
+DOMAINS_DIR
+  DOMAINS_KW "domains"
+  WHITESPACE " "
+  IDENT_SORT
+    IDENTIFIER
+      IDENT "Bar"
+  COMMA ","
+  WHITESPACE " "
+  IDENT_SORT
+    IDENTIFIER
+      IDENT "Baz"
+      WHITESPACE "\n"
+

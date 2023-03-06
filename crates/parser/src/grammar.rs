@@ -4,6 +4,7 @@ mod expressions;
 mod patterns;
 mod phrases;
 mod sorts;
+mod statements;
 
 use crate::{parser::Parser, token_set::TokenSet, SyntaxKind, T};
 use SyntaxKind::{CHAR, IDENT, STRING};
@@ -66,6 +67,19 @@ pub(crate) mod entry {
     pub(crate) fn dir(p: &mut Parser) {
         let m = p.start();
         super::directives::dir(p);
+        if p.at(SyntaxKind::EOF) {
+            m.abandon(p);
+            return;
+        }
+        while !p.at(SyntaxKind::EOF) {
+            p.bump_any();
+        }
+        m.complete(p, SyntaxKind::ERROR);
+    }
+
+    pub(crate) fn stmt(p: &mut Parser) {
+        let m = p.start();
+        super::statements::stmt(p);
         if p.at(SyntaxKind::EOF) {
             m.abandon(p);
             return;

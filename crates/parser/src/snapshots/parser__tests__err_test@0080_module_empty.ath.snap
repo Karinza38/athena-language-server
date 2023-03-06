@@ -1,0 +1,17 @@
+---
+source: crates/parser/src/tests.rs
+description: "module foo { }\n"
+input_file: crates/parser/test_data/parser/inline/err/dir/0080_module_empty.ath
+---
+MODULE_DIR
+  MODULE_KW "module"
+  WHITESPACE " "
+  IDENTIFIER
+    IDENT "foo"
+    WHITESPACE " "
+  L_CURLY "{"
+  WHITESPACE " "
+  R_CURLY "}"
+  WHITESPACE "\n"
+error 13: expected module body
+

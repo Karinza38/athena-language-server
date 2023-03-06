@@ -1,0 +1,15 @@
+---
+source: crates/parser/src/tests.rs
+description: "module foo {\n"
+input_file: crates/parser/test_data/parser/inline/err/dir/0079_module_no_rbrace.ath
+---
+MODULE_DIR
+  MODULE_KW "module"
+  WHITESPACE " "
+  IDENTIFIER
+    IDENT "foo"
+    WHITESPACE " "
+  L_CURLY "{"
+  WHITESPACE "\n"
+error 13: expected R_CURLY
+

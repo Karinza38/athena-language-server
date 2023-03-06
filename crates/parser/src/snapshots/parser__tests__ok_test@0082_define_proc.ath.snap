@@ -1,0 +1,33 @@
+---
+source: crates/parser/src/tests.rs
+description: "define (foo a b) := lambda () b\n"
+input_file: crates/parser/test_data/parser/inline/ok/dir/0082_define_proc.ath
+---
+DEFINE_PROC_DIR
+  DEFINE_KW "define"
+  WHITESPACE " "
+  L_PAREN "("
+  IDENTIFIER
+    IDENT "foo"
+    WHITESPACE " "
+  IDENTIFIER
+    IDENT "a"
+    WHITESPACE " "
+  IDENTIFIER
+    IDENT "b"
+  R_PAREN ")"
+  WHITESPACE " "
+  COLON_EQ ":="
+  WHITESPACE " "
+  EXPR_PHRASE
+    LAMBDA_EXPR
+      LAMBDA_KW "lambda"
+      WHITESPACE " "
+      L_PAREN "("
+      R_PAREN ")"
+      WHITESPACE " "
+      IDENT_EXPR
+        IDENTIFIER
+          IDENT "b"
+          WHITESPACE "\n"
+

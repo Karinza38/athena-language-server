@@ -1,0 +1,17 @@
+---
+source: crates/parser/src/tests.rs
+description: "define (foo) :=\n"
+input_file: crates/parser/test_data/parser/inline/err/dir/0086_define_proc_empty.ath
+---
+DEFINE_PROC_DIR
+  DEFINE_KW "define"
+  WHITESPACE " "
+  L_PAREN "("
+  IDENTIFIER
+    IDENT "foo"
+  R_PAREN ")"
+  WHITESPACE " "
+  COLON_EQ ":="
+  WHITESPACE "\n"
+error 16: expected procedure body
+

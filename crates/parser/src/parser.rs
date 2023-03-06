@@ -45,6 +45,10 @@ impl<'i> Parser<'i> {
         }
     }
 
+    pub(crate) fn at_end(&self) -> bool {
+        self.current() == SyntaxKind::EOF
+    }
+
     pub(crate) fn bump_one_of(&mut self, set: TokenSet) {
         let kind = self.current();
         assert!(set.contains(kind));

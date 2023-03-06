@@ -113,6 +113,8 @@ fn parse_inline_ok() {
     test_glob!(ok "inline/ok/expr");
     test_glob!(ok "inline/ok/pat");
     test_glob!(ok "inline/ok/ded");
+    test_glob!(ok "inline/ok/dir");
+    test_glob!(ok "inline/ok/stmt");
 }
 
 #[test]
@@ -120,6 +122,8 @@ fn parse_inline_err() {
     test_glob!(err "inline/err/expr");
     test_glob!(err "inline/err/pat");
     test_glob!(err "inline/err/ded");
+    test_glob!(err "inline/err/dir");
+    test_glob!(err "inline/err/stmt");
 }
 
 fn parse(entry: EntryPoint, text: &str) -> (String, bool) {
@@ -189,6 +193,7 @@ fn entry_point_from_str(s: &str) -> EntryPoint {
         "pat" => EntryPoint::Pat,
         "ded" => EntryPoint::Ded,
         "dir" => EntryPoint::Dir,
+        "stmt" => EntryPoint::Stmt,
         _ => panic!("unknown entry point"),
     }
 }

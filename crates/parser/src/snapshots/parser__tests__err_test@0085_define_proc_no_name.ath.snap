@@ -1,0 +1,27 @@
+---
+source: crates/parser/src/tests.rs
+description: "define ( ) := lambda () true\n"
+input_file: crates/parser/test_data/parser/inline/err/dir/0085_define_proc_no_name.ath
+---
+DEFINE_PROC_DIR
+  DEFINE_KW "define"
+  WHITESPACE " "
+  L_PAREN "("
+  WHITESPACE " "
+  R_PAREN ")"
+  WHITESPACE " "
+  COLON_EQ ":="
+  WHITESPACE " "
+  EXPR_PHRASE
+    LAMBDA_EXPR
+      LAMBDA_KW "lambda"
+      WHITESPACE " "
+      L_PAREN "("
+      R_PAREN ")"
+      WHITESPACE " "
+      IDENT_EXPR
+        IDENTIFIER
+          IDENT "true"
+          WHITESPACE "\n"
+error 9: expected procedure name
+

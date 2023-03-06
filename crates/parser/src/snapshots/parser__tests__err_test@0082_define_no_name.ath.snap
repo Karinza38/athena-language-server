@@ -1,0 +1,17 @@
+---
+source: crates/parser/src/tests.rs
+description: "define := true\n"
+input_file: crates/parser/test_data/parser/inline/err/dir/0082_define_no_name.ath
+---
+DEFINE_DIR
+  DEFINE_KW "define"
+  WHITESPACE " "
+  COLON_EQ ":="
+  WHITESPACE " "
+  EXPR_PHRASE
+    IDENT_EXPR
+      IDENTIFIER
+        IDENT "true"
+        WHITESPACE "\n"
+error 7: expected definition name
+

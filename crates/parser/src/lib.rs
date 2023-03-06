@@ -27,6 +27,7 @@ pub enum EntryPoint {
     Ded,
     Phrase,
     Dir,
+    Stmt,
 }
 
 impl EntryPoint {
@@ -37,6 +38,7 @@ impl EntryPoint {
             EntryPoint::Pat => grammar::entry::pat,
             EntryPoint::Ded => grammar::entry::ded,
             EntryPoint::Dir => grammar::entry::dir,
+            EntryPoint::Stmt => grammar::entry::stmt,
             _ => todo!("{self:?}"),
         };
         let mut p = parser::Parser::new(input);
