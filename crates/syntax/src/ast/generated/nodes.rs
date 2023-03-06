@@ -908,10 +908,10 @@ impl ProofByContraDed {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
-pub struct UniversalGeneralDed {
+pub struct GeneralizeOverDed {
     pub(crate) syntax: SyntaxNode,
 }
-impl UniversalGeneralDed {
+impl GeneralizeOverDed {
     pub fn generalize_over_token(&self) -> Option<SyntaxToken> {
         support::token(&self.syntax, T![generalize - over])
     }
@@ -921,6 +921,13 @@ impl UniversalGeneralDed {
     pub fn ded(&self) -> Option<Ded> {
         support::child(&self.syntax)
     }
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+pub struct PickAnyDed {
+    pub(crate) syntax: SyntaxNode,
+}
+impl PickAnyDed {
     pub fn pick_any_token(&self) -> Option<SyntaxToken> {
         support::token(&self.syntax, T![pick - any])
     }
@@ -931,6 +938,9 @@ impl UniversalGeneralDed {
         support::token(&self.syntax, T![:])
     }
     pub fn sort(&self) -> Option<Sort> {
+        support::child(&self.syntax)
+    }
+    pub fn ded(&self) -> Option<Ded> {
         support::child(&self.syntax)
     }
 }
@@ -1635,7 +1645,8 @@ pub enum Ded {
     AssumeDed(AssumeDed),
     NamedAssumeDed(NamedAssumeDed),
     ProofByContraDed(ProofByContraDed),
-    UniversalGeneralDed(UniversalGeneralDed),
+    GeneralizeOverDed(GeneralizeOverDed),
+    PickAnyDed(PickAnyDed),
     ExistentialInstantDed(ExistentialInstantDed),
     InductDed(InductDed),
     CasesDed(CasesDed),
@@ -2264,9 +2275,20 @@ impl AstNode for ProofByContraDed {
         &self.syntax
     }
 }
-impl AstNode for UniversalGeneralDed {
+impl AstNode for GeneralizeOverDed {
     fn can_cast(kind: SyntaxKind) -> bool {
-        kind == UNIVERSAL_GENERAL_DED
+        kind == GENERALIZE_OVER_DED
+    }
+    fn cast(syntax: SyntaxNode) -> Option<Self> {
+        if Self::can_cast(syntax.kind()) { Some(Self { syntax }) } else { None }
+    }
+    fn syntax(&self) -> &SyntaxNode {
+        &self.syntax
+    }
+}
+impl AstNode for PickAnyDed {
+    fn can_cast(kind: SyntaxKind) -> bool {
+        kind == PICK_ANY_DED
     }
     fn cast(syntax: SyntaxNode) -> Option<Self> {
         if Self::can_cast(syntax.kind()) { Some(Self { syntax }) } else { None }
@@ -3144,9 +3166,14 @@ impl From<ProofByContraDed> for Ded {
         Ded::ProofByContraDed(node)
     }
 }
-impl From<UniversalGeneralDed> for Ded {
-    fn from(node: UniversalGeneralDed) -> Ded {
-        Ded::UniversalGeneralDed(node)
+impl From<GeneralizeOverDed> for Ded {
+    fn from(node: GeneralizeOverDed) -> Ded {
+        Ded::GeneralizeOverDed(node)
+    }
+}
+impl From<PickAnyDed> for Ded {
+    fn from(node: PickAnyDed) -> Ded {
+        Ded::PickAnyDed(node)
     }
 }
 impl From<ExistentialInstantDed> for Ded {
@@ -3193,9 +3220,9 @@ impl AstNode for Ded {
     fn can_cast(kind: SyntaxKind) -> bool {
         matches!(
             kind, METHOD_CALL_DED | BANG_METHOD_CALL_DED | ASSUME_DED | NAMED_ASSUME_DED
-            | PROOF_BY_CONTRA_DED | UNIVERSAL_GENERAL_DED | EXISTENTIAL_INSTANT_DED |
-            INDUCT_DED | CASES_DED | CHECK_DED | MATCH_DED | LET_DED | LET_REC_DED |
-            TRY_DED
+            | PROOF_BY_CONTRA_DED | GENERALIZE_OVER_DED | PICK_ANY_DED |
+            EXISTENTIAL_INSTANT_DED | INDUCT_DED | CASES_DED | CHECK_DED | MATCH_DED |
+            LET_DED | LET_REC_DED | TRY_DED
         )
     }
     fn cast(syntax: SyntaxNode) -> Option<Self> {
@@ -3205,9 +3232,8 @@ impl AstNode for Ded {
             ASSUME_DED => Ded::AssumeDed(AssumeDed { syntax }),
             NAMED_ASSUME_DED => Ded::NamedAssumeDed(NamedAssumeDed { syntax }),
             PROOF_BY_CONTRA_DED => Ded::ProofByContraDed(ProofByContraDed { syntax }),
-            UNIVERSAL_GENERAL_DED => {
-                Ded::UniversalGeneralDed(UniversalGeneralDed { syntax })
-            }
+            GENERALIZE_OVER_DED => Ded::GeneralizeOverDed(GeneralizeOverDed { syntax }),
+            PICK_ANY_DED => Ded::PickAnyDed(PickAnyDed { syntax }),
             EXISTENTIAL_INSTANT_DED => {
                 Ded::ExistentialInstantDed(ExistentialInstantDed { syntax })
             }
@@ -3229,7 +3255,8 @@ impl AstNode for Ded {
             Ded::AssumeDed(it) => &it.syntax,
             Ded::NamedAssumeDed(it) => &it.syntax,
             Ded::ProofByContraDed(it) => &it.syntax,
-            Ded::UniversalGeneralDed(it) => &it.syntax,
+            Ded::GeneralizeOverDed(it) => &it.syntax,
+            Ded::PickAnyDed(it) => &it.syntax,
             Ded::ExistentialInstantDed(it) => &it.syntax,
             Ded::InductDed(it) => &it.syntax,
             Ded::CasesDed(it) => &it.syntax,
@@ -3647,7 +3674,12 @@ impl std::fmt::Display for ProofByContraDed {
         std::fmt::Display::fmt(self.syntax(), f)
     }
 }
-impl std::fmt::Display for UniversalGeneralDed {
+impl std::fmt::Display for GeneralizeOverDed {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        std::fmt::Display::fmt(self.syntax(), f)
+    }
+}
+impl std::fmt::Display for PickAnyDed {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         std::fmt::Display::fmt(self.syntax(), f)
     }

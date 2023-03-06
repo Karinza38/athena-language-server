@@ -249,8 +249,9 @@ Ded =
     | BangMethodCallDed // ✅
     | AssumeDed // ✅
     | NamedAssumeDed // ✅
-    | ProofByContraDed
-    | UniversalGeneralDed
+    | ProofByContraDed // ✅
+    | GeneralizeOverDed
+    | PickAnyDed
     | ExistentialInstantDed
     | InductDed
     | CasesDed
@@ -278,9 +279,11 @@ AssumePart =
 ProofByContraDed =
     'suppose-absurd' Phrase Ded
 
-UniversalGeneralDed =
+GeneralizeOverDed =
     'generalize-over' Expr Ded
-    | 'pick-any' Identifier (':' Sort)? Ded
+
+PickAnyDed =
+    'pick-any' Identifier (':' Sort)? Ded
 
 ExistentialInstantDed =
     'with-witness' Expr Phrase Ded

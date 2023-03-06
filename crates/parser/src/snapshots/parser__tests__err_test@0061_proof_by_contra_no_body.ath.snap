@@ -1,0 +1,15 @@
+---
+source: crates/parser/src/tests.rs
+description: "suppose-absurd A\n"
+input_file: crates/parser/test_data/parser/inline/err/ded/0061_proof_by_contra_no_body.ath
+---
+PROOF_BY_CONTRA_DED
+  SUPPOSE_ABSURD_KW "suppose-absurd"
+  WHITESPACE " "
+  EXPR_PHRASE
+    IDENT_EXPR
+      IDENTIFIER
+        IDENT "A"
+        WHITESPACE "\n"
+error 17: expected body for proof by contradiction
+

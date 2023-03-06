@@ -146,6 +146,29 @@ fn try_ded(p: &mut Parser) {
     super::phrases::try_expr_or_ded(p, Some(super::phrases::ExprOrDed::Ded));
 }
 
+// test(ded) proof_by_contra_ded
+// suppose-absurd A (!claim A)
+fn proof_by_contra_ded(p: &mut Parser) {
+    assert!(p.at(T![suppose - absurd]));
+
+    let m = p.start();
+    p.bump(T![suppose - absurd]);
+
+    if !phrase(p) {
+        // test_err(ded) proof_by_contra_no_phrase
+        // suppose-absurd
+        p.error("expected absurd hypothesis for proof by contradiction");
+    }
+
+    if !ded(p) {
+        // test_err(ded) proof_by_contra_no_body
+        // suppose-absurd A
+        p.error("expected body for proof by contradiction");
+    }
+
+    m.complete(p, SyntaxKind::PROOF_BY_CONTRA_DED);
+}
+
 pub(crate) const DED_START_SET: TokenSet = TokenSet::new(&[
     T!['('],
     T![assume],
@@ -185,6 +208,8 @@ pub(crate) fn ded(p: &mut Parser) -> bool {
         let_rec_ded(p);
     } else if p.at(T![try]) {
         try_ded(p);
+    } else if p.at(T![suppose - absurd]) {
+        proof_by_contra_ded(p);
     } else {
         return false;
     }

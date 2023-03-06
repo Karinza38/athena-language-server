@@ -18,6 +18,8 @@ fn sourcegen_ast() {
     let syntax_kinds_file =
         sourcegen::project_root().join("crates/parser/src/syntax_kind/generated.rs");
     let mut up_to_date = true;
+
+    eprintln!("ensuring syntax kinds");
     up_to_date =
         up_to_date && sourcegen::ensure_file_contents(syntax_kinds_file.as_path(), &syntax_kinds);
 
@@ -26,18 +28,21 @@ fn sourcegen_ast() {
         .unwrap();
     let ast = lower(&grammar);
 
+    eprintln!("ensuring ast tokens");
     let ast_tokens = generate_tokens(&ast);
     let ast_tokens_file =
         sourcegen::project_root().join("crates/syntax/src/ast/generated/tokens.rs");
     up_to_date =
         up_to_date && sourcegen::ensure_file_contents(ast_tokens_file.as_path(), &ast_tokens);
 
+    eprintln!("ensuring ast nodes");
     let ast_nodes = generate_nodes(KINDS_SRC, &ast);
     let ast_nodes_file = sourcegen::project_root().join("crates/syntax/src/ast/generated/nodes.rs");
     up_to_date =
         up_to_date && sourcegen::ensure_file_contents(ast_nodes_file.as_path(), &ast_nodes);
 
     let lexer = generate_lexer(&ast);
+    eprintln!("ensuring lexer");
     let lexer_file = sourcegen::project_root().join("crates/parser/src/lexer/generated.rs");
     up_to_date = up_to_date && sourcegen::ensure_file_contents(lexer_file.as_path(), &lexer);
 
