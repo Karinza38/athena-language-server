@@ -1,4 +1,5 @@
 mod ast;
+mod parsing;
 mod ptr;
 mod syntax_error;
 mod syntax_node;
@@ -21,6 +22,8 @@ pub use rowan::{
     TokenAtOffset, WalkEvent,
 };
 pub use smol_str::SmolStr;
+
+use util::format_to;
 
 /// `Parse` is the result of the parsing: a syntax tree and a collection of
 /// errors.
@@ -97,56 +100,57 @@ impl Parse<SyntaxNode> {
     }
 }
 
-// impl Parse<SourceFile> {
-//     pub fn debug_dump(&self) -> String {
-//         let mut buf = format!("{:#?}", self.tree().syntax());
-//         for err in self.errors.iter() {
-//             format_to!(buf, "error {:?}: {}\n", err.range(), err);
-//         }
-//         buf
-//     }
+impl Parse<SourceFile> {
+    pub fn debug_dump(&self) -> String {
+        let mut buf = format!("{:#?}", self.tree().syntax());
+        for err in self.errors.iter() {
+            format_to!(buf, "error {:?}: {}\n", err.range(), err);
+        }
+        buf
+    }
 
-//     pub fn reparse(&self, indel: &Indel) -> Parse<SourceFile> {
-//         self.incremental_reparse(indel)
-//             .unwrap_or_else(|| self.full_reparse(indel))
-//     }
+    // pub fn reparse(&self, indel: &Indel) -> Parse<SourceFile> {
+    //     self.incremental_reparse(indel)
+    //         .unwrap_or_else(|| self.full_reparse(indel))
+    // }
 
-//     fn incremental_reparse(&self, indel: &Indel) -> Option<Parse<SourceFile>> {
-//         // FIXME: validation errors are not handled here
-//         parsing::incremental_reparse(self.tree().syntax(), indel, self.errors.to_vec()).map(
-//             |(green_node, errors, _reparsed_range)| Parse {
-//                 green: green_node,
-//                 errors: Arc::new(errors),
-//                 _ty: PhantomData,
-//             },
-//         )
-//     }
+    // fn incremental_reparse(&self, indel: &Indel) -> Option<Parse<SourceFile>> {
+    //     // FIXME: validation errors are not handled here
+    //     parsing::incremental_reparse(self.tree().syntax(), indel, self.errors.to_vec()).map(
+    //         |(green_node, errors, _reparsed_range)| Parse {
+    //             green: green_node,
+    //             errors: Arc::new(errors),
+    //             _ty: PhantomData,
+    //         },
+    //     )
+    // }
 
-//     fn full_reparse(&self, indel: &Indel) -> Parse<SourceFile> {
-//         let mut text = self.tree().syntax().text().to_string();
-//         indel.apply(&mut text);
-//         SourceFile::parse(&text)
-//     }
-// }
+    // fn full_reparse(&self, indel: &Indel) -> Parse<SourceFile> {
+    //     let mut text = self.tree().syntax().text().to_string();
+    //     indel.apply(&mut text);
+    //     SourceFile::parse(&text)
+    // }
+}
 
 /// `SourceFile` represents a parse tree for a single Rust file.
-// pub use crate::ast::SourceFile;
+pub use crate::ast::SourceFile;
 
-// impl SourceFile {
-//     pub fn parse(text: &str) -> Parse<SourceFile> {
-//         let (green, mut errors) = parsing::parse_text(text);
-//         let root = SyntaxNode::new_root(green.clone());
+impl SourceFile {
+    pub fn parse(text: &str) -> Parse<SourceFile> {
+        let (green, errors) = parsing::parse_text(text);
+        let root = SyntaxNode::new_root(green.clone());
 
-//         // errors.extend(validation::validate(&root));
+        // TODO: Add syntax validation
+        // errors.extend(validation::validate(&root));
 
-//         assert_eq!(root.kind(), SyntaxKind::SOURCE_FILE);
-//         Parse {
-//             green,
-//             errors: Arc::new(errors),
-//             _ty: PhantomData,
-//         }
-//     }
-// }
+        assert_eq!(root.kind(), SyntaxKind::SOURCE_FILE);
+        Parse {
+            green,
+            errors: Arc::new(errors),
+            _ty: PhantomData,
+        }
+    }
+}
 
 /// Matches a `SyntaxNode` against an `ast` type.
 ///

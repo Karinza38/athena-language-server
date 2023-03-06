@@ -1,4 +1,4 @@
-use crate::{event::Event, input::Input, token_set::TokenSet, SyntaxKind};
+use crate::{event::Event, input::Input, token_set::TokenSet, SyntaxKind, T};
 use drop_bomb::DropBomb;
 
 pub(crate) struct Parser<'i> {
@@ -61,6 +61,27 @@ impl<'i> Parser<'i> {
             return;
         }
         self.bump_impl(kind);
+    }
+
+    /// Create an error node and consume the next token.
+    pub(crate) fn err_recover(&mut self, message: &str, recovery: TokenSet) {
+        match self.current() {
+            T!['{'] | T!['}'] => {
+                self.error(message);
+                return;
+            }
+            _ => (),
+        }
+
+        if self.at_one_of(recovery) {
+            self.error(message);
+            return;
+        }
+
+        let m = self.start();
+        self.error(message);
+        self.bump_any();
+        m.complete(self, SyntaxKind::ERROR);
     }
 
     pub(crate) fn error<Msg: Into<String>>(&mut self, msg: Msg) {

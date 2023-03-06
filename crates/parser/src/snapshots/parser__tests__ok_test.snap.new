@@ -1,0 +1,48 @@
+---
+source: crates/parser/src/tests.rs
+assertion_line: 70
+description: "module Foo {\n   domain Bar\n   declare Func: [Bar] -> Bar\n}\n"
+input_file: crates/parser/test_data/parser/inline/ok/file/0088_source_file.ath
+---
+SOURCE_FILE
+  DIR_STMT
+    MODULE_DIR
+      MODULE_KW "module"
+      WHITESPACE " "
+      IDENTIFIER
+        IDENT "Foo"
+        WHITESPACE " "
+      L_CURLY "{"
+      WHITESPACE "\n   "
+      DIR_STMT
+        DOMAIN_DIR
+          DOMAIN_KW "domain"
+          WHITESPACE " "
+          IDENT_SORT
+            IDENTIFIER
+              IDENT "Bar"
+              WHITESPACE "\n   "
+      DIR_STMT
+        DECLARE_DIR
+          DECLARE_KW "declare"
+          WHITESPACE " "
+          IDENTIFIER
+            IDENT "Func"
+          COLON ":"
+          WHITESPACE " "
+          FUNC_SORTS
+            L_BRACK "["
+            IDENT_SORT
+              IDENTIFIER
+                IDENT "Bar"
+            R_BRACK "]"
+            WHITESPACE " "
+          THIN_ARROW "->"
+          WHITESPACE " "
+          IDENT_SORT
+            IDENTIFIER
+              IDENT "Bar"
+              WHITESPACE "\n"
+      R_CURLY "}"
+      WHITESPACE "\n"
+

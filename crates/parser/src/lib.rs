@@ -39,7 +39,7 @@ impl EntryPoint {
             EntryPoint::Ded => grammar::entry::ded,
             EntryPoint::Dir => grammar::entry::dir,
             EntryPoint::Stmt => grammar::entry::stmt,
-            _ => todo!("{self:?}"),
+            EntryPoint::SourceFile => grammar::entry::source_file,
         };
         let mut p = parser::Parser::new(input);
         parse(&mut p);

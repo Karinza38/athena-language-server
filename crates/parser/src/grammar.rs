@@ -10,7 +10,7 @@ use crate::{parser::Parser, token_set::TokenSet, SyntaxKind, T};
 use SyntaxKind::{CHAR, IDENT, STRING};
 
 pub(crate) mod entry {
-    use super::*;
+    use super::{statements::STMT_START_SET, *};
 
     pub(crate) fn expr(p: &mut Parser) {
         let m = p.start();
@@ -88,6 +88,28 @@ pub(crate) mod entry {
             p.bump_any();
         }
         m.complete(p, SyntaxKind::ERROR);
+    }
+
+    // test(file) source_file
+    // module Foo {
+    //    domain Bar
+    //    declare Func: [Bar] -> Bar
+    // }
+    pub(crate) fn source_file(p: &mut Parser) {
+        let m = p.start();
+
+        while !p.at(SyntaxKind::EOF) {
+            // test_err(file) source_error_with_extra_junk
+            // module Foo {
+            //    domain Bar ]][]
+            //    declare Func: [Bar] -> Bar
+            // }
+            if !super::statements::stmt(p) {
+                p.err_recover("invalid statement", STMT_START_SET);
+            }
+        }
+
+        m.complete(p, SyntaxKind::SOURCE_FILE);
     }
 }
 

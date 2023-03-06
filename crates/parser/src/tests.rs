@@ -115,6 +115,7 @@ fn parse_inline_ok() {
     test_glob!(ok "inline/ok/ded");
     test_glob!(ok "inline/ok/dir");
     test_glob!(ok "inline/ok/stmt");
+    test_glob!(ok "inline/ok/file");
 }
 
 #[test]
@@ -124,6 +125,7 @@ fn parse_inline_err() {
     test_glob!(err "inline/err/ded");
     test_glob!(err "inline/err/dir");
     test_glob!(err "inline/err/stmt");
+    test_glob!(err "inline/err/file");
 }
 
 fn parse(entry: EntryPoint, text: &str) -> (String, bool) {

@@ -577,6 +577,8 @@ fn expr_or_ded(p: &mut Parser) -> Option<ExprOrDed> {
 
 const AMBIG_START: TokenSet = EXPR_START_SET.intersect(DED_START_SET);
 
+pub(crate) const PHRASE_START_SET: TokenSet = EXPR_START_SET.union(DED_START_SET);
+
 pub(crate) fn phrase(p: &mut Parser) -> bool {
     let m = p.start();
 
