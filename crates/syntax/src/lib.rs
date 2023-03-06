@@ -2,8 +2,6 @@ mod ast;
 mod ptr;
 mod syntax_error;
 mod syntax_node;
-#[cfg(test)]
-mod tests;
 
 use std::{marker::PhantomData, sync::Arc};
 

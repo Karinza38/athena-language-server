@@ -1,16 +1,5 @@
-//! Defines input for code generation process.
-
-pub(crate) struct KindsSrc<'a> {
-    pub(crate) punct: &'a [(&'a str, &'a str)],
-    pub(crate) keywords: &'a [&'a str],
-    pub(crate) contextual_keywords: &'a [&'a str],
-    pub(crate) literals: &'a [&'a str],
-    pub(crate) tokens: &'a [&'a str],
-    pub(crate) nodes: &'a [&'a str],
-}
-
-pub(crate) const KINDS_SRC: KindsSrc<'_> = KindsSrc {
-    punct: &[
+KindsSrc(
+    punct: [
         ("(", "L_PAREN"),
         (")", "R_PAREN"),
         ("{", "L_CURLY"),
@@ -31,7 +20,7 @@ pub(crate) const KINDS_SRC: KindsSrc<'_> = KindsSrc {
         ("->", "THIN_ARROW"),
         (",", "COMMA"),
     ],
-    keywords: &[
+    keywords: [
         "while",
         "let",
         "letrec",
@@ -87,10 +76,10 @@ pub(crate) const KINDS_SRC: KindsSrc<'_> = KindsSrc {
         "domain",
         "domains",
     ],
-    contextual_keywords: &[],
-    literals: &["INT_NUMBER", "STRING", "CHAR"],
-    tokens: &["ERROR", "IDENT", "WHITESPACE", "COMMENT"],
-    nodes: &[
+    contextual_keywords: [],
+    literals: ["INT_NUMBER", "STRING", "CHAR"],
+    tokens: ["ERROR", "IDENT", "WHITESPACE", "COMMENT"],
+    nodes: [
         "SOURCE_FILE",
         "IDENTIFIER",
         "LITERAL",
@@ -191,92 +180,4 @@ pub(crate) const KINDS_SRC: KindsSrc<'_> = KindsSrc {
         "DIR_STMT",
         "PHRASE_STMT",
     ],
-};
-
-#[derive(Default, Debug)]
-pub(crate) struct AstSrc {
-    pub(crate) tokens: Vec<String>,
-    pub(crate) nodes: Vec<AstNodeSrc>,
-    pub(crate) enums: Vec<AstEnumSrc>,
-    pub(crate) token_defs: Vec<AstTokenDefinition>,
-}
-
-#[derive(Debug)]
-pub(crate) struct AstNodeSrc {
-    pub(crate) doc: Vec<String>,
-    pub(crate) name: String,
-    pub(crate) traits: Vec<String>,
-    pub(crate) fields: Vec<Field>,
-}
-
-#[derive(Debug, Eq, PartialEq)]
-pub(crate) enum Field {
-    Token(String),
-    Node {
-        name: String,
-        ty: String,
-        cardinality: Cardinality,
-    },
-}
-
-#[derive(Debug, Eq, PartialEq)]
-pub(crate) enum Cardinality {
-    Optional,
-    Many,
-}
-
-#[derive(Debug)]
-pub(crate) struct AstEnumSrc {
-    pub(crate) doc: Vec<String>,
-    pub(crate) name: String,
-    pub(crate) traits: Vec<String>,
-    pub(crate) variants: Vec<String>,
-}
-
-#[derive(Debug)]
-pub(crate) struct AstTokenDefinition {
-    pub(crate) name: String,
-    pub(crate) def: AstTokenDef,
-}
-
-impl AstTokenDefinition {
-    pub(crate) fn regex(name: impl Into<String>, regex: impl Into<String>) -> Self {
-        Self {
-            name: name.into(),
-            def: AstTokenDef::Regex(regex.into()),
-        }
-    }
-
-    pub(crate) fn literal(name: impl Into<String>, literal: impl Into<String>) -> Self {
-        Self {
-            name: name.into(),
-            def: AstTokenDef::Literal(literal.into()),
-        }
-    }
-
-    // this is a terrible name
-    pub(crate) fn raw_token(&self) -> String {
-        match self {
-            AstTokenDefinition {
-                def: AstTokenDef::Literal(l),
-                ..
-            } => match l.as_str() {
-                "{" => "'{'",
-                "}" => "'}'",
-                "(" => "'('",
-                ")" => "')'",
-                "[" => "'['",
-                "]" => "']'",
-                _ => l,
-            }
-            .into(),
-            AstTokenDefinition { name, .. } => name.clone(),
-        }
-    }
-}
-
-#[derive(Debug)]
-pub(crate) enum AstTokenDef {
-    Literal(String),
-    Regex(String),
-}
+)

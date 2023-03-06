@@ -1,5 +1,5 @@
 [workspace]
-members = ["crates/*"]
+members = ["crates/*", "xtask"]
 
 [profile.dev.package.insta]
 opt-level = 3

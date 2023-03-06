@@ -1,3 +1,6 @@
+mod ast_src;
+
+use fs_err as fs;
 use itertools::Itertools;
 use proc_macro2::{Punct, Spacing};
 use quote::{format_ident, quote};
@@ -7,48 +10,53 @@ use std::{
 };
 use ungrammar::{Grammar, Rule};
 
-use crate::tests::ast_src::{
+use ast_src::{
     AstEnumSrc, AstNodeSrc, AstSrc, AstTokenDef, AstTokenDefinition, Cardinality, Field, KindsSrc,
-    KINDS_SRC,
 };
 
-#[test]
-fn sourcegen_ast() {
-    let syntax_kinds = generate_syntax_kinds(KINDS_SRC);
+use crate::Error;
+
+pub(super) fn sourcegen_ast() -> Result<(), Error> {
+    let src_string = fs::read_to_string(sourcegen::project_root().join("crates/syntax/ast.ron"))?;
+    let kinds_src = ron::from_str(&src_string)?;
+
+    let syntax_kinds = generate_syntax_kinds(&kinds_src);
     let syntax_kinds_file =
         sourcegen::project_root().join("crates/parser/src/syntax_kind/generated.rs");
     let mut up_to_date = true;
 
-    eprintln!("ensuring syntax kinds");
     up_to_date =
         up_to_date && sourcegen::ensure_file_contents(syntax_kinds_file.as_path(), &syntax_kinds);
 
-    let grammar = include_str!(concat!(env!("CARGO_MANIFEST_DIR"), "/athena.ungram"))
-        .parse()
-        .unwrap();
+    let grammar = include_str!(concat!(
+        env!("CARGO_MANIFEST_DIR"),
+        "/../crates/syntax/athena.ungram"
+    ))
+    .parse()
+    .unwrap();
+
     let ast = lower(&grammar);
 
-    eprintln!("ensuring ast tokens");
     let ast_tokens = generate_tokens(&ast);
     let ast_tokens_file =
         sourcegen::project_root().join("crates/syntax/src/ast/generated/tokens.rs");
     up_to_date =
         up_to_date && sourcegen::ensure_file_contents(ast_tokens_file.as_path(), &ast_tokens);
 
-    eprintln!("ensuring ast nodes");
-    let ast_nodes = generate_nodes(KINDS_SRC, &ast);
+    let ast_nodes = generate_nodes(&kinds_src, &ast);
     let ast_nodes_file = sourcegen::project_root().join("crates/syntax/src/ast/generated/nodes.rs");
     up_to_date =
         up_to_date && sourcegen::ensure_file_contents(ast_nodes_file.as_path(), &ast_nodes);
 
     let lexer = generate_lexer(&ast);
-    eprintln!("ensuring lexer");
     let lexer_file = sourcegen::project_root().join("crates/parser/src/lexer/generated.rs");
     up_to_date = up_to_date && sourcegen::ensure_file_contents(lexer_file.as_path(), &lexer);
 
     if !up_to_date {
-        sourcegen::fail_sourcegen_test();
+        eprintln!("generated code is out of date, commit the changes");
     }
+
+    Ok(())
 }
 
 fn generate_tokens(grammar: &AstSrc) -> String {
@@ -88,7 +96,7 @@ fn generate_tokens(grammar: &AstSrc) -> String {
     .replace("#[derive", "\n#[derive")
 }
 
-fn generate_nodes(kinds: KindsSrc<'_>, grammar: &AstSrc) -> String {
+fn generate_nodes(kinds: &KindsSrc, grammar: &AstSrc) -> String {
     let (node_defs, node_boilerplate_impls): (Vec<_>, Vec<_>) = grammar
         .nodes
         .iter()
@@ -352,7 +360,7 @@ fn write_doc_comment(contents: &[String], dest: &mut String) {
     }
 }
 
-fn generate_syntax_kinds(grammar: KindsSrc<'_>) -> String {
+fn generate_syntax_kinds(grammar: &KindsSrc) -> String {
     let (single_byte_tokens_values, single_byte_tokens): (Vec<_>, Vec<_>) = grammar
         .punct
         .iter()
@@ -375,11 +383,11 @@ fn generate_syntax_kinds(grammar: KindsSrc<'_>) -> String {
         .map(|(_token, name)| format_ident!("{}", name))
         .collect::<Vec<_>>();
 
-    let x = |&name| match name {
+    let x = |name: &String| match name.as_str() {
         "Self" => format_ident!("SELF_TYPE_KW"),
         name => format_ident!("{}_KW", to_upper_snake_case(name)),
     };
-    let full_keywords_values = grammar.keywords;
+    let full_keywords_values = grammar.keywords.clone();
     let full_keywords = full_keywords_values.iter().map(x);
 
     let contextual_keywords_values = &grammar.contextual_keywords;
@@ -389,7 +397,7 @@ fn generate_syntax_kinds(grammar: KindsSrc<'_>) -> String {
         .keywords
         .iter()
         .chain(grammar.contextual_keywords.iter())
-        .copied()
+        .cloned()
         .collect::<Vec<_>>();
     let all_keywords_idents = all_keywords_values
         .iter()
@@ -735,9 +743,9 @@ fn lower_token_defs(res: &mut AstSrc, grammar: &Grammar, token_def_rule: &Rule) 
 
     let mut token_defs = Vec::new();
     for alt in alts {
-        print!("alt = ");
-        print_rule(alt, grammar);
-        println!();
+        // print!("alt = ");
+        // print_rule(alt, grammar);
+        // println!();
         let tok = match alt {
             Rule::Token(tok) => tok,
             _ => unreachable!(),
@@ -748,7 +756,7 @@ fn lower_token_defs(res: &mut AstSrc, grammar: &Grammar, token_def_rule: &Rule) 
         let Some((name, def)) = token.name.split_once('=') else { panic!("not a valid token def")};
         ignore_tok_names.push(name.trim());
         let name = token_name(name.trim());
-        println!("name = {}, def = {}", name, def);
+        // println!("name = {}, def = {}", name, def);
         token_defs.push(AstTokenDefinition::regex(name, def.trim()));
     }
 
@@ -759,7 +767,6 @@ fn lower_token_defs(res: &mut AstSrc, grammar: &Grammar, token_def_rule: &Rule) 
         .filter(|d| !ignore_tok_names.contains(&&*d.name))
     {
         let name = token_name(&token.name);
-        println!("name = {name}");
         token_defs.push(AstTokenDefinition::literal(name, &token.name));
     }
 

@@ -1,0 +1,17 @@
+[package]
+name = "xtask"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+fs-err = "2.9.0"
+itertools = "0.10.5"
+pico-args = "0.5.0"
+proc-macro2 = "1.0.51"
+quote = "1.0.23"
+ron = "0.8.0"
+serde = { version = "1.0.152", features = ["derive"] }
+sourcegen = { path = "../crates/sourcegen" }
+ungrammar = "1.16.1"
