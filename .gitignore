@@ -1,1 +1,6 @@
 /target
+**/*.log
+**/node_modules
+
+client/out
+client/.vscode-test

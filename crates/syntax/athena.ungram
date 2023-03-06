@@ -270,6 +270,9 @@ Ded =
     | LetRecDed // ✅
     | TryDed // ✅
 
+ConcludeDed =
+    'conclude' Expr Ded
+
 MethodCallDed =
     '(' 'apply-method' Expr Phrase* ')'
 
