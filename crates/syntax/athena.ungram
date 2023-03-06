@@ -58,6 +58,13 @@ CompoundSort =
     '(' Sort* ')'
 
 //************//
+// SourceFile //
+//************//
+
+SourceFile =
+    Stmt*
+
+//************//
 // Statements //
 //************//
 
