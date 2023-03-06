@@ -1021,49 +1021,11 @@ fn extract_enums(ast: &mut AstSrc) {
 }
 
 fn extract_struct_traits(ast: &mut AstSrc) {
-    let traits: &[(&str, &[&str])] = &[
-        ("HasAttrs", &["attrs"]),
-        ("HasName", &["name"]),
-        ("HasVisibility", &["visibility"]),
-        ("HasGenericParams", &["generic_param_list", "where_clause"]),
-        ("HasTypeBounds", &["type_bound_list", "colon_token"]),
-        ("HasModuleItem", &["items"]),
-        ("HasLoopBody", &["label", "loop_body"]),
-        ("HasArgList", &["arg_list"]),
-    ];
+    let traits: &[(&str, &[&str])] = &[];
 
     for node in &mut ast.nodes {
         for (name, methods) in traits {
             extract_struct_trait(node, name, methods);
-        }
-    }
-
-    let nodes_with_doc_comments = [
-        "SourceFile",
-        "Fn",
-        "Struct",
-        "Union",
-        "RecordField",
-        "TupleField",
-        "Enum",
-        "Variant",
-        "Trait",
-        "Module",
-        "Static",
-        "Const",
-        "TypeAlias",
-        "Impl",
-        "ExternBlock",
-        "ExternCrate",
-        "MacroCall",
-        "MacroRules",
-        "MacroDef",
-        "Use",
-    ];
-
-    for node in &mut ast.nodes {
-        if nodes_with_doc_comments.contains(&&*node.name) {
-            node.traits.push("HasDocComments".into());
         }
     }
 }
@@ -1084,9 +1046,9 @@ fn extract_struct_trait(node: &mut AstNodeSrc, trait_name: &str, methods: &[&str
 
 fn extract_enum_traits(ast: &mut AstSrc) {
     for enm in &mut ast.enums {
-        if enm.name == "Stmt" {
-            continue;
-        }
+        // if enm.name == "Stmt" {
+        //     continue;
+        // }
         let nodes = &ast.nodes;
         let mut variant_traits = enm
             .variants
