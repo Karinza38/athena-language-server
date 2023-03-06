@@ -16,11 +16,10 @@ CHECK_EXPR
           WHITESPACE " "
     FAT_ARROW "=>"
     WHITESPACE " "
-    EXPR_PHRASE
-      IDENT_EXPR
-        IDENTIFIER
-          IDENT "true"
-          WHITESPACE "\n     "
+    IDENT_EXPR
+      IDENTIFIER
+        IDENT "true"
+        WHITESPACE "\n     "
   CHECK_ARM
     PIPE "|"
     WHITESPACE " "

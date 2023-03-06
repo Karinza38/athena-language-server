@@ -1,7 +1,7 @@
 ---
 source: crates/parser/src/tests.rs
-description: "check { foo => bar\n| baz => }\n"
-input_file: crates/parser/test_data/parser/inline/err/expr/0007_check_arm_no_expr.ath
+description: "check { foo => bar\n| => foo }\n"
+input_file: crates/parser/test_data/parser/inline/err/expr/0050_check_arm_no_phrase.ath
 ---
 CHECK_EXPR
   CHECK_KW "check"
@@ -23,14 +23,13 @@ CHECK_EXPR
   CHECK_ARM
     PIPE "|"
     WHITESPACE " "
-    EXPR_PHRASE
-      IDENT_EXPR
-        IDENTIFIER
-          IDENT "baz"
-          WHITESPACE " "
     FAT_ARROW "=>"
     WHITESPACE " "
+    IDENT_EXPR
+      IDENTIFIER
+        IDENT "foo"
+        WHITESPACE " "
   R_CURLY "}"
   WHITESPACE "\n"
-error 28: Expected a check arm body
+error 21: Expected to find a phrase for the check arm
 

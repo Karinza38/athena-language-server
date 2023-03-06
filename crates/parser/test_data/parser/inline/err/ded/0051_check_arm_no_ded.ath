@@ -1,0 +1,2 @@
+check { foo => (!claim A)
+| baz => }

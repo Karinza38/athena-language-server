@@ -18,5 +18,5 @@ CHECK_EXPR
     WHITESPACE " "
   R_CURLY "}"
   WHITESPACE "\n"
-error 15: Expected to find a phrase for the check expression result
+error 15: Expected a check arm body
 

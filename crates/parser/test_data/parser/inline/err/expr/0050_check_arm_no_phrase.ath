@@ -1,2 +1,2 @@
 check { foo => bar
-| foo => }
+| => foo }

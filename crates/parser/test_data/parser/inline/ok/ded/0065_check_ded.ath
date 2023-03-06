@@ -1,0 +1,1 @@
+check { false => (!claim A) | else => (!claim B) }

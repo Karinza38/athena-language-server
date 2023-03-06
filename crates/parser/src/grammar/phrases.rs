@@ -68,6 +68,46 @@ fn match_arm(p: &mut Parser, leading_pipe: bool, want: Option<ExprOrDed>) -> Exp
     }
 }
 
+fn expr_or_ded_fallback(
+    p: &mut Parser,
+    m: crate::parser::Marker,
+    to_node: impl Fn(ExprOrDed) -> SyntaxKind,
+    want: Option<ExprOrDed>,
+    actual: ExprOrDed,
+) {
+    let node_from_res = to_node(actual);
+
+    match want {
+        Some(ExprOrDed::Expr) => {
+            eprintln!("expr_or_ded_fallback: want is Expr");
+            m.complete(p, to_node(ExprOrDed::Expr));
+        }
+        Some(ExprOrDed::Ded) => {
+            eprintln!("expr_or_ded_fallback: want is Ded");
+            m.complete(p, to_node(ExprOrDed::Ded));
+        }
+        Some(ExprOrDed::Ambig) => {
+            eprintln!("expr_or_ded_fallback: want is Ambig");
+            m.complete(p, node_from_res);
+        }
+        None => {
+            eprintln!("expr_or_ded_fallback: want is None");
+            m.complete(p, node_from_res);
+        }
+    }
+
+    if want.is_some() && actual != want.unwrap() {
+        p.error(format!(
+            "Expected to find {}",
+            match want.unwrap() {
+                ExprOrDed::Expr => "an expression",
+                ExprOrDed::Ded => "a deduction",
+                ExprOrDed::Ambig => unreachable!(),
+            }
+        ));
+    }
+}
+
 pub(crate) fn match_expr_or_ded(p: &mut Parser, want: Option<ExprOrDed>) -> ExprOrDed {
     assert!(p.at(T![match]));
 
@@ -103,26 +143,118 @@ pub(crate) fn match_expr_or_ded(p: &mut Parser, want: Option<ExprOrDed>) -> Expr
 
     p.expect(T!['}']);
 
-    let node_from_res = match res {
-        ExprOrDed::Expr => SyntaxKind::MATCH_EXPR,
-        ExprOrDed::Ded => SyntaxKind::MATCH_DED,
-        ExprOrDed::Ambig => SyntaxKind::MATCH_EXPR,
+    expr_or_ded_fallback(
+        p,
+        m,
+        |eod| match eod {
+            ExprOrDed::Expr => SyntaxKind::MATCH_EXPR,
+            ExprOrDed::Ded => SyntaxKind::MATCH_DED,
+            ExprOrDed::Ambig => SyntaxKind::MATCH_EXPR,
+        },
+        want,
+        res,
+    );
+
+    res
+}
+
+fn check_arm(p: &mut Parser, leading_pipe: bool, want: Option<ExprOrDed>) -> ExprOrDed {
+    let m = if leading_pipe {
+        assert!(p.at(T![|]));
+
+        let m = p.start();
+        p.bump(T![|]);
+        m
+    } else {
+        // FIXME: Consider this assertion?
+        // assert!(p.at_one_of(super::patterns::PAT_START_SET));
+        p.start()
     };
 
-    match want {
-        Some(ExprOrDed::Expr) => {
-            m.complete(p, SyntaxKind::MATCH_EXPR);
-        }
-        Some(ExprOrDed::Ded) => {
-            m.complete(p, SyntaxKind::MATCH_DED);
-        }
-        Some(ExprOrDed::Ambig) => {
-            m.complete(p, node_from_res);
-        }
-        None => {
-            m.complete(p, node_from_res);
-        }
+    if !phrase(p) {
+        // test_err(expr) check_arm_no_phrase
+        // check { foo => bar
+        // | => foo }
+        p.error("Expected to find a phrase for the check arm");
     }
+
+    p.expect(T![=>]);
+
+    let res = match expr_or_ded(p) {
+        Some(res) => res,
+        None => {
+            // test_err(expr) check_arm_no_expr
+            // check { foo => bar
+            // | baz => }
+
+            // test_err(ded) check_arm_no_ded
+            // check { foo => (!claim A)
+            // | baz => }
+
+            p.error("Expected a check arm body");
+            want.unwrap_or(ExprOrDed::Ambig)
+        }
+    };
+
+    expr_or_ded_fallback(
+        p,
+        m,
+        |eod| match eod {
+            ExprOrDed::Expr => SyntaxKind::CHECK_ARM,
+            ExprOrDed::Ded => SyntaxKind::CHECK_DED_ARM,
+            ExprOrDed::Ambig => SyntaxKind::CHECK_ARM,
+        },
+        want,
+        res,
+    );
+
+    res
+}
+
+// test(expr) simple_check_expr
+// check { false => true
+//      | else => false
+// }
+
+// test(ded) simple_check_ded
+// check { false => (!claim A)
+//      | else => (!claim B)
+// }
+pub(crate) fn check_expr_or_ded(p: &mut Parser, want: Option<ExprOrDed>) -> ExprOrDed {
+    assert!(p.at(T![check]));
+
+    let m = p.start();
+    p.bump(T![check]);
+
+    p.expect(T!['{']);
+
+    let to_node = |eod| match eod {
+        ExprOrDed::Expr => SyntaxKind::CHECK_EXPR,
+        ExprOrDed::Ded => SyntaxKind::CHECK_DED,
+        ExprOrDed::Ambig => SyntaxKind::CHECK_EXPR,
+    };
+
+    if p.at(T!['}']) {
+        // test_err(expr) check_expr_no_arms
+        // check { }
+
+        // test_err(ded) check_ded_no_arms
+        // check { }
+        p.error("Expected at least one arm in the check expression");
+        let ret = want.unwrap_or(ExprOrDed::Ambig);
+        m.complete(p, to_node(ret));
+        return ret;
+    }
+
+    let res = check_arm(p, false, want);
+
+    while p.at(T![|]) {
+        check_arm(p, true, want);
+    }
+
+    p.expect(T!['}']);
+
+    expr_or_ded_fallback(p, m, to_node, want, res);
 
     res
 }

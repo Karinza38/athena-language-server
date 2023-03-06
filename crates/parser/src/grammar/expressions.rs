@@ -1,4 +1,9 @@
-use super::{identifier, literal, patterns::pat, phrases::phrase, LIT_SET};
+use super::{
+    identifier, literal,
+    patterns::pat,
+    phrases::{phrase, ExprOrDed},
+    LIT_SET,
+};
 use crate::{
     parser::Parser,
     token_set::TokenSet,
@@ -189,68 +194,8 @@ fn seq_expr(p: &mut Parser) {
     m.complete(p, SyntaxKind::SEQ_EXPR);
 }
 
-fn check_arm(p: &mut Parser) {
-    assert!(p.at(T![|]));
-
-    let m = p.start();
-    p.bump(T![|]);
-
-    if !phrase(p) {
-        // test_err(expr) check_arm_no_expr
-        // check { foo => bar
-        // | => foo }
-        p.error("Expected to find a phrase for the check arm");
-    }
-
-    p.expect(T![=>]);
-
-    if !expr(p) {
-        // test_err(expr) check_arm_no_result
-        // check { foo => bar
-        // | foo => }
-        p.error("Expected to find a expression for the check arm result");
-    }
-
-    m.complete(p, SyntaxKind::CHECK_ARM);
-}
-
-// test(expr) simple_check_expr
-// check { false => true
-//      | else => false
-// }
 fn check_expr(p: &mut Parser) {
-    assert!(p.at(T![check]));
-
-    let m = p.start();
-    p.bump(T![check]);
-
-    p.expect(T!['{']);
-
-    // FIXME: avoid creating an arm node if there is none
-    let arm = p.start();
-
-    if !phrase(p) {
-        // test_err(expr) check_expr_no_arms
-        // check {}
-        p.error("Expected to find a phrase for the check expression");
-    }
-
-    p.expect(T![=>]);
-
-    if !phrase(p) {
-        // test_err(expr) check_expr_no_result_first_arm
-        // check { foo => }
-        p.error("Expected to find a phrase for the check expression result");
-    }
-
-    arm.complete(p, SyntaxKind::CHECK_ARM);
-
-    while p.at(T![|]) {
-        check_arm(p);
-    }
-
-    p.expect(T!['}']);
-    m.complete(p, SyntaxKind::CHECK_EXPR);
+    super::phrases::check_expr_or_ded(p, Some(ExprOrDed::Expr));
 }
 
 // test(expr) simple_cell_expr
