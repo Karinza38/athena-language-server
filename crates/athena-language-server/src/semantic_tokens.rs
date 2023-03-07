@@ -1,11 +1,14 @@
 //! Semantic Tokens helpers
-use std::ops;
-use tower_lsp::lsp_types;
-
-use lsp_types::{
-    Range, SemanticToken, SemanticTokenModifier, SemanticTokenType, SemanticTokens,
-    SemanticTokensEdit,
+use std::{ops, sync::atomic::AtomicU32};
+use syntax::{
+    ast::{self},
+    AstNode, NodeOrToken, SyntaxKind, SyntaxNode, SyntaxToken, TextRange, WalkEvent, T,
 };
+use tower_lsp::lsp_types::{
+    SemanticToken, SemanticTokenModifier, SemanticTokenType, SemanticTokens, SemanticTokensEdit,
+};
+
+use crate::line_index::LineIndex;
 
 macro_rules! define_semantic_token_types {
     (
@@ -17,7 +20,7 @@ macro_rules! define_semantic_token_types {
         }
 
     ) => {
-        $(pub(crate) const $standard: SemanticTokenType = SemanticTokenType::$standard;)*
+        $(#[allow(dead_code)] pub(crate) const $standard: SemanticTokenType = SemanticTokenType::$standard;)*
         $(pub(crate) const $custom: SemanticTokenType = SemanticTokenType::new($string);)*
 
         pub(crate) const SUPPORTED_TYPES: &[SemanticTokenType] = &[
@@ -47,6 +50,8 @@ define_semantic_token_types![
         STRUCT,
         TYPE_PARAMETER,
         VARIABLE,
+        TYPE,
+        CLASS,
     }
 
     custom {
@@ -98,7 +103,7 @@ macro_rules! define_semantic_token_modifiers {
 
     ) => {
 
-        $(pub(crate) const $standard: SemanticTokenModifier = SemanticTokenModifier::$standard;)*
+        $(#[allow(dead_code)] pub(crate) const $standard: SemanticTokenModifier = SemanticTokenModifier::$standard;)*
         $(pub(crate) const $custom: SemanticTokenModifier = SemanticTokenModifier::new($string);)*
 
         pub(crate) const SUPPORTED_MODIFIERS: &[SemanticTokenModifier] = &[
@@ -150,25 +155,34 @@ impl ops::BitOrAssign<SemanticTokenModifier> for ModifierSet {
 /// Tokens are encoded relative to each other.
 ///
 /// This is a direct port of <https://github.com/microsoft/vscode-languageserver-node/blob/f425af9de46a0187adb78ec8a46b9b2ce80c5412/server/src/sematicTokens.proposed.ts#L45>
-pub(crate) struct SemanticTokensBuilder {
+pub(crate) struct SemanticTokensBuilder<'a> {
     id: String,
     prev_line: u32,
     prev_char: u32,
     data: Vec<SemanticToken>,
+    line_index: &'a LineIndex,
 }
 
-impl SemanticTokensBuilder {
-    pub(crate) fn new(id: String) -> Self {
+impl<'a> SemanticTokensBuilder<'a> {
+    pub(crate) fn new(id: String, line_index: &'a LineIndex) -> Self {
         SemanticTokensBuilder {
             id,
             prev_line: 0,
             prev_char: 0,
             data: Default::default(),
+            line_index,
         }
     }
 
     /// Push a new token onto the builder
-    pub(crate) fn push(&mut self, range: Range, token_index: u32, modifier_bitset: u32) {
+    pub(crate) fn push_with_mods(
+        &mut self,
+        text_range: TextRange,
+        token_type: SemanticTokenType,
+        modifier_bitset: u32,
+    ) {
+        let range = self.line_index.range(text_range);
+        let token_index = type_index(token_type);
         let mut push_line = range.start.line;
         let mut push_char = range.start.character;
 
@@ -196,6 +210,10 @@ impl SemanticTokensBuilder {
         self.prev_char = range.start.character;
     }
 
+    pub(crate) fn push(&mut self, text_range: TextRange, token_type: SemanticTokenType) {
+        self.push_with_mods(text_range, token_type, 0);
+    }
+
     pub(crate) fn build(self) -> SemanticTokens {
         SemanticTokens {
             result_id: Some(self.id),
@@ -204,6 +222,7 @@ impl SemanticTokensBuilder {
     }
 }
 
+#[allow(dead_code)]
 pub(crate) fn diff_tokens(old: &[SemanticToken], new: &[SemanticToken]) -> Vec<SemanticTokensEdit> {
     let offset = new
         .iter()
@@ -240,6 +259,91 @@ pub(crate) fn diff_tokens(old: &[SemanticToken], new: &[SemanticToken]) -> Vec<S
 
 pub(crate) fn type_index(ty: SemanticTokenType) -> u32 {
     SUPPORTED_TYPES.iter().position(|it| *it == ty).unwrap() as u32
+}
+
+fn punctuation(builder: &mut SemanticTokensBuilder, tok: SyntaxToken) {
+    match tok.kind() {
+        T!['{'] | T!['}'] => builder.push(tok.text_range(), BRACE),
+        T!['('] | T![')'] => builder.push(tok.text_range(), PARENTHESIS),
+        T!['['] | T![']'] => builder.push(tok.text_range(), BRACKET),
+        T![!] => builder.push(tok.text_range(), OPERATOR),
+        T![:] => builder.push(tok.text_range(), COLON),
+        T![;] => builder.push(tok.text_range(), SEMICOLON),
+        T![,] => builder.push(tok.text_range(), COMMA),
+        T![:=] => builder.push(tok.text_range(), OPERATOR),
+        _ => builder.push(tok.text_range(), PUNCTUATION),
+    }
+}
+
+fn keyword(builder: &mut SemanticTokensBuilder, tok: SyntaxToken) {
+    builder.push(tok.text_range(), KEYWORD);
+}
+
+fn literal(builder: &mut SemanticTokensBuilder, tok: SyntaxToken) {
+    match tok.kind() {
+        SyntaxKind::STRING => builder.push(tok.text_range(), STRING),
+        SyntaxKind::CHAR => builder.push(tok.text_range(), CHAR),
+        _ => todo!(),
+    }
+}
+
+fn token(builder: &mut SemanticTokensBuilder, tok: SyntaxToken) {
+    let kind = tok.kind();
+    if kind.is_keyword() {
+        keyword(builder, tok);
+    } else if kind.is_punct() {
+        punctuation(builder, tok);
+    } else if kind.is_literal() {
+        literal(builder, tok);
+    } else if kind == SyntaxKind::COMMENT {
+        builder.push(tok.text_range(), COMMENT);
+    } else {
+        log::warn!("unhandled token: {:?}", kind);
+    }
+}
+
+fn traverse(builder: &mut SemanticTokensBuilder, node: &SyntaxNode) {
+    for event in node.preorder_with_tokens() {
+        use WalkEvent::{Enter, Leave};
+
+        let element = match event {
+            Enter(NodeOrToken::Token(tok)) if tok.kind() == SyntaxKind::WHITESPACE => continue,
+            Enter(n) => n,
+            Leave(_) => continue,
+        };
+
+        match element {
+            NodeOrToken::Node(n) => {
+                if let Some(id) = ast::Identifier::cast(n) {
+                    identifier(builder, id);
+                } else {
+                    continue;
+                }
+            }
+            NodeOrToken::Token(tok) => token(builder, tok),
+        };
+    }
+}
+
+fn identifier(builder: &mut SemanticTokensBuilder, ident: ast::Identifier) {
+    builder.push(ident.syntax().text_range(), VARIABLE);
+}
+
+pub(crate) fn semantic_tokens_for_file(
+    file: syntax::SourceFile,
+    index: &LineIndex,
+) -> SemanticTokens {
+    static COUNTER: AtomicU32 = AtomicU32::new(0);
+    let mut builder = SemanticTokensBuilder::new(
+        COUNTER
+            .fetch_add(1, std::sync::atomic::Ordering::Relaxed)
+            .to_string(),
+        index,
+    );
+
+    traverse(&mut builder, file.syntax());
+
+    builder.build()
 }
 
 #[cfg(test)]

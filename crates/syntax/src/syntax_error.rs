@@ -25,6 +25,10 @@ impl SyntaxError {
         self.1 = range;
         self
     }
+
+    pub fn message(&self) -> &str {
+        &self.0
+    }
 }
 
 impl fmt::Display for SyntaxError {

@@ -305,8 +305,14 @@ fn load_dir(p: &mut Parser) {
     m.complete(p, SyntaxKind::LOAD_DIR);
 }
 
-pub(crate) const DIR_START_SET: TokenSet =
-    TokenSet::new(&[T![module], T![domain], T![domains], T![define], T![declare]]);
+pub(crate) const DIR_START_SET: TokenSet = TokenSet::new(&[
+    T![module],
+    T![domain],
+    T![domains],
+    T![define],
+    T![declare],
+    T![load],
+]);
 
 pub(crate) fn dir(p: &mut Parser) -> bool {
     if p.at(T![module]) {
