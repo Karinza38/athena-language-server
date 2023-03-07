@@ -951,9 +951,6 @@ fn lower_comma_list(
     label: Option<&String>,
     rule: &Rule,
 ) -> bool {
-    print!("lower_comma_list ");
-    print_rule(rule, grammar);
-    println!();
     let rule = match rule {
         Rule::Seq(it) => it,
         _ => return false,
