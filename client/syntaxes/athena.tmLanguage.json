@@ -1,0 +1,317 @@
+{
+  "fileTypes": [
+    "ath"
+  ],
+  "name": "athena",
+  "patterns": [
+    {
+      "include": "#main"
+    }
+  ],
+  "scopeName": "source.athena",
+  "uuid": "",
+  "repository": {
+    "main": {
+      "patterns": [
+        {
+          "include": "#declaration"
+        },
+        {
+          "include": "#reserved_keyword"
+        },
+        {
+          "match": "(forall)",
+          "name": "keyword.control.athena"
+        },
+        {
+          "match": "(\\.)",
+          "name": "keyword.operator.athena"
+        },
+        {
+          "match": "(==>)",
+          "name": "keyword.operator.athena"
+        },
+        {
+          "match": "(=>)",
+          "name": "keyword.operator.athena"
+        },
+        {
+          "match": "(=)",
+          "name": "keyword.operator.athena"
+        },
+        {
+          "match": "(:)",
+          "name": "punctuation.athena"
+        },
+        {
+          "match": "(\\?)",
+          "name": "punctuation.athena"
+        },
+        {
+          "match": "(\\'(?:[\\x{0025}\\x{0026}\\x{002a}\\x{002b}\\--9\\x{003c}-\\x{003e}\\x{0040}-Z\\x{005c}\\x{005e}_a-z\\x{007c}])(?:!|[\\x{0023}-\\x{0027}]|[\\x{002a}\\x{002b}]|[\\--9]|[\\x{003c}-\\x{005c}]|\\^|[_-z]|\\|)*)",
+          "name": "variable.name.athena"
+        },
+        {
+          "include": "#integer"
+        },
+        {
+          "include": "#ident"
+        },
+        {
+          "begin": "(\\{)",
+          "beginCaptures": {
+            "1": {
+              "name": "punctuation.athena"
+            }
+          },
+          "patterns": [
+            {
+              "include": "#main__1"
+            }
+          ],
+          "end": "(\\})",
+          "endCaptures": {
+            "1": {
+              "name": "punctuation.athena"
+            }
+          }
+        },
+        {
+          "match": "(!)",
+          "name": "keyword.operator.athena"
+        },
+        {
+          "match": "(;)",
+          "name": "punctuation.athena"
+        },
+        {
+          "match": "(:=)",
+          "name": "keyword.operator.athena"
+        },
+        {
+          "match": "(~)",
+          "name": "keyword.operator.athena"
+        },
+        {
+          "begin": "(\\[)",
+          "beginCaptures": {
+            "1": {
+              "name": "punctuation.athena"
+            }
+          },
+          "patterns": [
+            {
+              "include": "#main__2"
+            }
+          ],
+          "end": "(\\])",
+          "endCaptures": {
+            "1": {
+              "name": "punctuation.athena"
+            }
+          }
+        },
+        {
+          "begin": "(\\()",
+          "beginCaptures": {
+            "1": {
+              "name": "punctuation.athena"
+            }
+          },
+          "patterns": [
+            {
+              "include": "#main__3"
+            }
+          ],
+          "end": "(\\))",
+          "endCaptures": {
+            "1": {
+              "name": "punctuation.athena"
+            }
+          }
+        },
+        {
+          "include": "#single_line_comment"
+        },
+        {
+          "include": "#character_constant"
+        },
+        {
+          "include": "#string"
+        },
+        {
+          "match": "(//.*)",
+          "name": "comment.line.athena"
+        },
+        {
+          "match": "([^\\s])",
+          "name": "invalid.illegal.athena"
+        }
+      ]
+    },
+    "character_constant": {
+      "patterns": [
+        {
+          "match": "(`(?:(?:[\\x{007e}\\x{0023}-\\[\\]-\\x{007e}])|\\\"))",
+          "name": "string.quoted.athena"
+        },
+        {
+          "match": "(`(?:\\\\\\d{1,3}))",
+          "name": "constant.character.athena"
+        },
+        {
+          "match": "(`(?:\\\\\\^[A-Z\\x{0040}\\[\\]\\x{002f}\\x{005e}]))",
+          "name": "constant.character.escape.athena"
+        },
+        {
+          "match": "(`(?:\\\\[\\x{0022}\\x{005c}abnrftv]))",
+          "name": "constant.character.escape.athena"
+        }
+      ]
+    },
+    "declaration": {
+      "patterns": [
+        {
+          "match": "(?x)\n  (declare) #declare keyword\n  (\\s+)\n  ((?:[\\x{0025}\\x{0026}\\x{002a}\\x{002b}\\--9\\x{003c}-\\x{003e}\\x{0040}-Z\\x{005c}\\x{005e}_a-z\\x{007c}])(?:!|[\\x{0023}-\\x{0027}]|[\\x{002a}\\x{002b}]|[\\--9]|[\\x{003c}-\\x{005c}]|\\^|[_-z]|\\|)*)\n  (\\s*)\n  (:)\n  (\\s*)\n  (?:\n    (\\()\n    ((?:(?:[\\x{0025}\\x{0026}\\x{002a}\\x{002b}\\--9\\x{003c}-\\x{003e}\\x{0040}-Z\\x{005c}\\x{005e}_a-z\\x{007c}])(?:!|[\\x{0023}-\\x{0027}]|[\\x{002a}\\x{002b}]|[\\--9]|[\\x{003c}-\\x{005c}]|\\^|[_-z]|\\|)*\\s*)+)\n    (\\))\n  )?\n  (\\s*)\n  (\\[)\n  ((?:(?:[\\x{0025}\\x{0026}\\x{002a}\\x{002b}\\--9\\x{003c}-\\x{003e}\\x{0040}-Z\\x{005c}\\x{005e}_a-z\\x{007c}])(?:!|[\\x{0023}-\\x{0027}]|[\\x{002a}\\x{002b}]|[\\--9]|[\\x{003c}-\\x{005c}]|\\^|[_-z]|\\|)*\\s*)*)(\\])(\\s*)(->)(\\s*)((?:[\\x{0025}\\x{0026}\\x{002a}\\x{002b}\\--9\\x{003c}-\\x{003e}\\x{0040}-Z\\x{005c}\\x{005e}_a-z\\x{007c}])(?:!|[\\x{0023}-\\x{0027}]|[\\x{002a}\\x{002b}]|[\\--9]|[\\x{003c}-\\x{005c}]|\\^|[_-z]|\\|)*)\n",
+          "captures": {
+            "1": {
+              "name": "keyword.control.athena"
+            },
+            "2": {
+              "name": "whitespace.athena"
+            },
+            "3": {
+              "name": "entity.name.function.athena"
+            },
+            "4": {
+              "name": "whitespace.athena"
+            },
+            "5": {
+              "name": "punctuation.athena"
+            },
+            "6": {
+              "name": "whitespace.athena"
+            },
+            "7": {
+              "name": "punctuation.athena"
+            },
+            "8": {
+              "name": "entity.name.type.athena"
+            },
+            "9": {
+              "name": "punctuation.athena"
+            },
+            "10": {
+              "name": "whitespace.athena"
+            },
+            "11": {
+              "name": "punctuation.athena"
+            },
+            "12": {
+              "name": "entity.name.type.athena"
+            },
+            "13": {
+              "name": "punctuation.athena"
+            },
+            "14": {
+              "name": "whitespace.athena"
+            },
+            "15": {
+              "name": "punctuation.athena"
+            },
+            "16": {
+              "name": "whitespace.athena"
+            },
+            "17": {
+              "name": "entity.name.type.athena"
+            }
+          }
+        }
+      ]
+    },
+    "ident": {
+      "patterns": [
+        {
+          "match": "((?:[\\x{0025}\\x{0026}\\x{002a}\\x{002b}\\--9\\x{003c}-\\x{003e}\\x{0040}-Z\\x{005c}\\x{005e}_a-z\\x{007c}])(?:!|[\\x{0023}-\\x{0027}]|[\\x{002a}\\x{002b}]|[\\--9]|[\\x{003c}-\\x{005c}]|\\^|[_-z]|\\|)*)",
+          "name": "variable.name.athena"
+        }
+      ]
+    },
+    "integer": {
+      "patterns": [
+        {
+          "match": "(\\b\\d+)",
+          "name": "constant.numeric.athena"
+        }
+      ]
+    },
+    "main__1": {
+      "patterns": [
+        {
+          "include": "#main"
+        }
+      ]
+    },
+    "main__2": {
+      "patterns": [
+        {
+          "include": "#main"
+        }
+      ]
+    },
+    "main__3": {
+      "patterns": [
+        {
+          "include": "#main"
+        }
+      ]
+    },
+    "reserved_keyword": {
+      "patterns": [
+        {
+          "match": "(\\b((?:assume)|(?:private)|(?:bind)|(?:as)|(?:check)|(?:dcheck)|(?:the)|(?:for)|(?:set\\-precedence)|(?:open)|(?:open\\-module)|(?:extend\\-module)|(?:left\\-assoc)|(?:right\\-assoc)|(?:assert)|(?:assert\\*)|(?:retract)|(?:load\\-file)|(?:load)|(?:overload)|(?:overload\\-inv)|(?:expand\\-input)|(?:transform\\-output)|(?:START_LOAD)|(?:END_LOAD)|(?:exit\\-athena)|(?:expand\\-next\\-proof)|(?:print\\-call\\-stack)|(?:add\\-demon)|(?:add\\-demons)|(?:set\\-flag)|(?:define\\-symbol)|(?:define\\-sort)|(?:clear\\-assumption\\-base)|(?:assume\\-let)|(?:lambda)|(?:method)|(?:define)|(?:define\\*)|(?:define\\-memoized)|(?:primitive\\-method)|(?:structure)|(?:structures)|(?:datatype)|(?:datatypes)|(?:domain)|(?:domains)|(?:subsort)|(?:subsorts)|(?:declare)|(?:ddeclare)|(?:val\\-of)|(?:suppose\\-absurd)|(?:suppose\\-absurd\\-let)|(?:dmatch)|(?:match)|(?:let:)|(?:let)|(?:letrec)|(?:dlet)|(?:dletrec)|(?:apply\\-method)|(?:begin)|(?:\\{)|(?:PROVE)|(?:seq)|(?:dseq)|(?:end)|(?:\\})|(?:on)|(?:while)|(?:where)|(?:by\\-induction)|(?:use\\-term\\-parser)|(?:use\\-prop\\-parser)|(?:datatype\\-cases)|(?:datatype\\-cases-on-term)|(?:structure\\-cases)|(?:meta\\-id)|(?:try)|(?:dtry)|(?:define\\-fun)|(?:BY)|(?:by)|(?:conclude)|(?:from)|(?:pick\\-any)|(?:pick\\-witness)|(?:pick\\-witnesses)|(?:_)|(?:else)|(?:list\\-of)|(?:by\\-cases)|(?:cell\\-of)|(?:cell)|(?:ref)|(?:split)|(?:re\\-\\?)|(?:re\\-\\*)|(?:re\\-\\+)|(?:re\\-lit)|(?:re\\-range)|(?:re\\-rep)|(?:set!)|(?:BOP)|(?:OP)|(?:module)|(?:vector\\-set!)|(?:vector\\-sub)|(?:make\\-vector)|(?:generalize\\-over)|(?:specialize)|(?:ex\\-generalize)|(?:with\\-witness)|(?:with\\-predicate)|(?:with\\-keys)|(?:some\\-var)|(?:some\\-sentence)|(?:some\\-list)|(?:some\\-cell)|(?:some\\-quant)|(?:some\\-sent\\-con)|(?:some\\-term)|(?:some\\-atom)|(?:some\\-sent)|(?:some\\-proc)|(?:some\\-method)|(?:some\\-symbol)|(?:some\\-sub)|(?:some\\-table)|(?:some\\-map)|(?:some\\-char)|(?:some\\-vector)|(?:add-path))\\b)",
+          "name": "keyword.control.athena"
+        }
+      ]
+    },
+    "single_line_comment": {
+      "patterns": [
+        {
+          "match": "(#.+)",
+          "name": "comment.line.athena"
+        }
+      ]
+    },
+    "string": {
+      "patterns": [
+        {
+          "begin": "(\\\")",
+          "beginCaptures": {
+            "1": {
+              "name": "punctuation.athena"
+            }
+          },
+          "patterns": [
+            {
+              "include": "#string__1"
+            }
+          ],
+          "end": "(\\\")",
+          "endCaptures": {
+            "1": {
+              "name": "punctuation.athena"
+            }
+          }
+        }
+      ]
+    },
+    "string__1": {
+      "patterns": [
+        {
+          "match": "((?:(?:[\\x{007e}\\x{0023}-\\[\\]-\\x{007e}])|(?:\\\\\\d{1,3})|(?:\\\\\\^[A-Z\\x{0040}\\[\\]\\x{002f}\\x{005e}])|(?:\\\\[\\x{0022}\\x{005c}abnrftv]))*)",
+          "name": "string.quoted.athena"
+        }
+      ]
+    }
+  }
+}

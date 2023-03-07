@@ -27,7 +27,20 @@
         "id": "athena",
         "extensions": [
           ".ath"
-        ]
+        ],
+        "aliases": [
+          "Athena",
+          "ath",
+          "athena"
+        ],
+        "configuration": "./client/language-configuration.json"
+      }
+    ],
+    "grammars": [
+      {
+        "language": "athena",
+        "scopeName": "source.athena",
+        "path": "./client/syntaxes/athena.tmLanguage.json"
       }
     ],
     "configuration": {
