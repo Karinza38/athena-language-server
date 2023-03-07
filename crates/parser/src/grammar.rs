@@ -107,6 +107,10 @@ pub(crate) mod entry {
             if !super::statements::stmt(p) {
                 p.err_recover("invalid statement", STMT_START_SET);
             }
+            // test(file) source_file_with_semicolon
+            // domain Bar;
+            // domain Foo
+            p.eat(T![;]);
         }
 
         m.complete(p, SyntaxKind::SOURCE_FILE);
