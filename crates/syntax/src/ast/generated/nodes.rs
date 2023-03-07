@@ -277,6 +277,44 @@ impl LoadDir {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
+pub struct AssertDir {
+    pub(crate) syntax: SyntaxNode,
+}
+impl AssertDir {
+    pub fn assert_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T![assert])
+    }
+    pub fn identifier(&self) -> Option<Identifier> {
+        support::child(&self.syntax)
+    }
+    pub fn colon_eq_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T![:=])
+    }
+    pub fn expr(&self) -> Option<Expr> {
+        support::child(&self.syntax)
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+pub struct AssertClosedDir {
+    pub(crate) syntax: SyntaxNode,
+}
+impl AssertClosedDir {
+    pub fn assert_star_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T![assert *])
+    }
+    pub fn identifier(&self) -> Option<Identifier> {
+        support::child(&self.syntax)
+    }
+    pub fn colon_eq_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T![:=])
+    }
+    pub fn expr(&self) -> Option<Expr> {
+        support::child(&self.syntax)
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct CompoundSortDecl {
     pub(crate) syntax: SyntaxNode,
 }
@@ -1181,6 +1219,12 @@ impl ConcludeDed {
     pub fn conclude_token(&self) -> Option<SyntaxToken> {
         support::token(&self.syntax, T![conclude])
     }
+    pub fn identifier(&self) -> Option<Identifier> {
+        support::child(&self.syntax)
+    }
+    pub fn colon_eq_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T![:=])
+    }
     pub fn expr(&self) -> Option<Expr> {
         support::child(&self.syntax)
     }
@@ -1646,6 +1690,8 @@ pub enum Dir {
     DefineProcDir(DefineProcDir),
     DefineMultiDir(DefineMultiDir),
     LoadDir(LoadDir),
+    AssertDir(AssertDir),
+    AssertClosedDir(AssertClosedDir),
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
@@ -1926,6 +1972,28 @@ impl AstNode for DefineMultiDir {
 impl AstNode for LoadDir {
     fn can_cast(kind: SyntaxKind) -> bool {
         kind == LOAD_DIR
+    }
+    fn cast(syntax: SyntaxNode) -> Option<Self> {
+        if Self::can_cast(syntax.kind()) { Some(Self { syntax }) } else { None }
+    }
+    fn syntax(&self) -> &SyntaxNode {
+        &self.syntax
+    }
+}
+impl AstNode for AssertDir {
+    fn can_cast(kind: SyntaxKind) -> bool {
+        kind == ASSERT_DIR
+    }
+    fn cast(syntax: SyntaxNode) -> Option<Self> {
+        if Self::can_cast(syntax.kind()) { Some(Self { syntax }) } else { None }
+    }
+    fn syntax(&self) -> &SyntaxNode {
+        &self.syntax
+    }
+}
+impl AstNode for AssertClosedDir {
+    fn can_cast(kind: SyntaxKind) -> bool {
+        kind == ASSERT_CLOSED_DIR
     }
     fn cast(syntax: SyntaxNode) -> Option<Self> {
         if Self::can_cast(syntax.kind()) { Some(Self { syntax }) } else { None }
@@ -2893,11 +2961,22 @@ impl From<LoadDir> for Dir {
         Dir::LoadDir(node)
     }
 }
+impl From<AssertDir> for Dir {
+    fn from(node: AssertDir) -> Dir {
+        Dir::AssertDir(node)
+    }
+}
+impl From<AssertClosedDir> for Dir {
+    fn from(node: AssertClosedDir) -> Dir {
+        Dir::AssertClosedDir(node)
+    }
+}
 impl AstNode for Dir {
     fn can_cast(kind: SyntaxKind) -> bool {
         matches!(
             kind, MODULE_DIR | DOMAIN_DIR | DOMAINS_DIR | DECLARE_DIR | DEFINE_DIR |
-            DEFINE_PROC_DIR | DEFINE_MULTI_DIR | LOAD_DIR
+            DEFINE_PROC_DIR | DEFINE_MULTI_DIR | LOAD_DIR | ASSERT_DIR |
+            ASSERT_CLOSED_DIR
         )
     }
     fn cast(syntax: SyntaxNode) -> Option<Self> {
@@ -2910,6 +2989,8 @@ impl AstNode for Dir {
             DEFINE_PROC_DIR => Dir::DefineProcDir(DefineProcDir { syntax }),
             DEFINE_MULTI_DIR => Dir::DefineMultiDir(DefineMultiDir { syntax }),
             LOAD_DIR => Dir::LoadDir(LoadDir { syntax }),
+            ASSERT_DIR => Dir::AssertDir(AssertDir { syntax }),
+            ASSERT_CLOSED_DIR => Dir::AssertClosedDir(AssertClosedDir { syntax }),
             _ => return None,
         };
         Some(res)
@@ -2924,6 +3005,8 @@ impl AstNode for Dir {
             Dir::DefineProcDir(it) => &it.syntax,
             Dir::DefineMultiDir(it) => &it.syntax,
             Dir::LoadDir(it) => &it.syntax,
+            Dir::AssertDir(it) => &it.syntax,
+            Dir::AssertClosedDir(it) => &it.syntax,
         }
     }
 }
@@ -3632,6 +3715,16 @@ impl std::fmt::Display for DefineMultiDir {
     }
 }
 impl std::fmt::Display for LoadDir {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        std::fmt::Display::fmt(self.syntax(), f)
+    }
+}
+impl std::fmt::Display for AssertDir {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        std::fmt::Display::fmt(self.syntax(), f)
+    }
+}
+impl std::fmt::Display for AssertClosedDir {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         std::fmt::Display::fmt(self.syntax(), f)
     }

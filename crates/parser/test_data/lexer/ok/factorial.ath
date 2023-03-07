@@ -1,0 +1,35 @@
+load "nat-minus"
+load "nat-minus"
+
+module Factorial {
+
+   # define [< - * one <=] := [N.< N.- N.* N.one N.<= ]
+
+    declare factorial: [N] -> N [[int->nat]]
+    (transform-output eval [nat->int])
+    
+    assert f_zero := (forall x . x = zero ==> factorial x = one)
+
+    assert f_x := (forall x . one < x ==> (factorial x) = (x * (factorial (x - one))))
+
+    assert f_one := (forall x . one = x ==> (factorial x) = one)
+
+    (eval (factorial 4))
+    (eval (factorial 5))
+
+    define nothing-less-than-zero := (forall x . ~ x < zero)
+    
+    define f_x_less_than := (forall x . factorial (x - one) <= factorial x )
+    define lte-def := (forall x y . (x <= y <==> x < y | x = y))
+
+	define foo := bar
+    by-induction f_x_less_than {
+        zero => conclude base_case := (factorial (zero - one) <= factorial zero)
+                    (!force base_case)
+                        
+                    
+        | (m as (S n)) => conclude inductive_step := ((factorial (m - one)) <= (factorial m))
+                    (!force inductive_step)
+    }
+
+}

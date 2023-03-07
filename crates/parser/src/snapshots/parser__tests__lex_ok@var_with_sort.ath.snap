@@ -1,6 +1,7 @@
 ---
 source: crates/parser/src/tests.rs
 description: "?x: (List Int)"
+input_file: crates/parser/test_data/lexer/ok/var_with_sort.ath
 ---
 QUESTION "?"
 IDENT "x"

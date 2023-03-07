@@ -1,0 +1,16 @@
+---
+source: crates/parser/src/tests.rs
+description: "assert* := true\n"
+input_file: crates/parser/test_data/parser/inline/err/dir/0104_assert_closed_no_name.ath
+---
+ASSERT_CLOSED_DIR
+  ASSERT_STAR_KW "assert*"
+  WHITESPACE " "
+  COLON_EQ ":="
+  WHITESPACE " "
+  IDENT_EXPR
+    IDENTIFIER
+      IDENT "true"
+      WHITESPACE "\n"
+error 8: expected identifier for the closed assertion
+

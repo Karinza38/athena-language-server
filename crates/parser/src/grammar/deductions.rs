@@ -379,9 +379,9 @@ fn restricted_pat(p: &mut Parser) {
 
 fn restricted_match_arm(p: &mut Parser, leading_pipe: bool) {
     let m = if leading_pipe {
-        assert!(p.at(T![|]));
+        assert!(p.at_contextual_kw(T![|]));
         let m = p.start();
-        p.bump(T![|]);
+        p.bump_remap(T![|]);
         m
     } else {
         p.start()
@@ -400,6 +400,16 @@ fn restricted_match_arm(p: &mut Parser, leading_pipe: bool) {
 
 // test(ded) induct_ded
 // by-induction foo { a => (!claim a) }
+
+// test(ded) induct_ded_multiple
+// by-induction f_x_less_than {
+//     zero => conclude base_case := (factorial (zero - one) <= factorial zero)
+//                 (!force base_case)
+//
+//
+//     | (m as (S n)) => conclude inductive_step := ((factorial (m - one)) <= (factorial m))
+//                 (!force inductive_step)
+// }
 fn induct_ded(p: &mut Parser) {
     assert!(p.at(T![by - induction]));
 
@@ -422,7 +432,7 @@ fn induct_ded(p: &mut Parser) {
         restricted_match_arm(p, false);
     }
 
-    while p.at(T![|]) {
+    while p.at_contextual_kw(T![|]) {
         // test(ded) induct_multiple
         // by-induction a { a => (!claim a) | b => (!claim b) }
         restricted_match_arm(p, true);
@@ -456,7 +466,7 @@ fn cases_ded(p: &mut Parser) {
         restricted_match_arm(p, false);
     }
 
-    while p.at(T![|]) {
+    while p.at_contextual_kw(T![|]) {
         // test(ded) cases_multiple
         // datatype-cases a { a => (!claim a) | b => (!claim b) }
         restricted_match_arm(p, true);
@@ -474,6 +484,21 @@ fn conclude_ded(p: &mut Parser) {
 
     let m = p.start();
     p.bump(T![conclude]);
+
+    if p.at(IDENT) && p.peek_at(T![:=]) || p.at(T![:=]) {
+        // test(ded) conclude_ded_named
+        // conclude base_case := (factorial (zero - one) <= factorial zero)
+        //  (!force base_case)
+        if !p.at(IDENT) {
+            // test_err(ded) conclude_no_ident
+            // conclude := (factorial (zero - one) <= factorial zero)
+            //  (!force base_case)
+            p.error("expected identifier in conclude deduction");
+        } else {
+            identifier(p);
+        }
+        p.expect(T![:=]);
+    }
 
     if !expr(p) {
         // test_err(ded) conclude_no_expr

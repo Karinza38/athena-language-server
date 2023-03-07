@@ -22,10 +22,10 @@ pub(crate) enum ExprOrDed {
 
 fn match_arm(p: &mut Parser, leading_pipe: bool, want: Option<ExprOrDed>) -> ExprOrDed {
     let m = if leading_pipe {
-        assert!(p.at(T![|]));
+        assert!(p.at_contextual_kw(T![|]));
 
         let m = p.start();
-        p.bump(T![|]);
+        p.bump_remap(T![|]);
         m
     } else {
         // FIXME: Consider this assertion?
@@ -133,7 +133,7 @@ pub(crate) fn match_expr_or_ded(p: &mut Parser, want: Option<ExprOrDed>) -> Expr
         match_arm(p, false, want)
     };
 
-    while p.at(T![|]) {
+    while p.at_contextual_kw(T![|]) {
         // test(expr) match_expr_multiple_arms
         // match foo { bar => baz | qux => (quux "cool") }
         match_arm(p, true, want);
@@ -158,10 +158,10 @@ pub(crate) fn match_expr_or_ded(p: &mut Parser, want: Option<ExprOrDed>) -> Expr
 
 fn check_arm(p: &mut Parser, leading_pipe: bool, want: Option<ExprOrDed>) -> ExprOrDed {
     let m = if leading_pipe {
-        assert!(p.at(T![|]));
+        assert!(p.at_contextual_kw(T![|]));
 
         let m = p.start();
-        p.bump(T![|]);
+        p.bump_remap(T![|]);
         m
     } else {
         // FIXME: Consider this assertion?
@@ -246,7 +246,7 @@ pub(crate) fn check_expr_or_ded(p: &mut Parser, want: Option<ExprOrDed>) -> Expr
 
     let res = check_arm(p, false, want);
 
-    while p.at(T![|]) {
+    while p.at_contextual_kw(T![|]) {
         check_arm(p, true, want);
     }
 
@@ -432,10 +432,10 @@ pub(crate) fn let_rec_expr_or_ded(p: &mut Parser, want: Option<ExprOrDed>) -> Ex
 
 fn try_arm(p: &mut Parser, leading_pipe: bool, want: Option<ExprOrDed>) -> ExprOrDed {
     let m = if leading_pipe {
-        assert!(p.at(T![|]));
+        assert!(p.at_contextual_kw(T![|]));
 
         let m = p.start();
-        p.bump(T![|]);
+        p.bump_remap(T![|]);
         m
     } else {
         p.start()
@@ -494,7 +494,7 @@ pub(crate) fn try_expr_or_ded(p: &mut Parser, want: Option<ExprOrDed>) -> ExprOr
         try_arm(p, false, want)
     };
 
-    while p.at(T![|]) {
+    while p.at_contextual_kw(T![|]) {
         // test(expr) try_expr_multiple_arms
         // try { foo | bar | (func baz) }
 

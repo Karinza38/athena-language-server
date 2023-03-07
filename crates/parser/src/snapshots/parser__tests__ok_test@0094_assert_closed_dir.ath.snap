@@ -1,0 +1,26 @@
+---
+source: crates/parser/src/tests.rs
+description: "assert* (foo = foo)\n"
+input_file: crates/parser/test_data/parser/inline/ok/dir/0094_assert_closed_dir.ath
+---
+ASSERT_CLOSED_DIR
+  ASSERT_STAR_KW "assert*"
+  WHITESPACE " "
+  APPLICATION_EXPR
+    L_PAREN "("
+    IDENT_EXPR
+      IDENTIFIER
+        IDENT "foo"
+        WHITESPACE " "
+    EXPR_PHRASE
+      IDENT_EXPR
+        IDENTIFIER
+          IDENT "="
+          WHITESPACE " "
+    EXPR_PHRASE
+      IDENT_EXPR
+        IDENTIFIER
+          IDENT "foo"
+    R_PAREN ")"
+    WHITESPACE "\n"
+

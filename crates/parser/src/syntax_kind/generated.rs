@@ -16,7 +16,6 @@ pub enum SyntaxKind {
     L_BRACK,
     R_BRACK,
     QUESTION,
-    PIPE,
     UNDERSCORE,
     COLON,
     FAT_ARROW,
@@ -83,6 +82,9 @@ pub enum SyntaxKind {
     DOMAIN_KW,
     DOMAINS_KW,
     LOAD_KW,
+    ASSERT_KW,
+    ASSERT_STAR_KW,
+    PIPE,
     INT_NUMBER,
     STRING,
     CHAR,
@@ -181,6 +183,8 @@ pub enum SyntaxKind {
     DECLARE_DIR,
     MODULE_DIR,
     LOAD_DIR,
+    ASSERT_DIR,
+    ASSERT_CLOSED_DIR,
     DIR_STMT,
     PHRASE_STMT,
     #[doc(hidden)]
@@ -201,13 +205,14 @@ impl SyntaxKind {
             | SOME_VECTOR_KW | SOME_PROC_KW | SOME_METHOD_KW | SOME_SYMBOL_KW |
             SOME_TABLE_KW | SOME_MAP_KW | SOME_SUB_KW | SOME_CHAR_KW | SPLIT_KW |
             WHERE_KW | LIST_OF_KW | VAL_OF_KW | AS_KW | BIND_KW | FOR_KW | DEFINE_KW |
-            MODULE_KW | DECLARE_KW | DOMAIN_KW | DOMAINS_KW | LOAD_KW
+            MODULE_KW | DECLARE_KW | DOMAIN_KW | DOMAINS_KW | LOAD_KW | ASSERT_KW |
+            ASSERT_STAR_KW | PIPE
         )
     }
     pub fn is_punct(self) -> bool {
         matches!(
             self, L_PAREN | R_PAREN | L_CURLY | R_CURLY | L_BRACK | R_BRACK | QUESTION |
-            PIPE | UNDERSCORE | COLON | FAT_ARROW | BANG | AMP2 | PIPE2 | COLON_EQ |
+            UNDERSCORE | COLON | FAT_ARROW | BANG | AMP2 | PIPE2 | COLON_EQ |
             SINGLE_QUOTE | SEMI | THIN_ARROW | COMMA
         )
     }
@@ -271,6 +276,8 @@ impl SyntaxKind {
             "domain" => DOMAIN_KW,
             "domains" => DOMAINS_KW,
             "load" => LOAD_KW,
+            "assert" => ASSERT_KW,
+            "assert*" => ASSERT_STAR_KW,
             _ => return None,
         };
         Some(kw)
@@ -279,6 +286,7 @@ impl SyntaxKind {
         #[allow(unused_variables, unreachable_code)]
         {
             let kw = match ident {
+                "|" => PIPE,
                 _ => return None,
             };
             Some(kw)
@@ -293,7 +301,6 @@ impl SyntaxKind {
             '[' => L_BRACK,
             ']' => R_BRACK,
             '?' => QUESTION,
-            '|' => PIPE,
             '_' => UNDERSCORE,
             ':' => COLON,
             '!' => BANG,
@@ -327,9 +334,6 @@ macro_rules! T {
     };
     [?] => {
         $crate ::SyntaxKind::QUESTION
-    };
-    [|] => {
-        $crate ::SyntaxKind::PIPE
     };
     [_] => {
         $crate ::SyntaxKind::UNDERSCORE
@@ -528,6 +532,15 @@ macro_rules! T {
     };
     [load] => {
         $crate ::SyntaxKind::LOAD_KW
+    };
+    [assert] => {
+        $crate ::SyntaxKind::ASSERT_KW
+    };
+    [assert *] => {
+        $crate ::SyntaxKind::ASSERT_STAR_KW
+    };
+    [|] => {
+        $crate ::SyntaxKind::PIPE
     };
     [lifetime_ident] => {
         $crate ::SyntaxKind::LIFETIME_IDENT

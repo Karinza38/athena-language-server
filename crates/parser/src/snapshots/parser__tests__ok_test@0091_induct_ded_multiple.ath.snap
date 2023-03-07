@@ -1,0 +1,178 @@
+---
+source: crates/parser/src/tests.rs
+description: "by-induction f_x_less_than {\n    zero => conclude base_case := (factorial (zero - one) <= factorial zero)\n                (!force base_case)\n\n\n    | (m as (S n)) => conclude inductive_step := ((factorial (m - one)) <= (factorial m))\n                (!force inductive_step)\n}\n"
+input_file: crates/parser/test_data/parser/inline/ok/ded/0091_induct_ded_multiple.ath
+---
+INDUCT_DED
+  BY_INDUCTION_KW "by-induction"
+  WHITESPACE " "
+  EXPR_PHRASE
+    IDENT_EXPR
+      IDENTIFIER
+        IDENT "f_x_less_than"
+        WHITESPACE " "
+  L_CURLY "{"
+  WHITESPACE "\n    "
+  RESTRICTED_MATCH_DED
+    IDENT_PAT
+      IDENTIFIER
+        IDENT "zero"
+        WHITESPACE " "
+    FAT_ARROW "=>"
+    WHITESPACE " "
+    CONCLUDE_DED
+      CONCLUDE_KW "conclude"
+      WHITESPACE " "
+      IDENTIFIER
+        IDENT "base_case"
+        WHITESPACE " "
+      COLON_EQ ":="
+      WHITESPACE " "
+      APPLICATION_EXPR
+        L_PAREN "("
+        IDENT_EXPR
+          IDENTIFIER
+            IDENT "factorial"
+            WHITESPACE " "
+        EXPR_PHRASE
+          APPLICATION_EXPR
+            L_PAREN "("
+            IDENT_EXPR
+              IDENTIFIER
+                IDENT "zero"
+                WHITESPACE " "
+            EXPR_PHRASE
+              IDENT_EXPR
+                IDENTIFIER
+                  IDENT "-"
+                  WHITESPACE " "
+            EXPR_PHRASE
+              IDENT_EXPR
+                IDENTIFIER
+                  IDENT "one"
+            R_PAREN ")"
+            WHITESPACE " "
+        EXPR_PHRASE
+          IDENT_EXPR
+            IDENTIFIER
+              IDENT "<="
+              WHITESPACE " "
+        EXPR_PHRASE
+          IDENT_EXPR
+            IDENTIFIER
+              IDENT "factorial"
+              WHITESPACE " "
+        EXPR_PHRASE
+          IDENT_EXPR
+            IDENTIFIER
+              IDENT "zero"
+        R_PAREN ")"
+        WHITESPACE "\n                "
+      DED_PHRASE
+        BANG_METHOD_CALL_DED
+          L_PAREN "("
+          BANG "!"
+          IDENT_EXPR
+            IDENTIFIER
+              IDENT "force"
+              WHITESPACE " "
+          EXPR_PHRASE
+            IDENT_EXPR
+              IDENTIFIER
+                IDENT "base_case"
+          R_PAREN ")"
+          WHITESPACE "\n\n\n    "
+  RESTRICTED_MATCH_DED
+    PIPE "|"
+    WHITESPACE " "
+    RESTRICTED_NAMED_PAT
+      L_PAREN "("
+      IDENTIFIER
+        IDENT "m"
+        WHITESPACE " "
+      AS_KW "as"
+      WHITESPACE " "
+      RESTRICTED_APPLY_PAT
+        L_PAREN "("
+        IDENTIFIER
+          IDENT "S"
+          WHITESPACE " "
+        IDENT_PAT
+          IDENTIFIER
+            IDENT "n"
+        R_PAREN ")"
+      R_PAREN ")"
+      WHITESPACE " "
+    FAT_ARROW "=>"
+    WHITESPACE " "
+    CONCLUDE_DED
+      CONCLUDE_KW "conclude"
+      WHITESPACE " "
+      IDENTIFIER
+        IDENT "inductive_step"
+        WHITESPACE " "
+      COLON_EQ ":="
+      WHITESPACE " "
+      APPLICATION_EXPR
+        L_PAREN "("
+        APPLICATION_EXPR
+          L_PAREN "("
+          IDENT_EXPR
+            IDENTIFIER
+              IDENT "factorial"
+              WHITESPACE " "
+          EXPR_PHRASE
+            APPLICATION_EXPR
+              L_PAREN "("
+              IDENT_EXPR
+                IDENTIFIER
+                  IDENT "m"
+                  WHITESPACE " "
+              EXPR_PHRASE
+                IDENT_EXPR
+                  IDENTIFIER
+                    IDENT "-"
+                    WHITESPACE " "
+              EXPR_PHRASE
+                IDENT_EXPR
+                  IDENTIFIER
+                    IDENT "one"
+              R_PAREN ")"
+          R_PAREN ")"
+          WHITESPACE " "
+        EXPR_PHRASE
+          IDENT_EXPR
+            IDENTIFIER
+              IDENT "<="
+              WHITESPACE " "
+        EXPR_PHRASE
+          APPLICATION_EXPR
+            L_PAREN "("
+            IDENT_EXPR
+              IDENTIFIER
+                IDENT "factorial"
+                WHITESPACE " "
+            EXPR_PHRASE
+              IDENT_EXPR
+                IDENTIFIER
+                  IDENT "m"
+            R_PAREN ")"
+        R_PAREN ")"
+        WHITESPACE "\n                "
+      DED_PHRASE
+        BANG_METHOD_CALL_DED
+          L_PAREN "("
+          BANG "!"
+          IDENT_EXPR
+            IDENTIFIER
+              IDENT "force"
+              WHITESPACE " "
+          EXPR_PHRASE
+            IDENT_EXPR
+              IDENTIFIER
+                IDENT "inductive_step"
+          R_PAREN ")"
+          WHITESPACE "\n"
+  R_CURLY "}"
+  WHITESPACE "\n"
+

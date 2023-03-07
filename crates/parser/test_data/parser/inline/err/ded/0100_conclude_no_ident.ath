@@ -1,0 +1,2 @@
+conclude := (factorial (zero - one) <= factorial zero)
+ (!force base_case)

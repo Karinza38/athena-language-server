@@ -33,7 +33,7 @@ pub(super) fn sourcegen_ast() -> Result<(), Error> {
     .parse()
     .unwrap();
 
-    let ast = lower(&grammar);
+    let ast = lower(&grammar, &kinds_src);
 
     let ast_tokens = generate_tokens(&ast);
     let ast_tokens_file =
@@ -377,6 +377,8 @@ fn generate_syntax_kinds(grammar: &KindsSrc) -> String {
 
     let x = |name: &String| match name.as_str() {
         "Self" => format_ident!("SELF_TYPE_KW"),
+        "assert*" => format_ident!("ASSERT_STAR_KW"),
+        "|" => format_ident!("PIPE"),
         name => format_ident!("{}_KW", to_upper_snake_case(name)),
     };
     let full_keywords_values = grammar.keywords.clone();
@@ -391,9 +393,13 @@ fn generate_syntax_kinds(grammar: &KindsSrc) -> String {
         .chain(grammar.contextual_keywords.iter())
         .cloned()
         .collect::<Vec<_>>();
-    let all_keywords_idents = all_keywords_values
-        .iter()
-        .map(|kw| kw.parse::<proc_macro2::TokenStream>().unwrap());
+    let all_keywords_idents = all_keywords_values.iter().map(|kw| {
+        if kw.as_str() == "|" {
+            quote! { | }
+        } else {
+            kw.parse::<proc_macro2::TokenStream>().unwrap()
+        }
+    });
     let all_keywords = all_keywords_values.iter().map(x).collect::<Vec<_>>();
 
     let literals = grammar
@@ -676,6 +682,7 @@ fn token_name(name: &str) -> String {
         "||" => "pipepipe",
         "set!" => "set_bang",
         ":=" => "colon_eq",
+        "assert*" => "assert_star",
         _ => processed_name.as_str(),
     }
     .into()
@@ -728,7 +735,7 @@ impl Field {
     }
 }
 
-fn lower_token_defs(res: &mut AstSrc, grammar: &Grammar, token_def_rule: &Rule) {
+fn lower_token_defs(res: &mut AstSrc, grammar: &Grammar, kinds: &KindsSrc, token_def_rule: &Rule) {
     let mut ignore_toks = Vec::new();
     let mut ignore_tok_names = Vec::new();
     let Rule::Alt(alts) = token_def_rule else { unreachable!()};
@@ -756,7 +763,9 @@ fn lower_token_defs(res: &mut AstSrc, grammar: &Grammar, token_def_rule: &Rule) 
         .tokens()
         .filter(|t| !ignore_toks.contains(&t))
         .map(|t| &grammar[t])
-        .filter(|d| !ignore_tok_names.contains(&&*d.name))
+        .filter(|d| {
+            !ignore_tok_names.contains(&&*d.name) && !kinds.contextual_keywords.contains(&d.name)
+        })
     {
         let name = token_name(&token.name);
         token_defs.push(AstTokenDefinition::literal(name, &token.name));
@@ -765,7 +774,7 @@ fn lower_token_defs(res: &mut AstSrc, grammar: &Grammar, token_def_rule: &Rule) 
     res.token_defs.extend(token_defs);
 }
 
-fn lower(grammar: &Grammar) -> AstSrc {
+fn lower(grammar: &Grammar, kinds: &KindsSrc) -> AstSrc {
     let mut res = AstSrc {
         tokens: "Whitespace Comment String Ident"
             .split_ascii_whitespace()
@@ -781,7 +790,7 @@ fn lower(grammar: &Grammar) -> AstSrc {
         let rule = &grammar[node].rule;
 
         if name == "Tokens" {
-            lower_token_defs(&mut res, grammar, rule);
+            lower_token_defs(&mut res, grammar, kinds, rule);
             continue;
         }
 

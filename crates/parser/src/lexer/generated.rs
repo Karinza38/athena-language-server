@@ -6,7 +6,7 @@ use crate::{SyntaxKind, T};
 #[derive(Logos, Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub(crate) enum LexerToken {
     #[regex(
-        r###"[%&*+\--9<->@-Z\\^_a-z|](!|[#-']|[*+]|[\--9]|[<-\\]|\^|[_-z]|\|)*"###,
+        r###"~|([%&*+\--9<->@-Z\\^_a-z|](!|[#-']|[*+]|[\--9]|[<-\\]|\^|[_-z]|\|)*)"###,
         |lex|lex.slice().len()
     )]
     Ident(usize),
@@ -58,12 +58,14 @@ pub(crate) enum LexerToken {
     ColonEq(usize),
     #[token("load", |lex|lex.slice().len())]
     Load(usize),
+    #[token("assert", |lex|lex.slice().len())]
+    Assert(usize),
+    #[token("assert*", |lex|lex.slice().len())]
+    AssertStar(usize),
     #[token("?", |lex|lex.slice().len())]
     QuestionMark(usize),
     #[token("check", |lex|lex.slice().len())]
     Check(usize),
-    #[token("|", |lex|lex.slice().len())]
-    Pipe(usize),
     #[token("=>", |lex|lex.slice().len())]
     FatArrow(usize),
     #[token("lambda", |lex|lex.slice().len())]
@@ -195,9 +197,10 @@ impl LexerToken {
             Self::Define(..) => T![define],
             Self::ColonEq(..) => T![:=],
             Self::Load(..) => T![load],
+            Self::Assert(..) => T![assert],
+            Self::AssertStar(..) => T![assert *],
             Self::QuestionMark(..) => T![?],
             Self::Check(..) => T![check],
-            Self::Pipe(..) => T![|],
             Self::FatArrow(..) => T![=>],
             Self::Lambda(..) => T![lambda],
             Self::Method(..) => T![method],
@@ -279,9 +282,10 @@ impl LexerToken {
             Self::Define(len) => len,
             Self::ColonEq(len) => len,
             Self::Load(len) => len,
+            Self::Assert(len) => len,
+            Self::AssertStar(len) => len,
             Self::QuestionMark(len) => len,
             Self::Check(len) => len,
-            Self::Pipe(len) => len,
             Self::FatArrow(len) => len,
             Self::Lambda(len) => len,
             Self::Method(len) => len,

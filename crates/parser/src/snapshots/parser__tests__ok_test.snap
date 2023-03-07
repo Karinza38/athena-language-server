@@ -1,47 +1,762 @@
 ---
 source: crates/parser/src/tests.rs
-description: "module Foo {\n   domain Bar\n   declare Func: [Bar] -> Bar\n}\n"
-input_file: crates/parser/test_data/parser/inline/ok/file/0088_source_file.ath
+description: "load \"nat-minus\"\nload \"nat-minus\"\n\nmodule Factorial {\n\n   # define [< - * one <=] := [N.< N.- N.* N.one N.<= ]\n\n    declare factorial: [N] -> N [[int->nat]]\n    (transform-output eval [nat->int])\n    \n    assert f_zero := (forall x . x = zero ==> factorial x = one)\n\n    assert f_x := (forall x . one < x ==> (factorial x) = (x * (factorial (x - one))))\n\n    assert f_one := (forall x . one = x ==> (factorial x) = one)\n\n    (eval (factorial 4))\n    (eval (factorial 5))\n\n    define nothing-less-than-zero := (forall x . ~ x < zero)\n    \n    define f_x_less_than := (forall x . factorial (x - one) <= factorial x )\n    define lte-def := (forall x y . (x <= y <==> x < y | x = y))\n\n\tdefine foo := bar\n    by-induction f_x_less_than {\n        zero => conclude base_case := (factorial (zero - one) <= factorial zero)\n                    (!force base_case)\n                        \n                    \n        | (m as (S n)) => conclude inductive_step := ((factorial (m - one)) <= (factorial m))\n                    (!force inductive_step)\n    }\n\n}"
+input_file: crates/parser/test_data/parser/ok/file/loopy.ath
 ---
 SOURCE_FILE
+  DIR_STMT
+    LOAD_DIR
+      LOAD_KW "load"
+      WHITESPACE " "
+      STRING "\"nat-minus\""
+      WHITESPACE "\n"
+  DIR_STMT
+    LOAD_DIR
+      LOAD_KW "load"
+      WHITESPACE " "
+      STRING "\"nat-minus\""
+      WHITESPACE "\n\n"
   DIR_STMT
     MODULE_DIR
       MODULE_KW "module"
       WHITESPACE " "
       IDENTIFIER
-        IDENT "Foo"
+        IDENT "Factorial"
         WHITESPACE " "
       L_CURLY "{"
-      WHITESPACE "\n   "
-      DIR_STMT
-        DOMAIN_DIR
-          DOMAIN_KW "domain"
-          WHITESPACE " "
-          IDENT_SORT
-            IDENTIFIER
-              IDENT "Bar"
-              WHITESPACE "\n   "
+      WHITESPACE "\n\n   "
+      COMMENT "# define [< - * one <=] := [N.< N.- N.* N.one N.<= ]"
+      WHITESPACE "\n\n    "
       DIR_STMT
         DECLARE_DIR
           DECLARE_KW "declare"
           WHITESPACE " "
           IDENTIFIER
-            IDENT "Func"
+            IDENT "factorial"
           COLON ":"
           WHITESPACE " "
           FUNC_SORTS
             L_BRACK "["
             IDENT_SORT
               IDENTIFIER
-                IDENT "Bar"
+                IDENT "N"
             R_BRACK "]"
             WHITESPACE " "
           THIN_ARROW "->"
           WHITESPACE " "
           IDENT_SORT
             IDENTIFIER
-              IDENT "Bar"
-              WHITESPACE "\n"
+              IDENT "N"
+              WHITESPACE " "
+      PHRASE_STMT
+        EXPR_PHRASE
+          LIST_EXPR
+            L_BRACK "["
+            EXPR_PHRASE
+              LIST_EXPR
+                L_BRACK "["
+                EXPR_PHRASE
+                  IDENT_EXPR
+                    IDENTIFIER
+                      IDENT "int->nat"
+                R_BRACK "]"
+            R_BRACK "]"
+            WHITESPACE "\n    "
+      PHRASE_STMT
+        EXPR_PHRASE
+          APPLICATION_EXPR
+            L_PAREN "("
+            IDENT_EXPR
+              IDENTIFIER
+                IDENT "transform-output"
+                WHITESPACE " "
+            EXPR_PHRASE
+              IDENT_EXPR
+                IDENTIFIER
+                  IDENT "eval"
+                  WHITESPACE " "
+            EXPR_PHRASE
+              LIST_EXPR
+                L_BRACK "["
+                EXPR_PHRASE
+                  IDENT_EXPR
+                    IDENTIFIER
+                      IDENT "nat->int"
+                R_BRACK "]"
+            R_PAREN ")"
+            WHITESPACE "\n    \n    "
+      DIR_STMT
+        ASSERT_DIR
+          ASSERT_KW "assert"
+          WHITESPACE " "
+          IDENTIFIER
+            IDENT "f_zero"
+            WHITESPACE " "
+          COLON_EQ ":="
+          WHITESPACE " "
+          APPLICATION_EXPR
+            L_PAREN "("
+            IDENT_EXPR
+              IDENTIFIER
+                IDENT "forall"
+                WHITESPACE " "
+            EXPR_PHRASE
+              IDENT_EXPR
+                IDENTIFIER
+                  IDENT "x"
+                  WHITESPACE " "
+            EXPR_PHRASE
+              IDENT_EXPR
+                IDENTIFIER
+                  IDENT "."
+                  WHITESPACE " "
+            EXPR_PHRASE
+              IDENT_EXPR
+                IDENTIFIER
+                  IDENT "x"
+                  WHITESPACE " "
+            EXPR_PHRASE
+              IDENT_EXPR
+                IDENTIFIER
+                  IDENT "="
+                  WHITESPACE " "
+            EXPR_PHRASE
+              IDENT_EXPR
+                IDENTIFIER
+                  IDENT "zero"
+                  WHITESPACE " "
+            EXPR_PHRASE
+              IDENT_EXPR
+                IDENTIFIER
+                  IDENT "==>"
+                  WHITESPACE " "
+            EXPR_PHRASE
+              IDENT_EXPR
+                IDENTIFIER
+                  IDENT "factorial"
+                  WHITESPACE " "
+            EXPR_PHRASE
+              IDENT_EXPR
+                IDENTIFIER
+                  IDENT "x"
+                  WHITESPACE " "
+            EXPR_PHRASE
+              IDENT_EXPR
+                IDENTIFIER
+                  IDENT "="
+                  WHITESPACE " "
+            EXPR_PHRASE
+              IDENT_EXPR
+                IDENTIFIER
+                  IDENT "one"
+            R_PAREN ")"
+            WHITESPACE "\n\n    "
+      DIR_STMT
+        ASSERT_DIR
+          ASSERT_KW "assert"
+          WHITESPACE " "
+          IDENTIFIER
+            IDENT "f_x"
+            WHITESPACE " "
+          COLON_EQ ":="
+          WHITESPACE " "
+          APPLICATION_EXPR
+            L_PAREN "("
+            IDENT_EXPR
+              IDENTIFIER
+                IDENT "forall"
+                WHITESPACE " "
+            EXPR_PHRASE
+              IDENT_EXPR
+                IDENTIFIER
+                  IDENT "x"
+                  WHITESPACE " "
+            EXPR_PHRASE
+              IDENT_EXPR
+                IDENTIFIER
+                  IDENT "."
+                  WHITESPACE " "
+            EXPR_PHRASE
+              IDENT_EXPR
+                IDENTIFIER
+                  IDENT "one"
+                  WHITESPACE " "
+            EXPR_PHRASE
+              IDENT_EXPR
+                IDENTIFIER
+                  IDENT "<"
+                  WHITESPACE " "
+            EXPR_PHRASE
+              IDENT_EXPR
+                IDENTIFIER
+                  IDENT "x"
+                  WHITESPACE " "
+            EXPR_PHRASE
+              IDENT_EXPR
+                IDENTIFIER
+                  IDENT "==>"
+                  WHITESPACE " "
+            EXPR_PHRASE
+              APPLICATION_EXPR
+                L_PAREN "("
+                IDENT_EXPR
+                  IDENTIFIER
+                    IDENT "factorial"
+                    WHITESPACE " "
+                EXPR_PHRASE
+                  IDENT_EXPR
+                    IDENTIFIER
+                      IDENT "x"
+                R_PAREN ")"
+                WHITESPACE " "
+            EXPR_PHRASE
+              IDENT_EXPR
+                IDENTIFIER
+                  IDENT "="
+                  WHITESPACE " "
+            EXPR_PHRASE
+              APPLICATION_EXPR
+                L_PAREN "("
+                IDENT_EXPR
+                  IDENTIFIER
+                    IDENT "x"
+                    WHITESPACE " "
+                EXPR_PHRASE
+                  IDENT_EXPR
+                    IDENTIFIER
+                      IDENT "*"
+                      WHITESPACE " "
+                EXPR_PHRASE
+                  APPLICATION_EXPR
+                    L_PAREN "("
+                    IDENT_EXPR
+                      IDENTIFIER
+                        IDENT "factorial"
+                        WHITESPACE " "
+                    EXPR_PHRASE
+                      APPLICATION_EXPR
+                        L_PAREN "("
+                        IDENT_EXPR
+                          IDENTIFIER
+                            IDENT "x"
+                            WHITESPACE " "
+                        EXPR_PHRASE
+                          IDENT_EXPR
+                            IDENTIFIER
+                              IDENT "-"
+                              WHITESPACE " "
+                        EXPR_PHRASE
+                          IDENT_EXPR
+                            IDENTIFIER
+                              IDENT "one"
+                        R_PAREN ")"
+                    R_PAREN ")"
+                R_PAREN ")"
+            R_PAREN ")"
+            WHITESPACE "\n\n    "
+      DIR_STMT
+        ASSERT_DIR
+          ASSERT_KW "assert"
+          WHITESPACE " "
+          IDENTIFIER
+            IDENT "f_one"
+            WHITESPACE " "
+          COLON_EQ ":="
+          WHITESPACE " "
+          APPLICATION_EXPR
+            L_PAREN "("
+            IDENT_EXPR
+              IDENTIFIER
+                IDENT "forall"
+                WHITESPACE " "
+            EXPR_PHRASE
+              IDENT_EXPR
+                IDENTIFIER
+                  IDENT "x"
+                  WHITESPACE " "
+            EXPR_PHRASE
+              IDENT_EXPR
+                IDENTIFIER
+                  IDENT "."
+                  WHITESPACE " "
+            EXPR_PHRASE
+              IDENT_EXPR
+                IDENTIFIER
+                  IDENT "one"
+                  WHITESPACE " "
+            EXPR_PHRASE
+              IDENT_EXPR
+                IDENTIFIER
+                  IDENT "="
+                  WHITESPACE " "
+            EXPR_PHRASE
+              IDENT_EXPR
+                IDENTIFIER
+                  IDENT "x"
+                  WHITESPACE " "
+            EXPR_PHRASE
+              IDENT_EXPR
+                IDENTIFIER
+                  IDENT "==>"
+                  WHITESPACE " "
+            EXPR_PHRASE
+              APPLICATION_EXPR
+                L_PAREN "("
+                IDENT_EXPR
+                  IDENTIFIER
+                    IDENT "factorial"
+                    WHITESPACE " "
+                EXPR_PHRASE
+                  IDENT_EXPR
+                    IDENTIFIER
+                      IDENT "x"
+                R_PAREN ")"
+                WHITESPACE " "
+            EXPR_PHRASE
+              IDENT_EXPR
+                IDENTIFIER
+                  IDENT "="
+                  WHITESPACE " "
+            EXPR_PHRASE
+              IDENT_EXPR
+                IDENTIFIER
+                  IDENT "one"
+            R_PAREN ")"
+            WHITESPACE "\n\n    "
+      PHRASE_STMT
+        EXPR_PHRASE
+          APPLICATION_EXPR
+            L_PAREN "("
+            IDENT_EXPR
+              IDENTIFIER
+                IDENT "eval"
+                WHITESPACE " "
+            EXPR_PHRASE
+              APPLICATION_EXPR
+                L_PAREN "("
+                IDENT_EXPR
+                  IDENTIFIER
+                    IDENT "factorial"
+                    WHITESPACE " "
+                EXPR_PHRASE
+                  IDENT_EXPR
+                    IDENTIFIER
+                      IDENT "4"
+                R_PAREN ")"
+            R_PAREN ")"
+            WHITESPACE "\n    "
+      PHRASE_STMT
+        EXPR_PHRASE
+          APPLICATION_EXPR
+            L_PAREN "("
+            IDENT_EXPR
+              IDENTIFIER
+                IDENT "eval"
+                WHITESPACE " "
+            EXPR_PHRASE
+              APPLICATION_EXPR
+                L_PAREN "("
+                IDENT_EXPR
+                  IDENTIFIER
+                    IDENT "factorial"
+                    WHITESPACE " "
+                EXPR_PHRASE
+                  IDENT_EXPR
+                    IDENTIFIER
+                      IDENT "5"
+                R_PAREN ")"
+            R_PAREN ")"
+            WHITESPACE "\n\n    "
+      DIR_STMT
+        DEFINE_DIR
+          DEFINE_KW "define"
+          WHITESPACE " "
+          IDENTIFIER
+            IDENT "nothing-less-than-zero"
+            WHITESPACE " "
+          COLON_EQ ":="
+          WHITESPACE " "
+          EXPR_PHRASE
+            APPLICATION_EXPR
+              L_PAREN "("
+              IDENT_EXPR
+                IDENTIFIER
+                  IDENT "forall"
+                  WHITESPACE " "
+              EXPR_PHRASE
+                IDENT_EXPR
+                  IDENTIFIER
+                    IDENT "x"
+                    WHITESPACE " "
+              EXPR_PHRASE
+                IDENT_EXPR
+                  IDENTIFIER
+                    IDENT "."
+                    WHITESPACE " "
+              EXPR_PHRASE
+                IDENT_EXPR
+                  IDENTIFIER
+                    IDENT "~"
+                    WHITESPACE " "
+              EXPR_PHRASE
+                IDENT_EXPR
+                  IDENTIFIER
+                    IDENT "x"
+                    WHITESPACE " "
+              EXPR_PHRASE
+                IDENT_EXPR
+                  IDENTIFIER
+                    IDENT "<"
+                    WHITESPACE " "
+              EXPR_PHRASE
+                IDENT_EXPR
+                  IDENTIFIER
+                    IDENT "zero"
+              R_PAREN ")"
+              WHITESPACE "\n    \n    "
+      DIR_STMT
+        DEFINE_DIR
+          DEFINE_KW "define"
+          WHITESPACE " "
+          IDENTIFIER
+            IDENT "f_x_less_than"
+            WHITESPACE " "
+          COLON_EQ ":="
+          WHITESPACE " "
+          EXPR_PHRASE
+            APPLICATION_EXPR
+              L_PAREN "("
+              IDENT_EXPR
+                IDENTIFIER
+                  IDENT "forall"
+                  WHITESPACE " "
+              EXPR_PHRASE
+                IDENT_EXPR
+                  IDENTIFIER
+                    IDENT "x"
+                    WHITESPACE " "
+              EXPR_PHRASE
+                IDENT_EXPR
+                  IDENTIFIER
+                    IDENT "."
+                    WHITESPACE " "
+              EXPR_PHRASE
+                IDENT_EXPR
+                  IDENTIFIER
+                    IDENT "factorial"
+                    WHITESPACE " "
+              EXPR_PHRASE
+                APPLICATION_EXPR
+                  L_PAREN "("
+                  IDENT_EXPR
+                    IDENTIFIER
+                      IDENT "x"
+                      WHITESPACE " "
+                  EXPR_PHRASE
+                    IDENT_EXPR
+                      IDENTIFIER
+                        IDENT "-"
+                        WHITESPACE " "
+                  EXPR_PHRASE
+                    IDENT_EXPR
+                      IDENTIFIER
+                        IDENT "one"
+                  R_PAREN ")"
+                  WHITESPACE " "
+              EXPR_PHRASE
+                IDENT_EXPR
+                  IDENTIFIER
+                    IDENT "<="
+                    WHITESPACE " "
+              EXPR_PHRASE
+                IDENT_EXPR
+                  IDENTIFIER
+                    IDENT "factorial"
+                    WHITESPACE " "
+              EXPR_PHRASE
+                IDENT_EXPR
+                  IDENTIFIER
+                    IDENT "x"
+                    WHITESPACE " "
+              R_PAREN ")"
+              WHITESPACE "\n    "
+      DIR_STMT
+        DEFINE_DIR
+          DEFINE_KW "define"
+          WHITESPACE " "
+          IDENTIFIER
+            IDENT "lte-def"
+            WHITESPACE " "
+          COLON_EQ ":="
+          WHITESPACE " "
+          EXPR_PHRASE
+            APPLICATION_EXPR
+              L_PAREN "("
+              IDENT_EXPR
+                IDENTIFIER
+                  IDENT "forall"
+                  WHITESPACE " "
+              EXPR_PHRASE
+                IDENT_EXPR
+                  IDENTIFIER
+                    IDENT "x"
+                    WHITESPACE " "
+              EXPR_PHRASE
+                IDENT_EXPR
+                  IDENTIFIER
+                    IDENT "y"
+                    WHITESPACE " "
+              EXPR_PHRASE
+                IDENT_EXPR
+                  IDENTIFIER
+                    IDENT "."
+                    WHITESPACE " "
+              EXPR_PHRASE
+                APPLICATION_EXPR
+                  L_PAREN "("
+                  IDENT_EXPR
+                    IDENTIFIER
+                      IDENT "x"
+                      WHITESPACE " "
+                  EXPR_PHRASE
+                    IDENT_EXPR
+                      IDENTIFIER
+                        IDENT "<="
+                        WHITESPACE " "
+                  EXPR_PHRASE
+                    IDENT_EXPR
+                      IDENTIFIER
+                        IDENT "y"
+                        WHITESPACE " "
+                  EXPR_PHRASE
+                    IDENT_EXPR
+                      IDENTIFIER
+                        IDENT "<==>"
+                        WHITESPACE " "
+                  EXPR_PHRASE
+                    IDENT_EXPR
+                      IDENTIFIER
+                        IDENT "x"
+                        WHITESPACE " "
+                  EXPR_PHRASE
+                    IDENT_EXPR
+                      IDENTIFIER
+                        IDENT "<"
+                        WHITESPACE " "
+                  EXPR_PHRASE
+                    IDENT_EXPR
+                      IDENTIFIER
+                        IDENT "y"
+                        WHITESPACE " "
+                  EXPR_PHRASE
+                    IDENT_EXPR
+                      IDENTIFIER
+                        IDENT "|"
+                        WHITESPACE " "
+                  EXPR_PHRASE
+                    IDENT_EXPR
+                      IDENTIFIER
+                        IDENT "x"
+                        WHITESPACE " "
+                  EXPR_PHRASE
+                    IDENT_EXPR
+                      IDENTIFIER
+                        IDENT "="
+                        WHITESPACE " "
+                  EXPR_PHRASE
+                    IDENT_EXPR
+                      IDENTIFIER
+                        IDENT "y"
+                  R_PAREN ")"
+              R_PAREN ")"
+              WHITESPACE "\n\n\t"
+      DIR_STMT
+        DEFINE_DIR
+          DEFINE_KW "define"
+          WHITESPACE " "
+          IDENTIFIER
+            IDENT "foo"
+            WHITESPACE " "
+          COLON_EQ ":="
+          WHITESPACE " "
+          EXPR_PHRASE
+            IDENT_EXPR
+              IDENTIFIER
+                IDENT "bar"
+                WHITESPACE "\n    "
+      PHRASE_STMT
+        DED_PHRASE
+          INDUCT_DED
+            BY_INDUCTION_KW "by-induction"
+            WHITESPACE " "
+            EXPR_PHRASE
+              IDENT_EXPR
+                IDENTIFIER
+                  IDENT "f_x_less_than"
+                  WHITESPACE " "
+            L_CURLY "{"
+            WHITESPACE "\n        "
+            RESTRICTED_MATCH_DED
+              IDENT_PAT
+                IDENTIFIER
+                  IDENT "zero"
+                  WHITESPACE " "
+              FAT_ARROW "=>"
+              WHITESPACE " "
+              CONCLUDE_DED
+                CONCLUDE_KW "conclude"
+                WHITESPACE " "
+                IDENTIFIER
+                  IDENT "base_case"
+                  WHITESPACE " "
+                COLON_EQ ":="
+                WHITESPACE " "
+                APPLICATION_EXPR
+                  L_PAREN "("
+                  IDENT_EXPR
+                    IDENTIFIER
+                      IDENT "factorial"
+                      WHITESPACE " "
+                  EXPR_PHRASE
+                    APPLICATION_EXPR
+                      L_PAREN "("
+                      IDENT_EXPR
+                        IDENTIFIER
+                          IDENT "zero"
+                          WHITESPACE " "
+                      EXPR_PHRASE
+                        IDENT_EXPR
+                          IDENTIFIER
+                            IDENT "-"
+                            WHITESPACE " "
+                      EXPR_PHRASE
+                        IDENT_EXPR
+                          IDENTIFIER
+                            IDENT "one"
+                      R_PAREN ")"
+                      WHITESPACE " "
+                  EXPR_PHRASE
+                    IDENT_EXPR
+                      IDENTIFIER
+                        IDENT "<="
+                        WHITESPACE " "
+                  EXPR_PHRASE
+                    IDENT_EXPR
+                      IDENTIFIER
+                        IDENT "factorial"
+                        WHITESPACE " "
+                  EXPR_PHRASE
+                    IDENT_EXPR
+                      IDENTIFIER
+                        IDENT "zero"
+                  R_PAREN ")"
+                  WHITESPACE "\n                    "
+                DED_PHRASE
+                  BANG_METHOD_CALL_DED
+                    L_PAREN "("
+                    BANG "!"
+                    IDENT_EXPR
+                      IDENTIFIER
+                        IDENT "force"
+                        WHITESPACE " "
+                    EXPR_PHRASE
+                      IDENT_EXPR
+                        IDENTIFIER
+                          IDENT "base_case"
+                    R_PAREN ")"
+                    WHITESPACE "\n                        \n                    \n        "
+            RESTRICTED_MATCH_DED
+              PIPE "|"
+              WHITESPACE " "
+              RESTRICTED_NAMED_PAT
+                L_PAREN "("
+                IDENTIFIER
+                  IDENT "m"
+                  WHITESPACE " "
+                AS_KW "as"
+                WHITESPACE " "
+                RESTRICTED_APPLY_PAT
+                  L_PAREN "("
+                  IDENTIFIER
+                    IDENT "S"
+                    WHITESPACE " "
+                  IDENT_PAT
+                    IDENTIFIER
+                      IDENT "n"
+                  R_PAREN ")"
+                R_PAREN ")"
+                WHITESPACE " "
+              FAT_ARROW "=>"
+              WHITESPACE " "
+              CONCLUDE_DED
+                CONCLUDE_KW "conclude"
+                WHITESPACE " "
+                IDENTIFIER
+                  IDENT "inductive_step"
+                  WHITESPACE " "
+                COLON_EQ ":="
+                WHITESPACE " "
+                APPLICATION_EXPR
+                  L_PAREN "("
+                  APPLICATION_EXPR
+                    L_PAREN "("
+                    IDENT_EXPR
+                      IDENTIFIER
+                        IDENT "factorial"
+                        WHITESPACE " "
+                    EXPR_PHRASE
+                      APPLICATION_EXPR
+                        L_PAREN "("
+                        IDENT_EXPR
+                          IDENTIFIER
+                            IDENT "m"
+                            WHITESPACE " "
+                        EXPR_PHRASE
+                          IDENT_EXPR
+                            IDENTIFIER
+                              IDENT "-"
+                              WHITESPACE " "
+                        EXPR_PHRASE
+                          IDENT_EXPR
+                            IDENTIFIER
+                              IDENT "one"
+                        R_PAREN ")"
+                    R_PAREN ")"
+                    WHITESPACE " "
+                  EXPR_PHRASE
+                    IDENT_EXPR
+                      IDENTIFIER
+                        IDENT "<="
+                        WHITESPACE " "
+                  EXPR_PHRASE
+                    APPLICATION_EXPR
+                      L_PAREN "("
+                      IDENT_EXPR
+                        IDENTIFIER
+                          IDENT "factorial"
+                          WHITESPACE " "
+                      EXPR_PHRASE
+                        IDENT_EXPR
+                          IDENTIFIER
+                            IDENT "m"
+                      R_PAREN ")"
+                  R_PAREN ")"
+                  WHITESPACE "\n                    "
+                DED_PHRASE
+                  BANG_METHOD_CALL_DED
+                    L_PAREN "("
+                    BANG "!"
+                    IDENT_EXPR
+                      IDENTIFIER
+                        IDENT "force"
+                        WHITESPACE " "
+                    EXPR_PHRASE
+                      IDENT_EXPR
+                        IDENTIFIER
+                          IDENT "inductive_step"
+                    R_PAREN ")"
+                    WHITESPACE "\n    "
+            R_CURLY "}"
+            WHITESPACE "\n\n"
       R_CURLY "}"
-      WHITESPACE "\n"
 

@@ -41,6 +41,17 @@ impl<'i> Parser<'i> {
         assert!(self.eat(kind));
     }
 
+    /// Advances the parser by one token, remapping its kind.
+    /// This is useful to create contextual keywords from
+    /// identifiers.
+    pub(crate) fn bump_remap(&mut self, kind: SyntaxKind) {
+        if self.nth(0) == SyntaxKind::EOF {
+            // FIXME: panic!?
+            return;
+        }
+        self.bump_impl(kind);
+    }
+
     /// Bump the current token if it is `kind`
     pub(crate) fn eat(&mut self, kind: SyntaxKind) -> bool {
         if self.at(kind) {
@@ -124,6 +135,17 @@ impl<'i> Parser<'i> {
     /// Check that the `n`th token is `kind`
     pub(crate) fn nth_at(&self, n: usize, kind: SyntaxKind) -> bool {
         self.input.kind(self.pos + n) == kind
+    }
+
+    /// Checks if the current token is contextual keyword `kw`.
+    pub(crate) fn at_contextual_kw(&self, kw: SyntaxKind) -> bool {
+        self.input.contextual_kind(self.pos) == kw
+    }
+
+    #[allow(dead_code)]
+    /// Checks if the nth token is contextual keyword `kw`.
+    pub(crate) fn nth_at_contextual_kw(&self, n: usize, kw: SyntaxKind) -> bool {
+        self.input.contextual_kind(self.pos + n) == kw
     }
 
     /// Check that the next token is `kind`

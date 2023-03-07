@@ -7,7 +7,6 @@ KindsSrc(
         ("[", "L_BRACK"),
         ("]", "R_BRACK"),
         ("?", "QUESTION"),
-        ("|", "PIPE"),
         ("_", "UNDERSCORE"),
         (":", "COLON"),
         ("=>", "FAT_ARROW"),
@@ -76,8 +75,10 @@ KindsSrc(
         "domain",
         "domains",
         "load",
+        "assert",
+        "assert*",
     ],
-    contextual_keywords: [],
+    contextual_keywords: ["|"],
     literals: ["INT_NUMBER", "STRING", "CHAR"],
     tokens: ["ERROR", "IDENT", "WHITESPACE", "COMMENT"],
     nodes: [
@@ -179,6 +180,8 @@ KindsSrc(
         "DECLARE_DIR",
         "MODULE_DIR",
         "LOAD_DIR",
+        "ASSERT_DIR",
+        "ASSERT_CLOSED_DIR",
         // Statements
         "DIR_STMT",
         "PHRASE_STMT",

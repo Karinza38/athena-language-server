@@ -22,11 +22,17 @@ pub enum StrStep<'i> {
 impl<'i> LexedInput<'i> {
     pub fn to_parser_input(&self) -> crate::input::Input {
         let mut res = crate::input::Input::new();
-        for kind in self.kinds() {
+        for (i, kind) in self.kinds().enumerate() {
             if kind.is_trivia() {
                 continue;
+            } else if kind == SyntaxKind::IDENT {
+                let token_text = self.text(i);
+                let contextual_kw =
+                    SyntaxKind::from_contextual_keyword(token_text).unwrap_or(SyntaxKind::IDENT);
+                res.push_ident(contextual_kw);
+            } else {
+                res.push(kind);
             }
-            res.push(kind);
         }
         res
     }

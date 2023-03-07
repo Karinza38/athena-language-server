@@ -1,3 +1,4 @@
+use crate::grammar::expressions::expr;
 use crate::grammar::identifier;
 use crate::grammar::patterns::pat;
 use crate::grammar::phrases::phrase;
@@ -41,7 +42,12 @@ fn module_dir(p: &mut Parser) {
         }
     }
 
-    p.expect(T!['}']);
+    eprintln!("module_dir: {:?} {:?}", p.current(), p.nth(1));
+
+    if !p.expect(T!['}']) {
+        eprintln!("no rbrace");
+    }
+    eprintln!("module_dir: {:?} {:?}", p.current(), p.nth(1));
     m.complete(p, SyntaxKind::MODULE_DIR);
 }
 
@@ -305,6 +311,68 @@ fn load_dir(p: &mut Parser) {
     m.complete(p, SyntaxKind::LOAD_DIR);
 }
 
+// test(dir) assert_dir
+// assert (foo = foo)
+fn assert_dir(p: &mut Parser) {
+    assert!(p.at(T![assert]));
+
+    let m = p.start();
+    p.bump(T![assert]);
+
+    if p.at(IDENT) && p.peek_at(T![:=]) || p.at(T![:=]) {
+        // test(dir) assert_named
+        // assert foo := (bar = bar)
+
+        if !p.at(IDENT) {
+            // test_err(dir) assert_no_name
+            // assert := true
+            p.error("expected identifier for the assertion");
+        } else {
+            identifier(p);
+        }
+        p.expect(T![:=]);
+    }
+
+    if !expr(p) {
+        // test_err(dir) assert_empty
+        // assert
+        p.error("expected assertion");
+    }
+
+    m.complete(p, SyntaxKind::ASSERT_DIR);
+}
+
+// test(dir) assert_closed_dir
+// assert* (foo = foo)
+fn assert_closed_dir(p: &mut Parser) {
+    assert!(p.at(T![assert*]));
+
+    let m = p.start();
+    p.bump(T![assert*]);
+
+    if p.at(IDENT) && p.peek_at(T![:=]) || p.at(T![:=]) {
+        // test(dir) assert_closed_named
+        // assert* foo := (bar = bar)
+
+        if !p.at(IDENT) {
+            // test_err(dir) assert_closed_no_name
+            // assert* := true
+            p.error("expected identifier for the closed assertion");
+        } else {
+            identifier(p);
+        }
+        p.expect(T![:=]);
+    }
+
+    if !expr(p) {
+        // test_err(dir) assert_closed_empty
+        // assert*
+        p.error("expected assertion");
+    }
+
+    m.complete(p, SyntaxKind::ASSERT_CLOSED_DIR);
+}
+
 pub(crate) const DIR_START_SET: TokenSet = TokenSet::new(&[
     T![module],
     T![domain],
@@ -312,6 +380,8 @@ pub(crate) const DIR_START_SET: TokenSet = TokenSet::new(&[
     T![define],
     T![declare],
     T![load],
+    T![assert],
+    T![assert*],
 ]);
 
 pub(crate) fn dir(p: &mut Parser) -> bool {
@@ -333,6 +403,10 @@ pub(crate) fn dir(p: &mut Parser) -> bool {
         declare_dir(p);
     } else if p.at(T![load]) {
         load_dir(p);
+    } else if p.at(T![assert]) {
+        assert_dir(p);
+    } else if p.at(T![assert*]) {
+        assert_closed_dir(p);
     } else {
         return false;
     }

@@ -9,6 +9,7 @@ edition = "2021"
 drop_bomb = "0.1.5"
 logos = "0.12.1"
 static_assertions = "1.1.0"
+util = { version = "0.1.0", path = "../util" }
 
 [features]
 nightly = ["static_assertions/nightly"]

@@ -1,0 +1,8 @@
+by-induction f_x_less_than {
+    zero => conclude base_case := (factorial (zero - one) <= factorial zero)
+                (!force base_case)
+
+
+    | (m as (S n)) => conclude inductive_step := ((factorial (m - one)) <= (factorial m))
+                (!force inductive_step)
+}

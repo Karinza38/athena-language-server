@@ -1,0 +1,10 @@
+---
+source: crates/parser/src/tests.rs
+description: "assert*\n"
+input_file: crates/parser/test_data/parser/inline/err/dir/0102_assert_closed_empty.ath
+---
+ASSERT_CLOSED_DIR
+  ASSERT_STAR_KW "assert*"
+  WHITESPACE "\n"
+error 8: expected assertion
+
