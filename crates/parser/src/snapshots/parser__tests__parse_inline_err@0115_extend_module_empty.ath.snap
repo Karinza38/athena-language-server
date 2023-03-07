@@ -1,0 +1,17 @@
+---
+source: crates/parser/src/tests.rs
+description: "extend-module foo { }\n"
+input_file: crates/parser/test_data/parser/inline/err/dir/0115_extend_module_empty.ath
+---
+EXTEND_MODULE_DIR
+  EXTEND_MODULE_KW "extend-module"
+  WHITESPACE " "
+  IDENTIFIER
+    IDENT "foo"
+    WHITESPACE " "
+  L_CURLY "{"
+  WHITESPACE " "
+  R_CURLY "}"
+  WHITESPACE "\n"
+error 20: expected module body
+

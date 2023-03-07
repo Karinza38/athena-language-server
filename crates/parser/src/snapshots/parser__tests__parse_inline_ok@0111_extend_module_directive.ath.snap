@@ -1,0 +1,28 @@
+---
+source: crates/parser/src/tests.rs
+description: "extend-module Bar { declare joe: Person }\n"
+input_file: crates/parser/test_data/parser/inline/ok/dir/0111_extend_module_directive.ath
+---
+EXTEND_MODULE_DIR
+  EXTEND_MODULE_KW "extend-module"
+  WHITESPACE " "
+  IDENTIFIER
+    IDENT "Bar"
+    WHITESPACE " "
+  L_CURLY "{"
+  WHITESPACE " "
+  DIR_STMT
+    DECLARE_DIR
+      DECLARE_KW "declare"
+      WHITESPACE " "
+      IDENTIFIER
+        IDENT "joe"
+      COLON ":"
+      WHITESPACE " "
+      IDENT_SORT
+        IDENTIFIER
+          IDENT "Person"
+          WHITESPACE " "
+  R_CURLY "}"
+  WHITESPACE "\n"
+

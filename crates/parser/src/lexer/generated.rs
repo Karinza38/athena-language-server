@@ -50,6 +50,8 @@ pub(crate) enum LexerToken {
     LCurly(usize),
     #[token("}", |lex|lex.slice().len())]
     RCurly(usize),
+    #[token("extend-module", |lex|lex.slice().len())]
+    ExtendModule(usize),
     #[token("domain", |lex|lex.slice().len())]
     Domain(usize),
     #[token("domains", |lex|lex.slice().len())]
@@ -205,6 +207,7 @@ impl LexerToken {
             Self::Module(..) => T![module],
             Self::LCurly(..) => T!['{'],
             Self::RCurly(..) => T!['}'],
+            Self::ExtendModule(..) => T![extend - module],
             Self::Domain(..) => T![domain],
             Self::Domains(..) => T![domains],
             Self::Comma(..) => T![,],
@@ -296,6 +299,7 @@ impl LexerToken {
             Self::Module(len) => len,
             Self::LCurly(len) => len,
             Self::RCurly(len) => len,
+            Self::ExtendModule(len) => len,
             Self::Domain(len) => len,
             Self::Domains(len) => len,
             Self::Comma(len) => len,

@@ -11,6 +11,8 @@ use crate::{
     T,
 };
 
+// test(dir) module_directive
+// module foo { declare joe: Person }
 fn module_dir(p: &mut Parser) {
     assert!(p.at(T![module]));
 
@@ -44,6 +46,43 @@ fn module_dir(p: &mut Parser) {
 
     p.expect(T!['}']);
     m.complete(p, SyntaxKind::MODULE_DIR);
+}
+
+// test(dir) extend_module_directive
+// extend-module Bar { declare joe: Person }
+fn extend_module_dir(p: &mut Parser) {
+    assert!(p.at(T![extend - module]));
+
+    let m = p.start();
+    p.bump(T![extend - module]);
+
+    if !p.at(IDENT) {
+        p.error("expected module name");
+    } else {
+        identifier(p);
+    }
+
+    p.expect(T!['{']);
+
+    if p.at(T!['}']) {
+        // test_err(dir) extend_module_empty
+        // extend-module foo { }
+        p.error("expected module body");
+    }
+
+    // test_err(dir) extend_module_no_rbrace
+    // extend-module foo {
+    while !p.at(T!['}']) && !p.at_end() {
+        if !stmt(p) {
+            p.err_recover(
+                "unexpected input, expected statement in module body",
+                STMT_START_SET,
+            );
+        }
+    }
+
+    p.expect(T!['}']);
+    m.complete(p, SyntaxKind::EXTEND_MODULE_DIR);
 }
 
 // test(dir) domain_directive
@@ -433,6 +472,7 @@ fn assert_closed_dir(p: &mut Parser) {
 
 pub(crate) const DIR_START_SET: TokenSet = TokenSet::new(&[
     T![module],
+    T![extend - module],
     T![domain],
     T![domains],
     T![define],
@@ -446,30 +486,43 @@ pub(crate) fn dir(p: &mut Parser) -> bool {
     #[cfg(test)]
     eprintln!("dir: {:?} {:?}", p.current(), p.nth(1));
 
-    if p.at(T![module]) {
-        module_dir(p);
-    } else if p.at(T![domain]) {
-        domain_dir(p);
-    } else if p.at(T![domains]) {
-        domains_dir(p);
-    } else if p.at(T![define]) {
-        if p.peek_at(T!['(']) {
-            define_proc_dir(p);
-        } else if p.peek_at(T!['[']) {
-            define_multi(p);
-        } else {
-            define_dir(p);
+    match p.current() {
+        T![module] => {
+            module_dir(p);
         }
-    } else if p.at(T![declare]) {
-        declare_dir(p);
-    } else if p.at(T![load]) {
-        load_dir(p);
-    } else if p.at(T![assert]) {
-        assert_dir(p);
-    } else if p.at(T![assert*]) {
-        assert_closed_dir(p);
-    } else {
-        return false;
+        T![extend - module] => {
+            extend_module_dir(p);
+        }
+        T![domain] => {
+            domain_dir(p);
+        }
+        T![domains] => {
+            domains_dir(p);
+        }
+        T![define] => {
+            if p.peek_at(T!['(']) {
+                define_proc_dir(p);
+            } else if p.peek_at(T!['[']) {
+                define_multi(p);
+            } else {
+                define_dir(p);
+            }
+        }
+        T![declare] => {
+            declare_dir(p);
+        }
+        T![load] => {
+            load_dir(p);
+        }
+        T![assert] => {
+            assert_dir(p);
+        }
+        T![assert*] => {
+            assert_closed_dir(p);
+        }
+        _ => {
+            return false;
+        }
     }
 
     true

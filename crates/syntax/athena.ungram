@@ -124,9 +124,13 @@ Dir =
     | AssertDir
     | AssertClosedDir
     | DeclareDir
+    | ExtendModuleDir
 
 ModuleDir =
     'module' Identifier '{' Stmt* '}'
+
+ExtendModuleDir =
+    'extend-module' Identifier '{' Stmt* '}'
 
 DomainDir =
     'domain' SortDecl

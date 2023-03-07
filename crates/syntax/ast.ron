@@ -83,6 +83,7 @@ KindsSrc(
         "structure",
         "datatypes",
         "structures",
+        "extend-module",
     ],
     contextual_keywords: ["|"],
     literals: ["INT_NUMBER", "STRING", "CHAR"],
@@ -191,6 +192,7 @@ KindsSrc(
         "DECLARE_ATTR",
         "DECLARE_ATTRS",
         "INPUT_TRANSFORM_DECL",
+        "EXTEND_MODULE_DIR",
         // Statements
         "DIR_STMT",
         "PHRASE_STMT",
