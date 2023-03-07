@@ -1,0 +1,32 @@
+---
+source: crates/parser/src/tests.rs
+description: "declare foo : [Int] -> Int []\n"
+input_file: crates/parser/test_data/parser/inline/err/dir/0104_declare_attrs_empty.ath
+---
+DECLARE_DIR
+  DECLARE_KW "declare"
+  WHITESPACE " "
+  IDENTIFIER
+    IDENT "foo"
+    WHITESPACE " "
+  COLON ":"
+  WHITESPACE " "
+  FUNC_SORTS
+    L_BRACK "["
+    IDENT_SORT
+      IDENTIFIER
+        IDENT "Int"
+    R_BRACK "]"
+    WHITESPACE " "
+  THIN_ARROW "->"
+  WHITESPACE " "
+  IDENT_SORT
+    IDENTIFIER
+      IDENT "Int"
+      WHITESPACE " "
+  DECLARE_ATTRS
+    L_BRACK "["
+    R_BRACK "]"
+    WHITESPACE "\n"
+error 28: expected at least one attribute in declaration attributes
+

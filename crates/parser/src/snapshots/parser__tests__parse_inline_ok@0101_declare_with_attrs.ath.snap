@@ -1,0 +1,48 @@
+---
+source: crates/parser/src/tests.rs
+description: "declare foo : [Int] -> Int [100 left-assoc bar [int->nat]]\n"
+input_file: crates/parser/test_data/parser/inline/ok/dir/0101_declare_with_attrs.ath
+---
+DECLARE_DIR
+  DECLARE_KW "declare"
+  WHITESPACE " "
+  IDENTIFIER
+    IDENT "foo"
+    WHITESPACE " "
+  COLON ":"
+  WHITESPACE " "
+  FUNC_SORTS
+    L_BRACK "["
+    IDENT_SORT
+      IDENTIFIER
+        IDENT "Int"
+    R_BRACK "]"
+    WHITESPACE " "
+  THIN_ARROW "->"
+  WHITESPACE " "
+  IDENT_SORT
+    IDENTIFIER
+      IDENT "Int"
+      WHITESPACE " "
+  DECLARE_ATTRS
+    L_BRACK "["
+    DECLARE_ATTR
+      IDENTIFIER
+        IDENT "100"
+        WHITESPACE " "
+    DECLARE_ATTR
+      LEFT_ASSOC_KW "left-assoc"
+      WHITESPACE " "
+    DECLARE_ATTR
+      IDENTIFIER
+        IDENT "bar"
+        WHITESPACE " "
+    INPUT_TRANSFORM_DECL
+      L_BRACK "["
+      IDENT_EXPR
+        IDENTIFIER
+          IDENT "int->nat"
+      R_BRACK "]"
+    R_BRACK "]"
+    WHITESPACE "\n"
+

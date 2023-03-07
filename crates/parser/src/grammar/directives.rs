@@ -227,6 +227,66 @@ fn sort_vars_decl(p: &mut Parser) {
     m.complete(p, SyntaxKind::SORT_VARS_DECL);
 }
 
+fn input_transform_decl(p: &mut Parser) {
+    assert!(p.at(T!['[']));
+
+    let m = p.start();
+    p.bump(T!['[']);
+
+    while !p.at(T![']']) && !p.at_end() {
+        if !expr(p) {
+            p.err_and_bump("expected an expression in input transform");
+        }
+    }
+
+    p.expect(T![']']);
+    m.complete(p, SyntaxKind::INPUT_TRANSFORM_DECL);
+}
+
+fn declare_attr(p: &mut Parser) {
+    let m = p.start();
+    if p.at(T![left - assoc]) {
+        p.bump(T![left - assoc]);
+    } else if p.at(T![right - assoc]) {
+        p.bump(T![right - assoc]);
+    } else if p.at(IDENT) {
+        identifier(p);
+    } else {
+        p.err_and_bump("expected a declaration attribute (left-assoc, right-assoc, or identifier)");
+    }
+    m.complete(p, SyntaxKind::DECLARE_ATTR);
+}
+
+// test(dir) declare_attrs
+// declare foo : [Int] -> Int [left-assoc]
+fn declare_attrs(p: &mut Parser) {
+    assert!(p.at(T!['[']));
+
+    let m = p.start();
+    p.bump(T!['[']);
+
+    if p.at(T![']']) {
+        // test_err(dir) declare_attrs_empty
+        // declare foo : [Int] -> Int []
+        p.error("expected at least one attribute in declaration attributes");
+    }
+
+    while !p.at(T![']']) && !p.at(T!['[']) && !p.at_end() {
+        // test(dir) declare_attrs_multiple
+        // declare foo : [Int] -> Int [100 bar left-assoc]
+        declare_attr(p);
+    }
+
+    if p.at(T!['[']) {
+        // test(dir) declare_attrs_with_transform
+        // declare foo : [Int] -> Int [100 [int->nat]]
+        input_transform_decl(p);
+    }
+    p.expect(T![']']);
+
+    m.complete(p, SyntaxKind::DECLARE_ATTRS);
+}
+
 // test(dir) declare_directive
 // declare foo : [Int] -> Int
 fn declare_dir(p: &mut Parser) {
@@ -273,6 +333,12 @@ fn declare_dir(p: &mut Parser) {
         // test_err(dir) declare_no_ret_sort
         // declare foo : [Int] ->
         p.error("expected function return sort");
+    }
+
+    if p.at(T!['[']) {
+        // test(dir) declare_with_attrs
+        // declare foo : [Int] -> Int [100 left-assoc bar [int->nat]]
+        declare_attrs(p);
     }
 
     m.complete(p, SyntaxKind::DECLARE_DIR);

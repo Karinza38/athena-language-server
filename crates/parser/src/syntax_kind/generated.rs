@@ -84,6 +84,8 @@ pub enum SyntaxKind {
     LOAD_KW,
     ASSERT_KW,
     ASSERT_STAR_KW,
+    LEFT_ASSOC_KW,
+    RIGHT_ASSOC_KW,
     PIPE,
     INT_NUMBER,
     STRING,
@@ -185,6 +187,9 @@ pub enum SyntaxKind {
     LOAD_DIR,
     ASSERT_DIR,
     ASSERT_CLOSED_DIR,
+    DECLARE_ATTR,
+    DECLARE_ATTRS,
+    INPUT_TRANSFORM_DECL,
     DIR_STMT,
     PHRASE_STMT,
     #[doc(hidden)]
@@ -206,7 +211,7 @@ impl SyntaxKind {
             SOME_TABLE_KW | SOME_MAP_KW | SOME_SUB_KW | SOME_CHAR_KW | SPLIT_KW |
             WHERE_KW | LIST_OF_KW | VAL_OF_KW | AS_KW | BIND_KW | FOR_KW | DEFINE_KW |
             MODULE_KW | DECLARE_KW | DOMAIN_KW | DOMAINS_KW | LOAD_KW | ASSERT_KW |
-            ASSERT_STAR_KW | PIPE
+            ASSERT_STAR_KW | LEFT_ASSOC_KW | RIGHT_ASSOC_KW | PIPE
         )
     }
     pub fn is_punct(self) -> bool {
@@ -278,6 +283,8 @@ impl SyntaxKind {
             "load" => LOAD_KW,
             "assert" => ASSERT_KW,
             "assert*" => ASSERT_STAR_KW,
+            "left-assoc" => LEFT_ASSOC_KW,
+            "right-assoc" => RIGHT_ASSOC_KW,
             _ => return None,
         };
         Some(kw)
@@ -538,6 +545,12 @@ macro_rules! T {
     };
     [assert *] => {
         $crate ::SyntaxKind::ASSERT_STAR_KW
+    };
+    [left - assoc] => {
+        $crate ::SyntaxKind::LEFT_ASSOC_KW
+    };
+    [right - assoc] => {
+        $crate ::SyntaxKind::RIGHT_ASSOC_KW
     };
     [|] => {
         $crate ::SyntaxKind::PIPE

@@ -8,6 +8,7 @@ type Repr = u128;
 pub(crate) struct TokenSet(Repr);
 
 impl TokenSet {
+    pub(crate) const EMPTY: TokenSet = TokenSet(0);
     pub(crate) const fn new(kinds: &[SyntaxKind]) -> Self {
         let mut res = 0;
         let mut i = 0;

@@ -52,6 +52,10 @@ pub(crate) enum LexerToken {
     LBrack(usize),
     #[token("]", |lex|lex.slice().len())]
     RBrack(usize),
+    #[token("left-assoc", |lex|lex.slice().len())]
+    LeftAssoc(usize),
+    #[token("right-assoc", |lex|lex.slice().len())]
+    RightAssoc(usize),
     #[token("define", |lex|lex.slice().len())]
     Define(usize),
     #[token(":=", |lex|lex.slice().len())]
@@ -194,6 +198,8 @@ impl LexerToken {
             Self::ThinArrow(..) => T![->],
             Self::LBrack(..) => T!['['],
             Self::RBrack(..) => T![']'],
+            Self::LeftAssoc(..) => T![left - assoc],
+            Self::RightAssoc(..) => T![right - assoc],
             Self::Define(..) => T![define],
             Self::ColonEq(..) => T![:=],
             Self::Load(..) => T![load],
@@ -279,6 +285,8 @@ impl LexerToken {
             Self::ThinArrow(len) => len,
             Self::LBrack(len) => len,
             Self::RBrack(len) => len,
+            Self::LeftAssoc(len) => len,
+            Self::RightAssoc(len) => len,
             Self::Define(len) => len,
             Self::ColonEq(len) => len,
             Self::Load(len) => len,

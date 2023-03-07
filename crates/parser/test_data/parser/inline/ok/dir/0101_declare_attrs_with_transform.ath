@@ -1,0 +1,1 @@
+declare foo : [Int] -> Int [100 [int->nat]]

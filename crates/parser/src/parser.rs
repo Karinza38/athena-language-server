@@ -105,6 +105,10 @@ impl<'i> Parser<'i> {
         self.push_event(Event::Error { msg: msg.into() });
     }
 
+    pub(crate) fn err_and_bump(&mut self, message: &str) {
+        self.err_recover(message, TokenSet::EMPTY);
+    }
+
     /// Bump the current token if it is `kind`, otherwise report an error
     pub(crate) fn expect(&mut self, kind: SyntaxKind) -> bool {
         if self.at(kind) {

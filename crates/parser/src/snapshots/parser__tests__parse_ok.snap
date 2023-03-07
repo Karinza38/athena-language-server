@@ -48,18 +48,14 @@ SOURCE_FILE
             IDENTIFIER
               IDENT "N"
               WHITESPACE " "
-      PHRASE_STMT
-        EXPR_PHRASE
-          LIST_EXPR
+          DECLARE_ATTRS
             L_BRACK "["
-            EXPR_PHRASE
-              LIST_EXPR
-                L_BRACK "["
-                EXPR_PHRASE
-                  IDENT_EXPR
-                    IDENTIFIER
-                      IDENT "int->nat"
-                R_BRACK "]"
+            INPUT_TRANSFORM_DECL
+              L_BRACK "["
+              IDENT_EXPR
+                IDENTIFIER
+                  IDENT "int->nat"
+              R_BRACK "]"
             R_BRACK "]"
             WHITESPACE "\n    "
       PHRASE_STMT

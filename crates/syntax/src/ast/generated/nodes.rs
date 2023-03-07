@@ -192,6 +192,9 @@ impl DeclareDir {
     pub fn return_sort(&self) -> Option<SortDecl> {
         support::child(&self.syntax)
     }
+    pub fn declare_attrs(&self) -> Option<DeclareAttrs> {
+        support::child(&self.syntax)
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
@@ -359,6 +362,60 @@ impl FuncSorts {
     }
     pub fn r_brack_token(&self) -> Option<SyntaxToken> {
         support::token(&self.syntax, T![']'])
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+pub struct DeclareAttrs {
+    pub(crate) syntax: SyntaxNode,
+}
+impl DeclareAttrs {
+    pub fn l_brack_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T!['['])
+    }
+    pub fn declare_attrs(&self) -> AstChildren<DeclareAttr> {
+        support::children(&self.syntax)
+    }
+    pub fn input_transform_decl(&self) -> Option<InputTransformDecl> {
+        support::child(&self.syntax)
+    }
+    pub fn r_brack_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T![']'])
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+pub struct InputTransformDecl {
+    pub(crate) syntax: SyntaxNode,
+}
+impl InputTransformDecl {
+    pub fn l_brack_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T!['['])
+    }
+    pub fn expr(&self) -> Option<Expr> {
+        support::child(&self.syntax)
+    }
+    pub fn exprs(&self) -> AstChildren<Expr> {
+        support::children(&self.syntax)
+    }
+    pub fn r_brack_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T![']'])
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+pub struct DeclareAttr {
+    pub(crate) syntax: SyntaxNode,
+}
+impl DeclareAttr {
+    pub fn left_assoc_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T![left - assoc])
+    }
+    pub fn right_assoc_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T![right - assoc])
+    }
+    pub fn ident_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T![ident])
     }
 }
 
@@ -1701,25 +1758,6 @@ pub enum SortDecl {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
-pub enum Pat {
-    IdentPat(IdentPat),
-    AnnotatedIdentPat(AnnotatedIdentPat),
-    VarPat(VarPat),
-    MetaIdentPat(MetaIdentPat),
-    LiteralPat(LiteralPat),
-    UnitPat(UnitPat),
-    WildcardPat(WildcardPat),
-    NamedPat(NamedPat),
-    ValOfPat(ValOfPat),
-    ListOfPat(ListOfPat),
-    SplitPat(SplitPat),
-    ListPat(ListPat),
-    CompoundPat(CompoundPat),
-    WherePat(WherePat),
-    SomeThingPat(SomeThingPat),
-}
-
-#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub enum Expr {
     IdentExpr(IdentExpr),
     LiteralExpr(LiteralExpr),
@@ -1745,6 +1783,25 @@ pub enum Expr {
     SeqExpr(SeqExpr),
     AndExpr(AndExpr),
     OrExpr(OrExpr),
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+pub enum Pat {
+    IdentPat(IdentPat),
+    AnnotatedIdentPat(AnnotatedIdentPat),
+    VarPat(VarPat),
+    MetaIdentPat(MetaIdentPat),
+    LiteralPat(LiteralPat),
+    UnitPat(UnitPat),
+    WildcardPat(WildcardPat),
+    NamedPat(NamedPat),
+    ValOfPat(ValOfPat),
+    ListOfPat(ListOfPat),
+    SplitPat(SplitPat),
+    ListPat(ListPat),
+    CompoundPat(CompoundPat),
+    WherePat(WherePat),
+    SomeThingPat(SomeThingPat),
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
@@ -2027,6 +2084,39 @@ impl AstNode for SortVarsDecl {
 impl AstNode for FuncSorts {
     fn can_cast(kind: SyntaxKind) -> bool {
         kind == FUNC_SORTS
+    }
+    fn cast(syntax: SyntaxNode) -> Option<Self> {
+        if Self::can_cast(syntax.kind()) { Some(Self { syntax }) } else { None }
+    }
+    fn syntax(&self) -> &SyntaxNode {
+        &self.syntax
+    }
+}
+impl AstNode for DeclareAttrs {
+    fn can_cast(kind: SyntaxKind) -> bool {
+        kind == DECLARE_ATTRS
+    }
+    fn cast(syntax: SyntaxNode) -> Option<Self> {
+        if Self::can_cast(syntax.kind()) { Some(Self { syntax }) } else { None }
+    }
+    fn syntax(&self) -> &SyntaxNode {
+        &self.syntax
+    }
+}
+impl AstNode for InputTransformDecl {
+    fn can_cast(kind: SyntaxKind) -> bool {
+        kind == INPUT_TRANSFORM_DECL
+    }
+    fn cast(syntax: SyntaxNode) -> Option<Self> {
+        if Self::can_cast(syntax.kind()) { Some(Self { syntax }) } else { None }
+    }
+    fn syntax(&self) -> &SyntaxNode {
+        &self.syntax
+    }
+}
+impl AstNode for DeclareAttr {
+    fn can_cast(kind: SyntaxKind) -> bool {
+        kind == DECLARE_ATTR
     }
     fn cast(syntax: SyntaxNode) -> Option<Self> {
         if Self::can_cast(syntax.kind()) { Some(Self { syntax }) } else { None }
@@ -3039,130 +3129,6 @@ impl AstNode for SortDecl {
         }
     }
 }
-impl From<IdentPat> for Pat {
-    fn from(node: IdentPat) -> Pat {
-        Pat::IdentPat(node)
-    }
-}
-impl From<AnnotatedIdentPat> for Pat {
-    fn from(node: AnnotatedIdentPat) -> Pat {
-        Pat::AnnotatedIdentPat(node)
-    }
-}
-impl From<VarPat> for Pat {
-    fn from(node: VarPat) -> Pat {
-        Pat::VarPat(node)
-    }
-}
-impl From<MetaIdentPat> for Pat {
-    fn from(node: MetaIdentPat) -> Pat {
-        Pat::MetaIdentPat(node)
-    }
-}
-impl From<LiteralPat> for Pat {
-    fn from(node: LiteralPat) -> Pat {
-        Pat::LiteralPat(node)
-    }
-}
-impl From<UnitPat> for Pat {
-    fn from(node: UnitPat) -> Pat {
-        Pat::UnitPat(node)
-    }
-}
-impl From<WildcardPat> for Pat {
-    fn from(node: WildcardPat) -> Pat {
-        Pat::WildcardPat(node)
-    }
-}
-impl From<NamedPat> for Pat {
-    fn from(node: NamedPat) -> Pat {
-        Pat::NamedPat(node)
-    }
-}
-impl From<ValOfPat> for Pat {
-    fn from(node: ValOfPat) -> Pat {
-        Pat::ValOfPat(node)
-    }
-}
-impl From<ListOfPat> for Pat {
-    fn from(node: ListOfPat) -> Pat {
-        Pat::ListOfPat(node)
-    }
-}
-impl From<SplitPat> for Pat {
-    fn from(node: SplitPat) -> Pat {
-        Pat::SplitPat(node)
-    }
-}
-impl From<ListPat> for Pat {
-    fn from(node: ListPat) -> Pat {
-        Pat::ListPat(node)
-    }
-}
-impl From<CompoundPat> for Pat {
-    fn from(node: CompoundPat) -> Pat {
-        Pat::CompoundPat(node)
-    }
-}
-impl From<WherePat> for Pat {
-    fn from(node: WherePat) -> Pat {
-        Pat::WherePat(node)
-    }
-}
-impl From<SomeThingPat> for Pat {
-    fn from(node: SomeThingPat) -> Pat {
-        Pat::SomeThingPat(node)
-    }
-}
-impl AstNode for Pat {
-    fn can_cast(kind: SyntaxKind) -> bool {
-        matches!(
-            kind, IDENT_PAT | ANNOTATED_IDENT_PAT | VAR_PAT | META_IDENT_PAT |
-            LITERAL_PAT | UNIT_PAT | WILDCARD_PAT | NAMED_PAT | VAL_OF_PAT | LIST_OF_PAT
-            | SPLIT_PAT | LIST_PAT | COMPOUND_PAT | WHERE_PAT | SOME_THING_PAT
-        )
-    }
-    fn cast(syntax: SyntaxNode) -> Option<Self> {
-        let res = match syntax.kind() {
-            IDENT_PAT => Pat::IdentPat(IdentPat { syntax }),
-            ANNOTATED_IDENT_PAT => Pat::AnnotatedIdentPat(AnnotatedIdentPat { syntax }),
-            VAR_PAT => Pat::VarPat(VarPat { syntax }),
-            META_IDENT_PAT => Pat::MetaIdentPat(MetaIdentPat { syntax }),
-            LITERAL_PAT => Pat::LiteralPat(LiteralPat { syntax }),
-            UNIT_PAT => Pat::UnitPat(UnitPat { syntax }),
-            WILDCARD_PAT => Pat::WildcardPat(WildcardPat { syntax }),
-            NAMED_PAT => Pat::NamedPat(NamedPat { syntax }),
-            VAL_OF_PAT => Pat::ValOfPat(ValOfPat { syntax }),
-            LIST_OF_PAT => Pat::ListOfPat(ListOfPat { syntax }),
-            SPLIT_PAT => Pat::SplitPat(SplitPat { syntax }),
-            LIST_PAT => Pat::ListPat(ListPat { syntax }),
-            COMPOUND_PAT => Pat::CompoundPat(CompoundPat { syntax }),
-            WHERE_PAT => Pat::WherePat(WherePat { syntax }),
-            SOME_THING_PAT => Pat::SomeThingPat(SomeThingPat { syntax }),
-            _ => return None,
-        };
-        Some(res)
-    }
-    fn syntax(&self) -> &SyntaxNode {
-        match self {
-            Pat::IdentPat(it) => &it.syntax,
-            Pat::AnnotatedIdentPat(it) => &it.syntax,
-            Pat::VarPat(it) => &it.syntax,
-            Pat::MetaIdentPat(it) => &it.syntax,
-            Pat::LiteralPat(it) => &it.syntax,
-            Pat::UnitPat(it) => &it.syntax,
-            Pat::WildcardPat(it) => &it.syntax,
-            Pat::NamedPat(it) => &it.syntax,
-            Pat::ValOfPat(it) => &it.syntax,
-            Pat::ListOfPat(it) => &it.syntax,
-            Pat::SplitPat(it) => &it.syntax,
-            Pat::ListPat(it) => &it.syntax,
-            Pat::CompoundPat(it) => &it.syntax,
-            Pat::WherePat(it) => &it.syntax,
-            Pat::SomeThingPat(it) => &it.syntax,
-        }
-    }
-}
 impl From<IdentExpr> for Expr {
     fn from(node: IdentExpr) -> Expr {
         Expr::IdentExpr(node)
@@ -3349,6 +3315,130 @@ impl AstNode for Expr {
             Expr::SeqExpr(it) => &it.syntax,
             Expr::AndExpr(it) => &it.syntax,
             Expr::OrExpr(it) => &it.syntax,
+        }
+    }
+}
+impl From<IdentPat> for Pat {
+    fn from(node: IdentPat) -> Pat {
+        Pat::IdentPat(node)
+    }
+}
+impl From<AnnotatedIdentPat> for Pat {
+    fn from(node: AnnotatedIdentPat) -> Pat {
+        Pat::AnnotatedIdentPat(node)
+    }
+}
+impl From<VarPat> for Pat {
+    fn from(node: VarPat) -> Pat {
+        Pat::VarPat(node)
+    }
+}
+impl From<MetaIdentPat> for Pat {
+    fn from(node: MetaIdentPat) -> Pat {
+        Pat::MetaIdentPat(node)
+    }
+}
+impl From<LiteralPat> for Pat {
+    fn from(node: LiteralPat) -> Pat {
+        Pat::LiteralPat(node)
+    }
+}
+impl From<UnitPat> for Pat {
+    fn from(node: UnitPat) -> Pat {
+        Pat::UnitPat(node)
+    }
+}
+impl From<WildcardPat> for Pat {
+    fn from(node: WildcardPat) -> Pat {
+        Pat::WildcardPat(node)
+    }
+}
+impl From<NamedPat> for Pat {
+    fn from(node: NamedPat) -> Pat {
+        Pat::NamedPat(node)
+    }
+}
+impl From<ValOfPat> for Pat {
+    fn from(node: ValOfPat) -> Pat {
+        Pat::ValOfPat(node)
+    }
+}
+impl From<ListOfPat> for Pat {
+    fn from(node: ListOfPat) -> Pat {
+        Pat::ListOfPat(node)
+    }
+}
+impl From<SplitPat> for Pat {
+    fn from(node: SplitPat) -> Pat {
+        Pat::SplitPat(node)
+    }
+}
+impl From<ListPat> for Pat {
+    fn from(node: ListPat) -> Pat {
+        Pat::ListPat(node)
+    }
+}
+impl From<CompoundPat> for Pat {
+    fn from(node: CompoundPat) -> Pat {
+        Pat::CompoundPat(node)
+    }
+}
+impl From<WherePat> for Pat {
+    fn from(node: WherePat) -> Pat {
+        Pat::WherePat(node)
+    }
+}
+impl From<SomeThingPat> for Pat {
+    fn from(node: SomeThingPat) -> Pat {
+        Pat::SomeThingPat(node)
+    }
+}
+impl AstNode for Pat {
+    fn can_cast(kind: SyntaxKind) -> bool {
+        matches!(
+            kind, IDENT_PAT | ANNOTATED_IDENT_PAT | VAR_PAT | META_IDENT_PAT |
+            LITERAL_PAT | UNIT_PAT | WILDCARD_PAT | NAMED_PAT | VAL_OF_PAT | LIST_OF_PAT
+            | SPLIT_PAT | LIST_PAT | COMPOUND_PAT | WHERE_PAT | SOME_THING_PAT
+        )
+    }
+    fn cast(syntax: SyntaxNode) -> Option<Self> {
+        let res = match syntax.kind() {
+            IDENT_PAT => Pat::IdentPat(IdentPat { syntax }),
+            ANNOTATED_IDENT_PAT => Pat::AnnotatedIdentPat(AnnotatedIdentPat { syntax }),
+            VAR_PAT => Pat::VarPat(VarPat { syntax }),
+            META_IDENT_PAT => Pat::MetaIdentPat(MetaIdentPat { syntax }),
+            LITERAL_PAT => Pat::LiteralPat(LiteralPat { syntax }),
+            UNIT_PAT => Pat::UnitPat(UnitPat { syntax }),
+            WILDCARD_PAT => Pat::WildcardPat(WildcardPat { syntax }),
+            NAMED_PAT => Pat::NamedPat(NamedPat { syntax }),
+            VAL_OF_PAT => Pat::ValOfPat(ValOfPat { syntax }),
+            LIST_OF_PAT => Pat::ListOfPat(ListOfPat { syntax }),
+            SPLIT_PAT => Pat::SplitPat(SplitPat { syntax }),
+            LIST_PAT => Pat::ListPat(ListPat { syntax }),
+            COMPOUND_PAT => Pat::CompoundPat(CompoundPat { syntax }),
+            WHERE_PAT => Pat::WherePat(WherePat { syntax }),
+            SOME_THING_PAT => Pat::SomeThingPat(SomeThingPat { syntax }),
+            _ => return None,
+        };
+        Some(res)
+    }
+    fn syntax(&self) -> &SyntaxNode {
+        match self {
+            Pat::IdentPat(it) => &it.syntax,
+            Pat::AnnotatedIdentPat(it) => &it.syntax,
+            Pat::VarPat(it) => &it.syntax,
+            Pat::MetaIdentPat(it) => &it.syntax,
+            Pat::LiteralPat(it) => &it.syntax,
+            Pat::UnitPat(it) => &it.syntax,
+            Pat::WildcardPat(it) => &it.syntax,
+            Pat::NamedPat(it) => &it.syntax,
+            Pat::ValOfPat(it) => &it.syntax,
+            Pat::ListOfPat(it) => &it.syntax,
+            Pat::SplitPat(it) => &it.syntax,
+            Pat::ListPat(it) => &it.syntax,
+            Pat::CompoundPat(it) => &it.syntax,
+            Pat::WherePat(it) => &it.syntax,
+            Pat::SomeThingPat(it) => &it.syntax,
         }
     }
 }
@@ -3604,12 +3694,12 @@ impl std::fmt::Display for SortDecl {
         std::fmt::Display::fmt(self.syntax(), f)
     }
 }
-impl std::fmt::Display for Pat {
+impl std::fmt::Display for Expr {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         std::fmt::Display::fmt(self.syntax(), f)
     }
 }
-impl std::fmt::Display for Expr {
+impl std::fmt::Display for Pat {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         std::fmt::Display::fmt(self.syntax(), f)
     }
@@ -3740,6 +3830,21 @@ impl std::fmt::Display for SortVarsDecl {
     }
 }
 impl std::fmt::Display for FuncSorts {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        std::fmt::Display::fmt(self.syntax(), f)
+    }
+}
+impl std::fmt::Display for DeclareAttrs {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        std::fmt::Display::fmt(self.syntax(), f)
+    }
+}
+impl std::fmt::Display for InputTransformDecl {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        std::fmt::Display::fmt(self.syntax(), f)
+    }
+}
+impl std::fmt::Display for DeclareAttr {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         std::fmt::Display::fmt(self.syntax(), f)
     }

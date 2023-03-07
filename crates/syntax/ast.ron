@@ -77,6 +77,8 @@ KindsSrc(
         "load",
         "assert",
         "assert*",
+        "left-assoc",
+        "right-assoc",
     ],
     contextual_keywords: ["|"],
     literals: ["INT_NUMBER", "STRING", "CHAR"],
@@ -182,6 +184,9 @@ KindsSrc(
         "LOAD_DIR",
         "ASSERT_DIR",
         "ASSERT_CLOSED_DIR",
+        "DECLARE_ATTR",
+        "DECLARE_ATTRS",
+        "INPUT_TRANSFORM_DECL",
         // Statements
         "DIR_STMT",
         "PHRASE_STMT",
