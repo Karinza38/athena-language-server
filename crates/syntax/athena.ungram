@@ -111,7 +111,7 @@ CompoundSortDecl =
     '(' SortDecl* ')'
 
 DeclareDir =
-    'declare' (Identifier (',' Identifier)*) ':' SortVarsDecl? FuncSorts '->' return_sort:SortDecl
+    'declare' (Identifier (',' Identifier)*) ':' SortVarsDecl? ( FuncSorts '->' )? return_sort:SortDecl
 
 FuncSorts =
     '[' SortDecl* ']'

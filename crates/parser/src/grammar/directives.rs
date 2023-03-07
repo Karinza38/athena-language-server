@@ -262,15 +262,12 @@ fn declare_dir(p: &mut Parser) {
         sort_vars_decl(p);
     }
 
+    // test(dir) declare_no_args
+    // declare foo : Int
     if p.at(T!['[']) {
         func_sorts(p);
-    } else {
-        // test_err(dir) declare_no_sorts
-        // declare foo : -> Int
-        p.error("expected function argument sorts");
+        p.expect(T![->]);
     }
-
-    p.expect(T![->]);
 
     if !sort_decl(p) {
         // test_err(dir) declare_no_ret_sort
