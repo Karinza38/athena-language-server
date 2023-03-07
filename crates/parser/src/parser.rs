@@ -134,7 +134,7 @@ impl<'i> Parser<'i> {
 
     /// Check that the `n`th token is `kind`
     pub(crate) fn nth_at(&self, n: usize, kind: SyntaxKind) -> bool {
-        self.input.kind(self.pos + n) == kind
+        self.nth(n) == kind
     }
 
     /// Checks if the current token is contextual keyword `kw`.

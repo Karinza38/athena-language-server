@@ -2,7 +2,7 @@ use crate::grammar::expressions::expr;
 use crate::grammar::identifier;
 use crate::grammar::patterns::pat;
 use crate::grammar::phrases::phrase;
-use crate::grammar::sorts::{sort_decl, SORT_DECL_START};
+use crate::grammar::sorts::sort_decl;
 use crate::grammar::statements::{stmt, STMT_START_SET};
 use crate::parser::Parser;
 use crate::token_set::TokenSet;
@@ -42,12 +42,7 @@ fn module_dir(p: &mut Parser) {
         }
     }
 
-    eprintln!("module_dir: {:?} {:?}", p.current(), p.nth(1));
-
-    if !p.expect(T!['}']) {
-        eprintln!("no rbrace");
-    }
-    eprintln!("module_dir: {:?} {:?}", p.current(), p.nth(1));
+    p.expect(T!['}']);
     m.complete(p, SyntaxKind::MODULE_DIR);
 }
 
@@ -88,7 +83,7 @@ fn domains_dir(p: &mut Parser) {
         p.error("expected at least one sort declaration in domains directive");
     }
 
-    while p.at(T![,]) || p.at_one_of(SORT_DECL_START) {
+    while p.at(T![,]) {
         p.expect(T![,]);
         if !sort_decl(p) {
             p.error("expected a sort declaration");
@@ -385,6 +380,9 @@ pub(crate) const DIR_START_SET: TokenSet = TokenSet::new(&[
 ]);
 
 pub(crate) fn dir(p: &mut Parser) -> bool {
+    #[cfg(test)]
+    eprintln!("dir: {:?} {:?}", p.current(), p.nth(1));
+
     if p.at(T![module]) {
         module_dir(p);
     } else if p.at(T![domain]) {

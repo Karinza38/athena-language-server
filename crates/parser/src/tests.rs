@@ -47,45 +47,45 @@ fn lex(text: &str) -> String {
 macro_rules! test_glob {
     (ok $glob: expr) => {
         insta::glob!("../test_data", &format!("parser/{}/*.ath", $glob), |path| {
-            ok_test(path);
+            let case = TestCase::read(path);
+            eprintln!("running test: {}", case.ath.display());
+            let (actual, errors) = parse(case.entry.as_parse_entry(), &case.text);
+            assert!(
+                !errors,
+                "errors in an OK file {}:\n{actual}",
+                case.ath.display()
+            );
+            insta::with_settings!({description => &case.text, omit_expression => true }, { assert_snapshot!(actual) });
         });
     };
     (err $glob: expr) => {
         insta::glob!("../test_data", &format!("parser/{}/*.ath", $glob), |path| {
-            err_test(path);
+            let case = TestCase::read(path);
+            eprintln!("running test: {}", case.ath.display());
+            let (actual, errors) = parse(case.entry.as_parse_entry(), &case.text);
+            assert!(
+                errors,
+                "no errors in an ERR file {}:\n{actual}",
+                case.ath.display()
+            );
+            insta::with_settings!({description => &case.text, omit_expression => true }, { assert_snapshot!(actual) });
         });
     };
 }
 
-fn ok_test(p: &Path) {
-    let case = TestCase::read(p);
-    eprintln!("running test: {}", case.ath.display());
-    let (actual, errors) = parse(case.entry.as_parse_entry(), &case.text);
-    assert!(
-        !errors,
-        "errors in an OK file {}:\n{actual}",
-        case.ath.display()
-    );
-    insta::
-    
-    with_settings!({description => &case.text, omit_expression => true }, { assert_snapshot!(actual) });
-}
-
-fn err_test(p: &Path) {
-    let case = TestCase::read(p);
-    eprintln!("running test: {}", case.ath.display());
-    let (actual, errors) = parse(case.entry.as_parse_entry(), &case.text);
-    assert!(
-        errors,
-        "no errors in an ERR file {}:\n{actual}",
-        case.ath.display()
-    );
-    insta::with_settings!({description => &case.text, omit_expression => true }, { assert_snapshot!(actual) });
-}
-
 #[test]
 fn parse_ok() {
-    test_glob!(ok "ok/file");
+    insta::glob!("../test_data", "parser/ok/file/*.ath", |path| {
+        let case = TestCase::read(path);
+        eprintln!("running test: {}", case.ath.display());
+        let (actual, errors) = parse(case.entry.as_parse_entry(), &case.text);
+        assert!(
+            !errors,
+            "errors in an OK file {}:\n{actual}",
+            case.ath.display()
+        );
+        insta::with_settings!({description => &case.text, omit_expression => true }, { assert_snapshot!(actual) });
+    });
 }
 
 #[test]
@@ -218,7 +218,15 @@ fn entry_point_from_str(s: &str) -> ParseEntryOrLexer {
 
 impl TestCase {
     fn read(path: &Path) -> TestCase {
-        if path.parent().unwrap().parent().unwrap().file_name().unwrap() == "lexer" {
+        if path
+            .parent()
+            .unwrap()
+            .parent()
+            .unwrap()
+            .file_name()
+            .unwrap()
+            == "lexer"
+        {
             return TestCase {
                 ath: path.into(),
                 text: fs::read_to_string(&path).unwrap(),

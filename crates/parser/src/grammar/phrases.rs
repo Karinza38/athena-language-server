@@ -521,6 +521,8 @@ pub(crate) fn try_expr_or_ded(p: &mut Parser, want: Option<ExprOrDed>) -> ExprOr
 }
 
 fn expr_or_ded(p: &mut Parser) -> Option<ExprOrDed> {
+    #[cfg(test)]
+    eprintln!("parsing expr_or_ded: {:?} {:?}", p.current(), p.nth(1));
     if p.at_one_of(EXPR_START_SET.subtract(DED_START_SET)) {
         if !expr(p) {
             p.error("expected expression");
@@ -577,6 +579,8 @@ const AMBIG_START: TokenSet = EXPR_START_SET.intersect(DED_START_SET);
 pub(crate) const PHRASE_START_SET: TokenSet = EXPR_START_SET.union(DED_START_SET);
 
 pub(crate) fn phrase(p: &mut Parser) -> bool {
+    #[cfg(test)]
+    eprintln!("parsing phrase: {:?} {:?}", p.current(), p.nth(1));
     let m = p.start();
 
     match expr_or_ded(p) {

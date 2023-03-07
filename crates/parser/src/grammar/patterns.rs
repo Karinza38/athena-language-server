@@ -309,6 +309,8 @@ pub(crate) const PAT_START_SET: TokenSet =
     TokenSet::new(&[IDENT, T![?], T!['\''], T![_], T!['('], T![bind], T!['[']]).union(LIT_SET);
 
 pub(crate) fn pat(p: &mut Parser) -> bool {
+    #[cfg(test)]
+    eprintln!("parsing pat: {:?} {:?}", p.current(), p.nth(1));
     if p.at(IDENT) {
         if p.peek_at(T![:]) {
             annotated_ident_pat(p);
