@@ -277,10 +277,10 @@ fn let_part(p: &mut Parser, leading_semi: bool) {
 
     p.expect(T![:=]);
 
-    if !expr(p) {
-        // test_err(expr) let_part_no_expr
+    if !phrase(p) {
+        // test_err(expr) let_part_no_phrase
         // let { foo :=   } a
-        p.error("Expected to find an expression for the let binding");
+        p.error("Expected to find a phrase for the let binding");
     }
 
     m.complete(p, SyntaxKind::LET_PART);
@@ -288,6 +288,9 @@ fn let_part(p: &mut Parser, leading_semi: bool) {
 
 // test(expr) simple_let_expr
 // let { foo := (hotline miami) } foo
+
+// test(expr) let_expr_with_phrase_binding
+// let { foo := (!claim A) } qwer
 pub(crate) fn let_expr_or_ded(p: &mut Parser, want: Option<ExprOrDed>) -> ExprOrDed {
     assert!(p.at(T![let]));
 

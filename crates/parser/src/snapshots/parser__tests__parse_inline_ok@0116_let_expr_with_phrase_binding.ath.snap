@@ -1,7 +1,7 @@
 ---
 source: crates/parser/src/tests.rs
-description: "let { foo := (hotline miami) } foo\n"
-input_file: crates/parser/test_data/parser/inline/ok/expr/0037_simple_let_expr.ath
+description: "let { foo := (!claim A) } qwer\n"
+input_file: crates/parser/test_data/parser/inline/ok/expr/0116_let_expr_with_phrase_binding.ath
 ---
 LET_EXPR
   LET_KW "let"
@@ -15,23 +15,24 @@ LET_EXPR
         WHITESPACE " "
     COLON_EQ ":="
     WHITESPACE " "
-    EXPR_PHRASE
-      APPLICATION_EXPR
+    DED_PHRASE
+      BANG_METHOD_CALL_DED
         L_PAREN "("
+        BANG "!"
         IDENT_EXPR
           IDENTIFIER
-            IDENT "hotline"
+            IDENT "claim"
             WHITESPACE " "
         EXPR_PHRASE
           IDENT_EXPR
             IDENTIFIER
-              IDENT "miami"
+              IDENT "A"
         R_PAREN ")"
         WHITESPACE " "
   R_CURLY "}"
   WHITESPACE " "
   IDENT_EXPR
     IDENTIFIER
-      IDENT "foo"
+      IDENT "qwer"
       WHITESPACE "\n"
 

@@ -15,9 +15,10 @@ LET_DED
         WHITESPACE " "
     COLON_EQ ":="
     WHITESPACE " "
-    IDENT_EXPR
-      IDENTIFIER
-        IDENT "b"
+    EXPR_PHRASE
+      IDENT_EXPR
+        IDENTIFIER
+          IDENT "b"
   LET_PART
     SEMI ";"
     WHITESPACE " "
@@ -27,10 +28,11 @@ LET_DED
         WHITESPACE " "
     COLON_EQ ":="
     WHITESPACE " "
-    IDENT_EXPR
-      IDENTIFIER
-        IDENT "d"
-        WHITESPACE " "
+    EXPR_PHRASE
+      IDENT_EXPR
+        IDENTIFIER
+          IDENT "d"
+          WHITESPACE " "
   R_CURLY "}"
   WHITESPACE "\n"
 error 23: Expected a let body

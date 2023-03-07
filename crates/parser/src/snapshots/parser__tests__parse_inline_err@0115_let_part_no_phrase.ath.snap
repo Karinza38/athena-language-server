@@ -1,7 +1,7 @@
 ---
 source: crates/parser/src/tests.rs
 description: "let { foo :=   } a\n"
-input_file: crates/parser/test_data/parser/inline/err/expr/0025_let_part_no_expr.ath
+input_file: crates/parser/test_data/parser/inline/err/expr/0115_let_part_no_phrase.ath
 ---
 LET_EXPR
   LET_KW "let"
@@ -21,5 +21,5 @@ LET_EXPR
     IDENTIFIER
       IDENT "a"
       WHITESPACE "\n"
-error 15: Expected to find an expression for the let binding
+error 15: Expected to find a phrase for the let binding
 

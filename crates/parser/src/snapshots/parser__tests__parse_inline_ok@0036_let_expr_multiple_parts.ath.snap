@@ -15,10 +15,11 @@ LET_EXPR
         WHITESPACE " "
     COLON_EQ ":="
     WHITESPACE " "
-    IDENT_EXPR
-      IDENTIFIER
-        IDENT "bar"
-        WHITESPACE " "
+    EXPR_PHRASE
+      IDENT_EXPR
+        IDENTIFIER
+          IDENT "bar"
+          WHITESPACE " "
   LET_PART
     SEMI ";"
     WHITESPACE " "
@@ -28,18 +29,19 @@ LET_EXPR
         WHITESPACE " "
     COLON_EQ ":="
     WHITESPACE " "
-    APPLICATION_EXPR
-      L_PAREN "("
-      IDENT_EXPR
-        IDENTIFIER
-          IDENT "myfun"
-          WHITESPACE " "
-      EXPR_PHRASE
-        LITERAL_EXPR
-          LITERAL
-            STRING "\"cool\""
-      R_PAREN ")"
-      WHITESPACE " "
+    EXPR_PHRASE
+      APPLICATION_EXPR
+        L_PAREN "("
+        IDENT_EXPR
+          IDENTIFIER
+            IDENT "myfun"
+            WHITESPACE " "
+        EXPR_PHRASE
+          LITERAL_EXPR
+            LITERAL
+              STRING "\"cool\""
+        R_PAREN ")"
+        WHITESPACE " "
   R_CURLY "}"
   WHITESPACE " "
   IDENT_EXPR

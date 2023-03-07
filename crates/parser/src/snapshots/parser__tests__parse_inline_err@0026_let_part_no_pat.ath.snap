@@ -15,18 +15,20 @@ LET_EXPR
         WHITESPACE " "
     COLON_EQ ":="
     WHITESPACE " "
-    IDENT_EXPR
-      IDENTIFIER
-        IDENT "b"
+    EXPR_PHRASE
+      IDENT_EXPR
+        IDENTIFIER
+          IDENT "b"
   LET_PART
     SEMI ";"
     WHITESPACE " "
     COLON_EQ ":="
     WHITESPACE " "
-    IDENT_EXPR
-      IDENTIFIER
-        IDENT "c"
-        WHITESPACE " "
+    EXPR_PHRASE
+      IDENT_EXPR
+        IDENTIFIER
+          IDENT "c"
+          WHITESPACE " "
   R_CURLY "}"
   WHITESPACE " "
   IDENT_EXPR
