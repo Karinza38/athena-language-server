@@ -294,6 +294,9 @@ pub struct DefineDir {
     pub(crate) syntax: SyntaxNode,
 }
 impl DefineDir {
+    pub fn private_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T![private])
+    }
     pub fn define_token(&self) -> Option<SyntaxToken> {
         support::token(&self.syntax, T![define])
     }
@@ -341,6 +344,9 @@ pub struct DefineMultiDir {
     pub(crate) syntax: SyntaxNode,
 }
 impl DefineMultiDir {
+    pub fn private_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T![private])
+    }
     pub fn define_token(&self) -> Option<SyntaxToken> {
         support::token(&self.syntax, T![define])
     }

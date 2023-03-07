@@ -1,0 +1,19 @@
+---
+source: crates/parser/src/tests.rs
+description: "define foo := true\n"
+input_file: crates/parser/test_data/parser/inline/ok/dir/0115_define_dir.ath
+---
+DEFINE_DIR
+  DEFINE_KW "define"
+  WHITESPACE " "
+  IDENTIFIER
+    IDENT "foo"
+    WHITESPACE " "
+  COLON_EQ ":="
+  WHITESPACE " "
+  EXPR_PHRASE
+    IDENT_EXPR
+      IDENTIFIER
+        IDENT "true"
+        WHITESPACE "\n"
+

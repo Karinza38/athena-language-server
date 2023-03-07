@@ -91,6 +91,7 @@ pub enum SyntaxKind {
     DATATYPES_KW,
     STRUCTURES_KW,
     EXTEND_MODULE_KW,
+    PRIVATE_KW,
     PIPE,
     INT_NUMBER,
     STRING,
@@ -227,7 +228,7 @@ impl SyntaxKind {
             WHERE_KW | LIST_OF_KW | VAL_OF_KW | AS_KW | BIND_KW | FOR_KW | DEFINE_KW |
             MODULE_KW | DECLARE_KW | DOMAIN_KW | DOMAINS_KW | LOAD_KW | ASSERT_KW |
             ASSERT_STAR_KW | LEFT_ASSOC_KW | RIGHT_ASSOC_KW | DATATYPE_KW | STRUCTURE_KW
-            | DATATYPES_KW | STRUCTURES_KW | EXTEND_MODULE_KW | PIPE
+            | DATATYPES_KW | STRUCTURES_KW | EXTEND_MODULE_KW | PRIVATE_KW | PIPE
         )
     }
     pub fn is_punct(self) -> bool {
@@ -306,6 +307,7 @@ impl SyntaxKind {
             "datatypes" => DATATYPES_KW,
             "structures" => STRUCTURES_KW,
             "extend-module" => EXTEND_MODULE_KW,
+            "private" => PRIVATE_KW,
             _ => return None,
         };
         Some(kw)
@@ -587,6 +589,9 @@ macro_rules! T {
     };
     [extend - module] => {
         $crate ::SyntaxKind::EXTEND_MODULE_KW
+    };
+    [private] => {
+        $crate ::SyntaxKind::PRIVATE_KW
     };
     [|] => {
         $crate ::SyntaxKind::PIPE

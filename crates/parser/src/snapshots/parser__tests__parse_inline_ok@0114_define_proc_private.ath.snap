@@ -1,0 +1,26 @@
+---
+source: crates/parser/src/tests.rs
+description: "private define (foo b) := b\n"
+input_file: crates/parser/test_data/parser/inline/ok/dir/0114_define_proc_private.ath
+---
+DEFINE_PROC_DIR
+  PRIVATE_KW "private"
+  WHITESPACE " "
+  DEFINE_KW "define"
+  WHITESPACE " "
+  L_PAREN "("
+  IDENTIFIER
+    IDENT "foo"
+    WHITESPACE " "
+  IDENTIFIER
+    IDENT "b"
+  R_PAREN ")"
+  WHITESPACE " "
+  COLON_EQ ":="
+  WHITESPACE " "
+  EXPR_PHRASE
+    IDENT_EXPR
+      IDENTIFIER
+        IDENT "b"
+        WHITESPACE "\n"
+

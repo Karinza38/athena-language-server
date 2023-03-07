@@ -1,0 +1,1 @@
+private define [a b] := [1 2]

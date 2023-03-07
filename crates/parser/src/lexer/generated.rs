@@ -70,6 +70,8 @@ pub(crate) enum LexerToken {
     LeftAssoc(usize),
     #[token("right-assoc", |lex|lex.slice().len())]
     RightAssoc(usize),
+    #[token("private", |lex|lex.slice().len())]
+    Private(usize),
     #[token("define", |lex|lex.slice().len())]
     Define(usize),
     #[token("load", |lex|lex.slice().len())]
@@ -217,6 +219,7 @@ impl LexerToken {
             Self::RBrack(..) => T![']'],
             Self::LeftAssoc(..) => T![left - assoc],
             Self::RightAssoc(..) => T![right - assoc],
+            Self::Private(..) => T![private],
             Self::Define(..) => T![define],
             Self::Load(..) => T![load],
             Self::Assert(..) => T![assert],
@@ -309,6 +312,7 @@ impl LexerToken {
             Self::RBrack(len) => len,
             Self::LeftAssoc(len) => len,
             Self::RightAssoc(len) => len,
+            Self::Private(len) => len,
             Self::Define(len) => len,
             Self::Load(len) => len,
             Self::Assert(len) => len,

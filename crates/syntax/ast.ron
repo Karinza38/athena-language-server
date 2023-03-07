@@ -84,6 +84,7 @@ KindsSrc(
         "datatypes",
         "structures",
         "extend-module",
+        "private",
     ],
     contextual_keywords: ["|"],
     literals: ["INT_NUMBER", "STRING", "CHAR"],

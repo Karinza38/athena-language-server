@@ -166,13 +166,13 @@ SortVarsDecl =
     '(' (IdentSort (',' IdentSort)*) ')'
 
 DefineDir =
-    'define' Identifier ':=' Phrase
+    'private'? 'define' Identifier ':=' Phrase
 
 DefineProcDir =
-    'define' '(' Identifier args:Identifier* ')' ':=' Phrase
+    'private'? 'define' '(' Identifier args:Identifier* ')' ':=' Phrase
 
 DefineMultiDir =
-    'define' '[' Pat* ']' ':=' '[' Phrase* ']'
+    'private'? 'define' '[' Pat* ']' ':=' '[' Phrase* ']'
 
 LoadDir =
     'load' 'string'

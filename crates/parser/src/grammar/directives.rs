@@ -132,10 +132,16 @@ fn domains_dir(p: &mut Parser) {
     m.complete(p, SyntaxKind::DOMAINS_DIR);
 }
 
+// test(dir) define_dir
+// define foo := true
+
+// test(dir) define_private
+// private define bar := false
 fn define_dir(p: &mut Parser) {
-    assert!(p.at(T![define]));
+    assert!((p.at(T![private]) && p.peek_at(T![define])) || p.at(T![define]));
 
     let m = p.start();
+    p.eat(T![private]);
     p.bump(T![define]);
 
     if !p.at(IDENT) {
@@ -159,11 +165,14 @@ fn define_dir(p: &mut Parser) {
 
 // test(dir) define_proc
 // define (foo a b) := lambda () b
+
+// test(dir) define_proc_private
+// private define (foo b) := b
 fn define_proc_dir(p: &mut Parser) {
-    assert!(p.at(T![define]) && p.peek_at(T!['(']));
+    assert!((p.at(T![private]) && p.peek_at(T![define])) || p.at(T![define]) && p.peek_at(T!['(']));
 
     let m = p.start();
-
+    p.eat(T![private]);
     p.bump(T![define]);
 
     p.bump(T!['(']);
@@ -202,10 +211,14 @@ fn define_proc_dir(p: &mut Parser) {
 
 // test(dir) define_multi
 // define [foo bar baz] := [true false true]
+
+// test(dir) define_multi_private
+// private define [a b] := [1 2]
 fn define_multi(p: &mut Parser) {
-    assert!(p.at(T![define]) && p.peek_at(T!['[']));
+    assert!((p.at(T![private]) && p.peek_at(T![define])) || p.at(T![define]) && p.peek_at(T!['[']));
 
     let m = p.start();
+    p.eat(T![private]);
     p.bump(T![define]);
 
     p.bump(T!['[']);
@@ -480,6 +493,7 @@ pub(crate) const DIR_START_SET: TokenSet = TokenSet::new(&[
     T![load],
     T![assert],
     T![assert*],
+    T![private],
 ]);
 
 pub(crate) fn dir(p: &mut Parser) -> bool {
@@ -498,6 +512,20 @@ pub(crate) fn dir(p: &mut Parser) -> bool {
         }
         T![domains] => {
             domains_dir(p);
+        }
+        T![private] => {
+            if p.peek_at(T![define]) {
+                if p.nth_at(2, T!['(']) {
+                    define_proc_dir(p);
+                } else if p.nth_at(2, T!['[']) {
+                    define_multi(p);
+                } else {
+                    define_dir(p);
+                }
+            } else {
+                p.error("private must be followed by define");
+                return false;
+            }
         }
         T![define] => {
             if p.peek_at(T!['(']) {
