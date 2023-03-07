@@ -123,6 +123,7 @@ Dir =
     | LoadDir
     | AssertDir
     | AssertClosedDir
+    | DeclareDir
 
 ModuleDir =
     'module' Identifier '{' Stmt* '}'

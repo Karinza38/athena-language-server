@@ -1,0 +1,10 @@
+---
+source: crates/parser/src/tests.rs
+description: "structures\n"
+input_file: crates/parser/test_data/parser/inline/err/stmt/0107_structures_stmt_err.ath
+---
+STRUCTURES_STMT
+  STRUCTURES_KW "structures"
+  WHITESPACE "\n"
+error 11: expected a structure definition
+

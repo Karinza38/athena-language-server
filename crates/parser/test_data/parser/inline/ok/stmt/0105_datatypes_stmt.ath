@@ -1,0 +1,1 @@
+datatypes Foo := bar | (baz num:Int) && Baz := quz | (qux val:Int)

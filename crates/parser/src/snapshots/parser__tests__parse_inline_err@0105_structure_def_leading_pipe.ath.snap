@@ -1,0 +1,24 @@
+---
+source: crates/parser/src/tests.rs
+description: "datatype Foo := | bar\n"
+input_file: crates/parser/test_data/parser/inline/err/stmt/0105_structure_def_leading_pipe.ath
+---
+DATATYPE_STMT
+  DATATYPE_KW "datatype"
+  WHITESPACE " "
+  STRUCTURE_DEF
+    STRUCTURE_NAME_DEF
+      IDENT_SORT
+        IDENTIFIER
+          IDENT "Foo"
+          WHITESPACE " "
+    COLON_EQ ":="
+    WHITESPACE " "
+    PIPE "|"
+    WHITESPACE " "
+    CONSTANT_CONSTRUCTOR
+      IDENTIFIER
+        IDENT "bar"
+        WHITESPACE "\n"
+error 16: leading `|` is not allowed in constructor list
+

@@ -1,0 +1,24 @@
+---
+source: crates/parser/src/tests.rs
+description: "datatypes Foo := bar &&\n"
+input_file: crates/parser/test_data/parser/inline/err/stmt/0106_datatypes_stmt_trailing_and.ath
+---
+DATATYPES_STMT
+  DATATYPES_KW "datatypes"
+  WHITESPACE " "
+  STRUCTURE_DEF
+    STRUCTURE_NAME_DEF
+      IDENT_SORT
+        IDENTIFIER
+          IDENT "Foo"
+          WHITESPACE " "
+    COLON_EQ ":="
+    WHITESPACE " "
+    CONSTANT_CONSTRUCTOR
+      IDENTIFIER
+        IDENT "bar"
+        WHITESPACE " "
+  AMP2 "&&"
+  WHITESPACE "\n"
+error 24: expected a datatype definition following the `&&`
+

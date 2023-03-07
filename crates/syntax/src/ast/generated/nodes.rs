@@ -410,22 +410,6 @@ impl AssertClosedDir {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
-pub struct CompoundSortDecl {
-    pub(crate) syntax: SyntaxNode,
-}
-impl CompoundSortDecl {
-    pub fn l_paren_token(&self) -> Option<SyntaxToken> {
-        support::token(&self.syntax, T!['('])
-    }
-    pub fn sort_decls(&self) -> AstChildren<SortDecl> {
-        support::children(&self.syntax)
-    }
-    pub fn r_paren_token(&self) -> Option<SyntaxToken> {
-        support::token(&self.syntax, T![')'])
-    }
-}
-
-#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct DeclareDir {
     pub(crate) syntax: SyntaxNode,
 }
@@ -453,6 +437,22 @@ impl DeclareDir {
     }
     pub fn declare_attrs(&self) -> Option<DeclareAttrs> {
         support::child(&self.syntax)
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+pub struct CompoundSortDecl {
+    pub(crate) syntax: SyntaxNode,
+}
+impl CompoundSortDecl {
+    pub fn l_paren_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T!['('])
+    }
+    pub fn sort_decls(&self) -> AstChildren<SortDecl> {
+        support::children(&self.syntax)
+    }
+    pub fn r_paren_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T![')'])
     }
 }
 
@@ -1871,6 +1871,7 @@ pub enum Dir {
     LoadDir(LoadDir),
     AssertDir(AssertDir),
     AssertClosedDir(AssertClosedDir),
+    DeclareDir(DeclareDir),
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
@@ -2275,9 +2276,9 @@ impl AstNode for AssertClosedDir {
         &self.syntax
     }
 }
-impl AstNode for CompoundSortDecl {
+impl AstNode for DeclareDir {
     fn can_cast(kind: SyntaxKind) -> bool {
-        kind == COMPOUND_SORT_DECL
+        kind == DECLARE_DIR
     }
     fn cast(syntax: SyntaxNode) -> Option<Self> {
         if Self::can_cast(syntax.kind()) { Some(Self { syntax }) } else { None }
@@ -2286,9 +2287,9 @@ impl AstNode for CompoundSortDecl {
         &self.syntax
     }
 }
-impl AstNode for DeclareDir {
+impl AstNode for CompoundSortDecl {
     fn can_cast(kind: SyntaxKind) -> bool {
-        kind == DECLARE_DIR
+        kind == COMPOUND_SORT_DECL
     }
     fn cast(syntax: SyntaxNode) -> Option<Self> {
         if Self::can_cast(syntax.kind()) { Some(Self { syntax }) } else { None }
@@ -3283,11 +3284,16 @@ impl From<AssertClosedDir> for Dir {
         Dir::AssertClosedDir(node)
     }
 }
+impl From<DeclareDir> for Dir {
+    fn from(node: DeclareDir) -> Dir {
+        Dir::DeclareDir(node)
+    }
+}
 impl AstNode for Dir {
     fn can_cast(kind: SyntaxKind) -> bool {
         matches!(
             kind, MODULE_DIR | DOMAIN_DIR | DOMAINS_DIR | DEFINE_DIR | DEFINE_PROC_DIR |
-            DEFINE_MULTI_DIR | LOAD_DIR | ASSERT_DIR | ASSERT_CLOSED_DIR
+            DEFINE_MULTI_DIR | LOAD_DIR | ASSERT_DIR | ASSERT_CLOSED_DIR | DECLARE_DIR
         )
     }
     fn cast(syntax: SyntaxNode) -> Option<Self> {
@@ -3301,6 +3307,7 @@ impl AstNode for Dir {
             LOAD_DIR => Dir::LoadDir(LoadDir { syntax }),
             ASSERT_DIR => Dir::AssertDir(AssertDir { syntax }),
             ASSERT_CLOSED_DIR => Dir::AssertClosedDir(AssertClosedDir { syntax }),
+            DECLARE_DIR => Dir::DeclareDir(DeclareDir { syntax }),
             _ => return None,
         };
         Some(res)
@@ -3316,6 +3323,7 @@ impl AstNode for Dir {
             Dir::LoadDir(it) => &it.syntax,
             Dir::AssertDir(it) => &it.syntax,
             Dir::AssertClosedDir(it) => &it.syntax,
+            Dir::DeclareDir(it) => &it.syntax,
         }
     }
 }
@@ -4116,12 +4124,12 @@ impl std::fmt::Display for AssertClosedDir {
         std::fmt::Display::fmt(self.syntax(), f)
     }
 }
-impl std::fmt::Display for CompoundSortDecl {
+impl std::fmt::Display for DeclareDir {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         std::fmt::Display::fmt(self.syntax(), f)
     }
 }
-impl std::fmt::Display for DeclareDir {
+impl std::fmt::Display for CompoundSortDecl {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         std::fmt::Display::fmt(self.syntax(), f)
     }

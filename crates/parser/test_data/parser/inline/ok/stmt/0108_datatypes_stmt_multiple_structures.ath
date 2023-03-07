@@ -1,0 +1,1 @@
+datatypes Foo := bar && Baz := quz

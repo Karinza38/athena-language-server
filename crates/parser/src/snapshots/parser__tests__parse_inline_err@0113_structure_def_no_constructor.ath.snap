@@ -1,0 +1,18 @@
+---
+source: crates/parser/src/tests.rs
+description: "datatype Foo :=\n"
+input_file: crates/parser/test_data/parser/inline/err/stmt/0113_structure_def_no_constructor.ath
+---
+DATATYPE_STMT
+  DATATYPE_KW "datatype"
+  WHITESPACE " "
+  STRUCTURE_DEF
+    STRUCTURE_NAME_DEF
+      IDENT_SORT
+        IDENTIFIER
+          IDENT "Foo"
+          WHITESPACE " "
+    COLON_EQ ":="
+    WHITESPACE "\n"
+error 16: expected at least one constructor
+

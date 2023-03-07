@@ -1,0 +1,1 @@
+structure Foo := bar | (baz num:Int)

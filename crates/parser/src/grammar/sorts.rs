@@ -1,4 +1,4 @@
-use crate::{parser::Parser, SyntaxKind, T};
+use crate::{parser::Parser, token_set::TokenSet, SyntaxKind, T};
 
 // test(expr) simple_ident_sort
 // ?x: bar
@@ -64,6 +64,8 @@ fn compound_sort_decl(p: &mut Parser) {
     p.expect(T![')']);
     m.complete(p, SyntaxKind::COMPOUND_SORT_DECL);
 }
+
+pub(crate) const SORT_DECL_START: TokenSet = TokenSet::new(&[SyntaxKind::IDENT, T!['(']]);
 
 pub(crate) fn sort_decl(p: &mut Parser) -> bool {
     if p.at(SyntaxKind::IDENT) {

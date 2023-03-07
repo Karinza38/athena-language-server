@@ -1,0 +1,35 @@
+---
+source: crates/parser/src/tests.rs
+description: "structures Foo := bar && Baz := quz\n"
+input_file: crates/parser/test_data/parser/inline/ok/stmt/0109_structures_stmt_multiple_structures.ath
+---
+STRUCTURES_STMT
+  STRUCTURES_KW "structures"
+  WHITESPACE " "
+  STRUCTURE_DEF
+    STRUCTURE_NAME_DEF
+      IDENT_SORT
+        IDENTIFIER
+          IDENT "Foo"
+          WHITESPACE " "
+    COLON_EQ ":="
+    WHITESPACE " "
+    CONSTANT_CONSTRUCTOR
+      IDENTIFIER
+        IDENT "bar"
+        WHITESPACE " "
+  AMP2 "&&"
+  WHITESPACE " "
+  STRUCTURE_DEF
+    STRUCTURE_NAME_DEF
+      IDENT_SORT
+        IDENTIFIER
+          IDENT "Baz"
+          WHITESPACE " "
+    COLON_EQ ":="
+    WHITESPACE " "
+    CONSTANT_CONSTRUCTOR
+      IDENTIFIER
+        IDENT "quz"
+        WHITESPACE "\n"
+

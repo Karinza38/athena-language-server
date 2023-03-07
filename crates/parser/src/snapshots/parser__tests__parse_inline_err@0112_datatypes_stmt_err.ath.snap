@@ -1,0 +1,10 @@
+---
+source: crates/parser/src/tests.rs
+description: "datatypes\n"
+input_file: crates/parser/test_data/parser/inline/err/stmt/0112_datatypes_stmt_err.ath
+---
+DATATYPES_STMT
+  DATATYPES_KW "datatypes"
+  WHITESPACE "\n"
+error 10: expected a datatype definition
+
