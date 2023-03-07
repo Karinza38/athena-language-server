@@ -8,5 +8,6 @@ PICK_WITNESS_DED
   WHITESPACE "\n"
 error 13: expected witness name in pick witness binding
 error 13: expected FOR_KW
+error 13: expected phrase in pick witness binding
 error 13: expected body for pick witness
 

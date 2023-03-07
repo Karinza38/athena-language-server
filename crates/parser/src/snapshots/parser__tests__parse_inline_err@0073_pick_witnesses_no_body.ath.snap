@@ -1,6 +1,6 @@
 ---
 source: crates/parser/src/tests.rs
-description: "pick-witnesses a for\n"
+description: "pick-witnesses a for a\n"
 input_file: crates/parser/test_data/parser/inline/err/ded/0073_pick_witnesses_no_body.ath
 ---
 PICK_WITNESSES_DED
@@ -10,6 +10,11 @@ PICK_WITNESSES_DED
     IDENT "a"
     WHITESPACE " "
   FOR_KW "for"
-  WHITESPACE "\n"
-error 21: expected body for pick witnesses
+  WHITESPACE " "
+  EXPR_PHRASE
+    IDENT_EXPR
+      IDENTIFIER
+        IDENT "a"
+        WHITESPACE "\n"
+error 23: expected body for pick witnesses
 

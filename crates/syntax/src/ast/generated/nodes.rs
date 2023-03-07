@@ -316,6 +316,9 @@ pub struct DefineProcDir {
     pub(crate) syntax: SyntaxNode,
 }
 impl DefineProcDir {
+    pub fn private_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T![private])
+    }
     pub fn define_token(&self) -> Option<SyntaxToken> {
         support::token(&self.syntax, T![define])
     }
@@ -1244,6 +1247,9 @@ impl PickWitnessDed {
     pub fn for_token(&self) -> Option<SyntaxToken> {
         support::token(&self.syntax, T![for])
     }
+    pub fn phrase(&self) -> Option<Phrase> {
+        support::child(&self.syntax)
+    }
     pub fn ded(&self) -> Option<Ded> {
         support::child(&self.syntax)
     }
@@ -1265,6 +1271,9 @@ impl PickWitnessesDed {
     }
     pub fn for_token(&self) -> Option<SyntaxToken> {
         support::token(&self.syntax, T![for])
+    }
+    pub fn phrase(&self) -> Option<Phrase> {
+        support::child(&self.syntax)
     }
     pub fn ded(&self) -> Option<Ded> {
         support::child(&self.syntax)

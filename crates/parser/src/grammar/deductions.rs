@@ -269,9 +269,21 @@ fn pick_witness_ded(p: &mut Parser) {
 
     p.expect(T![for]);
 
+    if !phrase(p) {
+        // test_err(ded) pick_witness_no_phrase
+        // pick-witness a for
+        p.error("expected phrase in pick witness binding");
+    }
+
+    if p.at(IDENT) {
+        // test(ded) pick_witness_with_ident
+        // pick-witness a for b c (!claim a)
+        identifier(p);
+    }
+
     if !ded(p) {
         // test_err(ded) pick_witness_no_body
-        // pick-witness a for
+        // pick-witness a for b
         p.error("expected body for pick witness");
     }
 
@@ -294,15 +306,27 @@ fn pick_witnesses_ded(p: &mut Parser) {
 
     while p.at(IDENT) {
         // test(ded) pick_witnesses_multiple
-        // pick-witnesses a b c for (!claim a)
+        // pick-witnesses a b c for d (!claim a)
         identifier(p);
     }
 
     p.expect(T![for]);
 
+    if !phrase(p) {
+        // test_err(ded) pick_witnesses_no_phrase
+        // pick-witnesses a for
+        p.error("expected phrase in pick witnesses binding");
+    }
+
+    if p.at(IDENT) {
+        // test(ded) pick_witnesses_with_ident
+        // pick-witnesses a for b c (!claim a)
+        identifier(p);
+    }
+
     if !ded(p) {
         // test_err(ded) pick_witnesses_no_body
-        // pick-witnesses a for
+        // pick-witnesses a for a
         p.error("expected body for pick witnesses");
     }
 

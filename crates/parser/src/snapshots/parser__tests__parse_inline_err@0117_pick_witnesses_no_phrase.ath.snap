@@ -1,0 +1,16 @@
+---
+source: crates/parser/src/tests.rs
+description: "pick-witnesses a for\n"
+input_file: crates/parser/test_data/parser/inline/err/ded/0117_pick_witnesses_no_phrase.ath
+---
+PICK_WITNESSES_DED
+  PICK_WITNESSES_KW "pick-witnesses"
+  WHITESPACE " "
+  IDENTIFIER
+    IDENT "a"
+    WHITESPACE " "
+  FOR_KW "for"
+  WHITESPACE "\n"
+error 21: expected phrase in pick witnesses binding
+error 21: expected body for pick witnesses
+

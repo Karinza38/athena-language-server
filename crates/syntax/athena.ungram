@@ -359,10 +359,10 @@ WithWitnessDed =
     'with-witness' Expr Phrase Ded
 
 PickWitnessDed =
-    'pick-witness' Identifier 'for' Ded
+    'pick-witness' Identifier 'for' Phrase Identifier? Ded
 
 PickWitnessesDed =
-    'pick-witnesses' Identifier Identifier* 'for' Ded
+    'pick-witnesses' Identifier Identifier* 'for' Phrase Identifier? Ded
 
 RestrictedApplyPat =
     '(' Identifier RestrictedPat RestrictedPat* ')'

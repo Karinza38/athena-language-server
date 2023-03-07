@@ -8,5 +8,6 @@ PICK_WITNESSES_DED
   WHITESPACE "\n"
 error 15: expected at least one witness name in pick witnesses binding
 error 15: expected FOR_KW
+error 15: expected phrase in pick witnesses binding
 error 15: expected body for pick witnesses
 
