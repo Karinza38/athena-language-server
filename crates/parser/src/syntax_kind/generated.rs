@@ -86,6 +86,10 @@ pub enum SyntaxKind {
     ASSERT_STAR_KW,
     LEFT_ASSOC_KW,
     RIGHT_ASSOC_KW,
+    DATATYPE_KW,
+    STRUCTURE_KW,
+    DATATYPES_KW,
+    STRUCTURES_KW,
     PIPE,
     INT_NUMBER,
     STRING,
@@ -192,6 +196,15 @@ pub enum SyntaxKind {
     INPUT_TRANSFORM_DECL,
     DIR_STMT,
     PHRASE_STMT,
+    STRUCTURE_NAME_DEF,
+    CONSTANT_CONSTRUCTOR,
+    COMPOUND_CONSTRUCTOR,
+    MAYBE_TAGGED_SORT_DECL,
+    STRUCTURE_DEF,
+    DATATYPE_STMT,
+    DATATYPES_STMT,
+    STRUCTURE_STMT,
+    STRUCTURES_STMT,
     #[doc(hidden)]
     __LAST,
 }
@@ -211,7 +224,8 @@ impl SyntaxKind {
             SOME_TABLE_KW | SOME_MAP_KW | SOME_SUB_KW | SOME_CHAR_KW | SPLIT_KW |
             WHERE_KW | LIST_OF_KW | VAL_OF_KW | AS_KW | BIND_KW | FOR_KW | DEFINE_KW |
             MODULE_KW | DECLARE_KW | DOMAIN_KW | DOMAINS_KW | LOAD_KW | ASSERT_KW |
-            ASSERT_STAR_KW | LEFT_ASSOC_KW | RIGHT_ASSOC_KW | PIPE
+            ASSERT_STAR_KW | LEFT_ASSOC_KW | RIGHT_ASSOC_KW | DATATYPE_KW | STRUCTURE_KW
+            | DATATYPES_KW | STRUCTURES_KW | PIPE
         )
     }
     pub fn is_punct(self) -> bool {
@@ -285,6 +299,10 @@ impl SyntaxKind {
             "assert*" => ASSERT_STAR_KW,
             "left-assoc" => LEFT_ASSOC_KW,
             "right-assoc" => RIGHT_ASSOC_KW,
+            "datatype" => DATATYPE_KW,
+            "structure" => STRUCTURE_KW,
+            "datatypes" => DATATYPES_KW,
+            "structures" => STRUCTURES_KW,
             _ => return None,
         };
         Some(kw)
@@ -551,6 +569,18 @@ macro_rules! T {
     };
     [right - assoc] => {
         $crate ::SyntaxKind::RIGHT_ASSOC_KW
+    };
+    [datatype] => {
+        $crate ::SyntaxKind::DATATYPE_KW
+    };
+    [structure] => {
+        $crate ::SyntaxKind::STRUCTURE_KW
+    };
+    [datatypes] => {
+        $crate ::SyntaxKind::DATATYPES_KW
+    };
+    [structures] => {
+        $crate ::SyntaxKind::STRUCTURES_KW
     };
     [|] => {
         $crate ::SyntaxKind::PIPE

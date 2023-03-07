@@ -30,6 +30,20 @@ pub(crate) enum LexerToken {
     LParen(usize),
     #[token(")", |lex|lex.slice().len())]
     RParen(usize),
+    #[token(":", |lex|lex.slice().len())]
+    Colon(usize),
+    #[token(":=", |lex|lex.slice().len())]
+    ColonEq(usize),
+    #[token("datatype", |lex|lex.slice().len())]
+    Datatype(usize),
+    #[token("structure", |lex|lex.slice().len())]
+    Structure(usize),
+    #[token("datatypes", |lex|lex.slice().len())]
+    Datatypes(usize),
+    #[token("&&", |lex|lex.slice().len())]
+    Ampamp(usize),
+    #[token("structures", |lex|lex.slice().len())]
+    Structures(usize),
     #[token("module", |lex|lex.slice().len())]
     Module(usize),
     #[token("{", |lex|lex.slice().len())]
@@ -44,8 +58,6 @@ pub(crate) enum LexerToken {
     Comma(usize),
     #[token("declare", |lex|lex.slice().len())]
     Declare(usize),
-    #[token(":", |lex|lex.slice().len())]
-    Colon(usize),
     #[token("->", |lex|lex.slice().len())]
     ThinArrow(usize),
     #[token("[", |lex|lex.slice().len())]
@@ -58,8 +70,6 @@ pub(crate) enum LexerToken {
     RightAssoc(usize),
     #[token("define", |lex|lex.slice().len())]
     Define(usize),
-    #[token(":=", |lex|lex.slice().len())]
-    ColonEq(usize),
     #[token("load", |lex|lex.slice().len())]
     Load(usize),
     #[token("assert", |lex|lex.slice().len())]
@@ -100,8 +110,6 @@ pub(crate) enum LexerToken {
     VectorSetBang(usize),
     #[token("seq", |lex|lex.slice().len())]
     Seq(usize),
-    #[token("&&", |lex|lex.slice().len())]
-    Ampamp(usize),
     #[token("||", |lex|lex.slice().len())]
     Pipepipe(usize),
     #[token("conclude", |lex|lex.slice().len())]
@@ -187,6 +195,13 @@ impl LexerToken {
             Self::SingleQuote(..) => T!['\''],
             Self::LParen(..) => T!['('],
             Self::RParen(..) => T![')'],
+            Self::Colon(..) => T![:],
+            Self::ColonEq(..) => T![:=],
+            Self::Datatype(..) => T![datatype],
+            Self::Structure(..) => T![structure],
+            Self::Datatypes(..) => T![datatypes],
+            Self::Ampamp(..) => T![&&],
+            Self::Structures(..) => T![structures],
             Self::Module(..) => T![module],
             Self::LCurly(..) => T!['{'],
             Self::RCurly(..) => T!['}'],
@@ -194,14 +209,12 @@ impl LexerToken {
             Self::Domains(..) => T![domains],
             Self::Comma(..) => T![,],
             Self::Declare(..) => T![declare],
-            Self::Colon(..) => T![:],
             Self::ThinArrow(..) => T![->],
             Self::LBrack(..) => T!['['],
             Self::RBrack(..) => T![']'],
             Self::LeftAssoc(..) => T![left - assoc],
             Self::RightAssoc(..) => T![right - assoc],
             Self::Define(..) => T![define],
-            Self::ColonEq(..) => T![:=],
             Self::Load(..) => T![load],
             Self::Assert(..) => T![assert],
             Self::AssertStar(..) => T![assert *],
@@ -222,7 +235,6 @@ impl LexerToken {
             Self::VectorSub(..) => T![vector - sub],
             Self::VectorSetBang(..) => T![vector - set!],
             Self::Seq(..) => T![seq],
-            Self::Ampamp(..) => T![&&],
             Self::Pipepipe(..) => T![||],
             Self::Conclude(..) => T![conclude],
             Self::ApplyMethod(..) => T![apply - method],
@@ -274,6 +286,13 @@ impl LexerToken {
             Self::SingleQuote(len) => len,
             Self::LParen(len) => len,
             Self::RParen(len) => len,
+            Self::Colon(len) => len,
+            Self::ColonEq(len) => len,
+            Self::Datatype(len) => len,
+            Self::Structure(len) => len,
+            Self::Datatypes(len) => len,
+            Self::Ampamp(len) => len,
+            Self::Structures(len) => len,
             Self::Module(len) => len,
             Self::LCurly(len) => len,
             Self::RCurly(len) => len,
@@ -281,14 +300,12 @@ impl LexerToken {
             Self::Domains(len) => len,
             Self::Comma(len) => len,
             Self::Declare(len) => len,
-            Self::Colon(len) => len,
             Self::ThinArrow(len) => len,
             Self::LBrack(len) => len,
             Self::RBrack(len) => len,
             Self::LeftAssoc(len) => len,
             Self::RightAssoc(len) => len,
             Self::Define(len) => len,
-            Self::ColonEq(len) => len,
             Self::Load(len) => len,
             Self::Assert(len) => len,
             Self::AssertStar(len) => len,
@@ -309,7 +326,6 @@ impl LexerToken {
             Self::VectorSub(len) => len,
             Self::VectorSetBang(len) => len,
             Self::Seq(len) => len,
-            Self::Ampamp(len) => len,
             Self::Pipepipe(len) => len,
             Self::Conclude(len) => len,
             Self::ApplyMethod(len) => len,

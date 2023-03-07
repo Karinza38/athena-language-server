@@ -119,6 +119,129 @@ impl PhraseStmt {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
+pub struct StructureNameDef {
+    pub(crate) syntax: SyntaxNode,
+}
+impl StructureNameDef {
+    pub fn sort_decl(&self) -> Option<SortDecl> {
+        support::child(&self.syntax)
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+pub struct ConstantConstructor {
+    pub(crate) syntax: SyntaxNode,
+}
+impl ConstantConstructor {
+    pub fn identifier(&self) -> Option<Identifier> {
+        support::child(&self.syntax)
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+pub struct CompoundConstructor {
+    pub(crate) syntax: SyntaxNode,
+}
+impl CompoundConstructor {
+    pub fn l_paren_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T!['('])
+    }
+    pub fn identifier(&self) -> Option<Identifier> {
+        support::child(&self.syntax)
+    }
+    pub fn maybe_tagged_sort_decl(&self) -> Option<MaybeTaggedSortDecl> {
+        support::child(&self.syntax)
+    }
+    pub fn r_paren_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T![')'])
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+pub struct MaybeTaggedSortDecl {
+    pub(crate) syntax: SyntaxNode,
+}
+impl MaybeTaggedSortDecl {
+    pub fn tag(&self) -> Option<Identifier> {
+        support::child(&self.syntax)
+    }
+    pub fn colon_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T![:])
+    }
+    pub fn sort_decl(&self) -> Option<SortDecl> {
+        support::child(&self.syntax)
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+pub struct StructureDef {
+    pub(crate) syntax: SyntaxNode,
+}
+impl StructureDef {
+    pub fn structure_name_def(&self) -> Option<StructureNameDef> {
+        support::child(&self.syntax)
+    }
+    pub fn colon_eq_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T![:=])
+    }
+    pub fn structure_constructors(&self) -> AstChildren<StructureConstructor> {
+        support::children(&self.syntax)
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+pub struct DatatypeStmt {
+    pub(crate) syntax: SyntaxNode,
+}
+impl DatatypeStmt {
+    pub fn datatype_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T![datatype])
+    }
+    pub fn structure_def(&self) -> Option<StructureDef> {
+        support::child(&self.syntax)
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+pub struct StructureStmt {
+    pub(crate) syntax: SyntaxNode,
+}
+impl StructureStmt {
+    pub fn structure_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T![structure])
+    }
+    pub fn structure_def(&self) -> Option<StructureDef> {
+        support::child(&self.syntax)
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+pub struct DatatypesStmt {
+    pub(crate) syntax: SyntaxNode,
+}
+impl DatatypesStmt {
+    pub fn datatypes_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T![datatypes])
+    }
+    pub fn structure_defs(&self) -> AstChildren<StructureDef> {
+        support::children(&self.syntax)
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+pub struct StructuresStmt {
+    pub(crate) syntax: SyntaxNode,
+}
+impl StructuresStmt {
+    pub fn structures_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T![structures])
+    }
+    pub fn structure_defs(&self) -> AstChildren<StructureDef> {
+        support::children(&self.syntax)
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct ModuleDir {
     pub(crate) syntax: SyntaxNode,
 }
@@ -163,37 +286,6 @@ impl DomainsDir {
     }
     pub fn sort_decls(&self) -> AstChildren<SortDecl> {
         support::children(&self.syntax)
-    }
-}
-
-#[derive(Debug, Clone, PartialEq, Eq, Hash)]
-pub struct DeclareDir {
-    pub(crate) syntax: SyntaxNode,
-}
-impl DeclareDir {
-    pub fn declare_token(&self) -> Option<SyntaxToken> {
-        support::token(&self.syntax, T![declare])
-    }
-    pub fn identifiers(&self) -> AstChildren<Identifier> {
-        support::children(&self.syntax)
-    }
-    pub fn colon_token(&self) -> Option<SyntaxToken> {
-        support::token(&self.syntax, T![:])
-    }
-    pub fn sort_vars_decl(&self) -> Option<SortVarsDecl> {
-        support::child(&self.syntax)
-    }
-    pub fn func_sorts(&self) -> Option<FuncSorts> {
-        support::child(&self.syntax)
-    }
-    pub fn thin_arrow_token(&self) -> Option<SyntaxToken> {
-        support::token(&self.syntax, T![->])
-    }
-    pub fn return_sort(&self) -> Option<SortDecl> {
-        support::child(&self.syntax)
-    }
-    pub fn declare_attrs(&self) -> Option<DeclareAttrs> {
-        support::child(&self.syntax)
     }
 }
 
@@ -334,6 +426,37 @@ impl CompoundSortDecl {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
+pub struct DeclareDir {
+    pub(crate) syntax: SyntaxNode,
+}
+impl DeclareDir {
+    pub fn declare_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T![declare])
+    }
+    pub fn identifiers(&self) -> AstChildren<Identifier> {
+        support::children(&self.syntax)
+    }
+    pub fn colon_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T![:])
+    }
+    pub fn sort_vars_decl(&self) -> Option<SortVarsDecl> {
+        support::child(&self.syntax)
+    }
+    pub fn func_sorts(&self) -> Option<FuncSorts> {
+        support::child(&self.syntax)
+    }
+    pub fn thin_arrow_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T![->])
+    }
+    pub fn return_sort(&self) -> Option<SortDecl> {
+        support::child(&self.syntax)
+    }
+    pub fn declare_attrs(&self) -> Option<DeclareAttrs> {
+        support::child(&self.syntax)
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct SortVarsDecl {
     pub(crate) syntax: SyntaxNode,
 }
@@ -414,8 +537,8 @@ impl DeclareAttr {
     pub fn right_assoc_token(&self) -> Option<SyntaxToken> {
         support::token(&self.syntax, T![right - assoc])
     }
-    pub fn ident_token(&self) -> Option<SyntaxToken> {
-        support::token(&self.syntax, T![ident])
+    pub fn identifier(&self) -> Option<Identifier> {
+        support::child(&self.syntax)
     }
 }
 
@@ -1742,7 +1865,6 @@ pub enum Dir {
     ModuleDir(ModuleDir),
     DomainDir(DomainDir),
     DomainsDir(DomainsDir),
-    DeclareDir(DeclareDir),
     DefineDir(DefineDir),
     DefineProcDir(DefineProcDir),
     DefineMultiDir(DefineMultiDir),
@@ -1755,6 +1877,12 @@ pub enum Dir {
 pub enum SortDecl {
     IdentSort(IdentSort),
     CompoundSortDecl(CompoundSortDecl),
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+pub enum StructureConstructor {
+    ConstantConstructor(ConstantConstructor),
+    CompoundConstructor(CompoundConstructor),
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
@@ -1949,6 +2077,105 @@ impl AstNode for PhraseStmt {
         &self.syntax
     }
 }
+impl AstNode for StructureNameDef {
+    fn can_cast(kind: SyntaxKind) -> bool {
+        kind == STRUCTURE_NAME_DEF
+    }
+    fn cast(syntax: SyntaxNode) -> Option<Self> {
+        if Self::can_cast(syntax.kind()) { Some(Self { syntax }) } else { None }
+    }
+    fn syntax(&self) -> &SyntaxNode {
+        &self.syntax
+    }
+}
+impl AstNode for ConstantConstructor {
+    fn can_cast(kind: SyntaxKind) -> bool {
+        kind == CONSTANT_CONSTRUCTOR
+    }
+    fn cast(syntax: SyntaxNode) -> Option<Self> {
+        if Self::can_cast(syntax.kind()) { Some(Self { syntax }) } else { None }
+    }
+    fn syntax(&self) -> &SyntaxNode {
+        &self.syntax
+    }
+}
+impl AstNode for CompoundConstructor {
+    fn can_cast(kind: SyntaxKind) -> bool {
+        kind == COMPOUND_CONSTRUCTOR
+    }
+    fn cast(syntax: SyntaxNode) -> Option<Self> {
+        if Self::can_cast(syntax.kind()) { Some(Self { syntax }) } else { None }
+    }
+    fn syntax(&self) -> &SyntaxNode {
+        &self.syntax
+    }
+}
+impl AstNode for MaybeTaggedSortDecl {
+    fn can_cast(kind: SyntaxKind) -> bool {
+        kind == MAYBE_TAGGED_SORT_DECL
+    }
+    fn cast(syntax: SyntaxNode) -> Option<Self> {
+        if Self::can_cast(syntax.kind()) { Some(Self { syntax }) } else { None }
+    }
+    fn syntax(&self) -> &SyntaxNode {
+        &self.syntax
+    }
+}
+impl AstNode for StructureDef {
+    fn can_cast(kind: SyntaxKind) -> bool {
+        kind == STRUCTURE_DEF
+    }
+    fn cast(syntax: SyntaxNode) -> Option<Self> {
+        if Self::can_cast(syntax.kind()) { Some(Self { syntax }) } else { None }
+    }
+    fn syntax(&self) -> &SyntaxNode {
+        &self.syntax
+    }
+}
+impl AstNode for DatatypeStmt {
+    fn can_cast(kind: SyntaxKind) -> bool {
+        kind == DATATYPE_STMT
+    }
+    fn cast(syntax: SyntaxNode) -> Option<Self> {
+        if Self::can_cast(syntax.kind()) { Some(Self { syntax }) } else { None }
+    }
+    fn syntax(&self) -> &SyntaxNode {
+        &self.syntax
+    }
+}
+impl AstNode for StructureStmt {
+    fn can_cast(kind: SyntaxKind) -> bool {
+        kind == STRUCTURE_STMT
+    }
+    fn cast(syntax: SyntaxNode) -> Option<Self> {
+        if Self::can_cast(syntax.kind()) { Some(Self { syntax }) } else { None }
+    }
+    fn syntax(&self) -> &SyntaxNode {
+        &self.syntax
+    }
+}
+impl AstNode for DatatypesStmt {
+    fn can_cast(kind: SyntaxKind) -> bool {
+        kind == DATATYPES_STMT
+    }
+    fn cast(syntax: SyntaxNode) -> Option<Self> {
+        if Self::can_cast(syntax.kind()) { Some(Self { syntax }) } else { None }
+    }
+    fn syntax(&self) -> &SyntaxNode {
+        &self.syntax
+    }
+}
+impl AstNode for StructuresStmt {
+    fn can_cast(kind: SyntaxKind) -> bool {
+        kind == STRUCTURES_STMT
+    }
+    fn cast(syntax: SyntaxNode) -> Option<Self> {
+        if Self::can_cast(syntax.kind()) { Some(Self { syntax }) } else { None }
+    }
+    fn syntax(&self) -> &SyntaxNode {
+        &self.syntax
+    }
+}
 impl AstNode for ModuleDir {
     fn can_cast(kind: SyntaxKind) -> bool {
         kind == MODULE_DIR
@@ -1974,17 +2201,6 @@ impl AstNode for DomainDir {
 impl AstNode for DomainsDir {
     fn can_cast(kind: SyntaxKind) -> bool {
         kind == DOMAINS_DIR
-    }
-    fn cast(syntax: SyntaxNode) -> Option<Self> {
-        if Self::can_cast(syntax.kind()) { Some(Self { syntax }) } else { None }
-    }
-    fn syntax(&self) -> &SyntaxNode {
-        &self.syntax
-    }
-}
-impl AstNode for DeclareDir {
-    fn can_cast(kind: SyntaxKind) -> bool {
-        kind == DECLARE_DIR
     }
     fn cast(syntax: SyntaxNode) -> Option<Self> {
         if Self::can_cast(syntax.kind()) { Some(Self { syntax }) } else { None }
@@ -2062,6 +2278,17 @@ impl AstNode for AssertClosedDir {
 impl AstNode for CompoundSortDecl {
     fn can_cast(kind: SyntaxKind) -> bool {
         kind == COMPOUND_SORT_DECL
+    }
+    fn cast(syntax: SyntaxNode) -> Option<Self> {
+        if Self::can_cast(syntax.kind()) { Some(Self { syntax }) } else { None }
+    }
+    fn syntax(&self) -> &SyntaxNode {
+        &self.syntax
+    }
+}
+impl AstNode for DeclareDir {
+    fn can_cast(kind: SyntaxKind) -> bool {
+        kind == DECLARE_DIR
     }
     fn cast(syntax: SyntaxNode) -> Option<Self> {
         if Self::can_cast(syntax.kind()) { Some(Self { syntax }) } else { None }
@@ -3026,11 +3253,6 @@ impl From<DomainsDir> for Dir {
         Dir::DomainsDir(node)
     }
 }
-impl From<DeclareDir> for Dir {
-    fn from(node: DeclareDir) -> Dir {
-        Dir::DeclareDir(node)
-    }
-}
 impl From<DefineDir> for Dir {
     fn from(node: DefineDir) -> Dir {
         Dir::DefineDir(node)
@@ -3064,9 +3286,8 @@ impl From<AssertClosedDir> for Dir {
 impl AstNode for Dir {
     fn can_cast(kind: SyntaxKind) -> bool {
         matches!(
-            kind, MODULE_DIR | DOMAIN_DIR | DOMAINS_DIR | DECLARE_DIR | DEFINE_DIR |
-            DEFINE_PROC_DIR | DEFINE_MULTI_DIR | LOAD_DIR | ASSERT_DIR |
-            ASSERT_CLOSED_DIR
+            kind, MODULE_DIR | DOMAIN_DIR | DOMAINS_DIR | DEFINE_DIR | DEFINE_PROC_DIR |
+            DEFINE_MULTI_DIR | LOAD_DIR | ASSERT_DIR | ASSERT_CLOSED_DIR
         )
     }
     fn cast(syntax: SyntaxNode) -> Option<Self> {
@@ -3074,7 +3295,6 @@ impl AstNode for Dir {
             MODULE_DIR => Dir::ModuleDir(ModuleDir { syntax }),
             DOMAIN_DIR => Dir::DomainDir(DomainDir { syntax }),
             DOMAINS_DIR => Dir::DomainsDir(DomainsDir { syntax }),
-            DECLARE_DIR => Dir::DeclareDir(DeclareDir { syntax }),
             DEFINE_DIR => Dir::DefineDir(DefineDir { syntax }),
             DEFINE_PROC_DIR => Dir::DefineProcDir(DefineProcDir { syntax }),
             DEFINE_MULTI_DIR => Dir::DefineMultiDir(DefineMultiDir { syntax }),
@@ -3090,7 +3310,6 @@ impl AstNode for Dir {
             Dir::ModuleDir(it) => &it.syntax,
             Dir::DomainDir(it) => &it.syntax,
             Dir::DomainsDir(it) => &it.syntax,
-            Dir::DeclareDir(it) => &it.syntax,
             Dir::DefineDir(it) => &it.syntax,
             Dir::DefineProcDir(it) => &it.syntax,
             Dir::DefineMultiDir(it) => &it.syntax,
@@ -3126,6 +3345,39 @@ impl AstNode for SortDecl {
         match self {
             SortDecl::IdentSort(it) => &it.syntax,
             SortDecl::CompoundSortDecl(it) => &it.syntax,
+        }
+    }
+}
+impl From<ConstantConstructor> for StructureConstructor {
+    fn from(node: ConstantConstructor) -> StructureConstructor {
+        StructureConstructor::ConstantConstructor(node)
+    }
+}
+impl From<CompoundConstructor> for StructureConstructor {
+    fn from(node: CompoundConstructor) -> StructureConstructor {
+        StructureConstructor::CompoundConstructor(node)
+    }
+}
+impl AstNode for StructureConstructor {
+    fn can_cast(kind: SyntaxKind) -> bool {
+        matches!(kind, CONSTANT_CONSTRUCTOR | COMPOUND_CONSTRUCTOR)
+    }
+    fn cast(syntax: SyntaxNode) -> Option<Self> {
+        let res = match syntax.kind() {
+            CONSTANT_CONSTRUCTOR => {
+                StructureConstructor::ConstantConstructor(ConstantConstructor { syntax })
+            }
+            COMPOUND_CONSTRUCTOR => {
+                StructureConstructor::CompoundConstructor(CompoundConstructor { syntax })
+            }
+            _ => return None,
+        };
+        Some(res)
+    }
+    fn syntax(&self) -> &SyntaxNode {
+        match self {
+            StructureConstructor::ConstantConstructor(it) => &it.syntax,
+            StructureConstructor::CompoundConstructor(it) => &it.syntax,
         }
     }
 }
@@ -3694,6 +3946,11 @@ impl std::fmt::Display for SortDecl {
         std::fmt::Display::fmt(self.syntax(), f)
     }
 }
+impl std::fmt::Display for StructureConstructor {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        std::fmt::Display::fmt(self.syntax(), f)
+    }
+}
 impl std::fmt::Display for Expr {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         std::fmt::Display::fmt(self.syntax(), f)
@@ -3769,6 +4026,51 @@ impl std::fmt::Display for PhraseStmt {
         std::fmt::Display::fmt(self.syntax(), f)
     }
 }
+impl std::fmt::Display for StructureNameDef {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        std::fmt::Display::fmt(self.syntax(), f)
+    }
+}
+impl std::fmt::Display for ConstantConstructor {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        std::fmt::Display::fmt(self.syntax(), f)
+    }
+}
+impl std::fmt::Display for CompoundConstructor {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        std::fmt::Display::fmt(self.syntax(), f)
+    }
+}
+impl std::fmt::Display for MaybeTaggedSortDecl {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        std::fmt::Display::fmt(self.syntax(), f)
+    }
+}
+impl std::fmt::Display for StructureDef {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        std::fmt::Display::fmt(self.syntax(), f)
+    }
+}
+impl std::fmt::Display for DatatypeStmt {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        std::fmt::Display::fmt(self.syntax(), f)
+    }
+}
+impl std::fmt::Display for StructureStmt {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        std::fmt::Display::fmt(self.syntax(), f)
+    }
+}
+impl std::fmt::Display for DatatypesStmt {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        std::fmt::Display::fmt(self.syntax(), f)
+    }
+}
+impl std::fmt::Display for StructuresStmt {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        std::fmt::Display::fmt(self.syntax(), f)
+    }
+}
 impl std::fmt::Display for ModuleDir {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         std::fmt::Display::fmt(self.syntax(), f)
@@ -3780,11 +4082,6 @@ impl std::fmt::Display for DomainDir {
     }
 }
 impl std::fmt::Display for DomainsDir {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        std::fmt::Display::fmt(self.syntax(), f)
-    }
-}
-impl std::fmt::Display for DeclareDir {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         std::fmt::Display::fmt(self.syntax(), f)
     }
@@ -3820,6 +4117,11 @@ impl std::fmt::Display for AssertClosedDir {
     }
 }
 impl std::fmt::Display for CompoundSortDecl {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        std::fmt::Display::fmt(self.syntax(), f)
+    }
+}
+impl std::fmt::Display for DeclareDir {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         std::fmt::Display::fmt(self.syntax(), f)
     }

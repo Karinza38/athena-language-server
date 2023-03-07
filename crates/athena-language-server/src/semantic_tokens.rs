@@ -297,6 +297,9 @@ fn token(builder: &mut SemanticTokensBuilder, tok: SyntaxToken) {
         literal(builder, tok);
     } else if kind == SyntaxKind::COMMENT {
         builder.push(tok.text_range(), COMMENT);
+    } else if kind == SyntaxKind::IDENT {
+        //FIXME: we shouldn't really hit this case
+        builder.push(tok.text_range(), VARIABLE);
     } else {
         log::warn!("unhandled token: {:?}", kind);
     }
@@ -314,9 +317,12 @@ fn traverse(builder: &mut SemanticTokensBuilder, node: &SyntaxNode) {
 
         match element {
             NodeOrToken::Node(n) => {
-                if let Some(id) = ast::Identifier::cast(n) {
+                if let Some(id) = ast::Identifier::cast(n.clone()) {
                     identifier(builder, id);
                 } else {
+                    if let Some(meta) = ast::MetaIdent::cast(n) {
+                        builder.push(meta.syntax().text_range(), MACRO);
+                    }
                     continue;
                 }
             }

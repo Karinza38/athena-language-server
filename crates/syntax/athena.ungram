@@ -78,6 +78,37 @@ PhraseStmt =
 DirStmt =
     Dir
 
+StructureNameDef =
+    SortDecl
+
+StructureConstructor =
+    ConstantConstructor
+    | CompoundConstructor
+
+ConstantConstructor =
+    Identifier
+
+CompoundConstructor =
+    '(' Identifier MaybeTaggedSortDecl ')'
+
+MaybeTaggedSortDecl =
+    (tag:Identifier ':')? SortDecl
+
+StructureDef =
+    StructureNameDef ':=' (StructureConstructor ('|' StructureConstructor)*)
+
+DatatypeStmt =
+    'datatype' StructureDef
+
+StructureStmt =
+    'structure' StructureDef
+
+DatatypesStmt =
+    'datatypes' (StructureDef ('&&' StructureDef)*)
+
+StructuresStmt =
+    'structures' (StructureDef ('&&' StructureDef)*)
+
 //************//
 // Directives //
 //************//
@@ -86,7 +117,6 @@ Dir =
     ModuleDir // ✅
     | DomainDir // ✅
     | DomainsDir // ✅
-    | DeclareDir // ✅
     | DefineDir // ✅
     | DefineProcDir // ✅
     | DefineMultiDir // ✅
