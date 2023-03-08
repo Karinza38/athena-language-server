@@ -20,7 +20,7 @@ pub(crate) enum LexerToken {
         |lex|lex.slice().len()
     )]
     Char(usize),
-    #[regex(r###"[ \t\n]+"###, |lex|lex.slice().len())]
+    #[regex(r###"[ \t\n\r]+"###, |lex|lex.slice().len())]
     Whitespace(usize),
     #[regex(r###"#.*"###, |lex|lex.slice().len())]
     Comment(usize),
