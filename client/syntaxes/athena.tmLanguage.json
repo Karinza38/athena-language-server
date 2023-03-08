@@ -1,7 +1,5 @@
 {
-  "fileTypes": [
-    "ath"
-  ],
+  "fileTypes": ["ath"],
   "name": "athena",
   "patterns": [
     {
@@ -13,9 +11,6 @@
   "repository": {
     "main": {
       "patterns": [
-        {
-          "include": "#declaration"
-        },
         {
           "include": "#reserved_keyword"
         },
@@ -45,6 +40,10 @@
         },
         {
           "match": "(\\?)",
+          "name": "punctuation.athena"
+        },
+        {
+          "match": "(,)",
           "name": "punctuation.athena"
         },
         {
@@ -166,66 +165,6 @@
         {
           "match": "(`(?:\\\\[\\x{0022}\\x{005c}abnrftv]))",
           "name": "constant.character.escape.athena"
-        }
-      ]
-    },
-    "declaration": {
-      "patterns": [
-        {
-          "match": "(?x)\n  (declare) #declare keyword\n  (\\s+)\n  ((?:[\\x{0025}\\x{0026}\\x{002a}\\x{002b}\\--9\\x{003c}-\\x{003e}\\x{0040}-Z\\x{005c}\\x{005e}_a-z\\x{007c}])(?:!|[\\x{0023}-\\x{0027}]|[\\x{002a}\\x{002b}]|[\\--9]|[\\x{003c}-\\x{005c}]|\\^|[_-z]|\\|)*)\n  (\\s*)\n  (:)\n  (\\s*)\n  (?:\n    (\\()\n    ((?:(?:[\\x{0025}\\x{0026}\\x{002a}\\x{002b}\\--9\\x{003c}-\\x{003e}\\x{0040}-Z\\x{005c}\\x{005e}_a-z\\x{007c}])(?:!|[\\x{0023}-\\x{0027}]|[\\x{002a}\\x{002b}]|[\\--9]|[\\x{003c}-\\x{005c}]|\\^|[_-z]|\\|)*\\s*)+)\n    (\\))\n  )?\n  (\\s*)\n  (\\[)\n  ((?:(?:[\\x{0025}\\x{0026}\\x{002a}\\x{002b}\\--9\\x{003c}-\\x{003e}\\x{0040}-Z\\x{005c}\\x{005e}_a-z\\x{007c}])(?:!|[\\x{0023}-\\x{0027}]|[\\x{002a}\\x{002b}]|[\\--9]|[\\x{003c}-\\x{005c}]|\\^|[_-z]|\\|)*\\s*)*)(\\])(\\s*)(->)(\\s*)((?:[\\x{0025}\\x{0026}\\x{002a}\\x{002b}\\--9\\x{003c}-\\x{003e}\\x{0040}-Z\\x{005c}\\x{005e}_a-z\\x{007c}])(?:!|[\\x{0023}-\\x{0027}]|[\\x{002a}\\x{002b}]|[\\--9]|[\\x{003c}-\\x{005c}]|\\^|[_-z]|\\|)*)\n",
-          "captures": {
-            "1": {
-              "name": "keyword.control.athena"
-            },
-            "2": {
-              "name": "whitespace.athena"
-            },
-            "3": {
-              "name": "entity.name.function.athena"
-            },
-            "4": {
-              "name": "whitespace.athena"
-            },
-            "5": {
-              "name": "punctuation.athena"
-            },
-            "6": {
-              "name": "whitespace.athena"
-            },
-            "7": {
-              "name": "punctuation.athena"
-            },
-            "8": {
-              "name": "entity.name.type.athena"
-            },
-            "9": {
-              "name": "punctuation.athena"
-            },
-            "10": {
-              "name": "whitespace.athena"
-            },
-            "11": {
-              "name": "punctuation.athena"
-            },
-            "12": {
-              "name": "entity.name.type.athena"
-            },
-            "13": {
-              "name": "punctuation.athena"
-            },
-            "14": {
-              "name": "whitespace.athena"
-            },
-            "15": {
-              "name": "punctuation.athena"
-            },
-            "16": {
-              "name": "whitespace.athena"
-            },
-            "17": {
-              "name": "entity.name.type.athena"
-            }
-          }
         }
       ]
     },

@@ -2,7 +2,7 @@
 use std::{ops, sync::atomic::AtomicU32};
 use syntax::{
     ast::{self},
-    AstNode, NodeOrToken, SyntaxKind, SyntaxNode, SyntaxToken, TextRange, WalkEvent, T,
+    match_ast, AstNode, NodeOrToken, SyntaxKind, SyntaxNode, SyntaxToken, TextRange, WalkEvent, T,
 };
 use tower_lsp::lsp_types::{
     SemanticToken, SemanticTokenModifier, SemanticTokenType, SemanticTokens, SemanticTokensEdit,
@@ -332,6 +332,22 @@ fn traverse(builder: &mut SemanticTokensBuilder, node: &SyntaxNode) {
 }
 
 fn identifier(builder: &mut SemanticTokensBuilder, ident: ast::Identifier) {
+    let Some(parent) = ident.syntax().parent() else {
+        return;
+    };
+    match_ast! {
+        match parent {
+            ast::DeclareDir(_d) => {
+                builder.push(ident.syntax().text_range(), FUNCTION);
+                return;
+            },
+            ast::Sort(_f) => {
+                builder.push(ident.syntax().text_range(), TYPE);
+                return;
+            },
+            _ => {}
+        }
+    }
     builder.push(ident.syntax().text_range(), VARIABLE);
 }
 
