@@ -63,6 +63,15 @@ impl<'i> Parser<'i> {
         }
     }
 
+    pub(crate) fn eat_contextual_kw(&mut self, kw: SyntaxKind) -> bool {
+        if self.at_contextual_kw(kw) {
+            self.bump_remap(kw);
+            true
+        } else {
+            false
+        }
+    }
+
     pub(crate) fn at_end(&self) -> bool {
         self.current() == SyntaxKind::EOF
     }

@@ -23,18 +23,10 @@ pub(crate) enum ExprOrDed {
     Ambig,
 }
 
-fn match_arm(p: &mut Parser, leading_pipe: bool, want: Option<ExprOrDed>) -> ExprOrDed {
-    let m = if leading_pipe {
-        assert!(p.at_contextual_kw(T![|]));
+fn match_arm(p: &mut Parser, want: Option<ExprOrDed>) -> ExprOrDed {
+    let m = p.start();
 
-        let m = p.start();
-        p.bump_remap(T![|]);
-        m
-    } else {
-        // FIXME: Consider this assertion?
-        // assert!(p.at_one_of(super::patterns::PAT_START_SET));
-        p.start()
-    };
+    p.eat_contextual_kw(T![|]);
 
     if !pat(p) {
         // test_err(expr) match_arm_no_pat
@@ -109,6 +101,8 @@ fn expr_or_ded_fallback(
     }
 }
 
+// test(expr) match_leading_pipe
+// match foo { | bar => 1 }
 pub(crate) fn match_expr_or_ded(p: &mut Parser, want: Option<ExprOrDed>) -> ExprOrDed {
     assert!(p.at(T![match]));
 
@@ -123,23 +117,25 @@ pub(crate) fn match_expr_or_ded(p: &mut Parser, want: Option<ExprOrDed>) -> Expr
 
     p.expect(T!['{']);
 
-    let res = if !p.at_one_of(super::patterns::PAT_START_SET) {
+    let res = if !p.at_one_of(super::patterns::PAT_START_SET)
+        && !p.peek_at_one_of(super::patterns::PAT_START_SET)
+    {
         // test_err(expr) match_expr_no_arm
         // match foo {  }
         if !p.at(T![=>]) {
             p.error("Expected at least one arm in the match expression");
             want.unwrap_or(ExprOrDed::Ambig)
         } else {
-            match_arm(p, false, want)
+            match_arm(p, want)
         }
     } else {
-        match_arm(p, false, want)
+        match_arm(p, want)
     };
 
     while p.at_contextual_kw(T![|]) {
         // test(expr) match_expr_multiple_arms
         // match foo { bar => baz | qux => (quux "cool") }
-        match_arm(p, true, want);
+        match_arm(p, want);
     }
 
     p.expect(T!['}']);
