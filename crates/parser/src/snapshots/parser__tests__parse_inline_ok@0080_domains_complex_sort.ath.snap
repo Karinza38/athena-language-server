@@ -11,7 +11,7 @@ DOMAINS_DIR
     IDENT_SORT
       IDENTIFIER
         IDENT "List"
-        WHITESPACE " "
+    WHITESPACE " "
     IDENT_SORT
       IDENTIFIER
         IDENT "T"
@@ -23,10 +23,10 @@ DOMAINS_DIR
     IDENT_SORT
       IDENTIFIER
         IDENT "Set"
-        WHITESPACE " "
+    WHITESPACE " "
     IDENT_SORT
       IDENTIFIER
         IDENT "U"
     R_PAREN ")"
-    WHITESPACE "\n"
+  WHITESPACE "\n"
 

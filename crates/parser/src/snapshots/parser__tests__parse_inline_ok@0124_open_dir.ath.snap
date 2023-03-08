@@ -12,5 +12,5 @@ OPEN_DIR
   WHITESPACE " "
   IDENTIFIER
     IDENT "Set"
-    WHITESPACE "\n"
+  WHITESPACE "\n"
 

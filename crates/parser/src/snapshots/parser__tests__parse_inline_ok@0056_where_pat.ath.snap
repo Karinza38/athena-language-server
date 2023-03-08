@@ -9,13 +9,13 @@ WHERE_PAT
   IDENT_PAT
     IDENTIFIER
       IDENT "a"
-      WHITESPACE " "
+  WHITESPACE " "
   WHERE_KW "where"
   WHITESPACE " "
   IDENT_EXPR
     IDENTIFIER
       IDENT "b"
-      WHITESPACE " "
+  WHITESPACE " "
   R_PAREN ")"
   WHITESPACE "\n"
 

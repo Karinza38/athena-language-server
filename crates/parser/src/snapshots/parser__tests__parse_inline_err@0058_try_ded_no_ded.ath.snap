@@ -15,17 +15,17 @@ TRY_DED
       IDENT_EXPR
         IDENTIFIER
           IDENT "claim"
-          WHITESPACE " "
+      WHITESPACE " "
       EXPR_PHRASE
         IDENT_EXPR
           IDENTIFIER
             IDENT "A"
       R_PAREN ")"
-      WHITESPACE " "
+  WHITESPACE " "
   TRY_DED_ARM
     PIPE "|"
-    WHITESPACE "  "
+  WHITESPACE "  "
   R_CURLY "}"
   WHITESPACE "\n"
-error 20: Expected to find an expression for the try arm
+error 18: Expected to find an expression for the try arm
 

@@ -13,13 +13,13 @@ CHECK_EXPR
       IDENT_EXPR
         IDENTIFIER
           IDENT "foo"
-          WHITESPACE " "
+    WHITESPACE " "
     FAT_ARROW "=>"
     WHITESPACE " "
     IDENT_EXPR
       IDENTIFIER
         IDENT "bar"
-        WHITESPACE "\n"
+  WHITESPACE "\n"
   CHECK_ARM
     PIPE "|"
     WHITESPACE " "
@@ -27,10 +27,10 @@ CHECK_EXPR
       IDENT_EXPR
         IDENTIFIER
           IDENT "baz"
-          WHITESPACE " "
-    FAT_ARROW "=>"
     WHITESPACE " "
+    FAT_ARROW "=>"
+  WHITESPACE " "
   R_CURLY "}"
   WHITESPACE "\n"
-error 28: Expected a check arm body
+error 27: Expected a check arm body
 

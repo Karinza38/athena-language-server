@@ -6,6 +6,6 @@ input_file: crates/parser/test_data/parser/inline/err/expr/0014_vector_sub_expr_
 VECTOR_SUB_EXPR
   VECTOR_SUB_KW "vector-sub"
   WHITESPACE "\n"
-error 11: Expected to find a target expression for the vector-sub expression
-error 11: Expected to find a value (expr) for the vector-sub expression
+error 10: Expected to find a target expression for the vector-sub expression
+error 10: Expected to find a value (expr) for the vector-sub expression
 

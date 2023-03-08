@@ -9,5 +9,5 @@ BANG_METHOD_CALL_DED
   WHITESPACE " "
   R_PAREN ")"
   WHITESPACE "\n"
-error 3: expected method expression to apply
+error 2: expected method expression to apply
 

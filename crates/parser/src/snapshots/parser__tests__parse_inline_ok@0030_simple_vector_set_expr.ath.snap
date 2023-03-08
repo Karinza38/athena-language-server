@@ -9,14 +9,14 @@ VECTOR_SET_EXPR
   IDENT_EXPR
     IDENTIFIER
       IDENT "foo"
-      WHITESPACE " "
+  WHITESPACE " "
   IDENT_EXPR
     IDENTIFIER
       IDENT "0"
-      WHITESPACE " "
+  WHITESPACE " "
   EXPR_PHRASE
     IDENT_EXPR
       IDENTIFIER
         IDENT "bar"
-        WHITESPACE "\n"
+  WHITESPACE "\n"
 

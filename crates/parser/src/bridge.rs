@@ -1,4 +1,4 @@
-//! Bridge between lexer and parser
+//! Bridges lexer and parser
 
 use std::mem;
 
@@ -96,7 +96,6 @@ impl<'i, 'o> Builder<'i, 'o> {
 
         self.eat_trivia();
         self.do_token(kind);
-        self.eat_trivia();
     }
 
     fn enter(&mut self, kind: SyntaxKind) {
@@ -132,7 +131,7 @@ impl<'i, 'o> Builder<'i, 'o> {
     }
 
     fn do_token(&mut self, kind: SyntaxKind) {
-        let text = self.lexed.text_for_range(self.pos..self.pos + 1);
+        let text = self.lexed.text(self.pos);
         self.pos += 1;
         (self.sink)(StrStep::Token { kind, text });
     }

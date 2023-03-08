@@ -8,7 +8,7 @@ DECLARE_DIR
   WHITESPACE " "
   IDENTIFIER
     IDENT "foo"
-    WHITESPACE " "
+  WHITESPACE " "
   COLON ":"
   WHITESPACE " "
   SORT_VARS_DECL
@@ -16,14 +16,14 @@ DECLARE_DIR
     IDENTIFIER
       IDENT "A"
     R_PAREN ")"
-    WHITESPACE " "
+  WHITESPACE " "
   FUNC_SORTS
     L_BRACK "["
     IDENT_SORT
       IDENTIFIER
         IDENT "A"
     R_BRACK "]"
-    WHITESPACE " "
+  WHITESPACE " "
   THIN_ARROW "->"
   WHITESPACE " "
   COMPOUND_SORT_DECL
@@ -31,10 +31,10 @@ DECLARE_DIR
     IDENT_SORT
       IDENTIFIER
         IDENT "List"
-        WHITESPACE " "
+    WHITESPACE " "
     IDENT_SORT
       IDENTIFIER
         IDENT "A"
     R_PAREN ")"
-    WHITESPACE "\n"
+  WHITESPACE "\n"
 

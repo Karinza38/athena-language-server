@@ -8,7 +8,7 @@ DECLARE_DIR
   WHITESPACE " "
   IDENTIFIER
     IDENT "foo"
-    WHITESPACE " "
+  WHITESPACE " "
   COLON ":"
   WHITESPACE " "
   FUNC_SORTS
@@ -17,8 +17,8 @@ DECLARE_DIR
       IDENTIFIER
         IDENT "Int"
     R_BRACK "]"
-    WHITESPACE " "
+  WHITESPACE " "
   THIN_ARROW "->"
   WHITESPACE "\n"
-error 23: expected function return sort
+error 22: expected function return sort
 

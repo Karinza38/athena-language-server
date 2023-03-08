@@ -6,5 +6,5 @@ input_file: crates/parser/test_data/parser/inline/err/expr/0008_cell_expr_no_phr
 CELL_EXPR
   CELL_KW "cell"
   WHITESPACE "\n"
-error 5: Expected to find a phrase for the cell expression
+error 4: Expected to find a phrase for the cell expression
 

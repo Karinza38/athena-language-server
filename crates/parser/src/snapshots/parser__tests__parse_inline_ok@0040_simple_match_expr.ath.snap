@@ -10,14 +10,14 @@ MATCH_EXPR
     IDENT_EXPR
       IDENTIFIER
         IDENT "foo"
-        WHITESPACE " "
+  WHITESPACE " "
   L_CURLY "{"
   WHITESPACE " "
   MATCH_ARM
     IDENT_PAT
       IDENTIFIER
         IDENT "bar"
-        WHITESPACE " "
+    WHITESPACE " "
     FAT_ARROW "=>"
     WHITESPACE " "
     APPLICATION_EXPR
@@ -25,13 +25,13 @@ MATCH_EXPR
       IDENT_EXPR
         IDENTIFIER
           IDENT "baz"
-          WHITESPACE " "
+      WHITESPACE " "
       EXPR_PHRASE
         IDENT_EXPR
           IDENTIFIER
             IDENT "boo"
       R_PAREN ")"
-      WHITESPACE " "
+  WHITESPACE " "
   R_CURLY "}"
   WHITESPACE "\n"
 

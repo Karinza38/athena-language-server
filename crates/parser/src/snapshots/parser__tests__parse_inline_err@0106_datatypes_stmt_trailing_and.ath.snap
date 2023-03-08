@@ -11,14 +11,14 @@ DATATYPES_STMT
       IDENT_SORT
         IDENTIFIER
           IDENT "Foo"
-          WHITESPACE " "
+    WHITESPACE " "
     COLON_EQ ":="
     WHITESPACE " "
     CONSTANT_CONSTRUCTOR
       IDENTIFIER
         IDENT "bar"
-        WHITESPACE " "
+  WHITESPACE " "
   AMP2 "&&"
   WHITESPACE "\n"
-error 24: expected a datatype definition following the `&&`
+error 23: expected a datatype definition following the `&&`
 

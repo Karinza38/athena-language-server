@@ -11,5 +11,5 @@ ASSERT_DIR
       IDENT "A"
   COMMA ","
   WHITESPACE "\n"
-error 10: expected assertion after comma
+error 9: expected assertion after comma
 

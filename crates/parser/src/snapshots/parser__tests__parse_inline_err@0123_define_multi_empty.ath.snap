@@ -10,7 +10,7 @@ DEFINE_MULTI_DIR
   IDENT_PAT
     IDENTIFIER
       IDENT "foo"
-      WHITESPACE " "
+  WHITESPACE " "
   IDENT_PAT
     IDENTIFIER
       IDENT "bar"
@@ -18,5 +18,5 @@ DEFINE_MULTI_DIR
   WHITESPACE " "
   COLON_EQ ":="
   WHITESPACE "\n"
-error 20: expected definition value
+error 19: expected definition value
 

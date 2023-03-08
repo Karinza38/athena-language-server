@@ -10,6 +10,6 @@ WHILE_EXPR
     IDENT_EXPR
       IDENTIFIER
         IDENT "foo"
-        WHITESPACE "\n"
-error 10: Expected to find a body (expr) for the while expression
+  WHITESPACE "\n"
+error 9: Expected to find a body (expr) for the while expression
 

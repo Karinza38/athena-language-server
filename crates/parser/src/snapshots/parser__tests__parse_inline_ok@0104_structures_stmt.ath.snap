@@ -11,13 +11,13 @@ STRUCTURES_STMT
       IDENT_SORT
         IDENTIFIER
           IDENT "Foo"
-          WHITESPACE " "
+    WHITESPACE " "
     COLON_EQ ":="
     WHITESPACE " "
     CONSTANT_CONSTRUCTOR
       IDENTIFIER
         IDENT "bar"
-        WHITESPACE " "
+  WHITESPACE " "
   AMP2 "&&"
   WHITESPACE " "
   STRUCTURE_DEF
@@ -25,11 +25,11 @@ STRUCTURES_STMT
       IDENT_SORT
         IDENTIFIER
           IDENT "Baz"
-          WHITESPACE " "
+    WHITESPACE " "
     COLON_EQ ":="
     WHITESPACE " "
     CONSTANT_CONSTRUCTOR
       IDENTIFIER
         IDENT "quz"
-        WHITESPACE "\n"
+  WHITESPACE "\n"
 

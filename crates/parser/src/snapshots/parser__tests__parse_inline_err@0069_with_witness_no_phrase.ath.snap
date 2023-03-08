@@ -9,7 +9,7 @@ WITH_WITNESS_DED
   IDENT_EXPR
     IDENTIFIER
       IDENT "a"
-      WHITESPACE "\n"
-error 15: expected phrase in with witness binding
-error 15: expected body for with witness
+  WHITESPACE "\n"
+error 14: expected phrase in with witness binding
+error 14: expected body for with witness
 

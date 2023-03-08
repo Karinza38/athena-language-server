@@ -12,14 +12,14 @@ MATCH_EXPR
     IDENT_PAT
       IDENTIFIER
         IDENT "foo"
-        WHITESPACE " "
+    WHITESPACE " "
     FAT_ARROW "=>"
     WHITESPACE " "
     IDENT_EXPR
       IDENTIFIER
         IDENT "bar"
-        WHITESPACE " "
+  WHITESPACE " "
   R_CURLY "}"
   WHITESPACE "\n"
-error 6: Expected to find a scrutinee (phrase) for the match expression
+error 5: Expected to find a scrutinee (phrase) for the match expression
 

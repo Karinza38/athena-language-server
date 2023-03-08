@@ -6,5 +6,5 @@ input_file: crates/parser/test_data/parser/inline/err/expr/0011_ref_expr_no_expr
 REF_EXPR
   REF_KW "ref"
   WHITESPACE "\n"
-error 4: Expected to find a target expression for the ref expression
+error 3: Expected to find a target expression for the ref expression
 

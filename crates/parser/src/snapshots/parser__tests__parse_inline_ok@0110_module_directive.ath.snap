@@ -8,7 +8,7 @@ MODULE_DIR
   WHITESPACE " "
   IDENTIFIER
     IDENT "foo"
-    WHITESPACE " "
+  WHITESPACE " "
   L_CURLY "{"
   WHITESPACE " "
   DIR_STMT
@@ -22,7 +22,7 @@ MODULE_DIR
       IDENT_SORT
         IDENTIFIER
           IDENT "Person"
-          WHITESPACE " "
+  WHITESPACE " "
   R_CURLY "}"
   WHITESPACE "\n"
 

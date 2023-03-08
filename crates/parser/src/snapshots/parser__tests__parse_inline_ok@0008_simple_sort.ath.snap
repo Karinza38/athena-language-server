@@ -12,5 +12,5 @@ TERM_VAR_EXPR
   IDENT_SORT
     IDENTIFIER
       IDENT "Int"
-      WHITESPACE "\n"
+  WHITESPACE "\n"
 

@@ -13,5 +13,5 @@ TERM_VAR_EXPR
     SINGLE_QUOTE "'"
     IDENTIFIER
       IDENT "foo"
-      WHITESPACE "\n"
+  WHITESPACE "\n"
 

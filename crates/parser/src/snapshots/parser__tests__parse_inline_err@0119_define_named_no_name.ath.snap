@@ -18,7 +18,7 @@ ERROR
           IDENT "a"
       R_BRACK "]"
       R_PAREN ")"
-      WHITESPACE " "
+    WHITESPACE " "
     COLON_EQ ":="
     WHITESPACE " "
     EXPR_PHRASE
@@ -27,5 +27,5 @@ ERROR
           IDENT "true"
   R_PAREN ")"
   WHITESPACE "\n"
-error 9: expected name for define
+error 8: expected name for define
 

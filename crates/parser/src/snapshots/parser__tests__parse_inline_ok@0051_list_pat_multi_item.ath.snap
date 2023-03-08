@@ -8,32 +8,32 @@ LIST_PAT
   IDENT_PAT
     IDENTIFIER
       IDENT "a"
-      WHITESPACE " "
+  WHITESPACE " "
   IDENT_PAT
     IDENTIFIER
       IDENT "b"
-      WHITESPACE " "
+  WHITESPACE " "
   LIST_PAT
     L_BRACK "["
     IDENT_PAT
       IDENTIFIER
         IDENT "c"
     R_BRACK "]"
-    WHITESPACE " "
+  WHITESPACE " "
   LIST_PAT
     L_BRACK "["
     R_BRACK "]"
-    WHITESPACE " "
+  WHITESPACE " "
   LIST_PAT
     L_BRACK "["
     IDENT_PAT
       IDENTIFIER
         IDENT "1"
-        WHITESPACE " "
+    WHITESPACE " "
     IDENT_PAT
       IDENTIFIER
         IDENT "2"
-        WHITESPACE " "
+    WHITESPACE " "
     IDENT_PAT
       IDENTIFIER
         IDENT "3"

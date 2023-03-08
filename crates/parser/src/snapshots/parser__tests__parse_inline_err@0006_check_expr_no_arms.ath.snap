@@ -8,8 +8,8 @@ ERROR
     CHECK_KW "check"
     WHITESPACE " "
     L_CURLY "{"
-    WHITESPACE " "
+  WHITESPACE " "
   R_CURLY "}"
   WHITESPACE "\n"
-error 8: Expected at least one arm in the check expression
+error 7: Expected at least one arm in the check expression
 

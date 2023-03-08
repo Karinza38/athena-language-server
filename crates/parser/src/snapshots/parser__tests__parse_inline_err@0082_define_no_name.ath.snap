@@ -12,6 +12,6 @@ DEFINE_DIR
     IDENT_EXPR
       IDENTIFIER
         IDENT "true"
-        WHITESPACE "\n"
-error 7: expected definition name
+  WHITESPACE "\n"
+error 6: expected definition name
 

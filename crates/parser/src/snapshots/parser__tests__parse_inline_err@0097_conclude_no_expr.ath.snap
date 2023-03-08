@@ -6,6 +6,6 @@ input_file: crates/parser/test_data/parser/inline/err/ded/0097_conclude_no_expr.
 CONCLUDE_DED
   CONCLUDE_KW "conclude"
   WHITESPACE "\n"
-error 9: expected expression yielding a sentence in conclude deduction
-error 9: expected phrase in conclude deduction
+error 8: expected expression yielding a sentence in conclude deduction
+error 8: expected phrase in conclude deduction
 

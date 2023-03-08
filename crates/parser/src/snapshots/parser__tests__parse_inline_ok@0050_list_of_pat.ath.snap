@@ -10,7 +10,7 @@ LIST_OF_PAT
   IDENT_PAT
     IDENTIFIER
       IDENT "a"
-      WHITESPACE " "
+  WHITESPACE " "
   IDENT_PAT
     IDENTIFIER
       IDENT "b"

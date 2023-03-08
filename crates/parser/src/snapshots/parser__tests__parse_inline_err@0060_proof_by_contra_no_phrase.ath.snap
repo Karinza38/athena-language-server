@@ -6,6 +6,6 @@ input_file: crates/parser/test_data/parser/inline/err/ded/0060_proof_by_contra_n
 PROOF_BY_CONTRA_DED
   SUPPOSE_ABSURD_KW "suppose-absurd"
   WHITESPACE "\n"
-error 15: expected absurd hypothesis for proof by contradiction
-error 15: expected body for proof by contradiction
+error 14: expected absurd hypothesis for proof by contradiction
+error 14: expected body for proof by contradiction
 

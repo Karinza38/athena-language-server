@@ -11,14 +11,14 @@ LET_REC_EXPR
   LET_REC_PART
     IDENTIFIER
       IDENT "foo"
-      WHITESPACE " "
+    WHITESPACE " "
     COLON_EQ ":="
-    WHITESPACE "   "
+  WHITESPACE "   "
   R_CURLY "}"
   WHITESPACE " "
   IDENT_EXPR
     IDENTIFIER
       IDENT "foo"
-      WHITESPACE "\n"
-error 18: Expected to find an expression for the letrec binding
+  WHITESPACE "\n"
+error 15: Expected to find an expression for the letrec binding
 

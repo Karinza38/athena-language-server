@@ -18,12 +18,12 @@ DECLARE_DIR
       IDENTIFIER
         IDENT "Int"
     R_BRACK "]"
-    WHITESPACE " "
+  WHITESPACE " "
   THIN_ARROW "->"
   WHITESPACE " "
   IDENT_SORT
     IDENTIFIER
       IDENT "Int"
-      WHITESPACE "\n"
-error 13: expected function symbol name, or trailing commas are not permitted
+  WHITESPACE "\n"
+error 12: expected function symbol name, or trailing commas are not permitted
 

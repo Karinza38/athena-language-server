@@ -11,6 +11,6 @@ ASSERT_DIR
   IDENT_EXPR
     IDENTIFIER
       IDENT "true"
-      WHITESPACE "\n"
-error 7: expected identifier for the assertion
+  WHITESPACE "\n"
+error 6: expected identifier for the assertion
 

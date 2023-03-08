@@ -11,16 +11,16 @@ ASSERT_DIR
     IDENT_EXPR
       IDENTIFIER
         IDENT "foo"
-        WHITESPACE " "
+    WHITESPACE " "
     EXPR_PHRASE
       IDENT_EXPR
         IDENTIFIER
           IDENT "="
-          WHITESPACE " "
+    WHITESPACE " "
     EXPR_PHRASE
       IDENT_EXPR
         IDENTIFIER
           IDENT "foo"
     R_PAREN ")"
-    WHITESPACE "\n"
+  WHITESPACE "\n"
 

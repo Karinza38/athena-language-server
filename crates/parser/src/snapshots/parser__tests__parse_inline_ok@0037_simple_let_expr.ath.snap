@@ -12,7 +12,7 @@ LET_EXPR
     IDENT_PAT
       IDENTIFIER
         IDENT "foo"
-        WHITESPACE " "
+    WHITESPACE " "
     COLON_EQ ":="
     WHITESPACE " "
     EXPR_PHRASE
@@ -21,17 +21,17 @@ LET_EXPR
         IDENT_EXPR
           IDENTIFIER
             IDENT "hotline"
-            WHITESPACE " "
+        WHITESPACE " "
         EXPR_PHRASE
           IDENT_EXPR
             IDENTIFIER
               IDENT "miami"
         R_PAREN ")"
-        WHITESPACE " "
+  WHITESPACE " "
   R_CURLY "}"
   WHITESPACE " "
   IDENT_EXPR
     IDENTIFIER
       IDENT "foo"
-      WHITESPACE "\n"
+  WHITESPACE "\n"
 

@@ -11,7 +11,7 @@ LET_REC_EXPR
   LET_REC_PART
     IDENTIFIER
       IDENT "a"
-      WHITESPACE " "
+    WHITESPACE " "
     COLON_EQ ":="
     WHITESPACE " "
     IDENT_EXPR
@@ -22,14 +22,14 @@ LET_REC_EXPR
     WHITESPACE " "
     IDENTIFIER
       IDENT "c"
-      WHITESPACE " "
+    WHITESPACE " "
     COLON_EQ ":="
     WHITESPACE " "
     IDENT_EXPR
       IDENTIFIER
         IDENT "d"
-        WHITESPACE " "
+  WHITESPACE " "
   R_CURLY "}"
   WHITESPACE "\n"
-error 26: Expected a letrec body
+error 25: Expected a letrec body
 

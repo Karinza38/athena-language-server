@@ -11,6 +11,6 @@ ASSERT_CLOSED_DIR
   IDENT_EXPR
     IDENTIFIER
       IDENT "true"
-      WHITESPACE "\n"
-error 8: expected identifier for the closed assertion
+  WHITESPACE "\n"
+error 7: expected identifier for the closed assertion
 

@@ -9,6 +9,6 @@ SET_EXPR
   IDENT_EXPR
     IDENTIFIER
       IDENT "foo"
-      WHITESPACE "\n"
-error 9: Expected to find a value (phrase) for the set! expression
+  WHITESPACE "\n"
+error 8: Expected to find a value (phrase) for the set! expression
 

@@ -10,8 +10,8 @@ LIST_OF_PAT
   IDENT_PAT
     IDENTIFIER
       IDENT "pat"
-      WHITESPACE " "
+  WHITESPACE " "
   R_PAREN ")"
   WHITESPACE "\n"
-error 13: expected a second pattern
+error 12: expected a second pattern
 

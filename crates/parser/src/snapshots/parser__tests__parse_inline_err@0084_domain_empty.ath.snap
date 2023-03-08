@@ -6,5 +6,5 @@ input_file: crates/parser/test_data/parser/inline/err/dir/0084_domain_empty.ath
 DOMAIN_DIR
   DOMAIN_KW "domain"
   WHITESPACE "\n"
-error 7: expected domain sort declaration
+error 6: expected domain sort declaration
 

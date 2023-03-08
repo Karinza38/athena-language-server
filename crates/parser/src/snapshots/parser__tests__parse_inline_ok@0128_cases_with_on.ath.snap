@@ -10,20 +10,20 @@ CASES_DED
     IDENT_EXPR
       IDENTIFIER
         IDENT "a"
-        WHITESPACE " "
+  WHITESPACE " "
   ON_KW "on"
   WHITESPACE " "
   IDENT_EXPR
     IDENTIFIER
       IDENT "b"
-      WHITESPACE " "
+  WHITESPACE " "
   L_CURLY "{"
   WHITESPACE " "
   RESTRICTED_MATCH_DED
     IDENT_PAT
       IDENTIFIER
         IDENT "c"
-        WHITESPACE " "
+    WHITESPACE " "
     FAT_ARROW "=>"
     WHITESPACE " "
     BANG_METHOD_CALL_DED
@@ -32,13 +32,13 @@ CASES_DED
       IDENT_EXPR
         IDENTIFIER
           IDENT "claim"
-          WHITESPACE " "
+      WHITESPACE " "
       EXPR_PHRASE
         IDENT_EXPR
           IDENTIFIER
             IDENT "d"
       R_PAREN ")"
-      WHITESPACE " "
+  WHITESPACE " "
   R_CURLY "}"
   WHITESPACE "\n"
 

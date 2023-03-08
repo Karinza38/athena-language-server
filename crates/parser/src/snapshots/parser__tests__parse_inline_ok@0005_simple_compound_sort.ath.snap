@@ -14,10 +14,10 @@ TERM_VAR_EXPR
     IDENT_SORT
       IDENTIFIER
         IDENT "List"
-        WHITESPACE " "
+    WHITESPACE " "
     IDENT_SORT
       IDENTIFIER
         IDENT "Int"
     R_PAREN ")"
-    WHITESPACE "\n"
+  WHITESPACE "\n"
 

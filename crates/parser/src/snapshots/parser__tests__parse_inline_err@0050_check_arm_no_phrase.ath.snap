@@ -13,13 +13,13 @@ CHECK_EXPR
       IDENT_EXPR
         IDENTIFIER
           IDENT "foo"
-          WHITESPACE " "
+    WHITESPACE " "
     FAT_ARROW "=>"
     WHITESPACE " "
     IDENT_EXPR
       IDENTIFIER
         IDENT "bar"
-        WHITESPACE "\n"
+  WHITESPACE "\n"
   CHECK_ARM
     PIPE "|"
     WHITESPACE " "
@@ -28,8 +28,8 @@ CHECK_EXPR
     IDENT_EXPR
       IDENTIFIER
         IDENT "foo"
-        WHITESPACE " "
+  WHITESPACE " "
   R_CURLY "}"
   WHITESPACE "\n"
-error 21: Expected to find a phrase for the check arm
+error 20: Expected to find a phrase for the check arm
 

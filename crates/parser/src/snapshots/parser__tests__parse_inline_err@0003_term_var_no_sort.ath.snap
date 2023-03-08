@@ -7,8 +7,8 @@ TERM_VAR_EXPR
   QUESTION "?"
   IDENTIFIER
     IDENT "foo"
-    WHITESPACE " "
+  WHITESPACE " "
   COLON ":"
   WHITESPACE "\n"
-error 7: Expected to find a sort for the term variable
+error 6: Expected to find a sort for the term variable
 

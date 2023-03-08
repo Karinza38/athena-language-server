@@ -7,5 +7,5 @@ META_IDENT_PAT
   META_IDENT
     SINGLE_QUOTE "'"
     IDENT "foo"
-    WHITESPACE "\n"
+  WHITESPACE "\n"
 

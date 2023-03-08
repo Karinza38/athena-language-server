@@ -9,6 +9,6 @@ GENERALIZE_OVER_DED
   IDENT_EXPR
     IDENTIFIER
       IDENT "a"
-      WHITESPACE "\n"
-error 18: expected body for generalize over
+  WHITESPACE "\n"
+error 17: expected body for generalize over
 

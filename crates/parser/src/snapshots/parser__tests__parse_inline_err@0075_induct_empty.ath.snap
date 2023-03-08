@@ -10,7 +10,7 @@ INDUCT_DED
     IDENT_EXPR
       IDENTIFIER
         IDENT "a"
-        WHITESPACE " "
+  WHITESPACE " "
   L_CURLY "{"
   R_CURLY "}"
   WHITESPACE "\n"

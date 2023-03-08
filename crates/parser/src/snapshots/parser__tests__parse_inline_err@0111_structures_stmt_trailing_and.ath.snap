@@ -11,14 +11,14 @@ STRUCTURES_STMT
       IDENT_SORT
         IDENTIFIER
           IDENT "Foo"
-          WHITESPACE " "
+    WHITESPACE " "
     COLON_EQ ":="
     WHITESPACE " "
     CONSTANT_CONSTRUCTOR
       IDENTIFIER
         IDENT "bar"
-        WHITESPACE " "
+  WHITESPACE " "
   AMP2 "&&"
   WHITESPACE "\n"
-error 25: expected a structure definition following the `&&`
+error 24: expected a structure definition following the `&&`
 

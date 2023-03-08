@@ -13,6 +13,6 @@ LET_REC_EXPR
   IDENT_EXPR
     IDENTIFIER
       IDENT "foo"
-      WHITESPACE "\n"
-error 10: Expected to find at least one binding for the letrec expression
+  WHITESPACE "\n"
+error 8: Expected to find at least one binding for the letrec expression
 

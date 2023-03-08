@@ -10,6 +10,6 @@ TERM_VAR_EXPR
   IDENT_SORT
     IDENTIFIER
       IDENT "bar"
-      WHITESPACE "\n"
-error 2: Expected to find an identifier for the term variable
+  WHITESPACE "\n"
+error 1: Expected to find an identifier for the term variable
 

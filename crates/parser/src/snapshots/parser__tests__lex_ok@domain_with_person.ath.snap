@@ -1,0 +1,10 @@
+---
+source: crates/parser/src/tests.rs
+description: "domain Person \n\n"
+input_file: crates/parser/test_data/lexer/ok/domain_with_person.ath
+---
+DOMAIN_KW "domain"
+WHITESPACE " "
+IDENT "Person"
+WHITESPACE " \n\n"
+

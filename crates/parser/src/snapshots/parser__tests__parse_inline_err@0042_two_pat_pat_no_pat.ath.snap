@@ -9,6 +9,6 @@ SPLIT_PAT
   WHITESPACE " "
   R_PAREN ")"
   WHITESPACE "\n"
-error 7: expected a pattern
-error 7: expected a second pattern
+error 6: expected a pattern
+error 6: expected a second pattern
 

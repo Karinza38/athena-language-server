@@ -12,7 +12,7 @@ TRY_EXPR
     IDENT_EXPR
       IDENTIFIER
         IDENT "foo"
-        WHITESPACE " "
+  WHITESPACE " "
   R_CURLY "}"
   WHITESPACE "\n"
 

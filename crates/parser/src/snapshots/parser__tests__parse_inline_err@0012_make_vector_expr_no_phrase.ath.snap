@@ -9,6 +9,6 @@ MAKE_VECTOR_EXPR
   IDENT_EXPR
     IDENTIFIER
       IDENT "foo"
-      WHITESPACE "\n"
-error 16: Expected to find a value (phrase) for the make_vector expression
+  WHITESPACE "\n"
+error 15: Expected to find a value (phrase) for the make_vector expression
 

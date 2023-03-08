@@ -9,5 +9,5 @@ DOMAIN_DIR
   IDENT_SORT
     IDENTIFIER
       IDENT "Bar"
-      WHITESPACE "\n"
+  WHITESPACE "\n"
 

@@ -6,5 +6,5 @@ input_file: crates/parser/test_data/parser/inline/err/stmt/0107_structures_stmt_
 STRUCTURES_STMT
   STRUCTURES_KW "structures"
   WHITESPACE "\n"
-error 11: expected a structure definition
+error 10: expected a structure definition
 

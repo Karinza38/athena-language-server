@@ -11,7 +11,7 @@ MAP_EXPR
       IDENT_EXPR
         IDENTIFIER
           IDENT "foo"
-          WHITESPACE " "
+    WHITESPACE " "
     COLON_EQ ":="
     WHITESPACE " "
     EXPR_PHRASE

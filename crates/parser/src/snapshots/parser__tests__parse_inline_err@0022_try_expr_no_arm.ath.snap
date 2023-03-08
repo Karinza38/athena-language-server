@@ -10,5 +10,5 @@ TRY_EXPR
   WHITESPACE "  "
   R_CURLY "}"
   WHITESPACE "\n"
-error 7: Expected to find at least one arm for the try block
+error 5: Expected to find at least one arm for the try block
 

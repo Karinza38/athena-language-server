@@ -12,11 +12,11 @@ TRY_EXPR
     IDENT_EXPR
       IDENTIFIER
         IDENT "foo"
-        WHITESPACE " "
+  WHITESPACE " "
   TRY_ARM
     PIPE "|"
-    WHITESPACE "  "
+  WHITESPACE "  "
   R_CURLY "}"
   WHITESPACE "\n"
-error 13: Expected to find an expression for the try arm
+error 11: Expected to find an expression for the try arm
 

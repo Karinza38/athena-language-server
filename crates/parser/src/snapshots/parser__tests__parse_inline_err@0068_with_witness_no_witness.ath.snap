@@ -6,7 +6,7 @@ input_file: crates/parser/test_data/parser/inline/err/ded/0068_with_witness_no_w
 WITH_WITNESS_DED
   WITH_WITNESS_KW "with-witness"
   WHITESPACE "\n"
-error 13: expected witness expression in with witness deduction
-error 13: expected phrase in with witness binding
-error 13: expected body for with witness
+error 12: expected witness expression in with witness deduction
+error 12: expected phrase in with witness binding
+error 12: expected body for with witness
 

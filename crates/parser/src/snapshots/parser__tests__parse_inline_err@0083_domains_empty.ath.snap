@@ -6,5 +6,5 @@ input_file: crates/parser/test_data/parser/inline/err/dir/0083_domains_empty.ath
 DOMAINS_DIR
   DOMAINS_KW "domains"
   WHITESPACE "\n"
-error 8: expected at least one sort declaration in domains directive
+error 7: expected at least one sort declaration in domains directive
 

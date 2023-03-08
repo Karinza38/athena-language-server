@@ -10,6 +10,6 @@ VAR_PAT
   IDENT_SORT
     IDENTIFIER
       IDENT "Int"
-      WHITESPACE "\n"
-error 2: expected an identifier
+  WHITESPACE "\n"
+error 1: expected an identifier
 

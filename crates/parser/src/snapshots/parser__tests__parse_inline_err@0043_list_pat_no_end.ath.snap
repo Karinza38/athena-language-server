@@ -8,14 +8,14 @@ LIST_PAT
   IDENT_PAT
     IDENTIFIER
       IDENT "a"
-      WHITESPACE " "
+  WHITESPACE " "
   IDENT_PAT
     IDENTIFIER
       IDENT "b"
-      WHITESPACE " "
+  WHITESPACE " "
   IDENT_PAT
     IDENTIFIER
       IDENT "c"
-      WHITESPACE "\n"
-error 7: expected R_BRACK
+  WHITESPACE "\n"
+error 6: expected R_BRACK
 

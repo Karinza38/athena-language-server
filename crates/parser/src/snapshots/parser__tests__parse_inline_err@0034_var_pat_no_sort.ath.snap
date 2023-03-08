@@ -9,5 +9,5 @@ VAR_PAT
     IDENT "foo"
   COLON ":"
   WHITESPACE "\n"
-error 6: expected a sort annotation
+error 5: expected a sort annotation
 

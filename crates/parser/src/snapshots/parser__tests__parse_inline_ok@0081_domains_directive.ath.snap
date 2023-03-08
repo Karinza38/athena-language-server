@@ -14,5 +14,5 @@ DOMAINS_DIR
   IDENT_SORT
     IDENTIFIER
       IDENT "Baz"
-      WHITESPACE "\n"
+  WHITESPACE "\n"
 

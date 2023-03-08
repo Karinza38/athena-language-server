@@ -11,7 +11,7 @@ LET_REC_EXPR
   LET_REC_PART
     IDENTIFIER
       IDENT "a"
-      WHITESPACE " "
+    WHITESPACE " "
     COLON_EQ ":="
     WHITESPACE " "
     IDENT_EXPR
@@ -25,12 +25,12 @@ LET_REC_EXPR
     IDENT_EXPR
       IDENTIFIER
         IDENT "c"
-        WHITESPACE " "
+  WHITESPACE " "
   R_CURLY "}"
   WHITESPACE " "
   IDENT_EXPR
     IDENTIFIER
       IDENT "foo"
-      WHITESPACE "\n"
-error 17: Expected to find an identifier for the letrec binding
+  WHITESPACE "\n"
+error 16: Expected to find an identifier for the letrec binding
 

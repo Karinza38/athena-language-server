@@ -12,21 +12,21 @@ LET_EXPR
     IDENT_PAT
       IDENTIFIER
         IDENT "foo"
-        WHITESPACE " "
+    WHITESPACE " "
     COLON_EQ ":="
     WHITESPACE " "
     EXPR_PHRASE
       IDENT_EXPR
         IDENTIFIER
           IDENT "bar"
-          WHITESPACE " "
+  WHITESPACE " "
   LET_PART
     SEMI ";"
     WHITESPACE " "
     IDENT_PAT
       IDENTIFIER
         IDENT "baz"
-        WHITESPACE " "
+    WHITESPACE " "
     COLON_EQ ":="
     WHITESPACE " "
     EXPR_PHRASE
@@ -35,17 +35,17 @@ LET_EXPR
         IDENT_EXPR
           IDENTIFIER
             IDENT "myfun"
-            WHITESPACE " "
+        WHITESPACE " "
         EXPR_PHRASE
           LITERAL_EXPR
             LITERAL
               STRING "\"cool\""
         R_PAREN ")"
-        WHITESPACE " "
+  WHITESPACE " "
   R_CURLY "}"
   WHITESPACE " "
   IDENT_EXPR
     IDENTIFIER
       IDENT "qwer"
-      WHITESPACE "\n"
+  WHITESPACE "\n"
 

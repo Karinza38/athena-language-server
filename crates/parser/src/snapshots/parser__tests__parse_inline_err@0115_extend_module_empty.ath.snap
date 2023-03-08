@@ -8,10 +8,10 @@ EXTEND_MODULE_DIR
   WHITESPACE " "
   IDENTIFIER
     IDENT "foo"
-    WHITESPACE " "
+  WHITESPACE " "
   L_CURLY "{"
   WHITESPACE " "
   R_CURLY "}"
   WHITESPACE "\n"
-error 20: expected module body
+error 19: expected module body
 

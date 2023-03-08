@@ -10,10 +10,10 @@ MATCH_EXPR
     IDENT_EXPR
       IDENTIFIER
         IDENT "foo"
-        WHITESPACE " "
+  WHITESPACE " "
   L_CURLY "{"
   WHITESPACE "  "
   R_CURLY "}"
   WHITESPACE "\n"
-error 13: Expected at least one arm in the match expression
+error 11: Expected at least one arm in the match expression
 

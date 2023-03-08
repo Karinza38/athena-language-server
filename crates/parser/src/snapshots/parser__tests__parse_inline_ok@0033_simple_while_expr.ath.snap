@@ -10,17 +10,17 @@ WHILE_EXPR
     IDENT_EXPR
       IDENTIFIER
         IDENT "true"
-        WHITESPACE " "
+  WHITESPACE " "
   APPLICATION_EXPR
     L_PAREN "("
     IDENT_EXPR
       IDENTIFIER
         IDENT "print"
-        WHITESPACE " "
+    WHITESPACE " "
     EXPR_PHRASE
       LITERAL_EXPR
         LITERAL
           STRING "\"hello world\""
     R_PAREN ")"
-    WHITESPACE "\n"
+  WHITESPACE "\n"
 

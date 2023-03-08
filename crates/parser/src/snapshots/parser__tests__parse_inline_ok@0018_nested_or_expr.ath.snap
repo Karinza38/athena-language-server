@@ -11,7 +11,7 @@ OR_EXPR
     IDENT_EXPR
       IDENTIFIER
         IDENT "bar"
-        WHITESPACE " "
+  WHITESPACE " "
   EXPR_PHRASE
     OR_EXPR
       L_PAREN "("

@@ -11,8 +11,8 @@ DATATYPE_STMT
       IDENT_SORT
         IDENTIFIER
           IDENT "Foo"
-          WHITESPACE " "
+    WHITESPACE " "
     COLON_EQ ":="
-    WHITESPACE "\n"
-error 16: expected at least one constructor
+  WHITESPACE "\n"
+error 15: expected at least one constructor
 

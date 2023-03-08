@@ -8,10 +8,10 @@ MODULE_DIR
   WHITESPACE " "
   IDENTIFIER
     IDENT "foo"
-    WHITESPACE " "
+  WHITESPACE " "
   L_CURLY "{"
   WHITESPACE " "
   R_CURLY "}"
   WHITESPACE "\n"
-error 13: expected module body
+error 12: expected module body
 

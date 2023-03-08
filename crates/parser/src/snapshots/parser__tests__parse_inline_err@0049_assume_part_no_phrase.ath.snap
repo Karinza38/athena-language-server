@@ -9,9 +9,9 @@ NAMED_ASSUME_DED
   ASSUME_PART
     IDENTIFIER
       IDENT "a"
-      WHITESPACE " "
+    WHITESPACE " "
     COLON_EQ ":="
-    WHITESPACE "\n"
-error 12: expected phrase in assume binding
-error 12: expected body for assumption
+  WHITESPACE "\n"
+error 11: expected phrase in assume binding
+error 11: expected body for assumption
 

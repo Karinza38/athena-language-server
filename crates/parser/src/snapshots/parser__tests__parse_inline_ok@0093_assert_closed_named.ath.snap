@@ -8,7 +8,7 @@ ASSERT_CLOSED_DIR
   WHITESPACE " "
   IDENTIFIER
     IDENT "foo"
-    WHITESPACE " "
+  WHITESPACE " "
   COLON_EQ ":="
   WHITESPACE " "
   APPLICATION_EXPR
@@ -16,16 +16,16 @@ ASSERT_CLOSED_DIR
     IDENT_EXPR
       IDENTIFIER
         IDENT "bar"
-        WHITESPACE " "
+    WHITESPACE " "
     EXPR_PHRASE
       IDENT_EXPR
         IDENTIFIER
           IDENT "="
-          WHITESPACE " "
+    WHITESPACE " "
     EXPR_PHRASE
       IDENT_EXPR
         IDENTIFIER
           IDENT "bar"
     R_PAREN ")"
-    WHITESPACE "\n"
+  WHITESPACE "\n"
 

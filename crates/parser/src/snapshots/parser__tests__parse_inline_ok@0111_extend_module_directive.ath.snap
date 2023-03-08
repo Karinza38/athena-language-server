@@ -8,7 +8,7 @@ EXTEND_MODULE_DIR
   WHITESPACE " "
   IDENTIFIER
     IDENT "Bar"
-    WHITESPACE " "
+  WHITESPACE " "
   L_CURLY "{"
   WHITESPACE " "
   DIR_STMT
@@ -22,7 +22,7 @@ EXTEND_MODULE_DIR
       IDENT_SORT
         IDENTIFIER
           IDENT "Person"
-          WHITESPACE " "
+  WHITESPACE " "
   R_CURLY "}"
   WHITESPACE "\n"
 

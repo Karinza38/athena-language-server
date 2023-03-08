@@ -6,5 +6,5 @@ input_file: crates/parser/test_data/parser/inline/ok/expr/0014_simple_string_exp
 LITERAL_EXPR
   LITERAL
     STRING "\"hello world\""
-    WHITESPACE "\n"
+  WHITESPACE "\n"
 

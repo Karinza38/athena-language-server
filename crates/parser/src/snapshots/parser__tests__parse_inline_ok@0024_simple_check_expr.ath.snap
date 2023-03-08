@@ -13,13 +13,13 @@ CHECK_EXPR
       IDENT_EXPR
         IDENTIFIER
           IDENT "false"
-          WHITESPACE " "
+    WHITESPACE " "
     FAT_ARROW "=>"
     WHITESPACE " "
     IDENT_EXPR
       IDENTIFIER
         IDENT "true"
-        WHITESPACE "\n     "
+  WHITESPACE "\n     "
   CHECK_ARM
     PIPE "|"
     WHITESPACE " "
@@ -27,13 +27,13 @@ CHECK_EXPR
       IDENT_EXPR
         IDENTIFIER
           IDENT "else"
-          WHITESPACE " "
+    WHITESPACE " "
     FAT_ARROW "=>"
     WHITESPACE " "
     IDENT_EXPR
       IDENTIFIER
         IDENT "false"
-        WHITESPACE "\n"
+  WHITESPACE "\n"
   R_CURLY "}"
   WHITESPACE "\n"
 

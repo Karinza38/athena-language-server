@@ -22,6 +22,6 @@ DEFINE_PROC_DIR
       IDENT_EXPR
         IDENTIFIER
           IDENT "true"
-          WHITESPACE "\n"
-error 9: expected procedure name
+  WHITESPACE "\n"
+error 8: expected procedure name
 

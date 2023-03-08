@@ -10,27 +10,27 @@ MATCH_EXPR
     IDENT_EXPR
       IDENTIFIER
         IDENT "foo"
-        WHITESPACE " "
+  WHITESPACE " "
   L_CURLY "{"
   WHITESPACE " "
   MATCH_ARM
     IDENT_PAT
       IDENTIFIER
         IDENT "bar"
-        WHITESPACE " "
+    WHITESPACE " "
     FAT_ARROW "=>"
     WHITESPACE " "
     IDENT_EXPR
       IDENTIFIER
         IDENT "baz"
-        WHITESPACE " "
+  WHITESPACE " "
   MATCH_ARM
     PIPE "|"
     WHITESPACE " "
     IDENT_PAT
       IDENTIFIER
         IDENT "qux"
-        WHITESPACE " "
+    WHITESPACE " "
     FAT_ARROW "=>"
     WHITESPACE " "
     APPLICATION_EXPR
@@ -38,13 +38,13 @@ MATCH_EXPR
       IDENT_EXPR
         IDENTIFIER
           IDENT "quux"
-          WHITESPACE " "
+      WHITESPACE " "
       EXPR_PHRASE
         LITERAL_EXPR
           LITERAL
             STRING "\"cool\""
       R_PAREN ")"
-      WHITESPACE " "
+  WHITESPACE " "
   R_CURLY "}"
   WHITESPACE "\n"
 

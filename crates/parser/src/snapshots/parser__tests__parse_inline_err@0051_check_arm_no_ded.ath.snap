@@ -13,7 +13,7 @@ CHECK_DED
       IDENT_EXPR
         IDENTIFIER
           IDENT "foo"
-          WHITESPACE " "
+    WHITESPACE " "
     FAT_ARROW "=>"
     WHITESPACE " "
     BANG_METHOD_CALL_DED
@@ -22,13 +22,13 @@ CHECK_DED
       IDENT_EXPR
         IDENTIFIER
           IDENT "claim"
-          WHITESPACE " "
+      WHITESPACE " "
       EXPR_PHRASE
         IDENT_EXPR
           IDENTIFIER
             IDENT "A"
       R_PAREN ")"
-      WHITESPACE "\n"
+  WHITESPACE "\n"
   CHECK_DED_ARM
     PIPE "|"
     WHITESPACE " "
@@ -36,10 +36,10 @@ CHECK_DED
       IDENT_EXPR
         IDENTIFIER
           IDENT "baz"
-          WHITESPACE " "
-    FAT_ARROW "=>"
     WHITESPACE " "
+    FAT_ARROW "=>"
+  WHITESPACE " "
   R_CURLY "}"
   WHITESPACE "\n"
-error 35: Expected a check arm body
+error 34: Expected a check arm body
 

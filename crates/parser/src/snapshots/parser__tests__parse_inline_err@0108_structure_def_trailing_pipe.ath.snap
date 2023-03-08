@@ -11,14 +11,14 @@ DATATYPE_STMT
       IDENT_SORT
         IDENTIFIER
           IDENT "Foo"
-          WHITESPACE " "
+    WHITESPACE " "
     COLON_EQ ":="
     WHITESPACE " "
     CONSTANT_CONSTRUCTOR
       IDENTIFIER
         IDENT "bar"
-        WHITESPACE " "
+    WHITESPACE " "
     PIPE "|"
-    WHITESPACE "\n"
-error 22: expected a constructor following the `|`
+  WHITESPACE "\n"
+error 21: expected a constructor following the `|`
 

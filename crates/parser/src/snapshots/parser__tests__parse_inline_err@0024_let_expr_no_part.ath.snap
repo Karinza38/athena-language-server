@@ -13,6 +13,6 @@ LET_EXPR
   IDENT_EXPR
     IDENTIFIER
       IDENT "foo"
-      WHITESPACE "\n"
-error 7: Expected to find at least one binding for the let expression
+  WHITESPACE "\n"
+error 5: Expected to find at least one binding for the let expression
 

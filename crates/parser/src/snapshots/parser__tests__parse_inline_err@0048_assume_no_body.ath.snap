@@ -10,6 +10,6 @@ ASSUME_DED
     IDENT_EXPR
       IDENTIFIER
         IDENT "a"
-        WHITESPACE "\n"
-error 9: expected body for assumption
+  WHITESPACE "\n"
+error 8: expected body for assumption
 

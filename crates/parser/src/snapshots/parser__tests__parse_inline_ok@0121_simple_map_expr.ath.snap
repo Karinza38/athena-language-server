@@ -11,7 +11,7 @@ MAP_EXPR
       IDENT_EXPR
         IDENTIFIER
           IDENT "foo"
-          WHITESPACE " "
+    WHITESPACE " "
     COLON_EQ ":="
     WHITESPACE " "
     EXPR_PHRASE
@@ -25,14 +25,14 @@ MAP_EXPR
       IDENT_EXPR
         IDENTIFIER
           IDENT "bar"
-          WHITESPACE " "
+    WHITESPACE " "
     COLON_EQ ":="
     WHITESPACE " "
     EXPR_PHRASE
       IDENT_EXPR
         IDENTIFIER
           IDENT "2"
-          WHITESPACE " "
+  WHITESPACE " "
   CURLY_PIPE "}|"
   WHITESPACE "\n"
 

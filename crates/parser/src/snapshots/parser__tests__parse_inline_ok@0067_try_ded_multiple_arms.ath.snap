@@ -15,13 +15,13 @@ TRY_DED
       IDENT_EXPR
         IDENTIFIER
           IDENT "claim"
-          WHITESPACE " "
+      WHITESPACE " "
       EXPR_PHRASE
         IDENT_EXPR
           IDENTIFIER
             IDENT "A"
       R_PAREN ")"
-      WHITESPACE " "
+  WHITESPACE " "
   TRY_DED_ARM
     PIPE "|"
     WHITESPACE " "
@@ -31,13 +31,13 @@ TRY_DED
       IDENT_EXPR
         IDENTIFIER
           IDENT "claim"
-          WHITESPACE " "
+      WHITESPACE " "
       EXPR_PHRASE
         IDENT_EXPR
           IDENTIFIER
             IDENT "B"
       R_PAREN ")"
-      WHITESPACE " "
+  WHITESPACE " "
   TRY_DED_ARM
     PIPE "|"
     WHITESPACE " "
@@ -47,13 +47,13 @@ TRY_DED
       IDENT_EXPR
         IDENTIFIER
           IDENT "claim"
-          WHITESPACE " "
+      WHITESPACE " "
       EXPR_PHRASE
         IDENT_EXPR
           IDENTIFIER
             IDENT "C"
       R_PAREN ")"
-      WHITESPACE " "
+  WHITESPACE " "
   R_CURLY "}"
   WHITESPACE "\n"
 

@@ -8,23 +8,23 @@ DECLARE_DIR
   WHITESPACE " "
   IDENTIFIER
     IDENT "foo"
-    WHITESPACE " "
+  WHITESPACE " "
   COLON ":"
   WHITESPACE " "
   SORT_VARS_DECL
     L_PAREN "("
     WHITESPACE " "
     R_PAREN ")"
-    WHITESPACE " "
+  WHITESPACE " "
   FUNC_SORTS
     L_BRACK "["
     R_BRACK "]"
-    WHITESPACE " "
+  WHITESPACE " "
   THIN_ARROW "->"
   WHITESPACE " "
   IDENT_SORT
     IDENTIFIER
       IDENT "Int"
-      WHITESPACE "\n"
-error 16: expected sort variable name
+  WHITESPACE "\n"
+error 15: expected sort variable name
 

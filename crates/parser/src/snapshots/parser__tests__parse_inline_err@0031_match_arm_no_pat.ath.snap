@@ -10,7 +10,7 @@ MATCH_EXPR
     IDENT_EXPR
       IDENTIFIER
         IDENT "foo"
-        WHITESPACE " "
+  WHITESPACE " "
   L_CURLY "{"
   WHITESPACE " "
   MATCH_ARM
@@ -19,7 +19,7 @@ MATCH_EXPR
     IDENT_EXPR
       IDENTIFIER
         IDENT "bar"
-        WHITESPACE " "
+  WHITESPACE " "
   R_CURLY "}"
   WHITESPACE "\n"
 error 12: Expected to find a pattern for the match arm

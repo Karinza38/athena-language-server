@@ -9,9 +9,9 @@ VECTOR_SUB_EXPR
   IDENT_EXPR
     IDENTIFIER
       IDENT "foo"
-      WHITESPACE " "
+  WHITESPACE " "
   IDENT_EXPR
     IDENTIFIER
       IDENT "bar"
-      WHITESPACE "\n"
+  WHITESPACE "\n"
 

@@ -9,7 +9,7 @@ CONCLUDE_DED
   IDENT_EXPR
     IDENTIFIER
       IDENT "A"
-      WHITESPACE "\n "
+  WHITESPACE "\n "
   DED_PHRASE
     BANG_METHOD_CALL_DED
       L_PAREN "("
@@ -17,11 +17,11 @@ CONCLUDE_DED
       IDENT_EXPR
         IDENTIFIER
           IDENT "claim"
-          WHITESPACE " "
+      WHITESPACE " "
       EXPR_PHRASE
         IDENT_EXPR
           IDENTIFIER
             IDENT "A"
       R_PAREN ")"
-      WHITESPACE "\n"
+  WHITESPACE "\n"
 

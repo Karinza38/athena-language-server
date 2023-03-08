@@ -12,14 +12,14 @@ LET_EXPR
     IDENT_PAT
       IDENTIFIER
         IDENT "foo"
-        WHITESPACE " "
+    WHITESPACE " "
     COLON_EQ ":="
-    WHITESPACE "   "
+  WHITESPACE "   "
   R_CURLY "}"
   WHITESPACE " "
   IDENT_EXPR
     IDENTIFIER
       IDENT "a"
-      WHITESPACE "\n"
-error 15: Expected to find a phrase for the let binding
+  WHITESPACE "\n"
+error 12: Expected to find a phrase for the let binding
 

@@ -13,7 +13,7 @@ MAP_EXPR
       IDENT_EXPR
         IDENTIFIER
           IDENT "1"
-          WHITESPACE " "
+  WHITESPACE " "
   CURLY_PIPE "}|"
   WHITESPACE "\n"
 error 3: Expected to find a key (phrase) for the map binding

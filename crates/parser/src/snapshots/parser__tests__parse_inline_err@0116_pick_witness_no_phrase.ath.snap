@@ -8,9 +8,9 @@ PICK_WITNESS_DED
   WHITESPACE " "
   IDENTIFIER
     IDENT "a"
-    WHITESPACE " "
+  WHITESPACE " "
   FOR_KW "for"
   WHITESPACE "\n"
-error 19: expected phrase in pick witness binding
-error 19: expected body for pick witness
+error 18: expected phrase in pick witness binding
+error 18: expected body for pick witness
 

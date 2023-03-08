@@ -11,7 +11,7 @@ DATATYPE_STMT
       IDENT_SORT
         IDENTIFIER
           IDENT "Foo"
-          WHITESPACE " "
+    WHITESPACE " "
     COLON_EQ ":="
     WHITESPACE " "
     PIPE "|"
@@ -19,6 +19,6 @@ DATATYPE_STMT
     CONSTANT_CONSTRUCTOR
       IDENTIFIER
         IDENT "bar"
-        WHITESPACE "\n"
-error 16: leading `|` is not allowed in constructor list
+  WHITESPACE "\n"
+error 15: leading `|` is not allowed in constructor list
 

@@ -8,5 +8,5 @@ ANNOTATED_IDENT_PAT
     IDENT "foo"
   COLON ":"
   WHITESPACE "\n"
-error 5: expected a sort annotation
+error 4: expected a sort annotation
 

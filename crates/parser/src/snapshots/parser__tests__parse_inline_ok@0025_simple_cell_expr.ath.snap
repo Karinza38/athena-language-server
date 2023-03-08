@@ -10,5 +10,5 @@ CELL_EXPR
     IDENT_EXPR
       IDENTIFIER
         IDENT "foo"
-        WHITESPACE "\n"
+  WHITESPACE "\n"
 

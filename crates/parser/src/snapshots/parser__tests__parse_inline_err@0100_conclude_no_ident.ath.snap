@@ -13,41 +13,41 @@ CONCLUDE_DED
     IDENT_EXPR
       IDENTIFIER
         IDENT "factorial"
-        WHITESPACE " "
+    WHITESPACE " "
     EXPR_PHRASE
       APPLICATION_EXPR
         L_PAREN "("
         IDENT_EXPR
           IDENTIFIER
             IDENT "zero"
-            WHITESPACE " "
+        WHITESPACE " "
         EXPR_PHRASE
           IDENT_EXPR
             IDENTIFIER
               IDENT "-"
-              WHITESPACE " "
+        WHITESPACE " "
         EXPR_PHRASE
           IDENT_EXPR
             IDENTIFIER
               IDENT "one"
         R_PAREN ")"
-        WHITESPACE " "
+    WHITESPACE " "
     EXPR_PHRASE
       IDENT_EXPR
         IDENTIFIER
           IDENT "<="
-          WHITESPACE " "
+    WHITESPACE " "
     EXPR_PHRASE
       IDENT_EXPR
         IDENTIFIER
           IDENT "factorial"
-          WHITESPACE " "
+    WHITESPACE " "
     EXPR_PHRASE
       IDENT_EXPR
         IDENTIFIER
           IDENT "zero"
     R_PAREN ")"
-    WHITESPACE "\n "
+  WHITESPACE "\n "
   DED_PHRASE
     BANG_METHOD_CALL_DED
       L_PAREN "("
@@ -55,12 +55,12 @@ CONCLUDE_DED
       IDENT_EXPR
         IDENTIFIER
           IDENT "force"
-          WHITESPACE " "
+      WHITESPACE " "
       EXPR_PHRASE
         IDENT_EXPR
           IDENTIFIER
             IDENT "base_case"
       R_PAREN ")"
-      WHITESPACE "\n"
-error 9: expected identifier in conclude deduction
+  WHITESPACE "\n"
+error 8: expected identifier in conclude deduction
 

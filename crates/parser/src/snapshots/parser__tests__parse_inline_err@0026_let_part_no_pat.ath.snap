@@ -12,7 +12,7 @@ LET_EXPR
     IDENT_PAT
       IDENTIFIER
         IDENT "a"
-        WHITESPACE " "
+    WHITESPACE " "
     COLON_EQ ":="
     WHITESPACE " "
     EXPR_PHRASE
@@ -28,12 +28,12 @@ LET_EXPR
       IDENT_EXPR
         IDENTIFIER
           IDENT "c"
-          WHITESPACE " "
+  WHITESPACE " "
   R_CURLY "}"
   WHITESPACE " "
   IDENT_EXPR
     IDENTIFIER
       IDENT "a"
-      WHITESPACE "\n"
-error 14: Expected to find a pattern for the let binding
+  WHITESPACE "\n"
+error 13: Expected to find a pattern for the let binding
 

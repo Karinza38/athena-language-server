@@ -12,7 +12,7 @@ LET_EXPR
     IDENT_PAT
       IDENTIFIER
         IDENT "foo"
-        WHITESPACE " "
+    WHITESPACE " "
     COLON_EQ ":="
     WHITESPACE " "
     DED_PHRASE
@@ -22,17 +22,17 @@ LET_EXPR
         IDENT_EXPR
           IDENTIFIER
             IDENT "claim"
-            WHITESPACE " "
+        WHITESPACE " "
         EXPR_PHRASE
           IDENT_EXPR
             IDENTIFIER
               IDENT "A"
         R_PAREN ")"
-        WHITESPACE " "
+  WHITESPACE " "
   R_CURLY "}"
   WHITESPACE " "
   IDENT_EXPR
     IDENTIFIER
       IDENT "qwer"
-      WHITESPACE "\n"
+  WHITESPACE "\n"
 

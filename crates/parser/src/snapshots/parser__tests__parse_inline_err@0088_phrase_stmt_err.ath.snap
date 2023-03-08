@@ -10,6 +10,6 @@ PHRASE_STMT
       BANG "!"
       WHITESPACE " "
       R_PAREN ")"
-      WHITESPACE "\n"
-error 3: expected method expression to apply
+  WHITESPACE "\n"
+error 2: expected method expression to apply
 

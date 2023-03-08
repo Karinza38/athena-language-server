@@ -7,5 +7,5 @@ UNIT_PAT
   UNIT
     L_PAREN "("
     R_PAREN ")"
-    WHITESPACE "\n"
+  WHITESPACE "\n"
 

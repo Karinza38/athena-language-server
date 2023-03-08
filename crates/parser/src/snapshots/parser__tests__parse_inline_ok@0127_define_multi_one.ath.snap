@@ -18,5 +18,5 @@ DEFINE_MULTI_DIR
     IDENT_EXPR
       IDENTIFIER
         IDENT "true"
-        WHITESPACE "\n"
+  WHITESPACE "\n"
 

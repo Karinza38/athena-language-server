@@ -8,9 +8,9 @@ PICK_WITNESSES_DED
   WHITESPACE " "
   IDENTIFIER
     IDENT "a"
-    WHITESPACE " "
+  WHITESPACE " "
   FOR_KW "for"
   WHITESPACE "\n"
-error 21: expected phrase in pick witnesses binding
-error 21: expected body for pick witnesses
+error 20: expected phrase in pick witnesses binding
+error 20: expected body for pick witnesses
 

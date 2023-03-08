@@ -12,7 +12,7 @@ LET_DED
     IDENT_PAT
       IDENTIFIER
         IDENT "a"
-        WHITESPACE " "
+    WHITESPACE " "
     COLON_EQ ":="
     WHITESPACE " "
     EXPR_PHRASE
@@ -25,15 +25,15 @@ LET_DED
     IDENT_PAT
       IDENTIFIER
         IDENT "c"
-        WHITESPACE " "
+    WHITESPACE " "
     COLON_EQ ":="
     WHITESPACE " "
     EXPR_PHRASE
       IDENT_EXPR
         IDENTIFIER
           IDENT "d"
-          WHITESPACE " "
+  WHITESPACE " "
   R_CURLY "}"
   WHITESPACE "\n"
-error 23: Expected a let body
+error 22: Expected a let body
 

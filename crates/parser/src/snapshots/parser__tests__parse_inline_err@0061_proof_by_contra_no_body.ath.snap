@@ -10,6 +10,6 @@ PROOF_BY_CONTRA_DED
     IDENT_EXPR
       IDENTIFIER
         IDENT "A"
-        WHITESPACE "\n"
-error 17: expected body for proof by contradiction
+  WHITESPACE "\n"
+error 16: expected body for proof by contradiction
 

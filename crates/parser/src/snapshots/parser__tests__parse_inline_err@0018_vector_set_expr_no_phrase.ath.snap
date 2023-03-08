@@ -9,10 +9,10 @@ VECTOR_SET_EXPR
   IDENT_EXPR
     IDENTIFIER
       IDENT "foo"
-      WHITESPACE " "
+  WHITESPACE " "
   IDENT_EXPR
     IDENTIFIER
       IDENT "bar"
-      WHITESPACE "\n"
-error 20: Expected to find a value (phrase) for the vector-set! expression
+  WHITESPACE "\n"
+error 19: Expected to find a value (phrase) for the vector-set! expression
 

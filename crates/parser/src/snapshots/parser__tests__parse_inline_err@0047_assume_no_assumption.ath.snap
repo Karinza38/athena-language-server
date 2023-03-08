@@ -6,6 +6,6 @@ input_file: crates/parser/test_data/parser/inline/err/ded/0047_assume_no_assumpt
 ASSUME_DED
   ASSUME_KW "assume"
   WHITESPACE "\n"
-error 7: expected assumption
-error 7: expected body for assumption
+error 6: expected assumption
+error 6: expected body for assumption
 

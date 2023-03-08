@@ -19,5 +19,5 @@ ASSERT_DIR
   IDENT_EXPR
     IDENTIFIER
       IDENT "C"
-      WHITESPACE "\n"
+  WHITESPACE "\n"
 

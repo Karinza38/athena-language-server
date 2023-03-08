@@ -10,17 +10,17 @@ MATCH_EXPR
     IDENT_EXPR
       IDENTIFIER
         IDENT "foo"
-        WHITESPACE " "
+  WHITESPACE " "
   L_CURLY "{"
   WHITESPACE " "
   MATCH_ARM
     IDENT_PAT
       IDENTIFIER
         IDENT "bar"
-        WHITESPACE " "
-    FAT_ARROW "=>"
     WHITESPACE " "
+    FAT_ARROW "=>"
+  WHITESPACE " "
   R_CURLY "}"
   WHITESPACE "\n"
-error 19: Expected to find an expression for the match arm
+error 18: Expected to find an expression for the match arm
 

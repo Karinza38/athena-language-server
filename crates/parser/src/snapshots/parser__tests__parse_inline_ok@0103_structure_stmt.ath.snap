@@ -11,20 +11,20 @@ STRUCTURE_STMT
       IDENT_SORT
         IDENTIFIER
           IDENT "Foo"
-          WHITESPACE " "
+    WHITESPACE " "
     COLON_EQ ":="
     WHITESPACE " "
     CONSTANT_CONSTRUCTOR
       IDENTIFIER
         IDENT "bar"
-        WHITESPACE " "
+    WHITESPACE " "
     PIPE "|"
     WHITESPACE " "
     COMPOUND_CONSTRUCTOR
       L_PAREN "("
       IDENTIFIER
         IDENT "baz"
-        WHITESPACE " "
+      WHITESPACE " "
       MAYBE_TAGGED_SORT_DECL
         IDENTIFIER
           IDENT "num"
@@ -33,5 +33,5 @@ STRUCTURE_STMT
           IDENTIFIER
             IDENT "Int"
       R_PAREN ")"
-      WHITESPACE "\n"
+  WHITESPACE "\n"
 

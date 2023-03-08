@@ -11,7 +11,7 @@ AND_EXPR
     IDENT_EXPR
       IDENTIFIER
         IDENT "bar"
-        WHITESPACE " "
+  WHITESPACE " "
   EXPR_PHRASE
     AND_EXPR
       L_PAREN "("

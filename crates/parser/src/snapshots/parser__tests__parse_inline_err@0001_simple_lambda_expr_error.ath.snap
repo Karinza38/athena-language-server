@@ -10,17 +10,17 @@ ERROR
     L_PAREN "("
     IDENTIFIER
       IDENT "x"
-      WHITESPACE " "
+    WHITESPACE " "
     IDENTIFIER
       IDENT "y"
-      WHITESPACE " "
+    WHITESPACE " "
     IDENTIFIER
       IDENT "z"
     R_PAREN ")"
-    WHITESPACE " "
+  WHITESPACE " "
   DOMAIN_KW "domain"
   WHITESPACE " "
   IDENT "D"
   WHITESPACE "\n"
-error 15: Expected to find an expression for the lambda body
+error 14: Expected to find an expression for the lambda body
 

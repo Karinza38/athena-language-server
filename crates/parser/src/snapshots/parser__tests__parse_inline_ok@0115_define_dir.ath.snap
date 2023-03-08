@@ -8,12 +8,12 @@ DEFINE_DIR
   WHITESPACE " "
   IDENTIFIER
     IDENT "foo"
-    WHITESPACE " "
+  WHITESPACE " "
   COLON_EQ ":="
   WHITESPACE " "
   EXPR_PHRASE
     IDENT_EXPR
       IDENTIFIER
         IDENT "true"
-        WHITESPACE "\n"
+  WHITESPACE "\n"
 

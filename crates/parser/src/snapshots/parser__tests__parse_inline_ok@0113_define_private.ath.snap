@@ -10,12 +10,12 @@ DEFINE_DIR
   WHITESPACE " "
   IDENTIFIER
     IDENT "bar"
-    WHITESPACE " "
+  WHITESPACE " "
   COLON_EQ ":="
   WHITESPACE " "
   EXPR_PHRASE
     IDENT_EXPR
       IDENTIFIER
         IDENT "false"
-        WHITESPACE "\n"
+  WHITESPACE "\n"
 

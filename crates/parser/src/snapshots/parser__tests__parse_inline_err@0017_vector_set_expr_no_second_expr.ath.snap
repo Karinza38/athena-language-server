@@ -9,7 +9,7 @@ VECTOR_SET_EXPR
   IDENT_EXPR
     IDENTIFIER
       IDENT "foo"
-      WHITESPACE "\n"
-error 16: Expected to find an index (expr) for the vector-set! expression
-error 16: Expected to find a value (phrase) for the vector-set! expression
+  WHITESPACE "\n"
+error 15: Expected to find an index (expr) for the vector-set! expression
+error 15: Expected to find a value (phrase) for the vector-set! expression
 

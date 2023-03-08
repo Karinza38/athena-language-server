@@ -9,12 +9,12 @@ PICK_ANY_DED
   TYPED_PARAM
     IDENTIFIER
       IDENT "a"
-      WHITESPACE " "
+    WHITESPACE " "
     COLON ":"
     WHITESPACE " "
     IDENT_SORT
       IDENTIFIER
         IDENT "Int"
-        WHITESPACE "\n"
-error 17: expected body for pick any
+  WHITESPACE "\n"
+error 16: expected body for pick any
 

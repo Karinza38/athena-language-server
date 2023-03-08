@@ -9,6 +9,6 @@ CONCLUDE_DED
   IDENT_EXPR
     IDENTIFIER
       IDENT "A"
-      WHITESPACE "\n"
-error 11: expected phrase in conclude deduction
+  WHITESPACE "\n"
+error 10: expected phrase in conclude deduction
 

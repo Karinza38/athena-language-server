@@ -11,5 +11,5 @@ VAR_PAT
   IDENT_SORT
     IDENTIFIER
       IDENT "Int"
-      WHITESPACE "\n"
+  WHITESPACE "\n"
 

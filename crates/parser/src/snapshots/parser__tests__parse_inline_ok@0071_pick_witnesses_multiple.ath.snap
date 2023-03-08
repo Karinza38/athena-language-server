@@ -8,31 +8,31 @@ PICK_WITNESSES_DED
   WHITESPACE " "
   IDENTIFIER
     IDENT "a"
-    WHITESPACE " "
+  WHITESPACE " "
   IDENTIFIER
     IDENT "b"
-    WHITESPACE " "
+  WHITESPACE " "
   IDENTIFIER
     IDENT "c"
-    WHITESPACE " "
+  WHITESPACE " "
   FOR_KW "for"
   WHITESPACE " "
   EXPR_PHRASE
     IDENT_EXPR
       IDENTIFIER
         IDENT "d"
-        WHITESPACE " "
+  WHITESPACE " "
   BANG_METHOD_CALL_DED
     L_PAREN "("
     BANG "!"
     IDENT_EXPR
       IDENTIFIER
         IDENT "claim"
-        WHITESPACE " "
+    WHITESPACE " "
     EXPR_PHRASE
       IDENT_EXPR
         IDENTIFIER
           IDENT "a"
     R_PAREN ")"
-    WHITESPACE "\n"
+  WHITESPACE "\n"
 

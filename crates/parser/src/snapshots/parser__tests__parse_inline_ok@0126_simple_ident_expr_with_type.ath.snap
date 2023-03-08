@@ -12,5 +12,5 @@ IDENT_EXPR
     IDENT_SORT
       IDENTIFIER
         IDENT "Int"
-        WHITESPACE "\n"
+  WHITESPACE "\n"
 

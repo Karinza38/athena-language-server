@@ -12,7 +12,7 @@ DEFINE_MULTI_DIR
   IDENT_PAT
     IDENTIFIER
       IDENT "a"
-      WHITESPACE " "
+  WHITESPACE " "
   IDENT_PAT
     IDENTIFIER
       IDENT "b"
@@ -27,11 +27,11 @@ DEFINE_MULTI_DIR
         IDENT_EXPR
           IDENTIFIER
             IDENT "1"
-            WHITESPACE " "
+      WHITESPACE " "
       EXPR_PHRASE
         IDENT_EXPR
           IDENTIFIER
             IDENT "2"
       R_BRACK "]"
-      WHITESPACE "\n"
+  WHITESPACE "\n"
 

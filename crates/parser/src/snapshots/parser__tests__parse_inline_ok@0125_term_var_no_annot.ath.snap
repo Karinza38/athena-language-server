@@ -7,5 +7,5 @@ TERM_VAR_EXPR
   QUESTION "?"
   IDENTIFIER
     IDENT "foo"
-    WHITESPACE "\n"
+  WHITESPACE "\n"
 

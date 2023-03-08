@@ -9,6 +9,6 @@ VECTOR_SUB_EXPR
   IDENT_EXPR
     IDENTIFIER
       IDENT "foo"
-      WHITESPACE "\n"
-error 15: Expected to find a value (expr) for the vector-sub expression
+  WHITESPACE "\n"
+error 14: Expected to find a value (expr) for the vector-sub expression
 

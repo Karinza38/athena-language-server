@@ -6,7 +6,7 @@ input_file: crates/parser/test_data/parser/inline/err/expr/0016_vector_set_expr_
 VECTOR_SET_EXPR
   VECTOR_SETBANG_KW "vector-set!"
   WHITESPACE "\n"
-error 12: Expected to find a target vector expression for the vector-set! expression
-error 12: Expected to find an index (expr) for the vector-set! expression
-error 12: Expected to find a value (phrase) for the vector-set! expression
+error 11: Expected to find a target vector expression for the vector-set! expression
+error 11: Expected to find an index (expr) for the vector-set! expression
+error 11: Expected to find a value (phrase) for the vector-set! expression
 

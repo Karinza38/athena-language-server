@@ -20,5 +20,5 @@ SOURCE_FILE
       IDENT_SORT
         IDENTIFIER
           IDENT "Foo"
-          WHITESPACE "\n"
+  WHITESPACE "\n"
 

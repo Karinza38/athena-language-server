@@ -9,13 +9,13 @@ NAMED_ASSUME_DED
   ASSUME_PART
     IDENTIFIER
       IDENT "a"
-      WHITESPACE " "
+    WHITESPACE " "
     COLON_EQ ":="
     WHITESPACE " "
     EXPR_PHRASE
       IDENT_EXPR
         IDENTIFIER
           IDENT "b"
-          WHITESPACE "\n"
-error 14: expected body for assumption
+  WHITESPACE "\n"
+error 13: expected body for assumption
 

@@ -12,7 +12,7 @@ CASES_DED
     IDENT_PAT
       IDENTIFIER
         IDENT "a"
-        WHITESPACE " "
+    WHITESPACE " "
     FAT_ARROW "=>"
     WHITESPACE " "
     BANG_METHOD_CALL_DED
@@ -21,14 +21,14 @@ CASES_DED
       IDENT_EXPR
         IDENTIFIER
           IDENT "claim"
-          WHITESPACE " "
+      WHITESPACE " "
       EXPR_PHRASE
         IDENT_EXPR
           IDENTIFIER
             IDENT "a"
       R_PAREN ")"
-      WHITESPACE " "
+  WHITESPACE " "
   R_CURLY "}"
   WHITESPACE "\n"
-error 15: expected phrase in datatype-cases deduction
+error 14: expected phrase in datatype-cases deduction
 

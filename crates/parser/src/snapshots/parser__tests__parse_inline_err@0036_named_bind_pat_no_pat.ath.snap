@@ -9,8 +9,8 @@ NAMED_PAT
   WHITESPACE " "
   IDENTIFIER
     IDENT "foo"
-    WHITESPACE " "
+  WHITESPACE " "
   R_PAREN ")"
   WHITESPACE "\n"
-error 10: expected a pattern to bind to
+error 9: expected a pattern to bind to
 

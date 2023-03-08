@@ -11,7 +11,7 @@ SEQ_EXPR
     IDENT_EXPR
       IDENTIFIER
         IDENT "bar"
-        WHITESPACE " "
+  WHITESPACE " "
   EXPR_PHRASE
     SEQ_EXPR
       L_PAREN "("

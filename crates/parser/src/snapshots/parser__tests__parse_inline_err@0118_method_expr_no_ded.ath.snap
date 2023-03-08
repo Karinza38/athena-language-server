@@ -11,5 +11,5 @@ METHOD_EXPR
     IDENT "foo"
   R_PAREN ")"
   WHITESPACE "\n"
-error 13: Expected to find a body (ded) for the method expression
+error 12: Expected to find a body (ded) for the method expression
 

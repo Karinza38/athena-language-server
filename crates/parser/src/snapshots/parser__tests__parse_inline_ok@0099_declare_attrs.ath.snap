@@ -8,7 +8,7 @@ DECLARE_DIR
   WHITESPACE " "
   IDENTIFIER
     IDENT "foo"
-    WHITESPACE " "
+  WHITESPACE " "
   COLON ":"
   WHITESPACE " "
   FUNC_SORTS
@@ -17,17 +17,17 @@ DECLARE_DIR
       IDENTIFIER
         IDENT "Int"
     R_BRACK "]"
-    WHITESPACE " "
+  WHITESPACE " "
   THIN_ARROW "->"
   WHITESPACE " "
   IDENT_SORT
     IDENTIFIER
       IDENT "Int"
-      WHITESPACE " "
+  WHITESPACE " "
   DECLARE_ATTRS
     L_BRACK "["
     DECLARE_ATTR
       LEFT_ASSOC_KW "left-assoc"
     R_BRACK "]"
-    WHITESPACE "\n"
+  WHITESPACE "\n"
 

@@ -8,13 +8,13 @@ PICK_WITNESS_DED
   WHITESPACE " "
   IDENTIFIER
     IDENT "a"
-    WHITESPACE " "
+  WHITESPACE " "
   FOR_KW "for"
   WHITESPACE " "
   EXPR_PHRASE
     IDENT_EXPR
       IDENTIFIER
         IDENT "b"
-        WHITESPACE "\n"
-error 21: expected body for pick witness
+  WHITESPACE "\n"
+error 20: expected body for pick witness
 

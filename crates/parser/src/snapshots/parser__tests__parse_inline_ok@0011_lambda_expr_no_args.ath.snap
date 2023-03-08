@@ -12,5 +12,5 @@ LAMBDA_EXPR
   LITERAL_EXPR
     LITERAL
       STRING "\"hello world\""
-      WHITESPACE "\n"
+  WHITESPACE "\n"
 

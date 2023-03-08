@@ -10,8 +10,8 @@ SPLIT_PAT
   IDENT_PAT
     IDENTIFIER
       IDENT "pat"
-      WHITESPACE " "
+  WHITESPACE " "
   R_PAREN ")"
   WHITESPACE "\n"
-error 11: expected a second pattern
+error 10: expected a second pattern
 

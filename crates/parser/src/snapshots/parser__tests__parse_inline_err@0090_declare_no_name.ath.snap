@@ -14,12 +14,12 @@ DECLARE_DIR
       IDENTIFIER
         IDENT "Int"
     R_BRACK "]"
-    WHITESPACE " "
+  WHITESPACE " "
   THIN_ARROW "->"
   WHITESPACE " "
   IDENT_SORT
     IDENTIFIER
       IDENT "Int"
-      WHITESPACE "\n"
-error 8: expected function symbol name
+  WHITESPACE "\n"
+error 7: expected function symbol name
 

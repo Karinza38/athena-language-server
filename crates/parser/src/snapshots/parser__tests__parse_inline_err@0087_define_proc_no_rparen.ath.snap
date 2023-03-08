@@ -9,7 +9,7 @@ DEFINE_PROC_DIR
   L_PAREN "("
   IDENTIFIER
     IDENT "foo"
-    WHITESPACE " "
+  WHITESPACE " "
   COLON_EQ ":="
   WHITESPACE " "
   EXPR_PHRASE
@@ -22,6 +22,6 @@ DEFINE_PROC_DIR
       IDENT_EXPR
         IDENTIFIER
           IDENT "true"
-          WHITESPACE "\n"
-error 12: expected R_PAREN
+  WHITESPACE "\n"
+error 11: expected R_PAREN
 

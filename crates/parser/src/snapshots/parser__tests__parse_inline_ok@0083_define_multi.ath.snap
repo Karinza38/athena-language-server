@@ -10,11 +10,11 @@ DEFINE_MULTI_DIR
   IDENT_PAT
     IDENTIFIER
       IDENT "foo"
-      WHITESPACE " "
+  WHITESPACE " "
   IDENT_PAT
     IDENTIFIER
       IDENT "bar"
-      WHITESPACE " "
+  WHITESPACE " "
   IDENT_PAT
     IDENTIFIER
       IDENT "baz"
@@ -29,16 +29,16 @@ DEFINE_MULTI_DIR
         IDENT_EXPR
           IDENTIFIER
             IDENT "true"
-            WHITESPACE " "
+      WHITESPACE " "
       EXPR_PHRASE
         IDENT_EXPR
           IDENTIFIER
             IDENT "false"
-            WHITESPACE " "
+      WHITESPACE " "
       EXPR_PHRASE
         IDENT_EXPR
           IDENTIFIER
             IDENT "true"
       R_BRACK "]"
-      WHITESPACE "\n"
+  WHITESPACE "\n"
 

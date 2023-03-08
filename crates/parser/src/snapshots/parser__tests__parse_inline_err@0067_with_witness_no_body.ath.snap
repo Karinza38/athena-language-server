@@ -9,11 +9,11 @@ WITH_WITNESS_DED
   IDENT_EXPR
     IDENTIFIER
       IDENT "a"
-      WHITESPACE " "
+  WHITESPACE " "
   EXPR_PHRASE
     IDENT_EXPR
       IDENTIFIER
         IDENT "b"
-        WHITESPACE "\n"
-error 17: expected body for with witness
+  WHITESPACE "\n"
+error 16: expected body for with witness
 

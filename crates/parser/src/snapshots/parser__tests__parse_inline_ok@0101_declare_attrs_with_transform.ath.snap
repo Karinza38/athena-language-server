@@ -8,7 +8,7 @@ DECLARE_DIR
   WHITESPACE " "
   IDENTIFIER
     IDENT "foo"
-    WHITESPACE " "
+  WHITESPACE " "
   COLON ":"
   WHITESPACE " "
   FUNC_SORTS
@@ -17,19 +17,19 @@ DECLARE_DIR
       IDENTIFIER
         IDENT "Int"
     R_BRACK "]"
-    WHITESPACE " "
+  WHITESPACE " "
   THIN_ARROW "->"
   WHITESPACE " "
   IDENT_SORT
     IDENTIFIER
       IDENT "Int"
-      WHITESPACE " "
+  WHITESPACE " "
   DECLARE_ATTRS
     L_BRACK "["
     DECLARE_ATTR
       IDENTIFIER
         IDENT "100"
-        WHITESPACE " "
+    WHITESPACE " "
     INPUT_TRANSFORM_DECL
       L_BRACK "["
       IDENT_EXPR
@@ -37,5 +37,5 @@ DECLARE_DIR
           IDENT "int->nat"
       R_BRACK "]"
     R_BRACK "]"
-    WHITESPACE "\n"
+  WHITESPACE "\n"
 

@@ -8,8 +8,8 @@ DEFINE_DIR
   WHITESPACE " "
   IDENTIFIER
     IDENT "foo"
-    WHITESPACE " "
+  WHITESPACE " "
   COLON_EQ ":="
   WHITESPACE "\n"
-error 14: expected definition value
+error 13: expected definition value
 

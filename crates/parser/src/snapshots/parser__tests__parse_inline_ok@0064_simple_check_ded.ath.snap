@@ -13,7 +13,7 @@ CHECK_DED
       IDENT_EXPR
         IDENTIFIER
           IDENT "false"
-          WHITESPACE " "
+    WHITESPACE " "
     FAT_ARROW "=>"
     WHITESPACE " "
     BANG_METHOD_CALL_DED
@@ -22,13 +22,13 @@ CHECK_DED
       IDENT_EXPR
         IDENTIFIER
           IDENT "claim"
-          WHITESPACE " "
+      WHITESPACE " "
       EXPR_PHRASE
         IDENT_EXPR
           IDENTIFIER
             IDENT "A"
       R_PAREN ")"
-      WHITESPACE "\n     "
+  WHITESPACE "\n     "
   CHECK_DED_ARM
     PIPE "|"
     WHITESPACE " "
@@ -36,7 +36,7 @@ CHECK_DED
       IDENT_EXPR
         IDENTIFIER
           IDENT "else"
-          WHITESPACE " "
+    WHITESPACE " "
     FAT_ARROW "=>"
     WHITESPACE " "
     BANG_METHOD_CALL_DED
@@ -45,13 +45,13 @@ CHECK_DED
       IDENT_EXPR
         IDENTIFIER
           IDENT "claim"
-          WHITESPACE " "
+      WHITESPACE " "
       EXPR_PHRASE
         IDENT_EXPR
           IDENTIFIER
             IDENT "B"
       R_PAREN ")"
-      WHITESPACE "\n"
+  WHITESPACE "\n"
   R_CURLY "}"
   WHITESPACE "\n"
 

@@ -12,7 +12,7 @@ INDUCT_DED
     IDENT_PAT
       IDENTIFIER
         IDENT "a"
-        WHITESPACE " "
+    WHITESPACE " "
     FAT_ARROW "=>"
     WHITESPACE " "
     BANG_METHOD_CALL_DED
@@ -21,14 +21,14 @@ INDUCT_DED
       IDENT_EXPR
         IDENTIFIER
           IDENT "claim"
-          WHITESPACE " "
+      WHITESPACE " "
       EXPR_PHRASE
         IDENT_EXPR
           IDENTIFIER
             IDENT "a"
       R_PAREN ")"
-      WHITESPACE " "
+  WHITESPACE " "
   R_CURLY "}"
   WHITESPACE "\n"
-error 13: expected phrase in by-induction deduction
+error 12: expected phrase in by-induction deduction
 

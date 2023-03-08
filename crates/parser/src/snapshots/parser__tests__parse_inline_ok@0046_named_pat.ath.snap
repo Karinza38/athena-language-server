@@ -7,7 +7,7 @@ NAMED_PAT
   L_PAREN "("
   IDENTIFIER
     IDENT "foo"
-    WHITESPACE " "
+  WHITESPACE " "
   AS_KW "as"
   WHITESPACE " "
   LITERAL_PAT

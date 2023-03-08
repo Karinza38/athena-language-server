@@ -1,8 +1,8 @@
 //! Semantic Tokens helpers
 use std::{ops, sync::atomic::AtomicU32};
 use syntax::{
-    ast::{self},
-    match_ast, AstNode, NodeOrToken, SyntaxKind, SyntaxNode, SyntaxToken, TextRange, WalkEvent, T,
+    ast, match_ast, AstNode, NodeOrToken, SyntaxKind, SyntaxNode, SyntaxToken, TextRange,
+    WalkEvent, T,
 };
 use tower_lsp::lsp_types::{
     SemanticToken, SemanticTokenModifier, SemanticTokenType, SemanticTokens, SemanticTokensEdit,
@@ -299,7 +299,7 @@ fn token(builder: &mut SemanticTokensBuilder, tok: SyntaxToken) {
         builder.push(tok.text_range(), COMMENT);
     } else if kind == SyntaxKind::IDENT {
         //FIXME: we shouldn't really hit this case
-        builder.push(tok.text_range(), VARIABLE);
+        return;
     } else {
         log::warn!("unhandled token: {:?}", kind);
     }
@@ -380,6 +380,18 @@ mod tests {
             token_type: t.3,
             token_modifiers_bitset: t.4,
         }
+    }
+
+    #[test]
+    fn test_semantic_tokens() {
+        let input = "domain Person\n ";
+        let file = syntax::SourceFile::parse(input);
+        let index = LineIndex::new(input);
+        let tokens = semantic_tokens_for_file(file.tree(), &index);
+        assert_eq!(
+            tokens.data,
+            vec![from((0, 0, 6, 6, 0)), from((0, 7, 6, 18, 0)),]
+        );
     }
 
     #[test]

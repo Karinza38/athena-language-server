@@ -11,10 +11,10 @@ DOMAIN_DIR
     IDENT_SORT
       IDENTIFIER
         IDENT "List"
-        WHITESPACE " "
+    WHITESPACE " "
     IDENT_SORT
       IDENTIFIER
         IDENT "T"
     R_PAREN ")"
-    WHITESPACE "\n"
+  WHITESPACE "\n"
 

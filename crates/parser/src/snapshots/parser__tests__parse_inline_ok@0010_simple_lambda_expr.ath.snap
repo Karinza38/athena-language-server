@@ -9,10 +9,10 @@ LAMBDA_EXPR
   L_PAREN "("
   IDENTIFIER
     IDENT "x"
-    WHITESPACE " "
+  WHITESPACE " "
   IDENTIFIER
     IDENT "y"
-    WHITESPACE " "
+  WHITESPACE " "
   IDENTIFIER
     IDENT "z"
   R_PAREN ")"
@@ -20,5 +20,5 @@ LAMBDA_EXPR
   LITERAL_EXPR
     LITERAL
       STRING "\"hello world\""
-      WHITESPACE "\n"
+  WHITESPACE "\n"
 

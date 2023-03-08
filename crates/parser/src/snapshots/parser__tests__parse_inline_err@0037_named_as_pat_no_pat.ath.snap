@@ -7,10 +7,10 @@ NAMED_PAT
   L_PAREN "("
   IDENTIFIER
     IDENT "foo"
-    WHITESPACE " "
+  WHITESPACE " "
   AS_KW "as"
   WHITESPACE " "
   R_PAREN ")"
   WHITESPACE "\n"
-error 8: expected a pattern to bind to
+error 7: expected a pattern to bind to
 
