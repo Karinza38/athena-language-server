@@ -20,7 +20,7 @@ Tokens =
     'ident = (::)|~|([%&*+\\--9<->@-Z\\\\^_a-z|](!|[#-\']|[*+]|[\\--9]|[<-\\\\]|\\^|[_-z]|\\|)*)'
     | 'string = "([ ~#-\\[\\]-~]|(?:\\\\\\d+)|(?:\\\\["\\\\abnrftv])|(?:\\\\\\^[A-Z@\\[\\]/^]))*"'
     | 'char = `([ ~#-\\[\\]-~]|(?:\\\\\\d+)|(?:\\\\["\\\\abnrftv])|(?:\\\\\\^[A-Z@\\[\\]/^]))'
-    | 'whitespace = [ \\t\\n]+'
+    | 'whitespace = [ \\t\\n\\r]+'
     | 'comment = #.*'
 
 //********************//
@@ -197,7 +197,7 @@ LoadDir =
     'load' 'string'
 
 AssertDir =
-    'assert' (Identifier ':=')? Expr
+    'assert' (Identifier ':=')? (Expr (',' Expr)*)
 
 AssertClosedDir =
     'assert*' (Identifier ':=')? Expr

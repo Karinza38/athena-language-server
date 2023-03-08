@@ -1,0 +1,23 @@
+---
+source: crates/parser/src/tests.rs
+description: "assert A, B, C\n"
+input_file: crates/parser/test_data/parser/inline/ok/dir/0129_assert_multiple.ath
+---
+ASSERT_DIR
+  ASSERT_KW "assert"
+  WHITESPACE " "
+  IDENT_EXPR
+    IDENTIFIER
+      IDENT "A"
+  COMMA ","
+  WHITESPACE " "
+  IDENT_EXPR
+    IDENTIFIER
+      IDENT "B"
+  COMMA ","
+  WHITESPACE " "
+  IDENT_EXPR
+    IDENTIFIER
+      IDENT "C"
+      WHITESPACE "\n"
+

@@ -487,6 +487,17 @@ fn assert_dir(p: &mut Parser) {
         p.error("expected assertion");
     }
 
+    while p.at(T![,]) {
+        // test(dir) assert_multiple
+        // assert A, B, C
+        p.bump(T![,]);
+        if !expr(p) {
+            // test_err(dir) assert_multiple_empty
+            // assert A,
+            p.error("expected assertion after comma");
+        }
+    }
+
     m.complete(p, SyntaxKind::ASSERT_DIR);
 }
 

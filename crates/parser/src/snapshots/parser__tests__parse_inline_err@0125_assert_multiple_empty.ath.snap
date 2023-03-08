@@ -1,0 +1,15 @@
+---
+source: crates/parser/src/tests.rs
+description: "assert A,\n"
+input_file: crates/parser/test_data/parser/inline/err/dir/0125_assert_multiple_empty.ath
+---
+ASSERT_DIR
+  ASSERT_KW "assert"
+  WHITESPACE " "
+  IDENT_EXPR
+    IDENTIFIER
+      IDENT "A"
+  COMMA ","
+  WHITESPACE "\n"
+error 10: expected assertion after comma
+
