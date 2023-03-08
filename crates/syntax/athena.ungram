@@ -240,6 +240,7 @@ Expr =
     | SeqExpr // ✅
     | AndExpr // ✅
     | OrExpr // ✅
+    | MapExpr
 
 IdentExpr =
     Identifier
@@ -321,6 +322,12 @@ AndExpr =
 
 OrExpr =
     '(' '||' Phrase* ')'
+
+MapExpr =
+    '|{' (MapBinding (',' MapBinding)*) '}|'
+
+MapBinding =
+    Phrase ':=' Phrase
 
 //************//
 // Deductions //

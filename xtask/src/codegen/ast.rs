@@ -364,6 +364,8 @@ fn generate_syntax_kinds(grammar: &KindsSrc) -> String {
         if "{}[]()'".contains(token) {
             let c = token.chars().next().unwrap();
             quote! { #c }
+        } else if "|{}|".contains(token) {
+            quote! { #token }
         } else {
             let cs = token.chars().map(|c| Punct::new(c, Spacing::Joint));
             quote! { #(#cs)* }
@@ -657,6 +659,8 @@ fn token_name(name: &str) -> String {
         "')'" | ")" => "r_paren",
         "'['" | "[" => "l_brack",
         "']'" | "]" => "r_brack",
+        r#""|{""# | "|{" => "pipe_curly",
+        r#"}|""# | "}|" => "curly_pipe",
         "<" => "l_angle",
         ">" => "r_angle",
         "=" => "eq",
@@ -691,6 +695,10 @@ fn token_name(name: &str) -> String {
 fn token_kind_raw(token: &str) -> proc_macro2::TokenStream {
     if token == "'" {
         return quote! { T!['\''] };
+    } else if token == "|{" {
+        return quote! { T!["|{"] };
+    } else if token == "}|" {
+        return quote! { T!["}|"] };
     }
     let token = token.parse::<proc_macro2::TokenStream>().unwrap();
     quote! { T![#token] }

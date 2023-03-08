@@ -1,0 +1,38 @@
+---
+source: crates/parser/src/tests.rs
+description: "|{ foo := 1, bar := 2 }|\n"
+input_file: crates/parser/test_data/parser/inline/ok/expr/0121_simple_map_expr.ath
+---
+MAP_EXPR
+  PIPE_CURLY "|{"
+  WHITESPACE " "
+  MAP_BINDING
+    EXPR_PHRASE
+      IDENT_EXPR
+        IDENTIFIER
+          IDENT "foo"
+          WHITESPACE " "
+    COLON_EQ ":="
+    WHITESPACE " "
+    EXPR_PHRASE
+      IDENT_EXPR
+        IDENTIFIER
+          IDENT "1"
+  COMMA ","
+  WHITESPACE " "
+  MAP_BINDING
+    EXPR_PHRASE
+      IDENT_EXPR
+        IDENTIFIER
+          IDENT "bar"
+          WHITESPACE " "
+    COLON_EQ ":="
+    WHITESPACE " "
+    EXPR_PHRASE
+      IDENT_EXPR
+        IDENTIFIER
+          IDENT "2"
+          WHITESPACE " "
+  CURLY_PIPE "}|"
+  WHITESPACE "\n"
+

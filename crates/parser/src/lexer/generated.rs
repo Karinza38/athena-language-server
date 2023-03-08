@@ -122,6 +122,10 @@ pub(crate) enum LexerToken {
     Seq(usize),
     #[token("||", |lex|lex.slice().len())]
     Pipepipe(usize),
+    #[token("|{", |lex|lex.slice().len())]
+    PipeCurly(usize),
+    #[token("}|", |lex|lex.slice().len())]
+    CurlyPipe(usize),
     #[token("conclude", |lex|lex.slice().len())]
     Conclude(usize),
     #[token("apply-method", |lex|lex.slice().len())]
@@ -245,6 +249,8 @@ impl LexerToken {
             Self::VectorSetBang(..) => T![vector - set!],
             Self::Seq(..) => T![seq],
             Self::Pipepipe(..) => T![||],
+            Self::PipeCurly(..) => T!["|{"],
+            Self::CurlyPipe(..) => T!["}|"],
             Self::Conclude(..) => T![conclude],
             Self::ApplyMethod(..) => T![apply - method],
             Self::Bang(..) => T![!],
@@ -338,6 +344,8 @@ impl LexerToken {
             Self::VectorSetBang(len) => len,
             Self::Seq(len) => len,
             Self::Pipepipe(len) => len,
+            Self::PipeCurly(len) => len,
+            Self::CurlyPipe(len) => len,
             Self::Conclude(len) => len,
             Self::ApplyMethod(len) => len,
             Self::Bang(len) => len,

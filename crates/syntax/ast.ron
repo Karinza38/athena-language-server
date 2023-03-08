@@ -18,6 +18,8 @@ KindsSrc(
         (";", "SEMI"),
         ("->", "THIN_ARROW"),
         (",", "COMMA"),
+        ("|{", "PIPE_CURLY"),
+        ("}|", "CURLY_PIPE"),
     ],
     keywords: [
         "while",
@@ -127,6 +129,8 @@ KindsSrc(
         "SEQ_EXPR",
         "AND_EXPR",
         "OR_EXPR",
+        "MAP_EXPR",
+        "MAP_BINDING",
         // Deductions
         "CONCLUDE_DED",
         "METHOD_CALL_DED",

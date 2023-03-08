@@ -27,6 +27,8 @@ pub enum SyntaxKind {
     SEMI,
     THIN_ARROW,
     COMMA,
+    PIPE_CURLY,
+    CURLY_PIPE,
     WHILE_KW,
     LET_KW,
     LETREC_KW,
@@ -134,6 +136,8 @@ pub enum SyntaxKind {
     SEQ_EXPR,
     AND_EXPR,
     OR_EXPR,
+    MAP_EXPR,
+    MAP_BINDING,
     CONCLUDE_DED,
     METHOD_CALL_DED,
     BANG_METHOD_CALL_DED,
@@ -238,7 +242,7 @@ impl SyntaxKind {
         matches!(
             self, L_PAREN | R_PAREN | L_CURLY | R_CURLY | L_BRACK | R_BRACK | QUESTION |
             UNDERSCORE | COLON | FAT_ARROW | BANG | AMP2 | PIPE2 | COLON_EQ |
-            SINGLE_QUOTE | SEMI | THIN_ARROW | COMMA
+            SINGLE_QUOTE | SEMI | THIN_ARROW | COMMA | PIPE_CURLY | CURLY_PIPE
         )
     }
     pub fn is_literal(self) -> bool {
@@ -400,6 +404,12 @@ macro_rules! T {
     };
     [,] => {
         $crate ::SyntaxKind::COMMA
+    };
+    ["|{"] => {
+        $crate ::SyntaxKind::PIPE_CURLY
+    };
+    ["}|"] => {
+        $crate ::SyntaxKind::CURLY_PIPE
     };
     [while] => {
         $crate ::SyntaxKind::WHILE_KW

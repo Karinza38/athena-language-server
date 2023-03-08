@@ -1,0 +1,20 @@
+---
+source: crates/parser/src/tests.rs
+description: "|{ := 1 }|\n"
+input_file: crates/parser/test_data/parser/inline/err/expr/0119_map_binding_no_key.ath
+---
+MAP_EXPR
+  PIPE_CURLY "|{"
+  WHITESPACE " "
+  MAP_BINDING
+    COLON_EQ ":="
+    WHITESPACE " "
+    EXPR_PHRASE
+      IDENT_EXPR
+        IDENTIFIER
+          IDENT "1"
+          WHITESPACE " "
+  CURLY_PIPE "}|"
+  WHITESPACE "\n"
+error 3: Expected to find a key (phrase) for the map binding
+

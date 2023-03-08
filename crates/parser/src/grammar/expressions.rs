@@ -400,6 +400,45 @@ fn match_expr(p: &mut Parser) {
     super::phrases::match_expr_or_ded(p, Some(super::phrases::ExprOrDed::Expr));
 }
 
+fn map_binding(p: &mut Parser) {
+    let m = p.start();
+    if !phrase(p) {
+        // test_err(expr) map_binding_no_key
+        // |{ := 1 }|
+        p.error("Expected to find a key (phrase) for the map binding");
+    }
+
+    p.expect(T![:=]);
+
+    if !phrase(p) {
+        // test_err(expr) map_binding_no_value
+        // |{ foo := }|
+        p.error("Expected to find a value (phrase) for the map binding");
+    }
+    m.complete(p, SyntaxKind::MAP_BINDING);
+}
+
+// test(expr) simple_map_expr
+// |{ foo := 1, bar := 2 }|
+fn map_expr(p: &mut Parser) {
+    assert!(p.at(T!["|{"]));
+
+    let m = p.start();
+    p.bump(T!["|{"]);
+
+    while !p.at(T!["}|"]) && !p.at_end() {
+        p.eat(T![,]);
+        map_binding(p);
+    }
+
+    p.expect(T!["}|"]);
+
+    // test(expr) nested_map_expr
+    // |{ foo := |{ bar := 1 }| }|
+
+    m.complete(p, SyntaxKind::MAP_EXPR);
+}
+
 pub(crate) const EXPR_START_SET: TokenSet = TokenSet::new(&[
     IDENT,
     T!['('],
@@ -420,6 +459,8 @@ pub(crate) const EXPR_START_SET: TokenSet = TokenSet::new(&[
     T![letrec],
     T![match],
     T![method],
+    T!["|{"],
+    T!["}|"],
 ])
 .union(LIT_SET);
 
@@ -490,6 +531,8 @@ pub(crate) fn expr(p: &mut Parser) -> bool {
         match_expr(p);
     } else if p.at(T![method]) {
         method_expr(p);
+    } else if p.at(T!["|{"]) {
+        map_expr(p);
     } else {
         // todo!();
         return false;
