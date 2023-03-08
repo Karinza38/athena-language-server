@@ -671,7 +671,7 @@ pub struct IdentExpr {
     pub(crate) syntax: SyntaxNode,
 }
 impl IdentExpr {
-    pub fn identifier(&self) -> Option<Identifier> {
+    pub fn maybe_typed_param(&self) -> Option<MaybeTypedParam> {
         support::child(&self.syntax)
     }
 }

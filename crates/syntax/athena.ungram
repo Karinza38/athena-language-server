@@ -17,7 +17,7 @@
 //   label:A     -- suggested name for field of AST node
 
 Tokens =
-    'ident = ~|([%&*+\\--9<->@-Z\\\\^_a-z|](!|[#-\']|[*+]|[\\--9]|[<-\\\\]|\\^|[_-z]|\\|)*)'
+    'ident = (::)|~|([%&*+\\--9<->@-Z\\\\^_a-z|](!|[#-\']|[*+]|[\\--9]|[<-\\\\]|\\^|[_-z]|\\|)*)'
     | 'string = "([ ~#-\\[\\]-~]|(?:\\\\\\d+)|(?:\\\\["\\\\abnrftv])|(?:\\\\\\^[A-Z@\\[\\]/^]))*"'
     | 'char = `([ ~#-\\[\\]-~]|(?:\\\\\\d+)|(?:\\\\["\\\\abnrftv])|(?:\\\\\\^[A-Z@\\[\\]/^]))'
     | 'whitespace = [ \\t\\n]+'
@@ -247,7 +247,7 @@ Expr =
     | MapExpr
 
 IdentExpr =
-    Identifier
+    MaybeTypedParam
 
 LiteralExpr =
     Literal

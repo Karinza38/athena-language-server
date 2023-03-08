@@ -6,7 +6,7 @@ use crate::{SyntaxKind, T};
 #[derive(Logos, Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub(crate) enum LexerToken {
     #[regex(
-        r###"~|([%&*+\--9<->@-Z\\^_a-z|](!|[#-']|[*+]|[\--9]|[<-\\]|\^|[_-z]|\|)*)"###,
+        r###"(::)|~|([%&*+\--9<->@-Z\\^_a-z|](!|[#-']|[*+]|[\--9]|[<-\\]|\^|[_-z]|\|)*)"###,
         |lex|lex.slice().len()
     )]
     Ident(usize),

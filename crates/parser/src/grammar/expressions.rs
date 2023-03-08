@@ -13,10 +13,13 @@ use crate::{
 
 // test(expr) simple_ident_expr
 // foo
+
+// test(expr) simple_ident_expr_with_type
+// foo: Int
 fn ident_expr(p: &mut Parser) {
     assert!(p.at(IDENT));
     let m = p.start();
-    identifier(p);
+    super::maybe_typed_param(p);
     m.complete(p, IDENT_EXPR);
 }
 
