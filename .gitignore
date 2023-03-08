@@ -4,3 +4,5 @@
 
 client/out
 client/.vscode-test
+client/*.vsix
+*.py

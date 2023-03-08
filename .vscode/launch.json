@@ -7,7 +7,7 @@
       "request": "launch",
       "name": "Launch Client",
       "runtimeExecutable": "${execPath}",
-      "args": ["--extensionDevelopmentPath=${workspaceRoot}"],
+      "args": ["--extensionDevelopmentPath=${workspaceRoot}/client"],
       "outFiles": ["${workspaceRoot}/client/out/**/*.js"],
       "autoAttachChildProcesses": true,
       "preLaunchTask": {
@@ -24,7 +24,7 @@
       "request": "launch",
       "runtimeExecutable": "${execPath}",
       "args": [
-        "--extensionDevelopmentPath=${workspaceRoot}",
+        "--extensionDevelopmentPath=${workspaceRoot}/client",
         "--extensionTestsPath=${workspaceRoot}/client/out/test/index",
         "${workspaceRoot}/client/testFixture"
       ],

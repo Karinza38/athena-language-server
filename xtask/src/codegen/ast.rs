@@ -283,7 +283,8 @@ fn generate_nodes(kinds: &KindsSrc, grammar: &AstSrc) -> String {
                                 #kinds => #name::#variants(#variants { syntax }),
                                 )*
                                 #(
-                                #inlined_kinds => #name::#inlined_variant_parents(#inlined_variant_parents::#inlined_variants(#inlined_variants { syntax })),
+                                #inlined_kinds => 
+                                    #name::#inlined_variant_parents(#inlined_variant_parents::#inlined_variants(#inlined_variants { syntax })),
                                 )*
                                 _ => return None,
                             };

@@ -1,8 +1,9 @@
 // Athena Un-Grammar.
 //
-// This grammar specifies the structure of Rust's concrete syntax tree.
+// This grammar specifies the structure of Athena's concrete syntax tree.
 // It does not specify parsing rules (ambiguities, precedence, etc are out of scope).
 // Tokens are processed -- contextual keywords are recognised, compound operators glued.
+//
 //
 // Legend:
 //
@@ -16,6 +17,14 @@
 //   (A)         -- same as A
 //   label:A     -- suggested name for field of AST node
 
+//
+// The `Tokens` non-terminal definition is special. It should consist of alternating terminals
+// of the form `terminal_name = lexer_regex`. 
+// These are extracted from the grammar to generate
+// lexer code (using the `logos` crate) automatically. If a terminal exists in the grammar but does
+// not have a definition in `Tokens` it is taken as a verbatim lexer rule. (For instance, the ':'
+// terminal gets a lexer rule `#[token(":")]` instead of a regex).
+//
 Tokens =
     'ident = (::)|~|([%&*+\\--9<->@-Z\\\\^_a-z|](!|[#-\']|[*+]|[\\--9]|[<-\\\\]|\\^|[_-z]|\\|)*)'
     | 'string = "([ ~#-\\[\\]-~]|(?:\\\\\\d+)|(?:\\\\["\\\\abnrftv])|(?:\\\\\\^[A-Z@\\[\\]/^]))*"'
