@@ -146,6 +146,7 @@ Dir =
     | DeclareDir
     | ExtendModuleDir
     | OpenDir
+    | AssociativityDir
 
 ModuleDir =
     'module' Identifier '{' Stmt* '}'
@@ -213,6 +214,9 @@ AssertClosedDir =
 
 OpenDir =
     'open' (Identifier (',' Identifier)*)
+
+AssociativityDir =
+    ('left-assoc' | 'right-assoc') Identifier
 
 //****************************//
 // Expressions and Deductions //

@@ -204,6 +204,7 @@ KindsSrc(
         "INPUT_TRANSFORM_DECL",
         "EXTEND_MODULE_DIR",
         "DEFINE_NAMED_PATTERN",
+        "ASSOCIATIVITY_DIR",
         // Statements
         "DIR_STMT",
         "PHRASE_STMT",

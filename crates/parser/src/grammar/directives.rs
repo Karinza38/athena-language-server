@@ -562,6 +562,30 @@ fn open_dir(p: &mut Parser) {
     m.complete(p, SyntaxKind::OPEN_DIR);
 }
 
+// test(dir) associativity_dir_left
+// left-assoc Foo
+
+// test(dir) associativity_dir_right
+// right-assoc Foo
+fn associativity_dir(p: &mut Parser) {
+    assert!(p.at_one_of(ASSOCIATIVITY_SET));
+
+    let m = p.start();
+    p.bump_one_of(ASSOCIATIVITY_SET);
+
+    if !p.at(IDENT) {
+        // test_err(dir) associativity_dir_no_identifier
+        // left-assoc
+        p.error("expected identifier to set associativity for");
+    } else {
+        identifier(p);
+    }
+
+    m.complete(p, SyntaxKind::ASSOCIATIVITY_DIR);
+}
+
+const ASSOCIATIVITY_SET: TokenSet = TokenSet::new(&[T![left - assoc], T![right - assoc]]);
+
 pub(crate) const DIR_START_SET: TokenSet = TokenSet::new(&[
     T![module],
     T![extend - module],
@@ -574,6 +598,8 @@ pub(crate) const DIR_START_SET: TokenSet = TokenSet::new(&[
     T![assert*],
     T![private],
     T![open],
+    T![left - assoc],
+    T![right - assoc],
 ]);
 
 pub(crate) fn dir(p: &mut Parser) -> bool {
@@ -636,6 +662,9 @@ pub(crate) fn dir(p: &mut Parser) -> bool {
         }
         T![open] => {
             open_dir(p);
+        }
+        T![left - assoc] | T![right - assoc] => {
+            associativity_dir(p);
         }
         _ => {
             return false;

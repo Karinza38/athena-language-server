@@ -514,6 +514,22 @@ impl OpenDir {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
+pub struct AssociativityDir {
+    pub(crate) syntax: SyntaxNode,
+}
+impl AssociativityDir {
+    pub fn left_assoc_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T![left - assoc])
+    }
+    pub fn right_assoc_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T![right - assoc])
+    }
+    pub fn identifier(&self) -> Option<Identifier> {
+        support::child(&self.syntax)
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct CompoundSortDecl {
     pub(crate) syntax: SyntaxNode,
 }
@@ -2000,6 +2016,7 @@ pub enum Dir {
     DeclareDir(DeclareDir),
     ExtendModuleDir(ExtendModuleDir),
     OpenDir(OpenDir),
+    AssociativityDir(AssociativityDir),
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
@@ -2456,6 +2473,17 @@ impl AstNode for ExtendModuleDir {
 impl AstNode for OpenDir {
     fn can_cast(kind: SyntaxKind) -> bool {
         kind == OPEN_DIR
+    }
+    fn cast(syntax: SyntaxNode) -> Option<Self> {
+        if Self::can_cast(syntax.kind()) { Some(Self { syntax }) } else { None }
+    }
+    fn syntax(&self) -> &SyntaxNode {
+        &self.syntax
+    }
+}
+impl AstNode for AssociativityDir {
+    fn can_cast(kind: SyntaxKind) -> bool {
+        kind == ASSOCIATIVITY_DIR
     }
     fn cast(syntax: SyntaxNode) -> Option<Self> {
         if Self::can_cast(syntax.kind()) { Some(Self { syntax }) } else { None }
@@ -3527,12 +3555,17 @@ impl From<OpenDir> for Dir {
         Dir::OpenDir(node)
     }
 }
+impl From<AssociativityDir> for Dir {
+    fn from(node: AssociativityDir) -> Dir {
+        Dir::AssociativityDir(node)
+    }
+}
 impl AstNode for Dir {
     fn can_cast(kind: SyntaxKind) -> bool {
         matches!(
             kind, MODULE_DIR | DOMAIN_DIR | DOMAINS_DIR | DEFINE_DIR | DEFINE_PROC_DIR |
             DEFINE_MULTI_DIR | LOAD_DIR | ASSERT_DIR | ASSERT_CLOSED_DIR | DECLARE_DIR |
-            EXTEND_MODULE_DIR | OPEN_DIR
+            EXTEND_MODULE_DIR | OPEN_DIR | ASSOCIATIVITY_DIR
         )
     }
     fn cast(syntax: SyntaxNode) -> Option<Self> {
@@ -3549,6 +3582,7 @@ impl AstNode for Dir {
             DECLARE_DIR => Dir::DeclareDir(DeclareDir { syntax }),
             EXTEND_MODULE_DIR => Dir::ExtendModuleDir(ExtendModuleDir { syntax }),
             OPEN_DIR => Dir::OpenDir(OpenDir { syntax }),
+            ASSOCIATIVITY_DIR => Dir::AssociativityDir(AssociativityDir { syntax }),
             _ => return None,
         };
         Some(res)
@@ -3567,6 +3601,7 @@ impl AstNode for Dir {
             Dir::DeclareDir(it) => &it.syntax,
             Dir::ExtendModuleDir(it) => &it.syntax,
             Dir::OpenDir(it) => &it.syntax,
+            Dir::AssociativityDir(it) => &it.syntax,
         }
     }
 }
@@ -4417,6 +4452,11 @@ impl std::fmt::Display for ExtendModuleDir {
     }
 }
 impl std::fmt::Display for OpenDir {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        std::fmt::Display::fmt(self.syntax(), f)
+    }
+}
+impl std::fmt::Display for AssociativityDir {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         std::fmt::Display::fmt(self.syntax(), f)
     }

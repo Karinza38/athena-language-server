@@ -1,0 +1,10 @@
+---
+source: crates/parser/src/tests.rs
+description: "left-assoc\n"
+input_file: crates/parser/test_data/parser/inline/err/dir/0126_associativity_dir_no_identifier.ath
+---
+ASSOCIATIVITY_DIR
+  LEFT_ASSOC_KW "left-assoc"
+  WHITESPACE "\n"
+error 10: expected identifier to set associativity for
+
