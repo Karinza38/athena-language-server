@@ -518,6 +518,36 @@ fn assert_closed_dir(p: &mut Parser) {
     m.complete(p, SyntaxKind::ASSERT_CLOSED_DIR);
 }
 
+// test(dir) open_dir
+// open List, Set
+fn open_dir(p: &mut Parser) {
+    assert!(p.at(T![open]));
+
+    let m = p.start();
+    p.bump(T![open]);
+
+    if !p.at(IDENT) {
+        // test_err(dir) open_no_name
+        // open
+        p.error("expected module name");
+    } else {
+        identifier(p);
+    }
+
+    while p.at(T![,]) {
+        p.bump(T![,]);
+        if !p.at(IDENT) {
+            // test_err(dir) open_no_second_name
+            // open List,
+            p.error("expected module name, or trailing commas are not permitted");
+        } else {
+            identifier(p);
+        }
+    }
+
+    m.complete(p, SyntaxKind::OPEN_DIR);
+}
+
 pub(crate) const DIR_START_SET: TokenSet = TokenSet::new(&[
     T![module],
     T![extend - module],
@@ -529,6 +559,7 @@ pub(crate) const DIR_START_SET: TokenSet = TokenSet::new(&[
     T![assert],
     T![assert*],
     T![private],
+    T![open],
 ]);
 
 pub(crate) fn dir(p: &mut Parser) -> bool {
@@ -588,6 +619,9 @@ pub(crate) fn dir(p: &mut Parser) -> bool {
         }
         T![assert*] => {
             assert_closed_dir(p);
+        }
+        T![open] => {
+            open_dir(p);
         }
         _ => {
             return false;

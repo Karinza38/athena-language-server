@@ -1,0 +1,11 @@
+---
+source: crates/parser/src/tests.rs
+description: "?foo\n"
+input_file: crates/parser/test_data/parser/inline/ok/expr/0125_term_var_no_annot.ath
+---
+TERM_VAR_EXPR
+  QUESTION "?"
+  IDENTIFIER
+    IDENT "foo"
+    WHITESPACE "\n"
+

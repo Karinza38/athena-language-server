@@ -1,0 +1,14 @@
+---
+source: crates/parser/src/tests.rs
+description: "open List,\n"
+input_file: crates/parser/test_data/parser/inline/err/dir/0122_open_no_second_name.ath
+---
+OPEN_DIR
+  OPEN_KW "open"
+  WHITESPACE " "
+  IDENTIFIER
+    IDENT "List"
+  COMMA ","
+  WHITESPACE "\n"
+error 11: expected module name, or trailing commas are not permitted
+

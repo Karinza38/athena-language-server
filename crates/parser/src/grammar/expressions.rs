@@ -40,6 +40,9 @@ fn unit_expr(p: &mut Parser) {
 
 // test(expr) simple_term_var_expr
 // ?foo:bar
+
+// test(expr) term_var_no_annot
+// ?foo
 fn term_var_expr(p: &mut Parser) {
     assert!(p.at(T![?]));
     let m = p.start();
@@ -53,16 +56,16 @@ fn term_var_expr(p: &mut Parser) {
         p.error("Expected to find an identifier for the term variable");
     }
 
-    p.expect(T![:]);
+    if p.at(T![:]) {
+        p.expect(T![:]);
 
-    if super::sorts::sort(p) {
-        m.complete(p, SyntaxKind::TERM_VAR_EXPR);
-    } else {
-        // test_err(expr) term_var_no_sort
-        // ?foo :
-        p.error("Expected to find a sort for the term variable");
-        m.complete(p, SyntaxKind::TERM_VAR_EXPR);
+        if !super::sorts::sort(p) {
+            // test_err(expr) term_var_no_sort
+            // ?foo :
+            p.error("Expected to find a sort for the term variable");
+        }
     }
+    m.complete(p, SyntaxKind::TERM_VAR_EXPR);
 }
 
 // test(expr) simple_meta_ident_expr

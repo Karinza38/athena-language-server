@@ -136,6 +136,7 @@ Dir =
     | AssertClosedDir
     | DeclareDir
     | ExtendModuleDir
+    | OpenDir
 
 ModuleDir =
     'module' Identifier '{' Stmt* '}'
@@ -200,6 +201,9 @@ AssertDir =
 
 AssertClosedDir =
     'assert*' (Identifier ':=')? Expr
+
+OpenDir =
+    'open' (Identifier (',' Identifier)*)
 
 //****************************//
 // Expressions and Deductions //

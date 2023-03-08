@@ -1,0 +1,10 @@
+---
+source: crates/parser/src/tests.rs
+description: "open\n"
+input_file: crates/parser/test_data/parser/inline/err/dir/0121_open_no_name.ath
+---
+OPEN_DIR
+  OPEN_KW "open"
+  WHITESPACE "\n"
+error 5: expected module name
+

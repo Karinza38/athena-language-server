@@ -86,6 +86,8 @@ pub(crate) enum LexerToken {
     Assert(usize),
     #[token("assert*", |lex|lex.slice().len())]
     AssertStar(usize),
+    #[token("open", |lex|lex.slice().len())]
+    Open(usize),
     #[token("?", |lex|lex.slice().len())]
     QuestionMark(usize),
     #[token("check", |lex|lex.slice().len())]
@@ -231,6 +233,7 @@ impl LexerToken {
             Self::Load(..) => T![load],
             Self::Assert(..) => T![assert],
             Self::AssertStar(..) => T![assert *],
+            Self::Open(..) => T![open],
             Self::QuestionMark(..) => T![?],
             Self::Check(..) => T![check],
             Self::FatArrow(..) => T![=>],
@@ -326,6 +329,7 @@ impl LexerToken {
             Self::Load(len) => len,
             Self::Assert(len) => len,
             Self::AssertStar(len) => len,
+            Self::Open(len) => len,
             Self::QuestionMark(len) => len,
             Self::Check(len) => len,
             Self::FatArrow(len) => len,

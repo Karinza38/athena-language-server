@@ -1,0 +1,16 @@
+---
+source: crates/parser/src/tests.rs
+description: "open List, Set\n"
+input_file: crates/parser/test_data/parser/inline/ok/dir/0124_open_dir.ath
+---
+OPEN_DIR
+  OPEN_KW "open"
+  WHITESPACE " "
+  IDENTIFIER
+    IDENT "List"
+  COMMA ","
+  WHITESPACE " "
+  IDENTIFIER
+    IDENT "Set"
+    WHITESPACE "\n"
+
