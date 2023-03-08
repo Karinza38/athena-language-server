@@ -1,0 +1,1 @@
+datatype-cases a on { a => (!claim a) }

@@ -156,6 +156,8 @@ pub(crate) enum LexerToken {
     ByInduction(usize),
     #[token("datatype-cases", |lex|lex.slice().len())]
     DatatypeCases(usize),
+    #[token("on", |lex|lex.slice().len())]
+    On(usize),
     #[token("val-of", |lex|lex.slice().len())]
     ValOf(usize),
     #[token("list-of", |lex|lex.slice().len())]
@@ -268,6 +270,7 @@ impl LexerToken {
             Self::PickWitnesses(..) => T![pick - witnesses],
             Self::ByInduction(..) => T![by - induction],
             Self::DatatypeCases(..) => T![datatype - cases],
+            Self::On(..) => T![on],
             Self::ValOf(..) => T![val - of],
             Self::ListOf(..) => T![list - of],
             Self::Split(..) => T![split],
@@ -364,6 +367,7 @@ impl LexerToken {
             Self::PickWitnesses(len) => len,
             Self::ByInduction(len) => len,
             Self::DatatypeCases(len) => len,
+            Self::On(len) => len,
             Self::ValOf(len) => len,
             Self::ListOf(len) => len,
             Self::Split(len) => len,

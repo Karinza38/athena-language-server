@@ -1,0 +1,41 @@
+---
+source: crates/parser/src/tests.rs
+description: "datatype-cases a on { a => (!claim a) }\n"
+input_file: crates/parser/test_data/parser/inline/err/ded/0124_cases_with_on_no_term.ath
+---
+CASES_DED
+  DATATYPE_CASES_KW "datatype-cases"
+  WHITESPACE " "
+  EXPR_PHRASE
+    IDENT_EXPR
+      IDENTIFIER
+        IDENT "a"
+        WHITESPACE " "
+  ON_KW "on"
+  WHITESPACE " "
+  L_CURLY "{"
+  WHITESPACE " "
+  RESTRICTED_MATCH_DED
+    IDENT_PAT
+      IDENTIFIER
+        IDENT "a"
+        WHITESPACE " "
+    FAT_ARROW "=>"
+    WHITESPACE " "
+    BANG_METHOD_CALL_DED
+      L_PAREN "("
+      BANG "!"
+      IDENT_EXPR
+        IDENTIFIER
+          IDENT "claim"
+          WHITESPACE " "
+      EXPR_PHRASE
+        IDENT_EXPR
+          IDENTIFIER
+            IDENT "a"
+      R_PAREN ")"
+      WHITESPACE " "
+  R_CURLY "}"
+  WHITESPACE "\n"
+error 20: expected term after `on` in datatype-cases deduction
+

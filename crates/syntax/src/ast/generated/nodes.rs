@@ -394,8 +394,8 @@ impl DefineMultiDir {
     pub fn colon_eq_token(&self) -> Option<SyntaxToken> {
         support::token(&self.syntax, T![:=])
     }
-    pub fn phrases(&self) -> AstChildren<Phrase> {
-        support::children(&self.syntax)
+    pub fn phrase(&self) -> Option<Phrase> {
+        support::child(&self.syntax)
     }
 }
 
@@ -1404,6 +1404,12 @@ impl CasesDed {
         support::token(&self.syntax, T![datatype - cases])
     }
     pub fn phrase(&self) -> Option<Phrase> {
+        support::child(&self.syntax)
+    }
+    pub fn on_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T![on])
+    }
+    pub fn expr(&self) -> Option<Expr> {
         support::child(&self.syntax)
     }
     pub fn l_curly_token(&self) -> Option<SyntaxToken> {

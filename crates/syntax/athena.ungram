@@ -411,7 +411,7 @@ RestrictedMatchDed =
     '|'? RestrictedPat '=>' Ded
 
 CasesDed =
-    'datatype-cases' Phrase '{' RestrictedMatchDed* '}'
+    'datatype-cases' Phrase ('on' Expr)? '{' RestrictedMatchDed* '}'
 
 CheckDed =
     'check' '{' arms:CheckDedArm* '}'

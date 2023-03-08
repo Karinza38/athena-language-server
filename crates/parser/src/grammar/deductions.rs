@@ -488,6 +488,17 @@ fn cases_ded(p: &mut Parser) {
         p.error("expected phrase in datatype-cases deduction");
     }
 
+    if p.at(T![on]) {
+        // test(ded) cases_with_on
+        // datatype-cases a on b { c => (!claim d) }
+        p.bump(T![on]);
+        if !expr(p) {
+            // test_err(ded) cases_with_on_no_term
+            // datatype-cases a on { a => (!claim a) }
+            p.error("expected term after `on` in datatype-cases deduction");
+        }
+    }
+
     p.expect(T!['{']);
 
     if p.at(T!['}']) {
