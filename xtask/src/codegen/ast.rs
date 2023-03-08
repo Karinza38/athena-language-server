@@ -2,7 +2,7 @@ mod ast_src;
 
 use fs_err as fs;
 use itertools::Itertools;
-use proc_macro2::{Punct, Spacing};
+use proc_macro2::{Ident, Punct, Spacing};
 use quote::{format_ident, quote};
 use std::{
     collections::{BTreeSet, HashSet},
@@ -88,13 +88,99 @@ fn generate_tokens(grammar: &AstSrc) -> String {
     .replace("#[derive", "\n#[derive")
 }
 
+impl AstSrc {
+    fn get_enum_node(&self, name: &str) -> Option<&AstEnumSrc> {
+        self.enums.iter().find(|node| node.name == name)
+    }
+
+    fn get_node(&self, name: &str) -> Option<&AstNodeSrc> {
+        self.nodes.iter().find(|node| node.name == name)
+    }
+
+    #[allow(dead_code)]
+    fn get_traits(&self, name: &str) -> Option<BTreeSet<String>> {
+        match self.get_node(name) {
+            Some(node) => Some(node.traits()),
+            None => self.get_enum_node(name).map(|enm| enm.traits()),
+        }
+    }
+}
+
+impl AstNodeSrc {
+    fn name(&self) -> Ident {
+        format_ident!("{}", &self.name)
+    }
+
+    fn kind(&self) -> Ident {
+        format_ident!("{}", to_upper_snake_case(&self.name))
+    }
+
+    fn traits(&self) -> BTreeSet<String> {
+        self.traits.iter().cloned().collect()
+    }
+}
+
+impl AstEnumSrc {
+    fn variants(&self, grammar: &AstSrc) -> Vec<Ident> {
+        self.variants
+            .iter()
+            .filter_map(|variant| {
+                if grammar.get_enum_node(variant).is_none() {
+                    Some(format_ident!("{}", variant))
+                } else {
+                    None
+                }
+            })
+            .collect()
+    }
+
+    fn name(&self) -> Ident {
+        format_ident!("{}", &self.name)
+    }
+
+    fn traits(&self) -> BTreeSet<String> {
+        self.traits.iter().cloned().collect()
+    }
+
+    fn variants_inlined(&self, grammar: &AstSrc) -> Vec<(Ident, Ident)> {
+        self.variants
+            .iter()
+            .filter_map(|v| {
+                let enm = grammar.get_enum_node(v)?;
+                let parent = enm.name();
+                Some(
+                    enm.variants(grammar)
+                        .into_iter()
+                        .map(move |variant| (parent.clone(), variant)),
+                )
+            })
+            .flatten()
+            .collect()
+    }
+
+    fn kinds(&self) -> Vec<Ident> {
+        self.variants
+            .iter()
+            .map(|variant| format_ident!("{}", to_upper_snake_case(variant)))
+            .collect()
+    }
+
+    fn kinds_inlined(&self, grammar: &AstSrc) -> Vec<Ident> {
+        self.variants
+            .iter()
+            .filter_map(|v| Some(grammar.get_enum_node(v)?.kinds()))
+            .flatten()
+            .collect()
+    }
+}
+
 fn generate_nodes(kinds: &KindsSrc, grammar: &AstSrc) -> String {
     let (node_defs, node_boilerplate_impls): (Vec<_>, Vec<_>) = grammar
         .nodes
         .iter()
         .map(|node| {
-            let name = format_ident!("{}", node.name);
-            let kind = format_ident!("{}", to_upper_snake_case(&node.name));
+            let name = node.name();
+            let kind = node.kind();
             let traits = node
                 .traits
                 .iter()
@@ -165,20 +251,25 @@ fn generate_nodes(kinds: &KindsSrc, grammar: &AstSrc) -> String {
         .enums
         .iter()
         .map(|en| {
-            let variants: Vec<_> = en
-                .variants
-                .iter()
-                .map(|var| format_ident!("{}", var))
-                .collect();
-            let name = format_ident!("{}", en.name);
-            let kinds: Vec<_> = variants
-                .iter()
-                .map(|name| format_ident!("{}", to_upper_snake_case(&name.to_string())))
-                .collect();
+            let variants = en.variants(grammar);
+            let name = en.name();
+            let kinds = en.kinds();
+
+            let (inlined_variant_parents, inlined_variants): (Vec<_>, Vec<_>) =
+                en.variants_inlined(grammar).into_iter().unzip();
+            let inlined_kinds = en.kinds_inlined(grammar);
             let traits = en.traits.iter().map(|trait_name| {
                 let trait_name = format_ident!("{}", trait_name);
                 quote!(impl ast::#trait_name for #name {})
             });
+
+
+            let unique_parent_variants = inlined_variant_parents
+                .iter()
+                .cloned()
+                .collect::<BTreeSet<_>>()
+                .into_iter()
+                .collect::<Vec<_>>();
 
             let ast_node = {
                 quote! {
@@ -191,6 +282,9 @@ fn generate_nodes(kinds: &KindsSrc, grammar: &AstSrc) -> String {
                                 #(
                                 #kinds => #name::#variants(#variants { syntax }),
                                 )*
+                                #(
+                                #inlined_kinds => #name::#inlined_variant_parents(#inlined_variant_parents::#inlined_variants(#inlined_variants { syntax })),
+                                )*
                                 _ => return None,
                             };
                             Some(res)
@@ -200,11 +294,15 @@ fn generate_nodes(kinds: &KindsSrc, grammar: &AstSrc) -> String {
                                 #(
                                 #name::#variants(it) => &it.syntax,
                                 )*
+                                #(
+                                #name::#unique_parent_variants(it) => it.syntax(),
+                                )*
                             }
                         }
                     }
                 }
             };
+
 
             (
                 quote! {
@@ -212,8 +310,8 @@ fn generate_nodes(kinds: &KindsSrc, grammar: &AstSrc) -> String {
                     #[derive(Debug, Clone, PartialEq, Eq, Hash)]
                     pub enum #name {
                         #(#variants(#variants),)*
+                        #(#unique_parent_variants(#unique_parent_variants),)*
                     }
-
                     #(#traits)*
                 },
                 quote! {
@@ -221,6 +319,13 @@ fn generate_nodes(kinds: &KindsSrc, grammar: &AstSrc) -> String {
                         impl From<#variants> for #name {
                             fn from(node: #variants) -> #name {
                                 #name::#variants(node)
+                            }
+                        }
+                    )*
+                    #(
+                        impl From<#unique_parent_variants> for #name {
+                            fn from(node: #unique_parent_variants) -> #name {
+                                #name::#unique_parent_variants(node)
                             }
                         }
                     )*
@@ -1062,12 +1167,7 @@ fn extract_enum_traits(ast: &mut AstSrc) {
         let mut variant_traits = enm
             .variants
             .iter()
-            .map(|var| {
-                nodes
-                    .iter()
-                    .find(|it| &it.name == var)
-                    .expect(format!("no node for {}", var).as_str())
-            })
+            .filter_map(|var| nodes.iter().find(|it| &it.name == var))
             .map(|node| node.traits.iter().cloned().collect::<BTreeSet<_>>());
 
         let mut enum_traits = match variant_traits.next() {
