@@ -1,0 +1,1 @@
+pick-any f:(Fun 'S 'T) g:(Fun 'U 'S) (!claim A)

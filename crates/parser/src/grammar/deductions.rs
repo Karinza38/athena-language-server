@@ -1,5 +1,5 @@
 use crate::{
-    grammar::{expressions::expr, phrases::phrase, sorts::sort},
+    grammar::{expressions::expr, maybe_typed_param, phrases::phrase, sorts::sort},
     parser::{Marker, Parser},
     token_set::TokenSet,
     SyntaxKind::{self, IDENT},
@@ -201,20 +201,28 @@ fn pick_any_ded(p: &mut Parser) {
     p.bump(T![pick - any]);
 
     if !p.at(IDENT) {
-        // test_err(ded) pick_any_no_ident
-        // pick-any : Int (!claim A)
-        p.error("expected identifier in pick any binding");
+        if p.at(T![:]) {
+            // test_err(ded) pick_any_no_ident
+            // pick-any : Int (!claim A)
+            let m = p.start();
+            p.error("expected identifier in pick any binding");
+            p.bump(T![:]);
+            sort(p);
+            m.complete(p, SyntaxKind::TYPED_PARAM);
+        } else {
+            p.err_recover(
+                "expected identifier in pick any binding",
+                DED_START_SET.union(TokenSet::new(&[IDENT])),
+            );
+        }
     } else {
-        identifier(p);
+        maybe_typed_param(p);
     }
 
-    if p.at(T![:]) {
-        p.bump(T![:]);
-        if !sort(p) {
-            // test_err(ded) pick_any_no_sory
-            // pick-any a : assume B (!claim B)
-            p.error("expected sort in pick any binding");
-        }
+    while p.at(IDENT) {
+        // test(ded) pick_any_multi_param
+        // pick-any f:(Fun 'S 'T) g:(Fun 'U 'S) (!claim A)
+        maybe_typed_param(p);
     }
 
     if !ded(p) {

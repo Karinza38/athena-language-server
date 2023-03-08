@@ -50,6 +50,35 @@ impl Unit {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
+pub struct TypedParam {
+    pub(crate) syntax: SyntaxNode,
+}
+impl TypedParam {
+    pub fn identifier(&self) -> Option<Identifier> {
+        support::child(&self.syntax)
+    }
+    pub fn colon_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T![:])
+    }
+    pub fn sort(&self) -> Option<Sort> {
+        support::child(&self.syntax)
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+pub struct MaybeWildcardTypedParam {
+    pub(crate) syntax: SyntaxNode,
+}
+impl MaybeWildcardTypedParam {
+    pub fn maybe_typed_param(&self) -> Option<MaybeTypedParam> {
+        support::child(&self.syntax)
+    }
+    pub fn underscore_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T![_])
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct VarSort {
     pub(crate) syntax: SyntaxNode,
 }
@@ -325,6 +354,12 @@ impl DefineProcDir {
     pub fn l_paren_token(&self) -> Option<SyntaxToken> {
         support::token(&self.syntax, T!['('])
     }
+    pub fn identifier(&self) -> Option<Identifier> {
+        support::child(&self.syntax)
+    }
+    pub fn args(&self) -> AstChildren<MaybeWildcardTypedParam> {
+        support::children(&self.syntax)
+    }
     pub fn r_paren_token(&self) -> Option<SyntaxToken> {
         support::token(&self.syntax, T![')'])
     }
@@ -332,9 +367,6 @@ impl DefineProcDir {
         support::token(&self.syntax, T![:=])
     }
     pub fn phrase(&self) -> Option<Phrase> {
-        support::child(&self.syntax)
-    }
-    pub fn define_name(&self) -> Option<DefineName> {
         support::child(&self.syntax)
     }
 }
@@ -1228,14 +1260,8 @@ impl PickAnyDed {
     pub fn pick_any_token(&self) -> Option<SyntaxToken> {
         support::token(&self.syntax, T![pick - any])
     }
-    pub fn identifier(&self) -> Option<Identifier> {
-        support::child(&self.syntax)
-    }
-    pub fn colon_token(&self) -> Option<SyntaxToken> {
-        support::token(&self.syntax, T![:])
-    }
-    pub fn sort(&self) -> Option<Sort> {
-        support::child(&self.syntax)
+    pub fn maybe_typed_params(&self) -> AstChildren<MaybeTypedParam> {
+        support::children(&self.syntax)
     }
     pub fn ded(&self) -> Option<Ded> {
         support::child(&self.syntax)
@@ -1300,7 +1326,7 @@ impl PickWitnessesDed {
     pub fn ded(&self) -> Option<Ded> {
         support::child(&self.syntax)
     }
-    pub fn define_name(&self) -> Option<DefineName> {
+    pub fn maybe_typed_param(&self) -> Option<MaybeTypedParam> {
         support::child(&self.syntax)
     }
 }
@@ -1543,23 +1569,7 @@ pub struct IdentPat {
     pub(crate) syntax: SyntaxNode,
 }
 impl IdentPat {
-    pub fn identifier(&self) -> Option<Identifier> {
-        support::child(&self.syntax)
-    }
-}
-
-#[derive(Debug, Clone, PartialEq, Eq, Hash)]
-pub struct AnnotatedIdentPat {
-    pub(crate) syntax: SyntaxNode,
-}
-impl AnnotatedIdentPat {
-    pub fn identifier(&self) -> Option<Identifier> {
-        support::child(&self.syntax)
-    }
-    pub fn colon_token(&self) -> Option<SyntaxToken> {
-        support::token(&self.syntax, T![:])
-    }
-    pub fn sort(&self) -> Option<Sort> {
+    pub fn maybe_typed_param(&self) -> Option<MaybeTypedParam> {
         support::child(&self.syntax)
     }
 }
@@ -1904,6 +1914,12 @@ impl SomeThing {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
+pub enum MaybeTypedParam {
+    Identifier(Identifier),
+    TypedParam(TypedParam),
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub enum Sort {
     VarSort(VarSort),
     IdentSort(IdentSort),
@@ -1986,7 +2002,6 @@ pub enum DefineName {
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub enum Pat {
     IdentPat(IdentPat),
-    AnnotatedIdentPat(AnnotatedIdentPat),
     VarPat(VarPat),
     MetaIdentPat(MetaIdentPat),
     LiteralPat(LiteralPat),
@@ -2027,7 +2042,6 @@ pub enum Ded {
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub enum RestrictedPat {
     IdentPat(IdentPat),
-    AnnotatedIdentPat(AnnotatedIdentPat),
     RestrictedApplyPat(RestrictedApplyPat),
     RestrictedNamedPat(RestrictedNamedPat),
 }
@@ -2073,6 +2087,28 @@ impl AstNode for MetaIdent {
 impl AstNode for Unit {
     fn can_cast(kind: SyntaxKind) -> bool {
         kind == UNIT
+    }
+    fn cast(syntax: SyntaxNode) -> Option<Self> {
+        if Self::can_cast(syntax.kind()) { Some(Self { syntax }) } else { None }
+    }
+    fn syntax(&self) -> &SyntaxNode {
+        &self.syntax
+    }
+}
+impl AstNode for TypedParam {
+    fn can_cast(kind: SyntaxKind) -> bool {
+        kind == TYPED_PARAM
+    }
+    fn cast(syntax: SyntaxNode) -> Option<Self> {
+        if Self::can_cast(syntax.kind()) { Some(Self { syntax }) } else { None }
+    }
+    fn syntax(&self) -> &SyntaxNode {
+        &self.syntax
+    }
+}
+impl AstNode for MaybeWildcardTypedParam {
+    fn can_cast(kind: SyntaxKind) -> bool {
+        kind == MAYBE_WILDCARD_TYPED_PARAM
     }
     fn cast(syntax: SyntaxNode) -> Option<Self> {
         if Self::can_cast(syntax.kind()) { Some(Self { syntax }) } else { None }
@@ -3027,17 +3063,6 @@ impl AstNode for IdentPat {
         &self.syntax
     }
 }
-impl AstNode for AnnotatedIdentPat {
-    fn can_cast(kind: SyntaxKind) -> bool {
-        kind == ANNOTATED_IDENT_PAT
-    }
-    fn cast(syntax: SyntaxNode) -> Option<Self> {
-        if Self::can_cast(syntax.kind()) { Some(Self { syntax }) } else { None }
-    }
-    fn syntax(&self) -> &SyntaxNode {
-        &self.syntax
-    }
-}
 impl AstNode for RestrictedMatchDed {
     fn can_cast(kind: SyntaxKind) -> bool {
         kind == RESTRICTED_MATCH_DED
@@ -3234,6 +3259,35 @@ impl AstNode for SomeThing {
     }
     fn syntax(&self) -> &SyntaxNode {
         &self.syntax
+    }
+}
+impl From<Identifier> for MaybeTypedParam {
+    fn from(node: Identifier) -> MaybeTypedParam {
+        MaybeTypedParam::Identifier(node)
+    }
+}
+impl From<TypedParam> for MaybeTypedParam {
+    fn from(node: TypedParam) -> MaybeTypedParam {
+        MaybeTypedParam::TypedParam(node)
+    }
+}
+impl AstNode for MaybeTypedParam {
+    fn can_cast(kind: SyntaxKind) -> bool {
+        matches!(kind, IDENTIFIER | TYPED_PARAM)
+    }
+    fn cast(syntax: SyntaxNode) -> Option<Self> {
+        let res = match syntax.kind() {
+            IDENTIFIER => MaybeTypedParam::Identifier(Identifier { syntax }),
+            TYPED_PARAM => MaybeTypedParam::TypedParam(TypedParam { syntax }),
+            _ => return None,
+        };
+        Some(res)
+    }
+    fn syntax(&self) -> &SyntaxNode {
+        match self {
+            MaybeTypedParam::Identifier(it) => &it.syntax,
+            MaybeTypedParam::TypedParam(it) => &it.syntax,
+        }
     }
 }
 impl From<VarSort> for Sort {
@@ -3713,11 +3767,6 @@ impl From<IdentPat> for Pat {
         Pat::IdentPat(node)
     }
 }
-impl From<AnnotatedIdentPat> for Pat {
-    fn from(node: AnnotatedIdentPat) -> Pat {
-        Pat::AnnotatedIdentPat(node)
-    }
-}
 impl From<VarPat> for Pat {
     fn from(node: VarPat) -> Pat {
         Pat::VarPat(node)
@@ -3786,15 +3835,14 @@ impl From<SomeThingPat> for Pat {
 impl AstNode for Pat {
     fn can_cast(kind: SyntaxKind) -> bool {
         matches!(
-            kind, IDENT_PAT | ANNOTATED_IDENT_PAT | VAR_PAT | META_IDENT_PAT |
-            LITERAL_PAT | UNIT_PAT | WILDCARD_PAT | NAMED_PAT | VAL_OF_PAT | LIST_OF_PAT
-            | SPLIT_PAT | LIST_PAT | COMPOUND_PAT | WHERE_PAT | SOME_THING_PAT
+            kind, IDENT_PAT | VAR_PAT | META_IDENT_PAT | LITERAL_PAT | UNIT_PAT |
+            WILDCARD_PAT | NAMED_PAT | VAL_OF_PAT | LIST_OF_PAT | SPLIT_PAT | LIST_PAT |
+            COMPOUND_PAT | WHERE_PAT | SOME_THING_PAT
         )
     }
     fn cast(syntax: SyntaxNode) -> Option<Self> {
         let res = match syntax.kind() {
             IDENT_PAT => Pat::IdentPat(IdentPat { syntax }),
-            ANNOTATED_IDENT_PAT => Pat::AnnotatedIdentPat(AnnotatedIdentPat { syntax }),
             VAR_PAT => Pat::VarPat(VarPat { syntax }),
             META_IDENT_PAT => Pat::MetaIdentPat(MetaIdentPat { syntax }),
             LITERAL_PAT => Pat::LiteralPat(LiteralPat { syntax }),
@@ -3815,7 +3863,6 @@ impl AstNode for Pat {
     fn syntax(&self) -> &SyntaxNode {
         match self {
             Pat::IdentPat(it) => &it.syntax,
-            Pat::AnnotatedIdentPat(it) => &it.syntax,
             Pat::VarPat(it) => &it.syntax,
             Pat::MetaIdentPat(it) => &it.syntax,
             Pat::LiteralPat(it) => &it.syntax,
@@ -3983,11 +4030,6 @@ impl From<IdentPat> for RestrictedPat {
         RestrictedPat::IdentPat(node)
     }
 }
-impl From<AnnotatedIdentPat> for RestrictedPat {
-    fn from(node: AnnotatedIdentPat) -> RestrictedPat {
-        RestrictedPat::AnnotatedIdentPat(node)
-    }
-}
 impl From<RestrictedApplyPat> for RestrictedPat {
     fn from(node: RestrictedApplyPat) -> RestrictedPat {
         RestrictedPat::RestrictedApplyPat(node)
@@ -4000,17 +4042,11 @@ impl From<RestrictedNamedPat> for RestrictedPat {
 }
 impl AstNode for RestrictedPat {
     fn can_cast(kind: SyntaxKind) -> bool {
-        matches!(
-            kind, IDENT_PAT | ANNOTATED_IDENT_PAT | RESTRICTED_APPLY_PAT |
-            RESTRICTED_NAMED_PAT
-        )
+        matches!(kind, IDENT_PAT | RESTRICTED_APPLY_PAT | RESTRICTED_NAMED_PAT)
     }
     fn cast(syntax: SyntaxNode) -> Option<Self> {
         let res = match syntax.kind() {
             IDENT_PAT => RestrictedPat::IdentPat(IdentPat { syntax }),
-            ANNOTATED_IDENT_PAT => {
-                RestrictedPat::AnnotatedIdentPat(AnnotatedIdentPat { syntax })
-            }
             RESTRICTED_APPLY_PAT => {
                 RestrictedPat::RestrictedApplyPat(RestrictedApplyPat { syntax })
             }
@@ -4024,7 +4060,6 @@ impl AstNode for RestrictedPat {
     fn syntax(&self) -> &SyntaxNode {
         match self {
             RestrictedPat::IdentPat(it) => &it.syntax,
-            RestrictedPat::AnnotatedIdentPat(it) => &it.syntax,
             RestrictedPat::RestrictedApplyPat(it) => &it.syntax,
             RestrictedPat::RestrictedNamedPat(it) => &it.syntax,
         }
@@ -4057,6 +4092,11 @@ impl AstNode for SimplePat {
             SimplePat::IdentPat(it) => &it.syntax,
             SimplePat::WildcardPat(it) => &it.syntax,
         }
+    }
+}
+impl std::fmt::Display for MaybeTypedParam {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        std::fmt::Display::fmt(self.syntax(), f)
     }
 }
 impl std::fmt::Display for Sort {
@@ -4135,6 +4175,16 @@ impl std::fmt::Display for MetaIdent {
     }
 }
 impl std::fmt::Display for Unit {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        std::fmt::Display::fmt(self.syntax(), f)
+    }
+}
+impl std::fmt::Display for TypedParam {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        std::fmt::Display::fmt(self.syntax(), f)
+    }
+}
+impl std::fmt::Display for MaybeWildcardTypedParam {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         std::fmt::Display::fmt(self.syntax(), f)
     }
@@ -4565,11 +4615,6 @@ impl std::fmt::Display for RestrictedNamedPat {
     }
 }
 impl std::fmt::Display for IdentPat {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        std::fmt::Display::fmt(self.syntax(), f)
-    }
-}
-impl std::fmt::Display for AnnotatedIdentPat {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         std::fmt::Display::fmt(self.syntax(), f)
     }

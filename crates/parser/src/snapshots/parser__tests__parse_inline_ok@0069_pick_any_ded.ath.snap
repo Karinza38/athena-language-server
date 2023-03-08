@@ -6,15 +6,16 @@ input_file: crates/parser/test_data/parser/inline/ok/ded/0069_pick_any_ded.ath
 PICK_ANY_DED
   PICK_ANY_KW "pick-any"
   WHITESPACE " "
-  IDENTIFIER
-    IDENT "a"
-    WHITESPACE " "
-  COLON ":"
-  WHITESPACE " "
-  IDENT_SORT
+  TYPED_PARAM
     IDENTIFIER
-      IDENT "Int"
+      IDENT "a"
       WHITESPACE " "
+    COLON ":"
+    WHITESPACE " "
+    IDENT_SORT
+      IDENTIFIER
+        IDENT "Int"
+        WHITESPACE " "
   BANG_METHOD_CALL_DED
     L_PAREN "("
     BANG "!"

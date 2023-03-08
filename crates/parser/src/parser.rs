@@ -1,6 +1,6 @@
 use std::cell::Cell;
 
-use crate::{event::Event, input::Input, token_set::TokenSet, SyntaxKind, T};
+use crate::{event::Event, input::Input, token_set::TokenSet, SyntaxKind};
 use drop_bomb::DropBomb;
 
 pub(crate) struct Parser<'i> {

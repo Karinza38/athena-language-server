@@ -6,14 +6,15 @@ input_file: crates/parser/test_data/parser/inline/err/ded/0063_pick_any_no_body.
 PICK_ANY_DED
   PICK_ANY_KW "pick-any"
   WHITESPACE " "
-  IDENTIFIER
-    IDENT "a"
-    WHITESPACE " "
-  COLON ":"
-  WHITESPACE " "
-  IDENT_SORT
+  TYPED_PARAM
     IDENTIFIER
-      IDENT "Int"
-      WHITESPACE "\n"
+      IDENT "a"
+      WHITESPACE " "
+    COLON ":"
+    WHITESPACE " "
+    IDENT_SORT
+      IDENTIFIER
+        IDENT "Int"
+        WHITESPACE "\n"
 error 17: expected body for pick any
 

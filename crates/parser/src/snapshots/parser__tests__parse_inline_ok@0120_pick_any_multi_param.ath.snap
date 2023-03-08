@@ -1,0 +1,64 @@
+---
+source: crates/parser/src/tests.rs
+description: "pick-any f:(Fun 'S 'T) g:(Fun 'U 'S) (!claim A)\n"
+input_file: crates/parser/test_data/parser/inline/ok/ded/0120_pick_any_multi_param.ath
+---
+PICK_ANY_DED
+  PICK_ANY_KW "pick-any"
+  WHITESPACE " "
+  TYPED_PARAM
+    IDENTIFIER
+      IDENT "f"
+    COLON ":"
+    COMPOUND_SORT
+      L_PAREN "("
+      IDENT_SORT
+        IDENTIFIER
+          IDENT "Fun"
+          WHITESPACE " "
+      VAR_SORT
+        SINGLE_QUOTE "'"
+        IDENTIFIER
+          IDENT "S"
+          WHITESPACE " "
+      VAR_SORT
+        SINGLE_QUOTE "'"
+        IDENTIFIER
+          IDENT "T"
+      R_PAREN ")"
+      WHITESPACE " "
+  TYPED_PARAM
+    IDENTIFIER
+      IDENT "g"
+    COLON ":"
+    COMPOUND_SORT
+      L_PAREN "("
+      IDENT_SORT
+        IDENTIFIER
+          IDENT "Fun"
+          WHITESPACE " "
+      VAR_SORT
+        SINGLE_QUOTE "'"
+        IDENTIFIER
+          IDENT "U"
+          WHITESPACE " "
+      VAR_SORT
+        SINGLE_QUOTE "'"
+        IDENTIFIER
+          IDENT "S"
+      R_PAREN ")"
+      WHITESPACE " "
+  BANG_METHOD_CALL_DED
+    L_PAREN "("
+    BANG "!"
+    IDENT_EXPR
+      IDENTIFIER
+        IDENT "claim"
+        WHITESPACE " "
+    EXPR_PHRASE
+      IDENT_EXPR
+        IDENTIFIER
+          IDENT "A"
+    R_PAREN ")"
+    WHITESPACE "\n"
+

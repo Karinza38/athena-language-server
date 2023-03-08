@@ -125,6 +125,43 @@ fn identifier(p: &mut Parser) {
     m.complete(p, SyntaxKind::IDENTIFIER);
 }
 
+fn typed_param(p: &mut Parser) {
+    assert!(p.at(IDENT));
+
+    let m = p.start();
+    identifier(p);
+
+    p.expect(T![:]);
+    if !sorts::sort(p) {
+        p.error("expected sort annotation");
+    }
+
+    m.complete(p, SyntaxKind::TYPED_PARAM);
+}
+
+fn maybe_typed_param(p: &mut Parser) {
+    assert!(p.at(IDENT));
+    if p.peek_at(T![:]) {
+        typed_param(p);
+    } else {
+        identifier(p);
+    }
+}
+
+fn maybe_wildcard_typed_param(p: &mut Parser) {
+    assert!(p.at(IDENT) || p.at(T![_]));
+
+    let m = p.start();
+
+    if p.at(T![_]) {
+        p.bump(T![_]);
+    } else {
+        maybe_typed_param(p);
+    }
+
+    m.complete(p, SyntaxKind::MAYBE_WILDCARD_TYPED_PARAM);
+}
+
 const LIT_KINDS: &[SyntaxKind] = &[CHAR, STRING];
 const LIT_SET: TokenSet = TokenSet::new(LIT_KINDS);
 fn literal(p: &mut Parser) {

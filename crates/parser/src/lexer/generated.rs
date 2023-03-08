@@ -32,6 +32,8 @@ pub(crate) enum LexerToken {
     RParen(usize),
     #[token(":", |lex|lex.slice().len())]
     Colon(usize),
+    #[token("_", |lex|lex.slice().len())]
+    Underscore(usize),
     #[token(":=", |lex|lex.slice().len())]
     ColonEq(usize),
     #[token("datatype", |lex|lex.slice().len())]
@@ -148,8 +150,6 @@ pub(crate) enum LexerToken {
     ByInduction(usize),
     #[token("datatype-cases", |lex|lex.slice().len())]
     DatatypeCases(usize),
-    #[token("_", |lex|lex.slice().len())]
-    Underscore(usize),
     #[token("val-of", |lex|lex.slice().len())]
     ValOf(usize),
     #[token("list-of", |lex|lex.slice().len())]
@@ -200,6 +200,7 @@ impl LexerToken {
             Self::LParen(..) => T!['('],
             Self::RParen(..) => T![')'],
             Self::Colon(..) => T![:],
+            Self::Underscore(..) => T![_],
             Self::ColonEq(..) => T![:=],
             Self::Datatype(..) => T![datatype],
             Self::Structure(..) => T![structure],
@@ -258,7 +259,6 @@ impl LexerToken {
             Self::PickWitnesses(..) => T![pick - witnesses],
             Self::ByInduction(..) => T![by - induction],
             Self::DatatypeCases(..) => T![datatype - cases],
-            Self::Underscore(..) => T![_],
             Self::ValOf(..) => T![val - of],
             Self::ListOf(..) => T![list - of],
             Self::Split(..) => T![split],
@@ -293,6 +293,7 @@ impl LexerToken {
             Self::LParen(len) => len,
             Self::RParen(len) => len,
             Self::Colon(len) => len,
+            Self::Underscore(len) => len,
             Self::ColonEq(len) => len,
             Self::Datatype(len) => len,
             Self::Structure(len) => len,
@@ -351,7 +352,6 @@ impl LexerToken {
             Self::PickWitnesses(len) => len,
             Self::ByInduction(len) => len,
             Self::DatatypeCases(len) => len,
-            Self::Underscore(len) => len,
             Self::ValOf(len) => len,
             Self::ListOf(len) => len,
             Self::Split(len) => len,

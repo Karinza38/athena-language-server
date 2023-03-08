@@ -39,6 +39,17 @@ MetaIdent =
 Unit =
     '(' ')'
 
+MaybeTypedParam =
+    Identifier
+    | TypedParam
+
+TypedParam =
+    Identifier ':' Sort
+
+MaybeWildcardTypedParam =
+    MaybeTypedParam
+    | '_'
+
 //*******//
 // Sorts //
 //*******//
@@ -176,7 +187,7 @@ DefineNamedPattern =
     '(' Identifier ('as' | 'bind')  '[' Pat* ']' ')' 
 
 DefineProcDir =
-    'private'? 'define' '(' Identifier args:Identifier* ')' ':=' Phrase
+    'private'? 'define' '(' Identifier args:MaybeWildcardTypedParam* ')' ':=' Phrase
 
 DefineMultiDir =
     'private'? 'define' '[' Pat* ']' ':=' '[' Phrase* ']'
@@ -360,7 +371,7 @@ GeneralizeOverDed =
     'generalize-over' Expr Ded
 
 PickAnyDed =
-    'pick-any' Identifier (':' Sort)? Ded
+    'pick-any' MaybeTypedParam* Ded
 
 WithWitnessDed =
     'with-witness' Expr Phrase Ded
@@ -379,7 +390,6 @@ RestrictedNamedPat =
 
 RestrictedPat =
     IdentPat
-    | AnnotatedIdentPat
     | RestrictedApplyPat
     | RestrictedNamedPat
 
@@ -428,7 +438,6 @@ TryDedArm =
 
 Pat =
     IdentPat // ✅
-    | AnnotatedIdentPat // ✅
     | VarPat // ✅
     | MetaIdentPat // ✅
     | LiteralPat // ✅
@@ -444,10 +453,7 @@ Pat =
     | SomeThingPat // ✅
 
 IdentPat =
-    Identifier
-
-AnnotatedIdentPat =
-    Identifier ':' Sort
+    MaybeTypedParam
 
 VarPat =
     '?' Identifier ':' Sort

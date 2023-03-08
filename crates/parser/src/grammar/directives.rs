@@ -224,10 +224,10 @@ fn define_proc_dir(p: &mut Parser) {
     // define (foo := lambda () true
 
     while !p.at(T![')']) && !p.at(T![:=]) {
-        if p.at(IDENT) {
-            identifier(p);
+        if p.at(IDENT) || p.at(T![_]) {
+            super::maybe_wildcard_typed_param(p);
         } else {
-            p.err_and_bump("expected argument name");
+            p.err_and_bump("expected parameter");
         }
     }
 
