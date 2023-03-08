@@ -1,5 +1,8 @@
 use crate::{
-    grammar::{deductions::DED_AFTER_LPAREN_SET, expressions::EXPR_AFTER_LPAREN_SET},
+    grammar::{
+        deductions::DED_AFTER_LPAREN_SET, expressions::EXPR_AFTER_LPAREN_SET,
+        patterns::PAT_START_SET,
+    },
     parser::Parser,
     token_set::TokenSet,
     SyntaxKind::{self, IDENT},
@@ -265,7 +268,7 @@ fn let_part(p: &mut Parser, leading_semi: bool) {
         p.bump(T![;]);
         m
     } else {
-        assert!(p.at_one_of(EXPR_START_SET));
+        assert!(p.at_one_of(PAT_START_SET));
         p.start()
     };
 

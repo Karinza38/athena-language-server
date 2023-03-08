@@ -1,0 +1,15 @@
+---
+source: crates/parser/src/tests.rs
+description: "method (foo)\n"
+input_file: crates/parser/test_data/parser/inline/err/expr/0118_method_expr_no_ded.ath
+---
+METHOD_EXPR
+  METHOD_KW "method"
+  WHITESPACE " "
+  L_PAREN "("
+  IDENTIFIER
+    IDENT "foo"
+  R_PAREN ")"
+  WHITESPACE "\n"
+error 13: Expected to find a body (ded) for the method expression
+

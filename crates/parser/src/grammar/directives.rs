@@ -132,6 +132,37 @@ fn domains_dir(p: &mut Parser) {
     m.complete(p, SyntaxKind::DOMAINS_DIR);
 }
 
+const NAME_SET: TokenSet = TokenSet::new(&[T![as], T![bind]]);
+fn define_named_pattern(p: &mut Parser) {
+    assert!(p.at(T!['(']) && (p.peek_at_one_of(NAME_SET) || p.nth_at_one_of(2, NAME_SET)));
+
+    let m = p.start();
+    p.bump(T!['(']);
+
+    if !p.at(IDENT) {
+        // test_err(dir) define_named_no_name
+        // define ( as [a]) := true)
+        p.error("expected name for define");
+    } else {
+        identifier(p);
+    }
+
+    p.bump_one_of(NAME_SET);
+
+    if p.expect(T!['[']) {
+        while !p.at(T![']']) && !p.at_end() {
+            if !pat(p) {
+                p.err_and_bump("expected pattern for define");
+            }
+        }
+    }
+    p.expect(T![']']);
+
+    p.expect(T![')']);
+
+    m.complete(p, SyntaxKind::DEFINE_NAMED_PATTERN);
+}
+
 // test(dir) define_dir
 // define foo := true
 
@@ -144,12 +175,16 @@ fn define_dir(p: &mut Parser) {
     p.eat(T![private]);
     p.bump(T![define]);
 
-    if !p.at(IDENT) {
-        // test_err(dir) define_no_name
-        // define := true
-        p.error("expected definition name");
+    if p.at(T!['(']) {
+        define_named_pattern(p);
     } else {
-        identifier(p);
+        if !p.at(IDENT) {
+            // test_err(dir) define_no_name
+            // define := true
+            p.error("expected definition name");
+        } else {
+            identifier(p);
+        }
     }
 
     p.expect(T![:=]);
@@ -192,7 +227,7 @@ fn define_proc_dir(p: &mut Parser) {
         if p.at(IDENT) {
             identifier(p);
         } else {
-            p.error("expected argument name");
+            p.err_and_bump("expected argument name");
         }
     }
 
@@ -529,7 +564,13 @@ pub(crate) fn dir(p: &mut Parser) -> bool {
         }
         T![define] => {
             if p.peek_at(T!['(']) {
-                define_proc_dir(p);
+                let three_la = p.nth(3);
+
+                if p.nth_at_one_of(2, NAME_SET) || NAME_SET.contains(three_la) {
+                    define_dir(p);
+                } else {
+                    define_proc_dir(p);
+                }
             } else if p.peek_at(T!['[']) {
                 define_multi(p);
             } else {

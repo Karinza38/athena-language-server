@@ -194,6 +194,7 @@ KindsSrc(
         "DECLARE_ATTRS",
         "INPUT_TRANSFORM_DECL",
         "EXTEND_MODULE_DIR",
+        "DEFINE_NAMED_PATTERN",
         // Statements
         "DIR_STMT",
         "PHRASE_STMT",

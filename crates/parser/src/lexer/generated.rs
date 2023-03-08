@@ -22,7 +22,7 @@ pub(crate) enum LexerToken {
     Char(usize),
     #[regex(r###"[ \t\n]+"###, |lex|lex.slice().len())]
     Whitespace(usize),
-    #[regex(r###"#.+"###, |lex|lex.slice().len())]
+    #[regex(r###"#.*"###, |lex|lex.slice().len())]
     Comment(usize),
     #[token("'", |lex|lex.slice().len())]
     SingleQuote(usize),
@@ -74,6 +74,10 @@ pub(crate) enum LexerToken {
     Private(usize),
     #[token("define", |lex|lex.slice().len())]
     Define(usize),
+    #[token("as", |lex|lex.slice().len())]
+    As(usize),
+    #[token("bind", |lex|lex.slice().len())]
+    Bind(usize),
     #[token("load", |lex|lex.slice().len())]
     Load(usize),
     #[token("assert", |lex|lex.slice().len())]
@@ -140,16 +144,12 @@ pub(crate) enum LexerToken {
     For(usize),
     #[token("pick-witnesses", |lex|lex.slice().len())]
     PickWitnesses(usize),
-    #[token("as", |lex|lex.slice().len())]
-    As(usize),
     #[token("by-induction", |lex|lex.slice().len())]
     ByInduction(usize),
     #[token("datatype-cases", |lex|lex.slice().len())]
     DatatypeCases(usize),
     #[token("_", |lex|lex.slice().len())]
     Underscore(usize),
-    #[token("bind", |lex|lex.slice().len())]
-    Bind(usize),
     #[token("val-of", |lex|lex.slice().len())]
     ValOf(usize),
     #[token("list-of", |lex|lex.slice().len())]
@@ -221,6 +221,8 @@ impl LexerToken {
             Self::RightAssoc(..) => T![right - assoc],
             Self::Private(..) => T![private],
             Self::Define(..) => T![define],
+            Self::As(..) => T![as],
+            Self::Bind(..) => T![bind],
             Self::Load(..) => T![load],
             Self::Assert(..) => T![assert],
             Self::AssertStar(..) => T![assert *],
@@ -254,11 +256,9 @@ impl LexerToken {
             Self::PickWitness(..) => T![pick - witness],
             Self::For(..) => T![for],
             Self::PickWitnesses(..) => T![pick - witnesses],
-            Self::As(..) => T![as],
             Self::ByInduction(..) => T![by - induction],
             Self::DatatypeCases(..) => T![datatype - cases],
             Self::Underscore(..) => T![_],
-            Self::Bind(..) => T![bind],
             Self::ValOf(..) => T![val - of],
             Self::ListOf(..) => T![list - of],
             Self::Split(..) => T![split],
@@ -314,6 +314,8 @@ impl LexerToken {
             Self::RightAssoc(len) => len,
             Self::Private(len) => len,
             Self::Define(len) => len,
+            Self::As(len) => len,
+            Self::Bind(len) => len,
             Self::Load(len) => len,
             Self::Assert(len) => len,
             Self::AssertStar(len) => len,
@@ -347,11 +349,9 @@ impl LexerToken {
             Self::PickWitness(len) => len,
             Self::For(len) => len,
             Self::PickWitnesses(len) => len,
-            Self::As(len) => len,
             Self::ByInduction(len) => len,
             Self::DatatypeCases(len) => len,
             Self::Underscore(len) => len,
-            Self::Bind(len) => len,
             Self::ValOf(len) => len,
             Self::ListOf(len) => len,
             Self::Split(len) => len,

@@ -21,7 +21,7 @@ Tokens =
     | 'string = "([ ~#-\\[\\]-~]|(?:\\\\\\d+)|(?:\\\\["\\\\abnrftv])|(?:\\\\\\^[A-Z@\\[\\]/^]))*"'
     | 'char = `([ ~#-\\[\\]-~]|(?:\\\\\\d+)|(?:\\\\["\\\\abnrftv])|(?:\\\\\\^[A-Z@\\[\\]/^]))'
     | 'whitespace = [ \\t\\n]+'
-    | 'comment = #.+'
+    | 'comment = #.*'
 
 //********************//
 // Names and Literals //
@@ -166,7 +166,14 @@ SortVarsDecl =
     '(' (IdentSort (',' IdentSort)*) ')'
 
 DefineDir =
-    'private'? 'define' Identifier ':=' Phrase
+    'private'? 'define' DefineName ':=' Phrase
+
+DefineName =
+    Identifier
+    | DefineNamedPattern
+
+DefineNamedPattern =
+    '(' Identifier ('as' | 'bind')  '[' Pat* ']' ')' 
 
 DefineProcDir =
     'private'? 'define' '(' Identifier args:Identifier* ')' ':=' Phrase

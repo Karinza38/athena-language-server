@@ -300,7 +300,7 @@ impl DefineDir {
     pub fn define_token(&self) -> Option<SyntaxToken> {
         support::token(&self.syntax, T![define])
     }
-    pub fn identifier(&self) -> Option<Identifier> {
+    pub fn define_name(&self) -> Option<DefineName> {
         support::child(&self.syntax)
     }
     pub fn colon_eq_token(&self) -> Option<SyntaxToken> {
@@ -325,12 +325,6 @@ impl DefineProcDir {
     pub fn l_paren_token(&self) -> Option<SyntaxToken> {
         support::token(&self.syntax, T!['('])
     }
-    pub fn identifier(&self) -> Option<Identifier> {
-        support::child(&self.syntax)
-    }
-    pub fn args(&self) -> AstChildren<Identifier> {
-        support::children(&self.syntax)
-    }
     pub fn r_paren_token(&self) -> Option<SyntaxToken> {
         support::token(&self.syntax, T![')'])
     }
@@ -338,6 +332,9 @@ impl DefineProcDir {
         support::token(&self.syntax, T![:=])
     }
     pub fn phrase(&self) -> Option<Phrase> {
+        support::child(&self.syntax)
+    }
+    pub fn define_name(&self) -> Option<DefineName> {
         support::child(&self.syntax)
     }
 }
@@ -570,6 +567,37 @@ impl DeclareAttr {
     }
     pub fn identifier(&self) -> Option<Identifier> {
         support::child(&self.syntax)
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+pub struct DefineNamedPattern {
+    pub(crate) syntax: SyntaxNode,
+}
+impl DefineNamedPattern {
+    pub fn l_paren_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T!['('])
+    }
+    pub fn identifier(&self) -> Option<Identifier> {
+        support::child(&self.syntax)
+    }
+    pub fn as_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T![as])
+    }
+    pub fn bind_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T![bind])
+    }
+    pub fn l_brack_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T!['['])
+    }
+    pub fn pats(&self) -> AstChildren<Pat> {
+        support::children(&self.syntax)
+    }
+    pub fn r_brack_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T![']'])
+    }
+    pub fn r_paren_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T![')'])
     }
 }
 
@@ -1263,12 +1291,6 @@ impl PickWitnessesDed {
     pub fn pick_witnesses_token(&self) -> Option<SyntaxToken> {
         support::token(&self.syntax, T![pick - witnesses])
     }
-    pub fn identifier(&self) -> Option<Identifier> {
-        support::child(&self.syntax)
-    }
-    pub fn identifiers(&self) -> AstChildren<Identifier> {
-        support::children(&self.syntax)
-    }
     pub fn for_token(&self) -> Option<SyntaxToken> {
         support::token(&self.syntax, T![for])
     }
@@ -1276,6 +1298,9 @@ impl PickWitnessesDed {
         support::child(&self.syntax)
     }
     pub fn ded(&self) -> Option<Ded> {
+        support::child(&self.syntax)
+    }
+    pub fn define_name(&self) -> Option<DefineName> {
         support::child(&self.syntax)
     }
 }
@@ -1953,6 +1978,12 @@ pub enum Expr {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
+pub enum DefineName {
+    Identifier(Identifier),
+    DefineNamedPattern(DefineNamedPattern),
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub enum Pat {
     IdentPat(IdentPat),
     AnnotatedIdentPat(AnnotatedIdentPat),
@@ -2394,6 +2425,17 @@ impl AstNode for InputTransformDecl {
 impl AstNode for DeclareAttr {
     fn can_cast(kind: SyntaxKind) -> bool {
         kind == DECLARE_ATTR
+    }
+    fn cast(syntax: SyntaxNode) -> Option<Self> {
+        if Self::can_cast(syntax.kind()) { Some(Self { syntax }) } else { None }
+    }
+    fn syntax(&self) -> &SyntaxNode {
+        &self.syntax
+    }
+}
+impl AstNode for DefineNamedPattern {
+    fn can_cast(kind: SyntaxKind) -> bool {
+        kind == DEFINE_NAMED_PATTERN
     }
     fn cast(syntax: SyntaxNode) -> Option<Self> {
         if Self::can_cast(syntax.kind()) { Some(Self { syntax }) } else { None }
@@ -3635,6 +3677,37 @@ impl AstNode for Expr {
         }
     }
 }
+impl From<Identifier> for DefineName {
+    fn from(node: Identifier) -> DefineName {
+        DefineName::Identifier(node)
+    }
+}
+impl From<DefineNamedPattern> for DefineName {
+    fn from(node: DefineNamedPattern) -> DefineName {
+        DefineName::DefineNamedPattern(node)
+    }
+}
+impl AstNode for DefineName {
+    fn can_cast(kind: SyntaxKind) -> bool {
+        matches!(kind, IDENTIFIER | DEFINE_NAMED_PATTERN)
+    }
+    fn cast(syntax: SyntaxNode) -> Option<Self> {
+        let res = match syntax.kind() {
+            IDENTIFIER => DefineName::Identifier(Identifier { syntax }),
+            DEFINE_NAMED_PATTERN => {
+                DefineName::DefineNamedPattern(DefineNamedPattern { syntax })
+            }
+            _ => return None,
+        };
+        Some(res)
+    }
+    fn syntax(&self) -> &SyntaxNode {
+        match self {
+            DefineName::Identifier(it) => &it.syntax,
+            DefineName::DefineNamedPattern(it) => &it.syntax,
+        }
+    }
+}
 impl From<IdentPat> for Pat {
     fn from(node: IdentPat) -> Pat {
         Pat::IdentPat(node)
@@ -4021,6 +4094,11 @@ impl std::fmt::Display for Expr {
         std::fmt::Display::fmt(self.syntax(), f)
     }
 }
+impl std::fmt::Display for DefineName {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        std::fmt::Display::fmt(self.syntax(), f)
+    }
+}
 impl std::fmt::Display for Pat {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         std::fmt::Display::fmt(self.syntax(), f)
@@ -4217,6 +4295,11 @@ impl std::fmt::Display for InputTransformDecl {
     }
 }
 impl std::fmt::Display for DeclareAttr {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        std::fmt::Display::fmt(self.syntax(), f)
+    }
+}
+impl std::fmt::Display for DefineNamedPattern {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         std::fmt::Display::fmt(self.syntax(), f)
     }

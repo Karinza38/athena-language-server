@@ -4,6 +4,7 @@ use super::{
     LIT_SET,
 };
 use crate::{
+    grammar::deductions::ded,
     parser::Parser,
     token_set::TokenSet,
     SyntaxKind::{self, IDENT, IDENT_EXPR, UNIT_EXPR},
@@ -352,6 +353,35 @@ fn while_expr(p: &mut Parser) {
     m.complete(p, SyntaxKind::WHILE_EXPR);
 }
 
+// test(expr) simple_method
+// method (x) (!claim x)
+fn method_expr(p: &mut Parser) {
+    assert!(p.at(T![method]));
+
+    let m = p.start();
+    p.bump(T![method]);
+
+    p.expect(T!['(']);
+
+    while !p.at(T![')']) && !p.at_end() {
+        if p.at(IDENT) {
+            identifier(p);
+        } else {
+            p.err_and_bump("Expected to find an identifier for the method expression");
+        }
+    }
+
+    p.expect(T![')']);
+
+    if !ded(p) {
+        // test_err(expr) method_expr_no_ded
+        // method (foo)
+        p.error("Expected to find a body (ded) for the method expression");
+    }
+
+    m.complete(p, SyntaxKind::METHOD_EXPR);
+}
+
 fn try_expr(p: &mut Parser) {
     super::phrases::try_expr_or_ded(p, Some(super::phrases::ExprOrDed::Expr));
 }
@@ -458,6 +488,8 @@ pub(crate) fn expr(p: &mut Parser) -> bool {
         // FIXME: have to figure out how to handle ambiguity
         // between match expr and match ded
         match_expr(p);
+    } else if p.at(T![method]) {
+        method_expr(p);
     } else {
         // todo!();
         return false;
