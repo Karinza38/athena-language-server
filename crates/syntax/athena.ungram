@@ -191,7 +191,7 @@ DefineProcDir =
     'private'? 'define' '(' Identifier args:MaybeWildcardTypedParam* ')' ':=' Phrase
 
 DefineMultiDir =
-    'private'? 'define' '[' Pat* ']' ':=' '[' Phrase* ']'
+    'private'? 'define' '[' Pat* ']' ':=' Phrase
 
 LoadDir =
     'load' 'string'

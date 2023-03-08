@@ -20,16 +20,18 @@ DEFINE_MULTI_DIR
   WHITESPACE " "
   COLON_EQ ":="
   WHITESPACE " "
-  L_BRACK "["
   EXPR_PHRASE
-    IDENT_EXPR
-      IDENTIFIER
-        IDENT "1"
-        WHITESPACE " "
-  EXPR_PHRASE
-    IDENT_EXPR
-      IDENTIFIER
-        IDENT "2"
-  R_BRACK "]"
-  WHITESPACE "\n"
+    LIST_EXPR
+      L_BRACK "["
+      EXPR_PHRASE
+        IDENT_EXPR
+          IDENTIFIER
+            IDENT "1"
+            WHITESPACE " "
+      EXPR_PHRASE
+        IDENT_EXPR
+          IDENTIFIER
+            IDENT "2"
+      R_BRACK "]"
+      WHITESPACE "\n"
 

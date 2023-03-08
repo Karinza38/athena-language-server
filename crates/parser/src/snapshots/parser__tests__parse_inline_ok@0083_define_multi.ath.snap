@@ -22,21 +22,23 @@ DEFINE_MULTI_DIR
   WHITESPACE " "
   COLON_EQ ":="
   WHITESPACE " "
-  L_BRACK "["
   EXPR_PHRASE
-    IDENT_EXPR
-      IDENTIFIER
-        IDENT "true"
-        WHITESPACE " "
-  EXPR_PHRASE
-    IDENT_EXPR
-      IDENTIFIER
-        IDENT "false"
-        WHITESPACE " "
-  EXPR_PHRASE
-    IDENT_EXPR
-      IDENTIFIER
-        IDENT "true"
-  R_BRACK "]"
-  WHITESPACE "\n"
+    LIST_EXPR
+      L_BRACK "["
+      EXPR_PHRASE
+        IDENT_EXPR
+          IDENTIFIER
+            IDENT "true"
+            WHITESPACE " "
+      EXPR_PHRASE
+        IDENT_EXPR
+          IDENTIFIER
+            IDENT "false"
+            WHITESPACE " "
+      EXPR_PHRASE
+        IDENT_EXPR
+          IDENTIFIER
+            IDENT "true"
+      R_BRACK "]"
+      WHITESPACE "\n"
 

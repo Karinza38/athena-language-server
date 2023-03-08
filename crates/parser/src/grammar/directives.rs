@@ -249,6 +249,9 @@ fn define_proc_dir(p: &mut Parser) {
 
 // test(dir) define_multi_private
 // private define [a b] := [1 2]
+
+// test(dir) define_multi_one
+// define [foo] := true
 fn define_multi(p: &mut Parser) {
     assert!((p.at(T![private]) && p.peek_at(T![define])) || p.at(T![define]) && p.peek_at(T!['[']));
 
@@ -264,11 +267,11 @@ fn define_multi(p: &mut Parser) {
 
     p.expect(T![:=]);
 
-    p.expect(T!['[']);
-
-    while !p.at(T![']']) && phrase(p) {}
-
-    p.expect(T![']']);
+    if !phrase(p) {
+        // test_err(dir) define_multi_empty
+        // define [foo bar] :=
+        p.error("expected definition value");
+    }
 
     m.complete(p, SyntaxKind::DEFINE_MULTI_DIR);
 }

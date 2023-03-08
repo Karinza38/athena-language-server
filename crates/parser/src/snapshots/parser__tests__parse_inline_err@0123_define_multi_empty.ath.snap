@@ -1,0 +1,22 @@
+---
+source: crates/parser/src/tests.rs
+description: "define [foo bar] :=\n"
+input_file: crates/parser/test_data/parser/inline/err/dir/0123_define_multi_empty.ath
+---
+DEFINE_MULTI_DIR
+  DEFINE_KW "define"
+  WHITESPACE " "
+  L_BRACK "["
+  IDENT_PAT
+    IDENTIFIER
+      IDENT "foo"
+      WHITESPACE " "
+  IDENT_PAT
+    IDENTIFIER
+      IDENT "bar"
+  R_BRACK "]"
+  WHITESPACE " "
+  COLON_EQ ":="
+  WHITESPACE "\n"
+error 20: expected definition value
+
