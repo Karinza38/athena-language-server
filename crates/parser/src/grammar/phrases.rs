@@ -542,6 +542,12 @@ fn expr_or_ded(p: &mut Parser) -> Option<ExprOrDed> {
             (T![match], _) => {
                 return Some(match_expr_or_ded(p, None));
             }
+            (T![check], _) => {
+                return Some(check_expr_or_ded(p, None));
+            }
+            (T![try], _) => {
+                return Some(try_expr_or_ded(p, None));
+            }
             (T!['('], peek) if DED_AFTER_LPAREN_SET.contains(peek) => {
                 if !ded(p) {
                     p.error("expected deduction");
