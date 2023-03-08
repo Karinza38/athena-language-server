@@ -33,6 +33,7 @@ impl<'i> Parser<'i> {
 
     fn bump_impl(&mut self, kind: SyntaxKind) {
         self.pos += 1;
+        self.steps.set(0);
         self.push_event(Event::Token { kind });
     }
 
@@ -82,13 +83,13 @@ impl<'i> Parser<'i> {
 
     /// Create an error node and consume the next token.
     pub(crate) fn err_recover(&mut self, message: &str, recovery: TokenSet) {
-        match self.current() {
-            T!['{'] | T!['}'] => {
-                self.error(message);
-                return;
-            }
-            _ => (),
-        }
+        // match self.current() {
+        //     T!['{'] | T!['}'] => {
+        //         self.error(message);
+        //         return;
+        //     }
+        //     _ => (),
+        // }
 
         if self.at_one_of(recovery) {
             self.error(message);
