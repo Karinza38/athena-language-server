@@ -48,7 +48,7 @@ fn install_client(sh: &Shell, code_bin: &str) -> Result<()> {
 
     let exts = cmd!(sh, "{code_bin} --list-extensions").read()?;
 
-    if !exts.contains("athena-language-server") {
+    if !exts.contains("athena-language-support-vscode") {
         return crate::error!("failed to install the extension");
     }
 
