@@ -6,13 +6,14 @@ input_file: crates/parser/test_data/parser/inline/err/ded/0074_induct_no_phrase.
 INDUCT_DED
   BY_INDUCTION_KW "by-induction"
   WHITESPACE " "
-  L_CURLY "{"
-  WHITESPACE " "
-  RESTRICTED_MATCH_DED
-    IDENT_PAT
+  DED_PHRASE
+    L_CURLY "{"
+    WHITESPACE " "
+    IDENT_EXPR
       IDENTIFIER
         IDENT "a"
-    WHITESPACE " "
+  WHITESPACE " "
+  RESTRICTED_MATCH_DED
     FAT_ARROW "=>"
     WHITESPACE " "
     BANG_METHOD_CALL_DED
@@ -30,5 +31,9 @@ INDUCT_DED
   WHITESPACE " "
   R_CURLY "}"
   WHITESPACE "\n"
-error 12: expected phrase in by-induction deduction
+error 16: expected `from` or `by` or `on`
+error 16: expected at least one inference
+error 16: expected deduction
+error 16: expected L_CURLY
+error 17: failed to parse restricted pattern
 

@@ -1,0 +1,76 @@
+---
+source: crates/parser/src/tests.rs
+description: "datatype-cases { (!claim A) } { foo => (!claim foo) | bar => (!claim bar) }\n"
+input_file: crates/parser/test_data/parser/inline/ok/ded/0132_cases_infer_block.ath
+---
+CASES_DED
+  DATATYPE_CASES_KW "datatype-cases"
+  WHITESPACE " "
+  DED_PHRASE
+    INFER_BLOCK_DED
+      L_CURLY "{"
+      WHITESPACE " "
+      MAYBE_NAMED_INFERENCE
+        INFERENCE
+          BANG_METHOD_CALL_DED
+            L_PAREN "("
+            BANG "!"
+            IDENT_EXPR
+              IDENTIFIER
+                IDENT "claim"
+            WHITESPACE " "
+            EXPR_PHRASE
+              IDENT_EXPR
+                IDENTIFIER
+                  IDENT "A"
+            R_PAREN ")"
+      WHITESPACE " "
+      R_CURLY "}"
+  WHITESPACE " "
+  L_CURLY "{"
+  WHITESPACE " "
+  RESTRICTED_MATCH_DED
+    IDENT_PAT
+      IDENTIFIER
+        IDENT "foo"
+    WHITESPACE " "
+    FAT_ARROW "=>"
+    WHITESPACE " "
+    BANG_METHOD_CALL_DED
+      L_PAREN "("
+      BANG "!"
+      IDENT_EXPR
+        IDENTIFIER
+          IDENT "claim"
+      WHITESPACE " "
+      EXPR_PHRASE
+        IDENT_EXPR
+          IDENTIFIER
+            IDENT "foo"
+      R_PAREN ")"
+  WHITESPACE " "
+  RESTRICTED_MATCH_DED
+    PIPE "|"
+    WHITESPACE " "
+    IDENT_PAT
+      IDENTIFIER
+        IDENT "bar"
+    WHITESPACE " "
+    FAT_ARROW "=>"
+    WHITESPACE " "
+    BANG_METHOD_CALL_DED
+      L_PAREN "("
+      BANG "!"
+      IDENT_EXPR
+        IDENTIFIER
+          IDENT "claim"
+      WHITESPACE " "
+      EXPR_PHRASE
+        IDENT_EXPR
+          IDENTIFIER
+            IDENT "bar"
+      R_PAREN ")"
+  WHITESPACE " "
+  R_CURLY "}"
+  WHITESPACE "\n"
+

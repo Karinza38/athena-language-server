@@ -1,0 +1,31 @@
+---
+source: crates/parser/src/tests.rs
+description: "{ A from B, C }\n"
+input_file: crates/parser/test_data/parser/inline/ok/ded/0138_infer_from_multiple.ath
+---
+INFER_BLOCK_DED
+  L_CURLY "{"
+  WHITESPACE " "
+  MAYBE_NAMED_INFERENCE
+    INFERENCE
+      INFER_FROM
+        IDENT_EXPR
+          IDENTIFIER
+            IDENT "A"
+        WHITESPACE " "
+        FROM_KW "from"
+        WHITESPACE " "
+        EXPR_PHRASE
+          IDENT_EXPR
+            IDENTIFIER
+              IDENT "B"
+        COMMA ","
+        WHITESPACE " "
+        EXPR_PHRASE
+          IDENT_EXPR
+            IDENTIFIER
+              IDENT "C"
+  WHITESPACE " "
+  R_CURLY "}"
+  WHITESPACE "\n"
+

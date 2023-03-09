@@ -1,0 +1,25 @@
+---
+source: crates/parser/src/tests.rs
+description: "{ A on B }\n"
+input_file: crates/parser/test_data/parser/inline/ok/ded/0134_infer_by_no_by.ath
+---
+INFER_BLOCK_DED
+  L_CURLY "{"
+  WHITESPACE " "
+  MAYBE_NAMED_INFERENCE
+    INFERENCE
+      INFER_BY
+        IDENT_EXPR
+          IDENTIFIER
+            IDENT "A"
+        WHITESPACE " "
+        ON_KW "on"
+        WHITESPACE " "
+        EXPR_PHRASE
+          IDENT_EXPR
+            IDENTIFIER
+              IDENT "B"
+  WHITESPACE " "
+  R_CURLY "}"
+  WHITESPACE "\n"
+

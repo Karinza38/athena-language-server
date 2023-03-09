@@ -34,6 +34,8 @@ pub(crate) enum LexerToken {
     Colon(usize),
     #[token("_", |lex|lex.slice().len())]
     Underscore(usize),
+    #[token("OP", |lex|lex.slice().len())]
+    Op(usize),
     #[token(":=", |lex|lex.slice().len())]
     ColonEq(usize),
     #[token("datatype", |lex|lex.slice().len())]
@@ -158,6 +160,14 @@ pub(crate) enum LexerToken {
     DatatypeCases(usize),
     #[token("on", |lex|lex.slice().len())]
     On(usize),
+    #[token("begin", |lex|lex.slice().len())]
+    Begin(usize),
+    #[token("end", |lex|lex.slice().len())]
+    End(usize),
+    #[token("from", |lex|lex.slice().len())]
+    From(usize),
+    #[token("by", |lex|lex.slice().len())]
+    By(usize),
     #[token("val-of", |lex|lex.slice().len())]
     ValOf(usize),
     #[token("list-of", |lex|lex.slice().len())]
@@ -209,6 +219,7 @@ impl LexerToken {
             Self::RParen(..) => T![')'],
             Self::Colon(..) => T![:],
             Self::Underscore(..) => T![_],
+            Self::Op(..) => T![OP],
             Self::ColonEq(..) => T![:=],
             Self::Datatype(..) => T![datatype],
             Self::Structure(..) => T![structure],
@@ -271,6 +282,10 @@ impl LexerToken {
             Self::ByInduction(..) => T![by - induction],
             Self::DatatypeCases(..) => T![datatype - cases],
             Self::On(..) => T![on],
+            Self::Begin(..) => T![begin],
+            Self::End(..) => T![end],
+            Self::From(..) => T![from],
+            Self::By(..) => T![by],
             Self::ValOf(..) => T![val - of],
             Self::ListOf(..) => T![list - of],
             Self::Split(..) => T![split],
@@ -306,6 +321,7 @@ impl LexerToken {
             Self::RParen(len) => len,
             Self::Colon(len) => len,
             Self::Underscore(len) => len,
+            Self::Op(len) => len,
             Self::ColonEq(len) => len,
             Self::Datatype(len) => len,
             Self::Structure(len) => len,
@@ -368,6 +384,10 @@ impl LexerToken {
             Self::ByInduction(len) => len,
             Self::DatatypeCases(len) => len,
             Self::On(len) => len,
+            Self::Begin(len) => len,
+            Self::End(len) => len,
+            Self::From(len) => len,
+            Self::By(len) => len,
             Self::ValOf(len) => len,
             Self::ListOf(len) => len,
             Self::Split(len) => len,

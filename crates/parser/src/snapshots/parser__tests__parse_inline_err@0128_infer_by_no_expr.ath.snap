@@ -1,0 +1,23 @@
+---
+source: crates/parser/src/tests.rs
+description: "{ A by }\n"
+input_file: crates/parser/test_data/parser/inline/err/ded/0128_infer_by_no_expr.ath
+---
+INFER_BLOCK_DED
+  L_CURLY "{"
+  WHITESPACE " "
+  MAYBE_NAMED_INFERENCE
+    INFERENCE
+      INFER_BY
+        IDENT_EXPR
+          IDENTIFIER
+            IDENT "A"
+        WHITESPACE " "
+        BY_KW "by"
+  WHITESPACE " "
+  R_CURLY "}"
+  WHITESPACE "\n"
+error 6: expected expression to infer by
+error 6: expected ON_KW
+error 6: expected phrase to infer on
+

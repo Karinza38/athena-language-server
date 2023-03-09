@@ -1,0 +1,6 @@
+{
+  foo := A from B, C;
+  bar := D by E on F, G;
+  baz:(OP 2) := (!claim X);
+  (!claim Z)
+}

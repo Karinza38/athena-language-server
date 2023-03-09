@@ -1,0 +1,1 @@
+datatype-cases { (!claim A) } { foo => (!claim foo) | bar => (!claim bar) }

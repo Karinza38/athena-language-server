@@ -1,0 +1,27 @@
+---
+source: crates/parser/src/tests.rs
+description: "{ A from B, }\n"
+input_file: crates/parser/test_data/parser/inline/err/ded/0130_infer_from_multiple_no_phrase.ath
+---
+INFER_BLOCK_DED
+  L_CURLY "{"
+  WHITESPACE " "
+  MAYBE_NAMED_INFERENCE
+    INFERENCE
+      INFER_FROM
+        IDENT_EXPR
+          IDENTIFIER
+            IDENT "A"
+        WHITESPACE " "
+        FROM_KW "from"
+        WHITESPACE " "
+        EXPR_PHRASE
+          IDENT_EXPR
+            IDENTIFIER
+              IDENT "B"
+        COMMA ","
+  WHITESPACE " "
+  R_CURLY "}"
+  WHITESPACE "\n"
+error 11: expected phrase after comma
+

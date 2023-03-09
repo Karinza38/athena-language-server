@@ -1,0 +1,33 @@
+---
+source: crates/parser/src/tests.rs
+description: "{ A by B on C, }\n"
+input_file: crates/parser/test_data/parser/inline/err/ded/0129_infer_by_multiple_no_phrase.ath
+---
+INFER_BLOCK_DED
+  L_CURLY "{"
+  WHITESPACE " "
+  MAYBE_NAMED_INFERENCE
+    INFERENCE
+      INFER_BY
+        IDENT_EXPR
+          IDENTIFIER
+            IDENT "A"
+        WHITESPACE " "
+        BY_KW "by"
+        WHITESPACE " "
+        IDENT_EXPR
+          IDENTIFIER
+            IDENT "B"
+        WHITESPACE " "
+        ON_KW "on"
+        WHITESPACE " "
+        EXPR_PHRASE
+          IDENT_EXPR
+            IDENTIFIER
+              IDENT "C"
+        COMMA ","
+  WHITESPACE " "
+  R_CURLY "}"
+  WHITESPACE "\n"
+error 14: expected phrases after comma
+

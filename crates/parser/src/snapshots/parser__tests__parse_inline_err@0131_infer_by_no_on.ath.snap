@@ -1,0 +1,36 @@
+---
+source: crates/parser/src/tests.rs
+description: "{ A by B C, D }\n"
+input_file: crates/parser/test_data/parser/inline/err/ded/0131_infer_by_no_on.ath
+---
+INFER_BLOCK_DED
+  L_CURLY "{"
+  WHITESPACE " "
+  MAYBE_NAMED_INFERENCE
+    INFERENCE
+      INFER_BY
+        IDENT_EXPR
+          IDENTIFIER
+            IDENT "A"
+        WHITESPACE " "
+        BY_KW "by"
+        WHITESPACE " "
+        IDENT_EXPR
+          IDENTIFIER
+            IDENT "B"
+        WHITESPACE " "
+        EXPR_PHRASE
+          IDENT_EXPR
+            IDENTIFIER
+              IDENT "C"
+        COMMA ","
+        WHITESPACE " "
+        EXPR_PHRASE
+          IDENT_EXPR
+            IDENTIFIER
+              IDENT "D"
+  WHITESPACE " "
+  R_CURLY "}"
+  WHITESPACE "\n"
+error 8: expected ON_KW
+

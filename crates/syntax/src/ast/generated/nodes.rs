@@ -66,6 +66,22 @@ impl TypedParam {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
+pub struct OpAnnotatedParam {
+    pub(crate) syntax: SyntaxNode,
+}
+impl OpAnnotatedParam {
+    pub fn identifier(&self) -> Option<Identifier> {
+        support::child(&self.syntax)
+    }
+    pub fn colon_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T![:])
+    }
+    pub fn OP_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T![OP])
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct MaybeWildcardTypedParam {
     pub(crate) syntax: SyntaxNode,
 }
@@ -1384,7 +1400,7 @@ impl PickWitnessesDed {
     pub fn ded(&self) -> Option<Ded> {
         support::child(&self.syntax)
     }
-    pub fn maybe_typed_param(&self) -> Option<MaybeTypedParam> {
+    pub fn define_name(&self) -> Option<DefineName> {
         support::child(&self.syntax)
     }
 }
@@ -1566,6 +1582,28 @@ impl ConcludeDed {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
+pub struct InferBlockDed {
+    pub(crate) syntax: SyntaxNode,
+}
+impl InferBlockDed {
+    pub fn l_curly_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T!['{'])
+    }
+    pub fn begin_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T![begin])
+    }
+    pub fn maybe_named_inferences(&self) -> AstChildren<MaybeNamedInference> {
+        support::children(&self.syntax)
+    }
+    pub fn r_curly_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T!['}'])
+    }
+    pub fn end_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T![end])
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct AssumePart {
     pub(crate) syntax: SyntaxNode,
 }
@@ -1705,6 +1743,78 @@ impl TryDedArm {
     }
     pub fn ded(&self) -> Option<Ded> {
         support::child(&self.syntax)
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+pub struct MaybeNamedInference {
+    pub(crate) syntax: SyntaxNode,
+}
+impl MaybeNamedInference {
+    pub fn maybe_wildcard_op_annotated_param(
+        &self,
+    ) -> Option<MaybeWildcardOpAnnotatedParam> {
+        support::child(&self.syntax)
+    }
+    pub fn colon_eq_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T![:=])
+    }
+    pub fn inference(&self) -> Option<Inference> {
+        support::child(&self.syntax)
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+pub struct MaybeWildcardOpAnnotatedParam {
+    pub(crate) syntax: SyntaxNode,
+}
+impl MaybeWildcardOpAnnotatedParam {
+    pub fn underscore_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T![_])
+    }
+    pub fn op_annotated_param(&self) -> Option<OpAnnotatedParam> {
+        support::child(&self.syntax)
+    }
+    pub fn identifier(&self) -> Option<Identifier> {
+        support::child(&self.syntax)
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+pub struct InferFrom {
+    pub(crate) syntax: SyntaxNode,
+}
+impl InferFrom {
+    pub fn expr(&self) -> Option<Expr> {
+        support::child(&self.syntax)
+    }
+    pub fn from_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T![from])
+    }
+    pub fn phrases(&self) -> AstChildren<Phrase> {
+        support::children(&self.syntax)
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+pub struct InferBy {
+    pub(crate) syntax: SyntaxNode,
+}
+impl InferBy {
+    pub fn expr(&self) -> Option<Expr> {
+        support::child(&self.syntax)
+    }
+    pub fn by_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T![by])
+    }
+    pub fn by_expr(&self) -> Option<Expr> {
+        support::child(&self.syntax)
+    }
+    pub fn on_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T![on])
+    }
+    pub fn phrases(&self) -> AstChildren<Phrase> {
+        support::children(&self.syntax)
     }
 }
 
@@ -1981,6 +2091,7 @@ impl SomeThing {
 pub enum MaybeTypedParam {
     Identifier(Identifier),
     TypedParam(TypedParam),
+    OpAnnotatedParam(OpAnnotatedParam),
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
@@ -2104,6 +2215,7 @@ pub enum Ded {
     LetRecDed(LetRecDed),
     TryDed(TryDed),
     ConcludeDed(ConcludeDed),
+    InferBlockDed(InferBlockDed),
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
@@ -2111,6 +2223,13 @@ pub enum RestrictedPat {
     IdentPat(IdentPat),
     RestrictedApplyPat(RestrictedApplyPat),
     RestrictedNamedPat(RestrictedNamedPat),
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+pub enum Inference {
+    InferFrom(InferFrom),
+    InferBy(InferBy),
+    Ded(Ded),
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
@@ -2165,6 +2284,17 @@ impl AstNode for Unit {
 impl AstNode for TypedParam {
     fn can_cast(kind: SyntaxKind) -> bool {
         kind == TYPED_PARAM
+    }
+    fn cast(syntax: SyntaxNode) -> Option<Self> {
+        if Self::can_cast(syntax.kind()) { Some(Self { syntax }) } else { None }
+    }
+    fn syntax(&self) -> &SyntaxNode {
+        &self.syntax
+    }
+}
+impl AstNode for OpAnnotatedParam {
+    fn can_cast(kind: SyntaxKind) -> bool {
+        kind == OP_ANNOTATED_PARAM
     }
     fn cast(syntax: SyntaxNode) -> Option<Self> {
         if Self::can_cast(syntax.kind()) { Some(Self { syntax }) } else { None }
@@ -3130,6 +3260,17 @@ impl AstNode for ConcludeDed {
         &self.syntax
     }
 }
+impl AstNode for InferBlockDed {
+    fn can_cast(kind: SyntaxKind) -> bool {
+        kind == INFER_BLOCK_DED
+    }
+    fn cast(syntax: SyntaxNode) -> Option<Self> {
+        if Self::can_cast(syntax.kind()) { Some(Self { syntax }) } else { None }
+    }
+    fn syntax(&self) -> &SyntaxNode {
+        &self.syntax
+    }
+}
 impl AstNode for AssumePart {
     fn can_cast(kind: SyntaxKind) -> bool {
         kind == ASSUME_PART
@@ -3210,6 +3351,50 @@ impl AstNode for MatchDedArm {
 impl AstNode for TryDedArm {
     fn can_cast(kind: SyntaxKind) -> bool {
         kind == TRY_DED_ARM
+    }
+    fn cast(syntax: SyntaxNode) -> Option<Self> {
+        if Self::can_cast(syntax.kind()) { Some(Self { syntax }) } else { None }
+    }
+    fn syntax(&self) -> &SyntaxNode {
+        &self.syntax
+    }
+}
+impl AstNode for MaybeNamedInference {
+    fn can_cast(kind: SyntaxKind) -> bool {
+        kind == MAYBE_NAMED_INFERENCE
+    }
+    fn cast(syntax: SyntaxNode) -> Option<Self> {
+        if Self::can_cast(syntax.kind()) { Some(Self { syntax }) } else { None }
+    }
+    fn syntax(&self) -> &SyntaxNode {
+        &self.syntax
+    }
+}
+impl AstNode for MaybeWildcardOpAnnotatedParam {
+    fn can_cast(kind: SyntaxKind) -> bool {
+        kind == MAYBE_WILDCARD_OP_ANNOTATED_PARAM
+    }
+    fn cast(syntax: SyntaxNode) -> Option<Self> {
+        if Self::can_cast(syntax.kind()) { Some(Self { syntax }) } else { None }
+    }
+    fn syntax(&self) -> &SyntaxNode {
+        &self.syntax
+    }
+}
+impl AstNode for InferFrom {
+    fn can_cast(kind: SyntaxKind) -> bool {
+        kind == INFER_FROM
+    }
+    fn cast(syntax: SyntaxNode) -> Option<Self> {
+        if Self::can_cast(syntax.kind()) { Some(Self { syntax }) } else { None }
+    }
+    fn syntax(&self) -> &SyntaxNode {
+        &self.syntax
+    }
+}
+impl AstNode for InferBy {
+    fn can_cast(kind: SyntaxKind) -> bool {
+        kind == INFER_BY
     }
     fn cast(syntax: SyntaxNode) -> Option<Self> {
         if Self::can_cast(syntax.kind()) { Some(Self { syntax }) } else { None }
@@ -3382,14 +3567,22 @@ impl From<TypedParam> for MaybeTypedParam {
         MaybeTypedParam::TypedParam(node)
     }
 }
+impl From<OpAnnotatedParam> for MaybeTypedParam {
+    fn from(node: OpAnnotatedParam) -> MaybeTypedParam {
+        MaybeTypedParam::OpAnnotatedParam(node)
+    }
+}
 impl AstNode for MaybeTypedParam {
     fn can_cast(kind: SyntaxKind) -> bool {
-        matches!(kind, IDENTIFIER | TYPED_PARAM)
+        matches!(kind, IDENTIFIER | TYPED_PARAM | OP_ANNOTATED_PARAM)
     }
     fn cast(syntax: SyntaxNode) -> Option<Self> {
         let res = match syntax.kind() {
             IDENTIFIER => MaybeTypedParam::Identifier(Identifier { syntax }),
             TYPED_PARAM => MaybeTypedParam::TypedParam(TypedParam { syntax }),
+            OP_ANNOTATED_PARAM => {
+                MaybeTypedParam::OpAnnotatedParam(OpAnnotatedParam { syntax })
+            }
             _ => return None,
         };
         Some(res)
@@ -3398,6 +3591,7 @@ impl AstNode for MaybeTypedParam {
         match self {
             MaybeTypedParam::Identifier(it) => &it.syntax,
             MaybeTypedParam::TypedParam(it) => &it.syntax,
+            MaybeTypedParam::OpAnnotatedParam(it) => &it.syntax,
         }
     }
 }
@@ -4101,13 +4295,19 @@ impl From<ConcludeDed> for Ded {
         Ded::ConcludeDed(node)
     }
 }
+impl From<InferBlockDed> for Ded {
+    fn from(node: InferBlockDed) -> Ded {
+        Ded::InferBlockDed(node)
+    }
+}
 impl AstNode for Ded {
     fn can_cast(kind: SyntaxKind) -> bool {
         matches!(
             kind, METHOD_CALL_DED | BANG_METHOD_CALL_DED | ASSUME_DED | NAMED_ASSUME_DED
             | PROOF_BY_CONTRA_DED | GENERALIZE_OVER_DED | PICK_ANY_DED | WITH_WITNESS_DED
             | PICK_WITNESS_DED | PICK_WITNESSES_DED | INDUCT_DED | CASES_DED | CHECK_DED
-            | MATCH_DED | LET_DED | LET_REC_DED | TRY_DED | CONCLUDE_DED
+            | MATCH_DED | LET_DED | LET_REC_DED | TRY_DED | CONCLUDE_DED |
+            INFER_BLOCK_DED
         )
     }
     fn cast(syntax: SyntaxNode) -> Option<Self> {
@@ -4130,6 +4330,7 @@ impl AstNode for Ded {
             LET_REC_DED => Ded::LetRecDed(LetRecDed { syntax }),
             TRY_DED => Ded::TryDed(TryDed { syntax }),
             CONCLUDE_DED => Ded::ConcludeDed(ConcludeDed { syntax }),
+            INFER_BLOCK_DED => Ded::InferBlockDed(InferBlockDed { syntax }),
             _ => return None,
         };
         Some(res)
@@ -4154,6 +4355,7 @@ impl AstNode for Ded {
             Ded::LetRecDed(it) => &it.syntax,
             Ded::TryDed(it) => &it.syntax,
             Ded::ConcludeDed(it) => &it.syntax,
+            Ded::InferBlockDed(it) => &it.syntax,
         }
     }
 }
@@ -4194,6 +4396,84 @@ impl AstNode for RestrictedPat {
             RestrictedPat::IdentPat(it) => &it.syntax,
             RestrictedPat::RestrictedApplyPat(it) => &it.syntax,
             RestrictedPat::RestrictedNamedPat(it) => &it.syntax,
+        }
+    }
+}
+impl From<InferFrom> for Inference {
+    fn from(node: InferFrom) -> Inference {
+        Inference::InferFrom(node)
+    }
+}
+impl From<InferBy> for Inference {
+    fn from(node: InferBy) -> Inference {
+        Inference::InferBy(node)
+    }
+}
+impl From<Ded> for Inference {
+    fn from(node: Ded) -> Inference {
+        Inference::Ded(node)
+    }
+}
+impl AstNode for Inference {
+    fn can_cast(kind: SyntaxKind) -> bool {
+        matches!(
+            kind, INFER_FROM | INFER_BY | METHOD_CALL_DED | BANG_METHOD_CALL_DED |
+            ASSUME_DED | NAMED_ASSUME_DED | PROOF_BY_CONTRA_DED | GENERALIZE_OVER_DED |
+            PICK_ANY_DED | WITH_WITNESS_DED | PICK_WITNESS_DED | PICK_WITNESSES_DED |
+            INDUCT_DED | CASES_DED | CHECK_DED | MATCH_DED | LET_DED | LET_REC_DED |
+            TRY_DED | CONCLUDE_DED | INFER_BLOCK_DED
+        )
+    }
+    fn cast(syntax: SyntaxNode) -> Option<Self> {
+        let res = match syntax.kind() {
+            INFER_FROM => Inference::InferFrom(InferFrom { syntax }),
+            INFER_BY => Inference::InferBy(InferBy { syntax }),
+            METHOD_CALL_DED => {
+                Inference::Ded(Ded::MethodCallDed(MethodCallDed { syntax }))
+            }
+            BANG_METHOD_CALL_DED => {
+                Inference::Ded(Ded::BangMethodCallDed(BangMethodCallDed { syntax }))
+            }
+            ASSUME_DED => Inference::Ded(Ded::AssumeDed(AssumeDed { syntax })),
+            NAMED_ASSUME_DED => {
+                Inference::Ded(Ded::NamedAssumeDed(NamedAssumeDed { syntax }))
+            }
+            PROOF_BY_CONTRA_DED => {
+                Inference::Ded(Ded::ProofByContraDed(ProofByContraDed { syntax }))
+            }
+            GENERALIZE_OVER_DED => {
+                Inference::Ded(Ded::GeneralizeOverDed(GeneralizeOverDed { syntax }))
+            }
+            PICK_ANY_DED => Inference::Ded(Ded::PickAnyDed(PickAnyDed { syntax })),
+            WITH_WITNESS_DED => {
+                Inference::Ded(Ded::WithWitnessDed(WithWitnessDed { syntax }))
+            }
+            PICK_WITNESS_DED => {
+                Inference::Ded(Ded::PickWitnessDed(PickWitnessDed { syntax }))
+            }
+            PICK_WITNESSES_DED => {
+                Inference::Ded(Ded::PickWitnessesDed(PickWitnessesDed { syntax }))
+            }
+            INDUCT_DED => Inference::Ded(Ded::InductDed(InductDed { syntax })),
+            CASES_DED => Inference::Ded(Ded::CasesDed(CasesDed { syntax })),
+            CHECK_DED => Inference::Ded(Ded::CheckDed(CheckDed { syntax })),
+            MATCH_DED => Inference::Ded(Ded::MatchDed(MatchDed { syntax })),
+            LET_DED => Inference::Ded(Ded::LetDed(LetDed { syntax })),
+            LET_REC_DED => Inference::Ded(Ded::LetRecDed(LetRecDed { syntax })),
+            TRY_DED => Inference::Ded(Ded::TryDed(TryDed { syntax })),
+            CONCLUDE_DED => Inference::Ded(Ded::ConcludeDed(ConcludeDed { syntax })),
+            INFER_BLOCK_DED => {
+                Inference::Ded(Ded::InferBlockDed(InferBlockDed { syntax }))
+            }
+            _ => return None,
+        };
+        Some(res)
+    }
+    fn syntax(&self) -> &SyntaxNode {
+        match self {
+            Inference::InferFrom(it) => &it.syntax,
+            Inference::InferBy(it) => &it.syntax,
+            Inference::Ded(it) => it.syntax(),
         }
     }
 }
@@ -4286,6 +4566,11 @@ impl std::fmt::Display for RestrictedPat {
         std::fmt::Display::fmt(self.syntax(), f)
     }
 }
+impl std::fmt::Display for Inference {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        std::fmt::Display::fmt(self.syntax(), f)
+    }
+}
 impl std::fmt::Display for SimplePat {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         std::fmt::Display::fmt(self.syntax(), f)
@@ -4312,6 +4597,11 @@ impl std::fmt::Display for Unit {
     }
 }
 impl std::fmt::Display for TypedParam {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        std::fmt::Display::fmt(self.syntax(), f)
+    }
+}
+impl std::fmt::Display for OpAnnotatedParam {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         std::fmt::Display::fmt(self.syntax(), f)
     }
@@ -4751,6 +5041,11 @@ impl std::fmt::Display for ConcludeDed {
         std::fmt::Display::fmt(self.syntax(), f)
     }
 }
+impl std::fmt::Display for InferBlockDed {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        std::fmt::Display::fmt(self.syntax(), f)
+    }
+}
 impl std::fmt::Display for AssumePart {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         std::fmt::Display::fmt(self.syntax(), f)
@@ -4787,6 +5082,26 @@ impl std::fmt::Display for MatchDedArm {
     }
 }
 impl std::fmt::Display for TryDedArm {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        std::fmt::Display::fmt(self.syntax(), f)
+    }
+}
+impl std::fmt::Display for MaybeNamedInference {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        std::fmt::Display::fmt(self.syntax(), f)
+    }
+}
+impl std::fmt::Display for MaybeWildcardOpAnnotatedParam {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        std::fmt::Display::fmt(self.syntax(), f)
+    }
+}
+impl std::fmt::Display for InferFrom {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        std::fmt::Display::fmt(self.syntax(), f)
+    }
+}
+impl std::fmt::Display for InferBy {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         std::fmt::Display::fmt(self.syntax(), f)
     }

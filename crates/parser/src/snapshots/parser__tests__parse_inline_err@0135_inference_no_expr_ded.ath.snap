@@ -1,0 +1,21 @@
+---
+source: crates/parser/src/tests.rs
+description: "{ define foo := 1 }\n"
+input_file: crates/parser/test_data/parser/inline/err/ded/0135_inference_no_expr_ded.ath
+---
+ERROR
+  L_CURLY "{"
+  WHITESPACE " "
+  DEFINE_KW "define"
+  WHITESPACE " "
+  IDENT "foo"
+  WHITESPACE " "
+  COLON_EQ ":="
+  WHITESPACE " "
+  IDENT "1"
+  WHITESPACE " "
+  R_CURLY "}"
+  WHITESPACE "\n"
+error 1: expected an inference
+error 1: expected at least one inference
+

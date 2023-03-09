@@ -522,7 +522,7 @@ pub(crate) fn try_expr_or_ded(p: &mut Parser, want: Option<ExprOrDed>) -> ExprOr
     res
 }
 
-fn expr_or_ded(p: &mut Parser) -> Option<ExprOrDed> {
+pub(crate) fn expr_or_ded(p: &mut Parser) -> Option<ExprOrDed> {
     #[cfg(test)]
     eprintln!("parsing expr_or_ded: {:?} {:?}", p.current(), p.nth(1));
     if p.at_one_of(EXPR_START_SET.subtract(DED_START_SET)) {
@@ -581,6 +581,8 @@ fn expr_or_ded(p: &mut Parser) -> Option<ExprOrDed> {
 
     None
 }
+
+// pub(crate) fn opt_phrase(p: &mut Parser) -> Result<(), Marker
 
 const AMBIG_START: TokenSet = EXPR_START_SET.intersect(DED_START_SET);
 

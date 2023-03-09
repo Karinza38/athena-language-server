@@ -1,0 +1,21 @@
+---
+source: crates/parser/src/tests.rs
+description: "{ A from }\n"
+input_file: crates/parser/test_data/parser/inline/err/ded/0132_infer_from_no_phrase.ath
+---
+INFER_BLOCK_DED
+  L_CURLY "{"
+  WHITESPACE " "
+  MAYBE_NAMED_INFERENCE
+    INFERENCE
+      INFER_FROM
+        IDENT_EXPR
+          IDENTIFIER
+            IDENT "A"
+        WHITESPACE " "
+        FROM_KW "from"
+  WHITESPACE " "
+  R_CURLY "}"
+  WHITESPACE "\n"
+error 8: expected phrase to infer from
+

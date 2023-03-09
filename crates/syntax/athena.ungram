@@ -51,6 +51,7 @@ Unit =
 MaybeTypedParam =
     Identifier
     | TypedParam
+    | OpAnnotatedParam
 
 TypedParam =
     Identifier ':' Sort
@@ -58,6 +59,9 @@ TypedParam =
 MaybeWildcardTypedParam =
     MaybeTypedParam
     | '_'
+
+OpAnnotatedParam =
+    Identifier ':' '(' 'OP' Identifier ')'
 
 //*******//
 // Sorts //
@@ -369,6 +373,7 @@ Ded =
     | LetRecDed // ✅
     | TryDed // ✅
     | ConcludeDed
+    | InferBlockDed
 
 ConcludeDed =
     'conclude' (Identifier ':=')? Expr Ded
@@ -455,6 +460,28 @@ TryDed =
 
 TryDedArm =
     '|'? Ded
+
+InferBlockDed =
+    ('{' | 'begin') (MaybeNamedInference (';' MaybeNamedInference )*) ('}' | 'end')
+
+MaybeNamedInference =
+    (MaybeWildcardOpAnnotatedParam ':=')? Inference
+
+MaybeWildcardOpAnnotatedParam =
+    '_'
+    | OpAnnotatedParam
+    | Identifier
+
+Inference =
+    InferFrom
+    | InferBy
+    | Ded
+
+InferFrom =
+    Expr 'from' (Phrase (',' Phrase)*)
+
+InferBy =
+    Expr ('by' by_expr:Expr)? 'on' (Phrase (',' Phrase)*)
 
 //**********//
 // Patterns //

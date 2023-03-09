@@ -1,0 +1,17 @@
+---
+source: crates/parser/src/tests.rs
+description: "{ A }\n"
+input_file: crates/parser/test_data/parser/inline/err/ded/0136_inference_no_from_by_on.ath
+---
+ERROR
+  L_CURLY "{"
+  WHITESPACE " "
+  IDENT_EXPR
+    IDENTIFIER
+      IDENT "A"
+  WHITESPACE " "
+  R_CURLY "}"
+  WHITESPACE "\n"
+error 3: expected `from` or `by` or `on`
+error 3: expected at least one inference
+

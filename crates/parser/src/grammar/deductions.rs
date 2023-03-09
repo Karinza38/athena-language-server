@@ -1,5 +1,10 @@
 use crate::{
-    grammar::{expressions::expr, maybe_typed_param, phrases::phrase, sorts::sort},
+    grammar::{
+        expressions::{expr, EXPR_START_SET},
+        maybe_typed_param,
+        phrases::phrase,
+        sorts::sort,
+    },
     parser::{Marker, Parser},
     token_set::TokenSet,
     SyntaxKind::{self, IDENT},
@@ -476,6 +481,9 @@ fn induct_ded(p: &mut Parser) {
 
 // test(ded) cases_ded
 // datatype-cases a { foo => (!claim foo) }
+
+// test(ded) cases_infer_block
+// datatype-cases { (!claim A) } { foo => (!claim foo) | bar => (!claim bar) }
 fn cases_ded(p: &mut Parser) {
     assert!(p.at(T![datatype - cases]));
 
@@ -483,6 +491,9 @@ fn cases_ded(p: &mut Parser) {
     p.bump(T![datatype - cases]);
 
     if !phrase(p) {
+        // FIXME: This error message doesn't actually happen because the block is parsed as a deduction (inference block)
+        // it would be good to fix this regression
+
         // test_err(ded) cases_no_phrase
         // datatype-cases { a => (!claim a) }
         p.error("expected phrase in datatype-cases deduction");
@@ -558,6 +569,221 @@ fn conclude_ded(p: &mut Parser) {
     m.complete(p, SyntaxKind::CONCLUDE_DED);
 }
 
+// test(ded) infer_from
+// { A from B }
+fn infer_from(p: &mut Parser, m: Marker) {
+    assert!(p.at(T![from]));
+
+    p.expect(T![from]);
+
+    if !phrase(p) {
+        // test_err(ded) infer_from_no_phrase
+        // { A from }
+        p.error("expected phrase to infer from");
+    }
+
+    while p.at(T![,]) {
+        // test(ded) infer_from_multiple
+        // { A from B, C }
+        p.bump(T![,]);
+        if !phrase(p) {
+            // test_err(ded) infer_from_multiple_no_phrase
+            // { A from B, }
+            p.error("expected phrase after comma");
+        }
+    }
+
+    m.complete(p, SyntaxKind::INFER_FROM);
+}
+
+// test(ded) infer_by
+// { A by B on C }
+fn infer_by(p: &mut Parser, m: Marker) {
+    assert!(p.at(T![by]) || p.at(T![on]));
+
+    if p.at(T![by]) {
+        p.bump(T![by]);
+        if !expr(p) {
+            // test_err(ded) infer_by_no_expr
+            // { A by }
+            p.error("expected expression to infer by");
+        }
+    } else {
+        // test(ded) infer_by_no_by
+        // { A on B }
+    }
+
+    // test_err(ded) infer_by_no_on
+    // { A by B C, D }
+    p.expect(T![on]);
+
+    if !phrase(p) {
+        // test_err(ded) infer_by_no_phrase
+        // { A by B on }
+        p.error("expected phrase to infer on");
+    }
+
+    while p.at(T![,]) {
+        // test(ded) infer_by_multiple
+        // { A by B on C, D }
+        p.bump(T![,]);
+        if !phrase(p) {
+            // test_err(ded) infer_by_multiple_no_phrase
+            // { A by B on C, }
+            p.error("expected phrases after comma");
+        }
+    }
+
+    m.complete(p, SyntaxKind::INFER_BY);
+}
+
+fn maybe_named_inference(p: &mut Parser) -> bool {
+    let m = p.start();
+
+    if p.at_one_of(NAMED_INFER_START) {
+        // test(ded) named_inference
+        // { A := (!claim B) }
+        for n in 1..=6 {
+            // 6 is the max lookahead for `:=`. Minimum is 1 (e.g. `a := ...`). Max is 6 (e.g. `a:(OP 2) := ...`)
+            // Instead of just checking 1 & 6, we check all of them in case there is an error in the input as in the
+            // following test case:
+
+            // test_err(ded) named_inference_err_lookahead
+            // { A:(OP) := (!claim B) }
+
+            // test(ded) named_inference_closest_lookahead
+            // { A := (!claim B) }
+
+            // test(ded) named_inference_farthest_lookahead
+            // { A:(OP 2) := (!claim B) }
+            if p.nth_at(n, T![:=]) {
+                maybe_wildcard_op_annotated_param(p);
+                p.expect(T![:=]);
+            }
+        }
+    }
+
+    if !inference(p) {
+        // test_err(ded) named_inference_no_inference
+        // { A := }
+        m.abandon(p);
+        return false;
+    } else {
+        m.complete(p, SyntaxKind::MAYBE_NAMED_INFERENCE);
+        true
+    }
+}
+
+const NAMED_INFER_START: TokenSet = TokenSet::new(&[IDENT, T![_]]);
+
+fn maybe_wildcard_op_annotated_param(p: &mut Parser) {
+    let m = p.start();
+    if p.at(T![_]) {
+        // test(ded) wildcard_param
+        // { _ := (!claim B) }
+        p.bump(T![_]);
+    } else if p.at(IDENT) {
+        if p.peek_at(T![:]) {
+            // test(ded) maybe_wildcard_op_annotated_param
+            // { A:(OP 2) := (!claim B) }
+            super::op_annotated_param(p);
+        } else {
+            // test(ded) maybe_wildcard_op_annotated_param_no_op
+            // { A := (!claim B) }
+            identifier(p);
+        }
+    }
+    m.complete(p, SyntaxKind::MAYBE_WILDCARD_OP_ANNOTATED_PARAM);
+}
+
+fn inference(p: &mut Parser) -> bool {
+    let m = p.start();
+    let m2 = p.start();
+    if let Some(res) = super::phrases::expr_or_ded(p) {
+        match res {
+            super::phrases::ExprOrDed::Expr => {
+                if p.at(T![from]) {
+                    infer_from(p, m2);
+                } else if p.at(T![by]) || p.at(T![on]) {
+                    infer_by(p, m2);
+                } else {
+                    // test_err(ded) inference_no_from_by_on
+                    // { A }
+                    m2.abandon(p);
+                    p.error("expected `from` or `by` or `on`");
+                    m.abandon(p);
+                    return false;
+                }
+                m.complete(p, SyntaxKind::INFERENCE);
+            }
+            super::phrases::ExprOrDed::Ded => {
+                m2.abandon(p);
+                m.complete(p, SyntaxKind::INFERENCE);
+            }
+            super::phrases::ExprOrDed::Ambig => {
+                // not actually sure how to hit this case
+                p.error("ambiguous expression or deduction");
+                m2.abandon(p);
+                m.complete(p, SyntaxKind::INFERENCE);
+            }
+        }
+    } else {
+        // test_err(ded) inference_no_expr_ded
+        // { define foo := 1 }
+
+        p.error("expected an inference");
+        m2.abandon(p);
+        m.abandon(p);
+        return false;
+    }
+    true
+}
+
+// FIXME: everything around inference blocks feels like a mess
+
+// test(ded) infer_block_ded
+// {
+//   foo := A from B, C;
+//   bar := D by E on F, G;
+//   baz:(OP 2) := (!claim X);
+//   (!claim Z)
+//}
+fn infer_block_ded(p: &mut Parser) -> bool {
+    assert!(p.at(T!['{']) || p.at(T![begin]));
+
+    let m = p.start();
+    let close = if p.at(T!['{']) {
+        p.bump(T!['{']);
+        T!['}']
+    } else {
+        p.bump(T![begin]);
+        T![end]
+    };
+
+    if !maybe_named_inference(p) {
+        p.error("expected at least one inference");
+        m.abandon(p);
+        return false;
+    }
+
+    while !p.at(close) && !p.at_end() {
+        p.eat(T![;]);
+        if !maybe_named_inference(p) {
+            p.err_recover(
+                "expected an inference",
+                DED_START_SET
+                    .union(EXPR_START_SET)
+                    .union(TokenSet::new(&[close])),
+            );
+        }
+    }
+
+    p.expect(close);
+
+    m.complete(p, SyntaxKind::INFER_BLOCK_DED);
+    true
+}
+
 pub(crate) const DED_START_SET: TokenSet = TokenSet::new(&[
     T!['('],
     T![assume],
@@ -575,6 +801,8 @@ pub(crate) const DED_START_SET: TokenSet = TokenSet::new(&[
     T![by - induction],
     T![datatype - cases],
     T![conclude],
+    T!['{'],
+    T![begin],
 ]);
 
 pub(crate) const DED_AFTER_LPAREN_SET: TokenSet = TokenSet::new(&[T![apply - method], T![!]]);
@@ -641,6 +869,11 @@ pub(crate) fn ded(p: &mut Parser) -> bool {
         }
         T![conclude] => {
             conclude_ded(p);
+        }
+        T!['{'] | T![begin] => {
+            if !infer_block_ded(p) {
+                return false;
+            }
         }
         _ => return false,
     }

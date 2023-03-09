@@ -1,0 +1,19 @@
+---
+source: crates/parser/src/tests.rs
+description: "{ A := }\n"
+input_file: crates/parser/test_data/parser/inline/err/ded/0134_named_inference_no_inference.ath
+---
+ERROR
+  L_CURLY "{"
+  WHITESPACE " "
+  MAYBE_WILDCARD_OP_ANNOTATED_PARAM
+    IDENTIFIER
+      IDENT "A"
+  WHITESPACE " "
+  COLON_EQ ":="
+  WHITESPACE " "
+  R_CURLY "}"
+  WHITESPACE "\n"
+error 6: expected an inference
+error 6: expected at least one inference
+

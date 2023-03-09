@@ -96,6 +96,11 @@ pub enum SyntaxKind {
     PRIVATE_KW,
     OPEN_KW,
     ON_KW,
+    BEGIN_KW,
+    END_KW,
+    FROM_KW,
+    BY_KW,
+    O_P_KW,
     PIPE,
     INT_NUMBER,
     STRING,
@@ -188,6 +193,8 @@ pub enum SyntaxKind {
     LET_REC_PART,
     TYPED_PARAM,
     MAYBE_WILDCARD_TYPED_PARAM,
+    OP_ANNOTATED_PARAM,
+    MAYBE_WILDCARD_OP_ANNOTATED_PARAM,
     FUNC_SORTS,
     SORT_VARS_DECL,
     COMPOUND_SORT_DECL,
@@ -208,6 +215,11 @@ pub enum SyntaxKind {
     EXTEND_MODULE_DIR,
     DEFINE_NAMED_PATTERN,
     ASSOCIATIVITY_DIR,
+    INFER_FROM,
+    INFER_BY,
+    INFERENCE,
+    MAYBE_NAMED_INFERENCE,
+    INFER_BLOCK_DED,
     DIR_STMT,
     PHRASE_STMT,
     STRUCTURE_NAME_DEF,
@@ -240,7 +252,7 @@ impl SyntaxKind {
             MODULE_KW | DECLARE_KW | DOMAIN_KW | DOMAINS_KW | LOAD_KW | ASSERT_KW |
             ASSERT_STAR_KW | LEFT_ASSOC_KW | RIGHT_ASSOC_KW | DATATYPE_KW | STRUCTURE_KW
             | DATATYPES_KW | STRUCTURES_KW | EXTEND_MODULE_KW | PRIVATE_KW | OPEN_KW |
-            ON_KW | PIPE
+            ON_KW | BEGIN_KW | END_KW | FROM_KW | BY_KW | O_P_KW | PIPE
         )
     }
     pub fn is_punct(self) -> bool {
@@ -322,6 +334,11 @@ impl SyntaxKind {
             "private" => PRIVATE_KW,
             "open" => OPEN_KW,
             "on" => ON_KW,
+            "begin" => BEGIN_KW,
+            "end" => END_KW,
+            "from" => FROM_KW,
+            "by" => BY_KW,
+            "OP" => O_P_KW,
             _ => return None,
         };
         Some(kw)
@@ -618,6 +635,21 @@ macro_rules! T {
     };
     [on] => {
         $crate ::SyntaxKind::ON_KW
+    };
+    [begin] => {
+        $crate ::SyntaxKind::BEGIN_KW
+    };
+    [end] => {
+        $crate ::SyntaxKind::END_KW
+    };
+    [from] => {
+        $crate ::SyntaxKind::FROM_KW
+    };
+    [by] => {
+        $crate ::SyntaxKind::BY_KW
+    };
+    [OP] => {
+        $crate ::SyntaxKind::O_P_KW
     };
     [|] => {
         $crate ::SyntaxKind::PIPE

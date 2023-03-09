@@ -6,13 +6,14 @@ input_file: crates/parser/test_data/parser/inline/err/ded/0077_cases_no_phrase.a
 CASES_DED
   DATATYPE_CASES_KW "datatype-cases"
   WHITESPACE " "
-  L_CURLY "{"
-  WHITESPACE " "
-  RESTRICTED_MATCH_DED
-    IDENT_PAT
+  DED_PHRASE
+    L_CURLY "{"
+    WHITESPACE " "
+    IDENT_EXPR
       IDENTIFIER
         IDENT "a"
-    WHITESPACE " "
+  WHITESPACE " "
+  RESTRICTED_MATCH_DED
     FAT_ARROW "=>"
     WHITESPACE " "
     BANG_METHOD_CALL_DED
@@ -30,5 +31,9 @@ CASES_DED
   WHITESPACE " "
   R_CURLY "}"
   WHITESPACE "\n"
-error 14: expected phrase in datatype-cases deduction
+error 18: expected `from` or `by` or `on`
+error 18: expected at least one inference
+error 18: expected deduction
+error 18: expected L_CURLY
+error 19: failed to parse restricted pattern
 

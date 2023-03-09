@@ -125,6 +125,28 @@ fn identifier(p: &mut Parser) {
     m.complete(p, SyntaxKind::IDENTIFIER);
 }
 
+fn op_annotated_param(p: &mut Parser) {
+    assert!(p.at(IDENT));
+
+    let m = p.start();
+    identifier(p);
+
+    p.expect(T![:]);
+
+    p.expect(T!['(']);
+    p.expect(T![OP]);
+
+    if p.at(IDENT) {
+        identifier(p);
+    } else {
+        p.error("expected operator arity");
+    }
+
+    p.expect(T![')']);
+
+    m.complete(p, SyntaxKind::OP_ANNOTATED_PARAM);
+}
+
 fn typed_param(p: &mut Parser) {
     assert!(p.at(IDENT));
 
@@ -142,7 +164,11 @@ fn typed_param(p: &mut Parser) {
 fn maybe_typed_param(p: &mut Parser) {
     assert!(p.at(IDENT));
     if p.peek_at(T![:]) {
-        typed_param(p);
+        if p.nth_at(2, T!['(']) && p.nth_at(3, T![OP]) {
+            op_annotated_param(p);
+        } else {
+            typed_param(p);
+        }
     } else {
         identifier(p);
     }
