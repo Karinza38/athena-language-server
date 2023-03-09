@@ -42,6 +42,7 @@ fn module_dir(p: &mut Parser) {
                 STMT_START_SET,
             );
         }
+        p.eat(T![;]);
     }
 
     p.expect(T!['}']);
@@ -79,6 +80,7 @@ fn extend_module_dir(p: &mut Parser) {
                 STMT_START_SET,
             );
         }
+        p.eat(T![;]);
     }
 
     p.expect(T!['}']);
