@@ -445,6 +445,16 @@ fn map_expr(p: &mut Parser) {
     m.complete(p, SyntaxKind::MAP_EXPR);
 }
 
+// test(expr) wildcard_expr
+// _
+fn wildcard_expr(p: &mut Parser) {
+    assert!(p.at(T![_]));
+
+    let m = p.start();
+    p.bump(T![_]);
+    m.complete(p, SyntaxKind::WILDCARD_EXPR);
+}
+
 pub(crate) const EXPR_START_SET: TokenSet = TokenSet::new(&[
     IDENT,
     T!['('],
@@ -467,6 +477,7 @@ pub(crate) const EXPR_START_SET: TokenSet = TokenSet::new(&[
     T![method],
     T!["|{"],
     T!["}|"],
+    T![_],
 ])
 .union(LIT_SET);
 
@@ -539,6 +550,8 @@ pub(crate) fn expr(p: &mut Parser) -> bool {
         method_expr(p);
     } else if p.at(T!["|{"]) {
         map_expr(p);
+    } else if p.at(T![_]) {
+        wildcard_expr(p);
     } else {
         // todo!();
         return false;

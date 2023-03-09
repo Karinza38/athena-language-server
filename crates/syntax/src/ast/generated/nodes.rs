@@ -76,8 +76,14 @@ impl OpAnnotatedParam {
     pub fn colon_token(&self) -> Option<SyntaxToken> {
         support::token(&self.syntax, T![:])
     }
+    pub fn l_paren_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T!['('])
+    }
     pub fn OP_token(&self) -> Option<SyntaxToken> {
         support::token(&self.syntax, T![OP])
+    }
+    pub fn r_paren_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T![')'])
     }
 }
 
@@ -1103,6 +1109,16 @@ impl MapExpr {
     }
     pub fn curly_pipe_token(&self) -> Option<SyntaxToken> {
         support::token(&self.syntax, T!["}|"])
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+pub struct WildcardExpr {
+    pub(crate) syntax: SyntaxNode,
+}
+impl WildcardExpr {
+    pub fn underscore_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T![_])
     }
 }
 
@@ -2169,6 +2185,7 @@ pub enum Expr {
     AndExpr(AndExpr),
     OrExpr(OrExpr),
     MapExpr(MapExpr),
+    WildcardExpr(WildcardExpr),
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
@@ -2977,6 +2994,17 @@ impl AstNode for OrExpr {
 impl AstNode for MapExpr {
     fn can_cast(kind: SyntaxKind) -> bool {
         kind == MAP_EXPR
+    }
+    fn cast(syntax: SyntaxNode) -> Option<Self> {
+        if Self::can_cast(syntax.kind()) { Some(Self { syntax }) } else { None }
+    }
+    fn syntax(&self) -> &SyntaxNode {
+        &self.syntax
+    }
+}
+impl AstNode for WildcardExpr {
+    fn can_cast(kind: SyntaxKind) -> bool {
+        kind == WILDCARD_EXPR
     }
     fn cast(syntax: SyntaxNode) -> Option<Self> {
         if Self::can_cast(syntax.kind()) { Some(Self { syntax }) } else { None }
@@ -3986,6 +4014,11 @@ impl From<MapExpr> for Expr {
         Expr::MapExpr(node)
     }
 }
+impl From<WildcardExpr> for Expr {
+    fn from(node: WildcardExpr) -> Expr {
+        Expr::WildcardExpr(node)
+    }
+}
 impl AstNode for Expr {
     fn can_cast(kind: SyntaxKind) -> bool {
         matches!(
@@ -3993,7 +4026,7 @@ impl AstNode for Expr {
             CHECK_EXPR | LAMBDA_EXPR | APPLICATION_EXPR | LIST_EXPR | METHOD_EXPR |
             LET_EXPR | LET_REC_EXPR | MATCH_EXPR | TRY_EXPR | CELL_EXPR | SET_EXPR |
             REF_EXPR | WHILE_EXPR | MAKE_VECTOR_EXPR | VECTOR_SUB_EXPR | VECTOR_SET_EXPR
-            | SEQ_EXPR | AND_EXPR | OR_EXPR | MAP_EXPR
+            | SEQ_EXPR | AND_EXPR | OR_EXPR | MAP_EXPR | WILDCARD_EXPR
         )
     }
     fn cast(syntax: SyntaxNode) -> Option<Self> {
@@ -4023,6 +4056,7 @@ impl AstNode for Expr {
             AND_EXPR => Expr::AndExpr(AndExpr { syntax }),
             OR_EXPR => Expr::OrExpr(OrExpr { syntax }),
             MAP_EXPR => Expr::MapExpr(MapExpr { syntax }),
+            WILDCARD_EXPR => Expr::WildcardExpr(WildcardExpr { syntax }),
             _ => return None,
         };
         Some(res)
@@ -4054,6 +4088,7 @@ impl AstNode for Expr {
             Expr::AndExpr(it) => &it.syntax,
             Expr::OrExpr(it) => &it.syntax,
             Expr::MapExpr(it) => &it.syntax,
+            Expr::WildcardExpr(it) => &it.syntax,
         }
     }
 }
@@ -4912,6 +4947,11 @@ impl std::fmt::Display for OrExpr {
     }
 }
 impl std::fmt::Display for MapExpr {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        std::fmt::Display::fmt(self.syntax(), f)
+    }
+}
+impl std::fmt::Display for WildcardExpr {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         std::fmt::Display::fmt(self.syntax(), f)
     }

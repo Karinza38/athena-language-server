@@ -145,6 +145,7 @@ pub enum SyntaxKind {
     OR_EXPR,
     MAP_EXPR,
     MAP_BINDING,
+    WILDCARD_EXPR,
     CONCLUDE_DED,
     METHOD_CALL_DED,
     BANG_METHOD_CALL_DED,

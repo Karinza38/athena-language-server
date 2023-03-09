@@ -262,6 +262,7 @@ Expr =
     | AndExpr // ✅
     | OrExpr // ✅
     | MapExpr
+    | WildcardExpr
 
 IdentExpr =
     MaybeTypedParam
@@ -277,6 +278,9 @@ MetaIdentExpr =
 
 TermVarExpr =
     '?' Identifier (':' Sort)?
+
+WildcardExpr =
+    '_'
 
 CheckExpr =
     'check' '{' CheckArm*  '}'
