@@ -293,28 +293,6 @@ impl StructuresStmt {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
-pub struct ModuleDir {
-    pub(crate) syntax: SyntaxNode,
-}
-impl ModuleDir {
-    pub fn module_token(&self) -> Option<SyntaxToken> {
-        support::token(&self.syntax, T![module])
-    }
-    pub fn identifier(&self) -> Option<Identifier> {
-        support::child(&self.syntax)
-    }
-    pub fn l_curly_token(&self) -> Option<SyntaxToken> {
-        support::token(&self.syntax, T!['{'])
-    }
-    pub fn stmts(&self) -> AstChildren<Stmt> {
-        support::children(&self.syntax)
-    }
-    pub fn r_curly_token(&self) -> Option<SyntaxToken> {
-        support::token(&self.syntax, T!['}'])
-    }
-}
-
-#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct DomainDir {
     pub(crate) syntax: SyntaxNode,
 }
@@ -548,6 +526,50 @@ impl AssociativityDir {
     }
     pub fn identifier(&self) -> Option<Identifier> {
         support::child(&self.syntax)
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+pub struct InfixModuleDir {
+    pub(crate) syntax: SyntaxNode,
+}
+impl InfixModuleDir {
+    pub fn module_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T![module])
+    }
+    pub fn identifier(&self) -> Option<Identifier> {
+        support::child(&self.syntax)
+    }
+    pub fn l_curly_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T!['{'])
+    }
+    pub fn stmts(&self) -> AstChildren<Stmt> {
+        support::children(&self.syntax)
+    }
+    pub fn r_curly_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T!['}'])
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+pub struct PrefixModuleDir {
+    pub(crate) syntax: SyntaxNode,
+}
+impl PrefixModuleDir {
+    pub fn l_paren_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T!['('])
+    }
+    pub fn module_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T![module])
+    }
+    pub fn identifier(&self) -> Option<Identifier> {
+        support::child(&self.syntax)
+    }
+    pub fn stmts(&self) -> AstChildren<Stmt> {
+        support::children(&self.syntax)
+    }
+    pub fn r_paren_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T![')'])
     }
 }
 
@@ -2153,7 +2175,6 @@ pub enum Phrase {
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub enum Dir {
-    ModuleDir(ModuleDir),
     DomainDir(DomainDir),
     DomainsDir(DomainsDir),
     DefineDir(DefineDir),
@@ -2166,6 +2187,7 @@ pub enum Dir {
     ExtendModuleDir(ExtendModuleDir),
     OpenDir(OpenDir),
     AssociativityDir(AssociativityDir),
+    ModuleDir(ModuleDir),
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
@@ -2178,6 +2200,12 @@ pub enum SortDecl {
 pub enum StructureConstructor {
     ConstantConstructor(ConstantConstructor),
     CompoundConstructor(CompoundConstructor),
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+pub enum ModuleDir {
+    InfixModuleDir(InfixModuleDir),
+    PrefixModuleDir(PrefixModuleDir),
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
@@ -2518,17 +2546,6 @@ impl AstNode for StructuresStmt {
         &self.syntax
     }
 }
-impl AstNode for ModuleDir {
-    fn can_cast(kind: SyntaxKind) -> bool {
-        kind == MODULE_DIR
-    }
-    fn cast(syntax: SyntaxNode) -> Option<Self> {
-        if Self::can_cast(syntax.kind()) { Some(Self { syntax }) } else { None }
-    }
-    fn syntax(&self) -> &SyntaxNode {
-        &self.syntax
-    }
-}
 impl AstNode for DomainDir {
     fn can_cast(kind: SyntaxKind) -> bool {
         kind == DOMAIN_DIR
@@ -2653,6 +2670,28 @@ impl AstNode for OpenDir {
 impl AstNode for AssociativityDir {
     fn can_cast(kind: SyntaxKind) -> bool {
         kind == ASSOCIATIVITY_DIR
+    }
+    fn cast(syntax: SyntaxNode) -> Option<Self> {
+        if Self::can_cast(syntax.kind()) { Some(Self { syntax }) } else { None }
+    }
+    fn syntax(&self) -> &SyntaxNode {
+        &self.syntax
+    }
+}
+impl AstNode for InfixModuleDir {
+    fn can_cast(kind: SyntaxKind) -> bool {
+        kind == INFIX_MODULE_DIR
+    }
+    fn cast(syntax: SyntaxNode) -> Option<Self> {
+        if Self::can_cast(syntax.kind()) { Some(Self { syntax }) } else { None }
+    }
+    fn syntax(&self) -> &SyntaxNode {
+        &self.syntax
+    }
+}
+impl AstNode for PrefixModuleDir {
+    fn can_cast(kind: SyntaxKind) -> bool {
+        kind == PREFIX_MODULE_DIR
     }
     fn cast(syntax: SyntaxNode) -> Option<Self> {
         if Self::can_cast(syntax.kind()) { Some(Self { syntax }) } else { None }
@@ -3750,11 +3789,6 @@ impl AstNode for Phrase {
         }
     }
 }
-impl From<ModuleDir> for Dir {
-    fn from(node: ModuleDir) -> Dir {
-        Dir::ModuleDir(node)
-    }
-}
 impl From<DomainDir> for Dir {
     fn from(node: DomainDir) -> Dir {
         Dir::DomainDir(node)
@@ -3815,17 +3849,22 @@ impl From<AssociativityDir> for Dir {
         Dir::AssociativityDir(node)
     }
 }
+impl From<ModuleDir> for Dir {
+    fn from(node: ModuleDir) -> Dir {
+        Dir::ModuleDir(node)
+    }
+}
 impl AstNode for Dir {
     fn can_cast(kind: SyntaxKind) -> bool {
         matches!(
-            kind, MODULE_DIR | DOMAIN_DIR | DOMAINS_DIR | DEFINE_DIR | DEFINE_PROC_DIR |
+            kind, DOMAIN_DIR | DOMAINS_DIR | DEFINE_DIR | DEFINE_PROC_DIR |
             DEFINE_MULTI_DIR | LOAD_DIR | ASSERT_DIR | ASSERT_CLOSED_DIR | DECLARE_DIR |
-            EXTEND_MODULE_DIR | OPEN_DIR | ASSOCIATIVITY_DIR
+            EXTEND_MODULE_DIR | OPEN_DIR | ASSOCIATIVITY_DIR | INFIX_MODULE_DIR |
+            PREFIX_MODULE_DIR
         )
     }
     fn cast(syntax: SyntaxNode) -> Option<Self> {
         let res = match syntax.kind() {
-            MODULE_DIR => Dir::ModuleDir(ModuleDir { syntax }),
             DOMAIN_DIR => Dir::DomainDir(DomainDir { syntax }),
             DOMAINS_DIR => Dir::DomainsDir(DomainsDir { syntax }),
             DEFINE_DIR => Dir::DefineDir(DefineDir { syntax }),
@@ -3838,13 +3877,18 @@ impl AstNode for Dir {
             EXTEND_MODULE_DIR => Dir::ExtendModuleDir(ExtendModuleDir { syntax }),
             OPEN_DIR => Dir::OpenDir(OpenDir { syntax }),
             ASSOCIATIVITY_DIR => Dir::AssociativityDir(AssociativityDir { syntax }),
+            INFIX_MODULE_DIR => {
+                Dir::ModuleDir(ModuleDir::InfixModuleDir(InfixModuleDir { syntax }))
+            }
+            PREFIX_MODULE_DIR => {
+                Dir::ModuleDir(ModuleDir::PrefixModuleDir(PrefixModuleDir { syntax }))
+            }
             _ => return None,
         };
         Some(res)
     }
     fn syntax(&self) -> &SyntaxNode {
         match self {
-            Dir::ModuleDir(it) => &it.syntax,
             Dir::DomainDir(it) => &it.syntax,
             Dir::DomainsDir(it) => &it.syntax,
             Dir::DefineDir(it) => &it.syntax,
@@ -3857,6 +3901,7 @@ impl AstNode for Dir {
             Dir::ExtendModuleDir(it) => &it.syntax,
             Dir::OpenDir(it) => &it.syntax,
             Dir::AssociativityDir(it) => &it.syntax,
+            Dir::ModuleDir(it) => it.syntax(),
         }
     }
 }
@@ -3919,6 +3964,35 @@ impl AstNode for StructureConstructor {
         match self {
             StructureConstructor::ConstantConstructor(it) => &it.syntax,
             StructureConstructor::CompoundConstructor(it) => &it.syntax,
+        }
+    }
+}
+impl From<InfixModuleDir> for ModuleDir {
+    fn from(node: InfixModuleDir) -> ModuleDir {
+        ModuleDir::InfixModuleDir(node)
+    }
+}
+impl From<PrefixModuleDir> for ModuleDir {
+    fn from(node: PrefixModuleDir) -> ModuleDir {
+        ModuleDir::PrefixModuleDir(node)
+    }
+}
+impl AstNode for ModuleDir {
+    fn can_cast(kind: SyntaxKind) -> bool {
+        matches!(kind, INFIX_MODULE_DIR | PREFIX_MODULE_DIR)
+    }
+    fn cast(syntax: SyntaxNode) -> Option<Self> {
+        let res = match syntax.kind() {
+            INFIX_MODULE_DIR => ModuleDir::InfixModuleDir(InfixModuleDir { syntax }),
+            PREFIX_MODULE_DIR => ModuleDir::PrefixModuleDir(PrefixModuleDir { syntax }),
+            _ => return None,
+        };
+        Some(res)
+    }
+    fn syntax(&self) -> &SyntaxNode {
+        match self {
+            ModuleDir::InfixModuleDir(it) => &it.syntax,
+            ModuleDir::PrefixModuleDir(it) => &it.syntax,
         }
     }
 }
@@ -4609,6 +4683,11 @@ impl std::fmt::Display for StructureConstructor {
         std::fmt::Display::fmt(self.syntax(), f)
     }
 }
+impl std::fmt::Display for ModuleDir {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        std::fmt::Display::fmt(self.syntax(), f)
+    }
+}
 impl std::fmt::Display for Expr {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         std::fmt::Display::fmt(self.syntax(), f)
@@ -4754,11 +4833,6 @@ impl std::fmt::Display for StructuresStmt {
         std::fmt::Display::fmt(self.syntax(), f)
     }
 }
-impl std::fmt::Display for ModuleDir {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        std::fmt::Display::fmt(self.syntax(), f)
-    }
-}
 impl std::fmt::Display for DomainDir {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         std::fmt::Display::fmt(self.syntax(), f)
@@ -4815,6 +4889,16 @@ impl std::fmt::Display for OpenDir {
     }
 }
 impl std::fmt::Display for AssociativityDir {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        std::fmt::Display::fmt(self.syntax(), f)
+    }
+}
+impl std::fmt::Display for InfixModuleDir {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        std::fmt::Display::fmt(self.syntax(), f)
+    }
+}
+impl std::fmt::Display for PrefixModuleDir {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         std::fmt::Display::fmt(self.syntax(), f)
     }

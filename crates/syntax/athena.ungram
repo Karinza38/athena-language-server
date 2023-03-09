@@ -153,7 +153,14 @@ Dir =
     | AssociativityDir
 
 ModuleDir =
+    InfixModuleDir
+    | PrefixModuleDir
+
+InfixModuleDir =
     'module' Identifier '{' Stmt* '}'
+
+PrefixModuleDir =
+    '(' 'module' Identifier Stmt* ')'
 
 ExtendModuleDir =
     'extend-module' Identifier '{' Stmt* '}'

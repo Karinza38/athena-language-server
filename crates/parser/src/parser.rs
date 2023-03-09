@@ -1,6 +1,6 @@
 use std::cell::Cell;
 
-use crate::{event::Event, input::Input, token_set::TokenSet, SyntaxKind};
+use crate::{event::Event, input::Input, token_set::TokenSet, SyntaxKind, T};
 use drop_bomb::DropBomb;
 
 pub(crate) struct Parser<'i> {
@@ -144,6 +144,10 @@ impl<'i> Parser<'i> {
     /// Check that the current token is `kind`
     pub(crate) fn at(&self, kind: SyntaxKind) -> bool {
         self.nth_at(0, kind)
+    }
+
+    pub(crate) fn at_prefix_kw(&self, kw: SyntaxKind) -> bool {
+        self.at(T!['(']) && self.peek_at(kw)
     }
 
     /// Check that the `n`th token is `kind`

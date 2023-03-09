@@ -14,7 +14,7 @@ use crate::{
 // test(dir) module_directive
 // module foo { declare joe: Person }
 fn module_dir(p: &mut Parser) {
-    assert!(p.at(T![module]));
+    assert!(p.at(T![module]) || p.at_prefix_kw(T![module]));
 
     let m = p.start();
     p.bump(T![module]);
@@ -46,7 +46,7 @@ fn module_dir(p: &mut Parser) {
     }
 
     p.expect(T!['}']);
-    m.complete(p, SyntaxKind::MODULE_DIR);
+    m.complete(p, SyntaxKind::INFIX_MODULE_DIR);
 }
 
 // test(dir) extend_module_directive

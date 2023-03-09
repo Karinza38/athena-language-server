@@ -3,7 +3,7 @@ source: crates/parser/src/tests.rs
 description: "module foo { }\n"
 input_file: crates/parser/test_data/parser/inline/err/dir/0080_module_empty.ath
 ---
-MODULE_DIR
+INFIX_MODULE_DIR
   MODULE_KW "module"
   WHITESPACE " "
   IDENTIFIER
