@@ -495,6 +495,7 @@ pub(crate) fn opened_expr(p: &mut Parser, m: Marker) {
                 "Expected to find a valid expression",
                 TokenSet::new(&[T![')']]).union(PHRASE_START_SET),
             );
+            m.abandon(p);
         }
     }
 }
