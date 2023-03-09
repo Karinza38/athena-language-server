@@ -1,5 +1,5 @@
 use crate::grammar::expressions::expr;
-use crate::grammar::{literal, meta_ident, unit};
+use crate::grammar::{literal, maybe_typed_param, meta_ident, unit};
 use crate::parser::Parser;
 use crate::token_set::TokenSet;
 use crate::SyntaxKind::{self, IDENT};
@@ -25,13 +25,7 @@ pub(crate) fn annotated_ident_pat(p: &mut Parser) {
     assert!(p.peek_at(T![:]));
 
     let m = p.start();
-    identifier(p);
-    p.bump(T![:]);
-    if !sort(p) {
-        // test_err(pat) annotated_ident_pat_no_sort
-        // foo:
-        p.error("expected a sort annotation");
-    }
+    maybe_typed_param(p);
     m.complete(p, SyntaxKind::ANNOTATED_IDENT_PAT);
 }
 
