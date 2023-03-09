@@ -535,63 +535,78 @@ pub(crate) fn expr(p: &mut Parser) -> bool {
     #[cfg(test)]
     eprintln!("parsing expr: {:?} {:?}", p.current(), p.nth(1));
 
-    if p.at(IDENT) {
-        ident_expr(p);
-    } else if p.at_one_of(super::LIT_SET) {
-        literal_expr(p);
-    } else if p.at(T!['(']) {
-        let m = p.start();
-        p.bump(T!['(']);
-        opened_expr(p, m);
-    } else if p.at(T![?]) {
-        term_var_expr(p);
-    } else if p.at(T!['\'']) {
-        meta_ident_expr(p);
-    } else if p.at(T![lambda]) {
-        lambda_expr(p);
-    } else if p.at(T!['[']) {
-        list_expr(p);
-    } else if p.at(T![check]) {
-        // FIXME: have to figure out how to handle ambiguity
-        // between check expr and check ded
-        check_expr(p);
-    } else if p.at(T![cell]) {
-        cell_expr(p);
-    } else if p.at(T![set!]) {
-        set_expr(p);
-    } else if p.at(T![ref]) {
-        ref_expr(p);
-    } else if p.at(T![make - vector]) {
-        make_vector_expr(p);
-    } else if p.at(T![vector - sub]) {
-        vector_sub_expr(p);
-    } else if p.at(T![vector-set!]) {
-        vector_set_expr(p);
-    } else if p.at(T![while]) {
-        while_expr(p);
-    } else if p.at(T![try]) {
-        try_expr(p);
-    } else if p.at(T![let]) {
-        // FIXME: have to figure out how to handle ambiguity
-        // between let expr and let ded
-        let_expr(p);
-    } else if p.at(T![letrec]) {
-        // FIXME: have to figure out how to handle ambiguity
-        // between letrec expr and letrec ded
-        let_rec_expr(p);
-    } else if p.at(T![match]) {
-        // FIXME: have to figure out how to handle ambiguity
-        // between match expr and match ded
-        match_expr(p);
-    } else if p.at(T![method]) {
-        method_expr(p);
-    } else if p.at(T!["|{"]) {
-        map_expr(p);
-    } else if p.at(T![_]) {
-        wildcard_expr(p);
-    } else {
-        // todo!();
-        return false;
+    match p.current() {
+        IDENT => {
+            ident_expr(p);
+        }
+        c if LIT_SET.contains(c) => {
+            literal_expr(p);
+        }
+        T!['('] => {
+            let m = p.start();
+            p.bump(T!['(']);
+            opened_expr(p, m);
+        }
+        T![?] => {
+            term_var_expr(p);
+        }
+        T!['\''] => {
+            meta_ident_expr(p);
+        }
+        T![lambda] => {
+            lambda_expr(p);
+        }
+        T!['['] => {
+            list_expr(p);
+        }
+        T![check] => {
+            check_expr(p);
+        }
+        T![cell] => {
+            cell_expr(p);
+        }
+        T![set!] => {
+            set_expr(p);
+        }
+        T![ref] => {
+            ref_expr(p);
+        }
+        T![make - vector] => {
+            make_vector_expr(p);
+        }
+        T![vector - sub] => {
+            vector_sub_expr(p);
+        }
+        T![vector-set!] => {
+            vector_set_expr(p);
+        }
+        T![while] => {
+            while_expr(p);
+        }
+        T![try] => {
+            try_expr(p);
+        }
+        T![let] => {
+            let_expr(p);
+        }
+        T![letrec] => {
+            let_rec_expr(p);
+        }
+        T![match] => {
+            match_expr(p);
+        }
+        T![method] => {
+            method_expr(p);
+        }
+        T!["|{"] => {
+            map_expr(p);
+        }
+        T![_] => {
+            wildcard_expr(p);
+        }
+        _ => {
+            return false;
+        }
     }
     true
 }
