@@ -1,0 +1,2 @@
+(primitive-method (false-intro)
+ (not (false)))

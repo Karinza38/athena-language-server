@@ -1,0 +1,29 @@
+---
+source: crates/parser/src/tests.rs
+description: "primitive-method ( foo domain Foo) := foo\n"
+input_file: crates/parser/test_data/parser/inline/err/dir/0146_parameter_list_ident_start_no_param.ath
+---
+INFIX_RULE_DIR
+  PRIMITIVE_METHOD_KW "primitive-method"
+  WHITESPACE " "
+  L_PAREN "("
+  WHITESPACE " "
+  IDENTIFIER
+    IDENT "foo"
+  WHITESPACE " "
+  ERROR
+    DOMAIN_KW "domain"
+  WHITESPACE " "
+  MAYBE_WILDCARD_TYPED_PARAM
+    IDENTIFIER
+      IDENT "Foo"
+  R_PAREN ")"
+  WHITESPACE " "
+  COLON_EQ ":="
+  WHITESPACE " "
+  IDENT_EXPR
+    IDENTIFIER
+      IDENT "foo"
+  WHITESPACE "\n"
+error 23: expected parameter
+

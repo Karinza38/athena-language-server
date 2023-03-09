@@ -88,6 +88,8 @@ pub(crate) enum LexerToken {
     AssertStar(usize),
     #[token("open", |lex|lex.slice().len())]
     Open(usize),
+    #[token("primitive-method", |lex|lex.slice().len())]
+    PrimitiveMethod(usize),
     #[token("?", |lex|lex.slice().len())]
     QuestionMark(usize),
     #[token("check", |lex|lex.slice().len())]
@@ -246,6 +248,7 @@ impl LexerToken {
             Self::Assert(..) => T![assert],
             Self::AssertStar(..) => T![assert *],
             Self::Open(..) => T![open],
+            Self::PrimitiveMethod(..) => T![primitive - method],
             Self::QuestionMark(..) => T![?],
             Self::Check(..) => T![check],
             Self::FatArrow(..) => T![=>],
@@ -348,6 +351,7 @@ impl LexerToken {
             Self::Assert(len) => len,
             Self::AssertStar(len) => len,
             Self::Open(len) => len,
+            Self::PrimitiveMethod(len) => len,
             Self::QuestionMark(len) => len,
             Self::Check(len) => len,
             Self::FatArrow(len) => len,

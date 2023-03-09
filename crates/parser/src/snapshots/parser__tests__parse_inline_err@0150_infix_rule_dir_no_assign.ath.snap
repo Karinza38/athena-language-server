@@ -1,0 +1,19 @@
+---
+source: crates/parser/src/tests.rs
+description: "primitive-method (foo) foo\n"
+input_file: crates/parser/test_data/parser/inline/err/dir/0150_infix_rule_dir_no_assign.ath
+---
+INFIX_RULE_DIR
+  PRIMITIVE_METHOD_KW "primitive-method"
+  WHITESPACE " "
+  L_PAREN "("
+  IDENTIFIER
+    IDENT "foo"
+  R_PAREN ")"
+  WHITESPACE " "
+  IDENT_EXPR
+    IDENTIFIER
+      IDENT "foo"
+  WHITESPACE "\n"
+error 22: expected `:=` after primitive method parameters
+

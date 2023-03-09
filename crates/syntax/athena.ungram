@@ -237,6 +237,16 @@ OpenDir =
 AssociativityDir =
     ('left-assoc' | 'right-assoc') Identifier
 
+RuleDir =
+    InfixRuleDir
+    | PrefixRuleDir
+
+InfixRuleDir =
+    'primitive-method' '(' Identifier MaybeWildcardTypedParam* ')' ':=' Expr
+
+PrefixRuleDir =
+    '(' 'primitive-method' '(' Identifier MaybeWildcardTypedParam* ')' Expr ')'
+
 //****************************//
 // Expressions and Deductions //
 //****************************//

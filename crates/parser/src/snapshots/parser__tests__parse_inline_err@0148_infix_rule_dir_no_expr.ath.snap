@@ -1,0 +1,17 @@
+---
+source: crates/parser/src/tests.rs
+description: "primitive-method (foo) :=\n"
+input_file: crates/parser/test_data/parser/inline/err/dir/0148_infix_rule_dir_no_expr.ath
+---
+INFIX_RULE_DIR
+  PRIMITIVE_METHOD_KW "primitive-method"
+  WHITESPACE " "
+  L_PAREN "("
+  IDENTIFIER
+    IDENT "foo"
+  R_PAREN ")"
+  WHITESPACE " "
+  COLON_EQ ":="
+  WHITESPACE "\n"
+error 25: expected body for primitive method
+

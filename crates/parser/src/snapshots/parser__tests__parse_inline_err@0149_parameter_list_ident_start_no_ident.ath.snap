@@ -1,0 +1,20 @@
+---
+source: crates/parser/src/tests.rs
+description: "primitive-method ( ) := foo\n"
+input_file: crates/parser/test_data/parser/inline/err/dir/0149_parameter_list_ident_start_no_ident.ath
+---
+INFIX_RULE_DIR
+  PRIMITIVE_METHOD_KW "primitive-method"
+  WHITESPACE " "
+  L_PAREN "("
+  WHITESPACE " "
+  R_PAREN ")"
+  WHITESPACE " "
+  COLON_EQ ":="
+  WHITESPACE " "
+  IDENT_EXPR
+    IDENTIFIER
+      IDENT "foo"
+  WHITESPACE "\n"
+error 18: expected identifier for primitive method
+

@@ -94,6 +94,7 @@ KindsSrc(
         "from",
         "by",
         "OP",
+        "primitive-method",
     ],
     contextual_keywords: ["|"],
     literals: ["INT_NUMBER", "STRING", "CHAR"],
@@ -222,6 +223,8 @@ KindsSrc(
         "DEFINE_PROC",
         "ASSOCIATIVITY_DIR",
         "CONSTANT_DECLARE_DIR",
+        "INFIX_RULE_DIR",
+        "PREFIX_RULE_DIR",
         // Statements
         "DIR_STMT",
         "PHRASE_STMT",

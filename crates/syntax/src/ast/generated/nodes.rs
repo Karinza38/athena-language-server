@@ -715,6 +715,59 @@ impl ListPat {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
+pub struct InfixRuleDir {
+    pub(crate) syntax: SyntaxNode,
+}
+impl InfixRuleDir {
+    pub fn primitive_method_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T![primitive - method])
+    }
+    pub fn l_paren_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T!['('])
+    }
+    pub fn identifier(&self) -> Option<Identifier> {
+        support::child(&self.syntax)
+    }
+    pub fn maybe_wildcard_typed_params(&self) -> AstChildren<MaybeWildcardTypedParam> {
+        support::children(&self.syntax)
+    }
+    pub fn r_paren_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T![')'])
+    }
+    pub fn colon_eq_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T![:=])
+    }
+    pub fn expr(&self) -> Option<Expr> {
+        support::child(&self.syntax)
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+pub struct PrefixRuleDir {
+    pub(crate) syntax: SyntaxNode,
+}
+impl PrefixRuleDir {
+    pub fn l_paren_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T!['('])
+    }
+    pub fn primitive_method_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T![primitive - method])
+    }
+    pub fn identifier(&self) -> Option<Identifier> {
+        support::child(&self.syntax)
+    }
+    pub fn maybe_wildcard_typed_params(&self) -> AstChildren<MaybeWildcardTypedParam> {
+        support::children(&self.syntax)
+    }
+    pub fn r_paren_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T![')'])
+    }
+    pub fn expr(&self) -> Option<Expr> {
+        support::child(&self.syntax)
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct ExprPhrase {
     pub(crate) syntax: SyntaxNode,
 }
@@ -2269,6 +2322,12 @@ pub enum DefineName {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
+pub enum RuleDir {
+    InfixRuleDir(InfixRuleDir),
+    PrefixRuleDir(PrefixRuleDir),
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub enum Ded {
     MethodCallDed(MethodCallDed),
     BangMethodCallDed(BangMethodCallDed),
@@ -2815,6 +2874,28 @@ impl AstNode for DefineProc {
 impl AstNode for ListPat {
     fn can_cast(kind: SyntaxKind) -> bool {
         kind == LIST_PAT
+    }
+    fn cast(syntax: SyntaxNode) -> Option<Self> {
+        if Self::can_cast(syntax.kind()) { Some(Self { syntax }) } else { None }
+    }
+    fn syntax(&self) -> &SyntaxNode {
+        &self.syntax
+    }
+}
+impl AstNode for InfixRuleDir {
+    fn can_cast(kind: SyntaxKind) -> bool {
+        kind == INFIX_RULE_DIR
+    }
+    fn cast(syntax: SyntaxNode) -> Option<Self> {
+        if Self::can_cast(syntax.kind()) { Some(Self { syntax }) } else { None }
+    }
+    fn syntax(&self) -> &SyntaxNode {
+        &self.syntax
+    }
+}
+impl AstNode for PrefixRuleDir {
+    fn can_cast(kind: SyntaxKind) -> bool {
+        kind == PREFIX_RULE_DIR
     }
     fn cast(syntax: SyntaxNode) -> Option<Self> {
         if Self::can_cast(syntax.kind()) { Some(Self { syntax }) } else { None }
@@ -4319,6 +4400,35 @@ impl AstNode for DefineName {
         }
     }
 }
+impl From<InfixRuleDir> for RuleDir {
+    fn from(node: InfixRuleDir) -> RuleDir {
+        RuleDir::InfixRuleDir(node)
+    }
+}
+impl From<PrefixRuleDir> for RuleDir {
+    fn from(node: PrefixRuleDir) -> RuleDir {
+        RuleDir::PrefixRuleDir(node)
+    }
+}
+impl AstNode for RuleDir {
+    fn can_cast(kind: SyntaxKind) -> bool {
+        matches!(kind, INFIX_RULE_DIR | PREFIX_RULE_DIR)
+    }
+    fn cast(syntax: SyntaxNode) -> Option<Self> {
+        let res = match syntax.kind() {
+            INFIX_RULE_DIR => RuleDir::InfixRuleDir(InfixRuleDir { syntax }),
+            PREFIX_RULE_DIR => RuleDir::PrefixRuleDir(PrefixRuleDir { syntax }),
+            _ => return None,
+        };
+        Some(res)
+    }
+    fn syntax(&self) -> &SyntaxNode {
+        match self {
+            RuleDir::InfixRuleDir(it) => &it.syntax,
+            RuleDir::PrefixRuleDir(it) => &it.syntax,
+        }
+    }
+}
 impl From<MethodCallDed> for Ded {
     fn from(node: MethodCallDed) -> Ded {
         Ded::MethodCallDed(node)
@@ -4792,6 +4902,11 @@ impl std::fmt::Display for DefineName {
         std::fmt::Display::fmt(self.syntax(), f)
     }
 }
+impl std::fmt::Display for RuleDir {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        std::fmt::Display::fmt(self.syntax(), f)
+    }
+}
 impl std::fmt::Display for Ded {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         std::fmt::Display::fmt(self.syntax(), f)
@@ -5038,6 +5153,16 @@ impl std::fmt::Display for DefineProc {
     }
 }
 impl std::fmt::Display for ListPat {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        std::fmt::Display::fmt(self.syntax(), f)
+    }
+}
+impl std::fmt::Display for InfixRuleDir {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        std::fmt::Display::fmt(self.syntax(), f)
+    }
+}
+impl std::fmt::Display for PrefixRuleDir {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         std::fmt::Display::fmt(self.syntax(), f)
     }

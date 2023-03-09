@@ -1,8 +1,8 @@
 use crate::grammar::expressions::expr;
-use crate::grammar::identifier;
 use crate::grammar::phrases::phrase;
 use crate::grammar::sorts::{sort_decl, SORT_DECL_START};
 use crate::grammar::statements::{stmt, STMT_START_SET};
+use crate::grammar::{identifier, maybe_wildcard_typed_param};
 use crate::parser::Parser;
 use crate::token_set::TokenSet;
 use crate::{
@@ -655,6 +655,81 @@ fn associativity_dir(p: &mut Parser) {
     m.complete(p, SyntaxKind::ASSOCIATIVITY_DIR);
 }
 
+fn parameter_list_ident_start(p: &mut Parser) {
+    assert!(p.at(T!['(']));
+
+    p.bump(T!['(']);
+
+    if !p.at(IDENT) {
+        // test_err(dir) parameter_list_ident_start_no_ident
+        // primitive-method ( ) := foo
+        p.error("expected identifier for primitive method");
+    } else {
+        identifier(p);
+    }
+
+    while !p.at(T![')']) && !p.at_end() {
+        if !maybe_wildcard_typed_param(p) {
+            // test_err(dir) parameter_list_ident_start_no_param
+            // primitive-method ( foo domain Foo) := foo
+            p.err_recover(
+                "expected parameter",
+                TokenSet::new(&[IDENT, T![')'], T![:=]]),
+            );
+        }
+    }
+
+    p.expect(T![')']);
+}
+
+// test(dir) infix_rule_dir
+// primitive-method (false-intro) := (not (false))
+fn infix_rule_dir(p: &mut Parser) {
+    assert!(p.at(T![primitive - method]));
+
+    let m = p.start();
+    p.bump(T![primitive - method]);
+
+    parameter_list_ident_start(p);
+
+    if !p.eat(T![:=]) {
+        // test_err(dir) infix_rule_dir_no_assign
+        // primitive-method (foo) foo
+        p.error("expected `:=` after primitive method parameters");
+    }
+
+    if !expr(p) {
+        // test_err(dir) infix_rule_dir_no_expr
+        // primitive-method (foo) :=
+        p.error("expected body for primitive method");
+    }
+
+    m.complete(p, SyntaxKind::INFIX_RULE_DIR);
+}
+
+// test(dir) prefix_rule_dir
+// (primitive-method (false-intro)
+//  (not (false)))
+fn prefix_rule_dir(p: &mut Parser) {
+    assert!(p.at(T!['(']) && p.peek_at(T![primitive - method]));
+
+    let m = p.start();
+    p.bump(T!['(']);
+    p.bump(T![primitive - method]);
+
+    parameter_list_ident_start(p);
+
+    if !expr(p) {
+        // test_err(dir) prefix_rule_dir_no_expr
+        // (primitive-method (foo) )
+        p.error("expected body for primitive method");
+    }
+
+    p.expect(T![')']);
+
+    m.complete(p, SyntaxKind::PREFIX_RULE_DIR);
+}
+
 const ASSOCIATIVITY_SET: TokenSet = TokenSet::new(&[T![left - assoc], T![right - assoc]]);
 
 pub(crate) const DIR_START_SET: TokenSet = TokenSet::new(&[
@@ -672,6 +747,7 @@ pub(crate) const DIR_START_SET: TokenSet = TokenSet::new(&[
     T![left - assoc],
     T![right - assoc],
     T!['('],
+    T![primitive - method],
 ]);
 
 pub(crate) const DIR_AFTER_LPAREN: TokenSet = TokenSet::new(&[
@@ -683,6 +759,7 @@ pub(crate) const DIR_AFTER_LPAREN: TokenSet = TokenSet::new(&[
     T![load],
     T![assert],
     T![assert*],
+    T![primitive - method],
 ]);
 
 pub(crate) fn dir(p: &mut Parser) -> bool {
@@ -731,13 +808,20 @@ pub(crate) fn dir(p: &mut Parser) -> bool {
         T![left - assoc] | T![right - assoc] => {
             associativity_dir(p);
         }
-        T!['('] => {
-            if p.peek_at(T![define]) {
+        T![primitive - method] => {
+            infix_rule_dir(p);
+        }
+        T!['('] => match p.nth(1) {
+            T![primitive - method] => {
+                prefix_rule_dir(p);
+            }
+            T![define] => {
                 prefix_define(p);
-            } else {
+            }
+            _ => {
                 return false;
             }
-        }
+        },
         _ => {
             return false;
         }

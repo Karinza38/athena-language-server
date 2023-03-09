@@ -101,6 +101,7 @@ pub enum SyntaxKind {
     FROM_KW,
     BY_KW,
     O_P_KW,
+    PRIMITIVE_METHOD_KW,
     PIPE,
     INT_NUMBER,
     STRING,
@@ -225,6 +226,8 @@ pub enum SyntaxKind {
     DEFINE_PROC,
     ASSOCIATIVITY_DIR,
     CONSTANT_DECLARE_DIR,
+    INFIX_RULE_DIR,
+    PREFIX_RULE_DIR,
     DIR_STMT,
     PHRASE_STMT,
     STRUCTURE_NAME_DEF,
@@ -257,7 +260,8 @@ impl SyntaxKind {
             MODULE_KW | DECLARE_KW | DOMAIN_KW | DOMAINS_KW | LOAD_KW | ASSERT_KW |
             ASSERT_STAR_KW | LEFT_ASSOC_KW | RIGHT_ASSOC_KW | DATATYPE_KW | STRUCTURE_KW
             | DATATYPES_KW | STRUCTURES_KW | EXTEND_MODULE_KW | PRIVATE_KW | OPEN_KW |
-            ON_KW | BEGIN_KW | END_KW | FROM_KW | BY_KW | O_P_KW | PIPE
+            ON_KW | BEGIN_KW | END_KW | FROM_KW | BY_KW | O_P_KW | PRIMITIVE_METHOD_KW |
+            PIPE
         )
     }
     pub fn is_punct(self) -> bool {
@@ -344,6 +348,7 @@ impl SyntaxKind {
             "from" => FROM_KW,
             "by" => BY_KW,
             "OP" => O_P_KW,
+            "primitive-method" => PRIMITIVE_METHOD_KW,
             _ => return None,
         };
         Some(kw)
@@ -655,6 +660,9 @@ macro_rules! T {
     };
     [OP] => {
         $crate ::SyntaxKind::O_P_KW
+    };
+    [primitive - method] => {
+        $crate ::SyntaxKind::PRIMITIVE_METHOD_KW
     };
     [|] => {
         $crate ::SyntaxKind::PIPE
