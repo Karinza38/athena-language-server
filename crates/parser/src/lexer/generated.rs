@@ -80,8 +80,6 @@ pub(crate) enum LexerToken {
     Private(usize),
     #[token("as", |lex|lex.slice().len())]
     As(usize),
-    #[token("bind", |lex|lex.slice().len())]
-    Bind(usize),
     #[token("load", |lex|lex.slice().len())]
     Load(usize),
     #[token("assert", |lex|lex.slice().len())]
@@ -168,6 +166,8 @@ pub(crate) enum LexerToken {
     From(usize),
     #[token("by", |lex|lex.slice().len())]
     By(usize),
+    #[token("bind", |lex|lex.slice().len())]
+    Bind(usize),
     #[token("val-of", |lex|lex.slice().len())]
     ValOf(usize),
     #[token("list-of", |lex|lex.slice().len())]
@@ -242,7 +242,6 @@ impl LexerToken {
             Self::Define(..) => T![define],
             Self::Private(..) => T![private],
             Self::As(..) => T![as],
-            Self::Bind(..) => T![bind],
             Self::Load(..) => T![load],
             Self::Assert(..) => T![assert],
             Self::AssertStar(..) => T![assert *],
@@ -286,6 +285,7 @@ impl LexerToken {
             Self::End(..) => T![end],
             Self::From(..) => T![from],
             Self::By(..) => T![by],
+            Self::Bind(..) => T![bind],
             Self::ValOf(..) => T![val - of],
             Self::ListOf(..) => T![list - of],
             Self::Split(..) => T![split],
@@ -344,7 +344,6 @@ impl LexerToken {
             Self::Define(len) => len,
             Self::Private(len) => len,
             Self::As(len) => len,
-            Self::Bind(len) => len,
             Self::Load(len) => len,
             Self::Assert(len) => len,
             Self::AssertStar(len) => len,
@@ -388,6 +387,7 @@ impl LexerToken {
             Self::End(len) => len,
             Self::From(len) => len,
             Self::By(len) => len,
+            Self::Bind(len) => len,
             Self::ValOf(len) => len,
             Self::ListOf(len) => len,
             Self::Split(len) => len,

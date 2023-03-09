@@ -304,7 +304,7 @@ CheckArm =
     '|'? Phrase '=>' Expr
 
 LambdaExpr =
-    'lambda' '(' Identifier* ')' Expr
+    'lambda' '(' MaybeWildcardTypedParam* ')' Expr
 
 ApplicationExpr =
     '(' Expr Phrase* ')'
@@ -313,7 +313,7 @@ ListExpr =
     '[' Phrase* ']'
 
 MethodExpr =
-    'method' '(' Identifier* ')' Ded
+    'method' '(' MaybeWildcardTypedParam* ')' Ded
 
 LetExpr =
     'let' '{' LetPart* '}' Expr

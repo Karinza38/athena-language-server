@@ -1,0 +1,32 @@
+---
+source: crates/parser/src/tests.rs
+description: "lambda (x y z domain D)\n"
+input_file: crates/parser/test_data/parser/inline/err/expr/0145_lambda_expr_error_recovery.ath
+---
+LAMBDA_EXPR
+  LAMBDA_KW "lambda"
+  WHITESPACE " "
+  L_PAREN "("
+  MAYBE_WILDCARD_TYPED_PARAM
+    IDENTIFIER
+      IDENT "x"
+  WHITESPACE " "
+  MAYBE_WILDCARD_TYPED_PARAM
+    IDENTIFIER
+      IDENT "y"
+  WHITESPACE " "
+  MAYBE_WILDCARD_TYPED_PARAM
+    IDENTIFIER
+      IDENT "z"
+  WHITESPACE " "
+  ERROR
+    DOMAIN_KW "domain"
+  WHITESPACE " "
+  MAYBE_WILDCARD_TYPED_PARAM
+    IDENTIFIER
+      IDENT "D"
+  R_PAREN ")"
+  WHITESPACE "\n"
+error 14: Expected to find a parameter for the lambda
+error 23: Expected to find an expression for the lambda body
+

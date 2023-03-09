@@ -4,7 +4,7 @@ use super::{
     LIT_SET,
 };
 use crate::{
-    grammar::deductions::ded,
+    grammar::{deductions::ded, maybe_wildcard_typed_param},
     parser::{Marker, Parser},
     token_set::TokenSet,
     SyntaxKind::{self, IDENT, IDENT_EXPR, UNIT_EXPR},
@@ -91,8 +91,15 @@ fn lambda_expr(p: &mut Parser) {
 
     // test(expr) lambda_expr_no_args
     // lambda () "hello world"
-    while p.at(IDENT) {
-        identifier(p);
+    while !p.at(T![')']) && !p.at_end() {
+        if !maybe_wildcard_typed_param(p) {
+            // test_err(expr) lambda_expr_error_recovery
+            // lambda (x y z domain D)
+            p.err_recover(
+                "Expected to find a parameter for the lambda",
+                EXPR_START_SET,
+            );
+        }
     }
     p.expect(T![')']);
 
@@ -388,11 +395,7 @@ fn method_expr(p: &mut Parser) {
     p.expect(T!['(']);
 
     while !p.at(T![')']) && !p.at_end() {
-        if p.at(IDENT) {
-            identifier(p);
-        } else {
-            p.err_and_bump("Expected to find an identifier for the method expression");
-        }
+        maybe_wildcard_typed_param(p);
     }
 
     p.expect(T![')']);

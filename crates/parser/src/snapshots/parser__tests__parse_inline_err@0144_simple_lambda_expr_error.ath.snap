@@ -1,21 +1,24 @@
 ---
 source: crates/parser/src/tests.rs
 description: "lambda (x y z) domain D\n"
-input_file: crates/parser/test_data/parser/inline/err/expr/0001_simple_lambda_expr_error.ath
+input_file: crates/parser/test_data/parser/inline/err/expr/0144_simple_lambda_expr_error.ath
 ---
 ERROR
   LAMBDA_EXPR
     LAMBDA_KW "lambda"
     WHITESPACE " "
     L_PAREN "("
-    IDENTIFIER
-      IDENT "x"
+    MAYBE_WILDCARD_TYPED_PARAM
+      IDENTIFIER
+        IDENT "x"
     WHITESPACE " "
-    IDENTIFIER
-      IDENT "y"
+    MAYBE_WILDCARD_TYPED_PARAM
+      IDENTIFIER
+        IDENT "y"
     WHITESPACE " "
-    IDENTIFIER
-      IDENT "z"
+    MAYBE_WILDCARD_TYPED_PARAM
+      IDENTIFIER
+        IDENT "z"
     R_PAREN ")"
   WHITESPACE " "
   DOMAIN_KW "domain"

@@ -407,7 +407,7 @@ fn generate_nodes(kinds: &KindsSrc, grammar: &AstSrc) -> String {
         .nodes
         .iter()
         .map(|kind| to_pascal_case(kind))
-        .filter(|name| !defined_nodes.iter().any(|&it| it == name))
+        .filter(|name| !defined_nodes.contains(name))
     {
         drop(node)
         // FIXME: restore this

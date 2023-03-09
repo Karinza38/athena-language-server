@@ -7,8 +7,9 @@ METHOD_EXPR
   METHOD_KW "method"
   WHITESPACE " "
   L_PAREN "("
-  IDENTIFIER
-    IDENT "foo"
+  MAYBE_WILDCARD_TYPED_PARAM
+    IDENTIFIER
+      IDENT "foo"
   R_PAREN ")"
   WHITESPACE "\n"
 error 12: Expected to find a body (ded) for the method expression

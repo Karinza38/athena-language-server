@@ -174,18 +174,20 @@ fn maybe_typed_param(p: &mut Parser) {
     }
 }
 
-fn maybe_wildcard_typed_param(p: &mut Parser) {
-    assert!(p.at(IDENT) || p.at(T![_]));
-
+fn maybe_wildcard_typed_param(p: &mut Parser) -> bool {
     let m = p.start();
 
     if p.at(T![_]) {
         p.bump(T![_]);
-    } else {
+    } else if p.at(IDENT) {
         maybe_typed_param(p);
+    } else {
+        m.abandon(p);
+        return false;
     }
 
     m.complete(p, SyntaxKind::MAYBE_WILDCARD_TYPED_PARAM);
+    true
 }
 
 const LIT_KINDS: &[SyntaxKind] = &[CHAR, STRING];

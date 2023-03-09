@@ -1,0 +1,67 @@
+---
+source: crates/parser/src/tests.rs
+description: "match p {\n\t(|| (some-atom _) (~ (some-atom _))) => true\n| _  => false\n}"
+input_file: crates/parser/test_data/parser/ok/file/baddefine.ath
+---
+SOURCE_FILE
+  PHRASE_STMT
+    EXPR_PHRASE
+      MATCH_EXPR
+        MATCH_KW "match"
+        WHITESPACE " "
+        EXPR_PHRASE
+          IDENT_EXPR
+            IDENTIFIER
+              IDENT "p"
+        WHITESPACE " "
+        L_CURLY "{"
+        WHITESPACE "\n\t"
+        MATCH_ARM
+          OR_PAT
+            L_PAREN "("
+            PIPE2 "||"
+            WHITESPACE " "
+            SOME_THING_PAT
+              L_PAREN "("
+              SOME_ATOM_KW "some-atom"
+              WHITESPACE " "
+              WILDCARD_PAT
+                UNDERSCORE "_"
+              R_PAREN ")"
+            WHITESPACE " "
+            COMPOUND_PAT
+              L_PAREN "("
+              IDENT_PAT
+                IDENTIFIER
+                  IDENT "~"
+              WHITESPACE " "
+              SOME_THING_PAT
+                L_PAREN "("
+                SOME_ATOM_KW "some-atom"
+                WHITESPACE " "
+                WILDCARD_PAT
+                  UNDERSCORE "_"
+                R_PAREN ")"
+              R_PAREN ")"
+            R_PAREN ")"
+          WHITESPACE " "
+          FAT_ARROW "=>"
+          WHITESPACE " "
+          IDENT_EXPR
+            IDENTIFIER
+              IDENT "true"
+        WHITESPACE "\n"
+        MATCH_ARM
+          PIPE "|"
+          WHITESPACE " "
+          WILDCARD_PAT
+            UNDERSCORE "_"
+          WHITESPACE "  "
+          FAT_ARROW "=>"
+          WHITESPACE " "
+          IDENT_EXPR
+            IDENTIFIER
+              IDENT "false"
+        WHITESPACE "\n"
+        R_CURLY "}"
+

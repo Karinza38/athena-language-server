@@ -671,9 +671,6 @@ impl DefineNamedPattern {
     pub fn as_token(&self) -> Option<SyntaxToken> {
         support::token(&self.syntax, T![as])
     }
-    pub fn bind_token(&self) -> Option<SyntaxToken> {
-        support::token(&self.syntax, T![bind])
-    }
     pub fn list_pat(&self) -> Option<ListPat> {
         support::child(&self.syntax)
     }
@@ -819,7 +816,7 @@ impl LambdaExpr {
     pub fn l_paren_token(&self) -> Option<SyntaxToken> {
         support::token(&self.syntax, T!['('])
     }
-    pub fn identifiers(&self) -> AstChildren<Identifier> {
+    pub fn maybe_wildcard_typed_params(&self) -> AstChildren<MaybeWildcardTypedParam> {
         support::children(&self.syntax)
     }
     pub fn r_paren_token(&self) -> Option<SyntaxToken> {
@@ -876,7 +873,7 @@ impl MethodExpr {
     pub fn l_paren_token(&self) -> Option<SyntaxToken> {
         support::token(&self.syntax, T!['('])
     }
-    pub fn identifiers(&self) -> AstChildren<Identifier> {
+    pub fn maybe_wildcard_typed_params(&self) -> AstChildren<MaybeWildcardTypedParam> {
         support::children(&self.syntax)
     }
     pub fn r_paren_token(&self) -> Option<SyntaxToken> {
