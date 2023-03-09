@@ -1,6 +1,5 @@
 use crate::grammar::expressions::expr;
 use crate::grammar::identifier;
-use crate::grammar::patterns::pat;
 use crate::grammar::phrases::phrase;
 use crate::grammar::sorts::{sort_decl, SORT_DECL_START};
 use crate::grammar::statements::{stmt, STMT_START_SET};
@@ -135,6 +134,9 @@ fn domains_dir(p: &mut Parser) {
 }
 
 const NAME_SET: TokenSet = TokenSet::new(&[T![as], T![bind]]);
+
+// test(dir) define_named
+// define (foo as [a]) := true
 fn define_named_pattern(p: &mut Parser) {
     assert!(p.at(T!['(']) && (p.peek_at_one_of(NAME_SET) || p.nth_at_one_of(2, NAME_SET)));
 
@@ -151,53 +153,15 @@ fn define_named_pattern(p: &mut Parser) {
 
     p.bump_one_of(NAME_SET);
 
-    if p.expect(T!['[']) {
-        while !p.at(T![']']) && !p.at_end() {
-            if !pat(p) {
-                p.err_and_bump("expected pattern for define");
-            }
-        }
+    if p.at(T!['[']) {
+        super::patterns::list_pat(p);
+    } else {
+        p.error("expected list pattern for named define");
     }
-    p.expect(T![']']);
 
     p.expect(T![')']);
 
     m.complete(p, SyntaxKind::DEFINE_NAMED_PATTERN);
-}
-
-// test(dir) define_dir
-// define foo := true
-
-// test(dir) define_private
-// private define bar := false
-fn define_dir(p: &mut Parser) {
-    assert!((p.at(T![private]) && p.peek_at(T![define])) || p.at(T![define]));
-
-    let m = p.start();
-    p.eat(T![private]);
-    p.bump(T![define]);
-
-    if p.at(T!['(']) {
-        define_named_pattern(p);
-    } else {
-        if !p.at(IDENT) {
-            // test_err(dir) define_no_name
-            // define := true
-            p.error("expected definition name");
-        } else {
-            identifier(p);
-        }
-    }
-
-    p.expect(T![:=]);
-
-    if !phrase(p) {
-        // test_err(dir) define_empty
-        // define foo :=
-        p.error("expected definition value");
-    }
-
-    m.complete(p, SyntaxKind::DEFINE_DIR);
 }
 
 // test(dir) define_proc
@@ -205,12 +169,8 @@ fn define_dir(p: &mut Parser) {
 
 // test(dir) define_proc_private
 // private define (foo b) := b
-fn define_proc_dir(p: &mut Parser) {
-    assert!((p.at(T![private]) && p.peek_at(T![define])) || p.at(T![define]) && p.peek_at(T!['(']));
-
+fn define_proc(p: &mut Parser) {
     let m = p.start();
-    p.eat(T![private]);
-    p.bump(T![define]);
 
     p.bump(T!['(']);
 
@@ -235,47 +195,91 @@ fn define_proc_dir(p: &mut Parser) {
 
     p.expect(T![')']);
 
-    p.expect(T![:=]);
-
-    if !phrase(p) {
-        // test_err(dir) define_proc_empty
-        // define (foo) :=
-        p.error("expected procedure body");
-    }
-
-    m.complete(p, SyntaxKind::DEFINE_PROC_DIR);
+    m.complete(p, SyntaxKind::DEFINE_PROC);
 }
 
-// test(dir) define_multi
-// define [foo bar baz] := [true false true]
+fn define_name(p: &mut Parser) {
+    match p.current() {
+        T!['('] => {
+            if p.peek_at_one_of(NAME_SET) || p.nth_at_one_of(2, NAME_SET) {
+                define_named_pattern(p);
+            } else {
+                define_proc(p);
+            }
+        }
+        T!['['] => {
+            // test(dir) define_multi
+            // define [foo bar baz] := [true false true]
 
-// test(dir) define_multi_private
-// private define [a b] := [1 2]
+            // test(dir) define_multi_private
+            // private define [a b] := [1 2]
 
-// test(dir) define_multi_one
-// define [foo] := true
-fn define_multi(p: &mut Parser) {
-    assert!((p.at(T![private]) && p.peek_at(T![define])) || p.at(T![define]) && p.peek_at(T!['[']));
+            // test(dir) define_multi_one
+            // define [foo] := true
+            super::patterns::list_pat(p);
+        }
+        IDENT => {
+            identifier(p);
+        }
+        _ => {
+            // test_err(dir) define_no_name
+            // define := true
+            p.error("expected definition name");
+        }
+    }
+}
+
+// test(dir) define_dir
+// define foo := true
+fn define_dir(p: &mut Parser) {
+    assert!((p.at(T![private]) && p.peek_at(T![define])) || p.at(T![define]));
 
     let m = p.start();
+
+    // test(dir) define_private
+    // private define bar := false
     p.eat(T![private]);
+
     p.bump(T![define]);
 
-    p.bump(T!['[']);
-
-    while !p.at(T![']']) && pat(p) {}
-
-    p.expect(T![']']);
+    define_name(p);
 
     p.expect(T![:=]);
 
     if !phrase(p) {
-        // test_err(dir) define_multi_empty
-        // define [foo bar] :=
+        // test_err(dir) define_empty
+        // define foo :=
         p.error("expected definition value");
     }
 
-    m.complete(p, SyntaxKind::DEFINE_MULTI_DIR);
+    m.complete(p, SyntaxKind::INFIX_DEFINE_DIR);
+}
+
+// test(dir) define_prefix
+// (define A B)
+fn prefix_define(p: &mut Parser) {
+    assert!(p.at(T!['(']) && p.peek_at(T![define]));
+
+    let m = p.start();
+    p.bump(T!['(']);
+    p.bump(T![define]);
+
+    // test_err(dir) define_prefix_no_name
+    // (define)
+
+    // test(dir) define_prefix_proc
+    // (define (foo a b) (lambda () b))
+    define_name(p);
+
+    if !phrase(p) {
+        // test_err(dir) define_prefix_no_value
+        // (define foo)
+        p.error("expected value for define");
+    }
+
+    p.expect(T![')']);
+
+    m.complete(p, SyntaxKind::PREFIX_DEFINE_DIR);
 }
 
 fn func_sorts(p: &mut Parser) {
@@ -667,6 +671,18 @@ pub(crate) const DIR_START_SET: TokenSet = TokenSet::new(&[
     T![open],
     T![left - assoc],
     T![right - assoc],
+    T!['('],
+]);
+
+pub(crate) const DIR_AFTER_LPAREN: TokenSet = TokenSet::new(&[
+    T![module],
+    T![define],
+    T![domain],
+    T![domains],
+    T![declare],
+    T![load],
+    T![assert],
+    T![assert*],
 ]);
 
 pub(crate) fn dir(p: &mut Parser) -> bool {
@@ -688,32 +704,14 @@ pub(crate) fn dir(p: &mut Parser) -> bool {
         }
         T![private] => {
             if p.peek_at(T![define]) {
-                if p.nth_at(2, T!['(']) {
-                    define_proc_dir(p);
-                } else if p.nth_at(2, T!['[']) {
-                    define_multi(p);
-                } else {
-                    define_dir(p);
-                }
+                define_dir(p);
             } else {
                 p.error("private must be followed by define");
                 return false;
             }
         }
         T![define] => {
-            if p.peek_at(T!['(']) {
-                let three_la = p.nth(3);
-
-                if p.nth_at_one_of(2, NAME_SET) || NAME_SET.contains(three_la) {
-                    define_dir(p);
-                } else {
-                    define_proc_dir(p);
-                }
-            } else if p.peek_at(T!['[']) {
-                define_multi(p);
-            } else {
-                define_dir(p);
-            }
+            define_dir(p);
         }
         T![declare] => {
             declare_dir(p);
@@ -732,6 +730,13 @@ pub(crate) fn dir(p: &mut Parser) -> bool {
         }
         T![left - assoc] | T![right - assoc] => {
             associativity_dir(p);
+        }
+        T!['('] => {
+            if p.peek_at(T![define]) {
+                prefix_define(p);
+            } else {
+                return false;
+            }
         }
         _ => {
             return false;

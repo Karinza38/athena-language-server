@@ -1,0 +1,15 @@
+---
+source: crates/parser/src/tests.rs
+description: "(define foo)\n"
+input_file: crates/parser/test_data/parser/inline/err/dir/0146_define_prefix_no_value.ath
+---
+PREFIX_DEFINE_DIR
+  L_PAREN "("
+  DEFINE_KW "define"
+  WHITESPACE " "
+  IDENTIFIER
+    IDENT "foo"
+  R_PAREN ")"
+  WHITESPACE "\n"
+error 11: expected value for define
+

@@ -142,8 +142,6 @@ Dir =
     | DomainDir // ✅
     | DomainsDir // ✅
     | DefineDir // ✅
-    | DefineProcDir // ✅
-    | DefineMultiDir // ✅
     | LoadDir
     | AssertDir
     | AssertClosedDir
@@ -203,20 +201,26 @@ SortVarsDecl =
     '(' (IdentSort (',' IdentSort)*) ')'
 
 DefineDir =
+    InfixDefineDir
+    | PrefixDefineDir
+
+PrefixDefineDir =
+    '(' 'define' Identifier Phrase ')'
+
+InfixDefineDir =
     'private'? 'define' DefineName ':=' Phrase
 
 DefineName =
     Identifier
     | DefineNamedPattern
+    | DefineProc
+    | ListPat
 
 DefineNamedPattern =
-    '(' Identifier ('as' | 'bind')  '[' Pat* ']' ')' 
+    '(' Identifier 'as' ListPat ')' 
 
-DefineProcDir =
-    'private'? 'define' '(' Identifier args:MaybeWildcardTypedParam* ')' ':=' Phrase
-
-DefineMultiDir =
-    'private'? 'define' '[' Pat* ']' ':=' Phrase
+DefineProc = 
+    '(' Identifier args:MaybeWildcardTypedParam* ')'
 
 LoadDir =
     'load' 'string'

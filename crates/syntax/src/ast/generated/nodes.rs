@@ -319,87 +319,6 @@ impl DomainsDir {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
-pub struct DefineDir {
-    pub(crate) syntax: SyntaxNode,
-}
-impl DefineDir {
-    pub fn private_token(&self) -> Option<SyntaxToken> {
-        support::token(&self.syntax, T![private])
-    }
-    pub fn define_token(&self) -> Option<SyntaxToken> {
-        support::token(&self.syntax, T![define])
-    }
-    pub fn define_name(&self) -> Option<DefineName> {
-        support::child(&self.syntax)
-    }
-    pub fn colon_eq_token(&self) -> Option<SyntaxToken> {
-        support::token(&self.syntax, T![:=])
-    }
-    pub fn phrase(&self) -> Option<Phrase> {
-        support::child(&self.syntax)
-    }
-}
-
-#[derive(Debug, Clone, PartialEq, Eq, Hash)]
-pub struct DefineProcDir {
-    pub(crate) syntax: SyntaxNode,
-}
-impl DefineProcDir {
-    pub fn private_token(&self) -> Option<SyntaxToken> {
-        support::token(&self.syntax, T![private])
-    }
-    pub fn define_token(&self) -> Option<SyntaxToken> {
-        support::token(&self.syntax, T![define])
-    }
-    pub fn l_paren_token(&self) -> Option<SyntaxToken> {
-        support::token(&self.syntax, T!['('])
-    }
-    pub fn identifier(&self) -> Option<Identifier> {
-        support::child(&self.syntax)
-    }
-    pub fn args(&self) -> AstChildren<MaybeWildcardTypedParam> {
-        support::children(&self.syntax)
-    }
-    pub fn r_paren_token(&self) -> Option<SyntaxToken> {
-        support::token(&self.syntax, T![')'])
-    }
-    pub fn colon_eq_token(&self) -> Option<SyntaxToken> {
-        support::token(&self.syntax, T![:=])
-    }
-    pub fn phrase(&self) -> Option<Phrase> {
-        support::child(&self.syntax)
-    }
-}
-
-#[derive(Debug, Clone, PartialEq, Eq, Hash)]
-pub struct DefineMultiDir {
-    pub(crate) syntax: SyntaxNode,
-}
-impl DefineMultiDir {
-    pub fn private_token(&self) -> Option<SyntaxToken> {
-        support::token(&self.syntax, T![private])
-    }
-    pub fn define_token(&self) -> Option<SyntaxToken> {
-        support::token(&self.syntax, T![define])
-    }
-    pub fn l_brack_token(&self) -> Option<SyntaxToken> {
-        support::token(&self.syntax, T!['['])
-    }
-    pub fn pats(&self) -> AstChildren<Pat> {
-        support::children(&self.syntax)
-    }
-    pub fn r_brack_token(&self) -> Option<SyntaxToken> {
-        support::token(&self.syntax, T![']'])
-    }
-    pub fn colon_eq_token(&self) -> Option<SyntaxToken> {
-        support::token(&self.syntax, T![:=])
-    }
-    pub fn phrase(&self) -> Option<Phrase> {
-        support::child(&self.syntax)
-    }
-}
-
-#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct LoadDir {
     pub(crate) syntax: SyntaxNode,
 }
@@ -695,6 +614,50 @@ impl DeclareAttr {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
+pub struct InfixDefineDir {
+    pub(crate) syntax: SyntaxNode,
+}
+impl InfixDefineDir {
+    pub fn private_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T![private])
+    }
+    pub fn define_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T![define])
+    }
+    pub fn define_name(&self) -> Option<DefineName> {
+        support::child(&self.syntax)
+    }
+    pub fn colon_eq_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T![:=])
+    }
+    pub fn phrase(&self) -> Option<Phrase> {
+        support::child(&self.syntax)
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+pub struct PrefixDefineDir {
+    pub(crate) syntax: SyntaxNode,
+}
+impl PrefixDefineDir {
+    pub fn l_paren_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T!['('])
+    }
+    pub fn define_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T![define])
+    }
+    pub fn identifier(&self) -> Option<Identifier> {
+        support::child(&self.syntax)
+    }
+    pub fn phrase(&self) -> Option<Phrase> {
+        support::child(&self.syntax)
+    }
+    pub fn r_paren_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T![')'])
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct DefineNamedPattern {
     pub(crate) syntax: SyntaxNode,
 }
@@ -711,6 +674,38 @@ impl DefineNamedPattern {
     pub fn bind_token(&self) -> Option<SyntaxToken> {
         support::token(&self.syntax, T![bind])
     }
+    pub fn list_pat(&self) -> Option<ListPat> {
+        support::child(&self.syntax)
+    }
+    pub fn r_paren_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T![')'])
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+pub struct DefineProc {
+    pub(crate) syntax: SyntaxNode,
+}
+impl DefineProc {
+    pub fn l_paren_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T!['('])
+    }
+    pub fn identifier(&self) -> Option<Identifier> {
+        support::child(&self.syntax)
+    }
+    pub fn args(&self) -> AstChildren<MaybeWildcardTypedParam> {
+        support::children(&self.syntax)
+    }
+    pub fn r_paren_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T![')'])
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+pub struct ListPat {
+    pub(crate) syntax: SyntaxNode,
+}
+impl ListPat {
     pub fn l_brack_token(&self) -> Option<SyntaxToken> {
         support::token(&self.syntax, T!['['])
     }
@@ -719,9 +714,6 @@ impl DefineNamedPattern {
     }
     pub fn r_brack_token(&self) -> Option<SyntaxToken> {
         support::token(&self.syntax, T![']'])
-    }
-    pub fn r_paren_token(&self) -> Option<SyntaxToken> {
-        support::token(&self.syntax, T![')'])
     }
 }
 
@@ -1451,6 +1443,12 @@ impl PickWitnessesDed {
     pub fn pick_witnesses_token(&self) -> Option<SyntaxToken> {
         support::token(&self.syntax, T![pick - witnesses])
     }
+    pub fn identifier(&self) -> Option<Identifier> {
+        support::child(&self.syntax)
+    }
+    pub fn identifiers(&self) -> AstChildren<Identifier> {
+        support::children(&self.syntax)
+    }
     pub fn for_token(&self) -> Option<SyntaxToken> {
         support::token(&self.syntax, T![for])
     }
@@ -1458,9 +1456,6 @@ impl PickWitnessesDed {
         support::child(&self.syntax)
     }
     pub fn ded(&self) -> Option<Ded> {
-        support::child(&self.syntax)
-    }
-    pub fn define_name(&self) -> Option<DefineName> {
         support::child(&self.syntax)
     }
 }
@@ -2042,22 +2037,6 @@ impl SplitPat {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
-pub struct ListPat {
-    pub(crate) syntax: SyntaxNode,
-}
-impl ListPat {
-    pub fn l_brack_token(&self) -> Option<SyntaxToken> {
-        support::token(&self.syntax, T!['['])
-    }
-    pub fn pats(&self) -> AstChildren<Pat> {
-        support::children(&self.syntax)
-    }
-    pub fn r_brack_token(&self) -> Option<SyntaxToken> {
-        support::token(&self.syntax, T![']'])
-    }
-}
-
-#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct CompoundPat {
     pub(crate) syntax: SyntaxNode,
 }
@@ -2218,9 +2197,6 @@ pub enum Phrase {
 pub enum Dir {
     DomainDir(DomainDir),
     DomainsDir(DomainsDir),
-    DefineDir(DefineDir),
-    DefineProcDir(DefineProcDir),
-    DefineMultiDir(DefineMultiDir),
     LoadDir(LoadDir),
     AssertDir(AssertDir),
     AssertClosedDir(AssertClosedDir),
@@ -2229,6 +2205,7 @@ pub enum Dir {
     ExtendModuleDir(ExtendModuleDir),
     OpenDir(OpenDir),
     AssociativityDir(AssociativityDir),
+    DefineDir(DefineDir),
     ModuleDir(ModuleDir),
 }
 
@@ -2248,6 +2225,12 @@ pub enum StructureConstructor {
 pub enum ModuleDir {
     InfixModuleDir(InfixModuleDir),
     PrefixModuleDir(PrefixModuleDir),
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+pub enum DefineDir {
+    InfixDefineDir(InfixDefineDir),
+    PrefixDefineDir(PrefixDefineDir),
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
@@ -2284,24 +2267,8 @@ pub enum Expr {
 pub enum DefineName {
     Identifier(Identifier),
     DefineNamedPattern(DefineNamedPattern),
-}
-
-#[derive(Debug, Clone, PartialEq, Eq, Hash)]
-pub enum Pat {
-    IdentPat(IdentPat),
-    VarPat(VarPat),
-    MetaIdentPat(MetaIdentPat),
-    LiteralPat(LiteralPat),
-    UnitPat(UnitPat),
-    WildcardPat(WildcardPat),
-    NamedPat(NamedPat),
-    ValOfPat(ValOfPat),
-    ListOfPat(ListOfPat),
-    SplitPat(SplitPat),
+    DefineProc(DefineProc),
     ListPat(ListPat),
-    CompoundPat(CompoundPat),
-    WherePat(WherePat),
-    SomeThingPat(SomeThingPat),
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
@@ -2325,6 +2292,24 @@ pub enum Ded {
     TryDed(TryDed),
     ConcludeDed(ConcludeDed),
     InferBlockDed(InferBlockDed),
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+pub enum Pat {
+    IdentPat(IdentPat),
+    VarPat(VarPat),
+    MetaIdentPat(MetaIdentPat),
+    LiteralPat(LiteralPat),
+    UnitPat(UnitPat),
+    WildcardPat(WildcardPat),
+    NamedPat(NamedPat),
+    ValOfPat(ValOfPat),
+    ListOfPat(ListOfPat),
+    SplitPat(SplitPat),
+    ListPat(ListPat),
+    CompoundPat(CompoundPat),
+    WherePat(WherePat),
+    SomeThingPat(SomeThingPat),
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
@@ -2610,39 +2595,6 @@ impl AstNode for DomainsDir {
         &self.syntax
     }
 }
-impl AstNode for DefineDir {
-    fn can_cast(kind: SyntaxKind) -> bool {
-        kind == DEFINE_DIR
-    }
-    fn cast(syntax: SyntaxNode) -> Option<Self> {
-        if Self::can_cast(syntax.kind()) { Some(Self { syntax }) } else { None }
-    }
-    fn syntax(&self) -> &SyntaxNode {
-        &self.syntax
-    }
-}
-impl AstNode for DefineProcDir {
-    fn can_cast(kind: SyntaxKind) -> bool {
-        kind == DEFINE_PROC_DIR
-    }
-    fn cast(syntax: SyntaxNode) -> Option<Self> {
-        if Self::can_cast(syntax.kind()) { Some(Self { syntax }) } else { None }
-    }
-    fn syntax(&self) -> &SyntaxNode {
-        &self.syntax
-    }
-}
-impl AstNode for DefineMultiDir {
-    fn can_cast(kind: SyntaxKind) -> bool {
-        kind == DEFINE_MULTI_DIR
-    }
-    fn cast(syntax: SyntaxNode) -> Option<Self> {
-        if Self::can_cast(syntax.kind()) { Some(Self { syntax }) } else { None }
-    }
-    fn syntax(&self) -> &SyntaxNode {
-        &self.syntax
-    }
-}
 impl AstNode for LoadDir {
     fn can_cast(kind: SyntaxKind) -> bool {
         kind == LOAD_DIR
@@ -2819,9 +2771,53 @@ impl AstNode for DeclareAttr {
         &self.syntax
     }
 }
+impl AstNode for InfixDefineDir {
+    fn can_cast(kind: SyntaxKind) -> bool {
+        kind == INFIX_DEFINE_DIR
+    }
+    fn cast(syntax: SyntaxNode) -> Option<Self> {
+        if Self::can_cast(syntax.kind()) { Some(Self { syntax }) } else { None }
+    }
+    fn syntax(&self) -> &SyntaxNode {
+        &self.syntax
+    }
+}
+impl AstNode for PrefixDefineDir {
+    fn can_cast(kind: SyntaxKind) -> bool {
+        kind == PREFIX_DEFINE_DIR
+    }
+    fn cast(syntax: SyntaxNode) -> Option<Self> {
+        if Self::can_cast(syntax.kind()) { Some(Self { syntax }) } else { None }
+    }
+    fn syntax(&self) -> &SyntaxNode {
+        &self.syntax
+    }
+}
 impl AstNode for DefineNamedPattern {
     fn can_cast(kind: SyntaxKind) -> bool {
         kind == DEFINE_NAMED_PATTERN
+    }
+    fn cast(syntax: SyntaxNode) -> Option<Self> {
+        if Self::can_cast(syntax.kind()) { Some(Self { syntax }) } else { None }
+    }
+    fn syntax(&self) -> &SyntaxNode {
+        &self.syntax
+    }
+}
+impl AstNode for DefineProc {
+    fn can_cast(kind: SyntaxKind) -> bool {
+        kind == DEFINE_PROC
+    }
+    fn cast(syntax: SyntaxNode) -> Option<Self> {
+        if Self::can_cast(syntax.kind()) { Some(Self { syntax }) } else { None }
+    }
+    fn syntax(&self) -> &SyntaxNode {
+        &self.syntax
+    }
+}
+impl AstNode for ListPat {
+    fn can_cast(kind: SyntaxKind) -> bool {
+        kind == LIST_PAT
     }
     fn cast(syntax: SyntaxNode) -> Option<Self> {
         if Self::can_cast(syntax.kind()) { Some(Self { syntax }) } else { None }
@@ -3655,17 +3651,6 @@ impl AstNode for SplitPat {
         &self.syntax
     }
 }
-impl AstNode for ListPat {
-    fn can_cast(kind: SyntaxKind) -> bool {
-        kind == LIST_PAT
-    }
-    fn cast(syntax: SyntaxNode) -> Option<Self> {
-        if Self::can_cast(syntax.kind()) { Some(Self { syntax }) } else { None }
-    }
-    fn syntax(&self) -> &SyntaxNode {
-        &self.syntax
-    }
-}
 impl AstNode for CompoundPat {
     fn can_cast(kind: SyntaxKind) -> bool {
         kind == COMPOUND_PAT
@@ -3863,21 +3848,6 @@ impl From<DomainsDir> for Dir {
         Dir::DomainsDir(node)
     }
 }
-impl From<DefineDir> for Dir {
-    fn from(node: DefineDir) -> Dir {
-        Dir::DefineDir(node)
-    }
-}
-impl From<DefineProcDir> for Dir {
-    fn from(node: DefineProcDir) -> Dir {
-        Dir::DefineProcDir(node)
-    }
-}
-impl From<DefineMultiDir> for Dir {
-    fn from(node: DefineMultiDir) -> Dir {
-        Dir::DefineMultiDir(node)
-    }
-}
 impl From<LoadDir> for Dir {
     fn from(node: LoadDir) -> Dir {
         Dir::LoadDir(node)
@@ -3918,6 +3888,11 @@ impl From<AssociativityDir> for Dir {
         Dir::AssociativityDir(node)
     }
 }
+impl From<DefineDir> for Dir {
+    fn from(node: DefineDir) -> Dir {
+        Dir::DefineDir(node)
+    }
+}
 impl From<ModuleDir> for Dir {
     fn from(node: ModuleDir) -> Dir {
         Dir::ModuleDir(node)
@@ -3926,19 +3901,16 @@ impl From<ModuleDir> for Dir {
 impl AstNode for Dir {
     fn can_cast(kind: SyntaxKind) -> bool {
         matches!(
-            kind, DOMAIN_DIR | DOMAINS_DIR | DEFINE_DIR | DEFINE_PROC_DIR |
-            DEFINE_MULTI_DIR | LOAD_DIR | ASSERT_DIR | ASSERT_CLOSED_DIR | DECLARE_DIR |
-            CONSTANT_DECLARE_DIR | EXTEND_MODULE_DIR | OPEN_DIR | ASSOCIATIVITY_DIR |
-            INFIX_MODULE_DIR | PREFIX_MODULE_DIR
+            kind, DOMAIN_DIR | DOMAINS_DIR | LOAD_DIR | ASSERT_DIR | ASSERT_CLOSED_DIR |
+            DECLARE_DIR | CONSTANT_DECLARE_DIR | EXTEND_MODULE_DIR | OPEN_DIR |
+            ASSOCIATIVITY_DIR | INFIX_MODULE_DIR | PREFIX_MODULE_DIR | INFIX_DEFINE_DIR |
+            PREFIX_DEFINE_DIR
         )
     }
     fn cast(syntax: SyntaxNode) -> Option<Self> {
         let res = match syntax.kind() {
             DOMAIN_DIR => Dir::DomainDir(DomainDir { syntax }),
             DOMAINS_DIR => Dir::DomainsDir(DomainsDir { syntax }),
-            DEFINE_DIR => Dir::DefineDir(DefineDir { syntax }),
-            DEFINE_PROC_DIR => Dir::DefineProcDir(DefineProcDir { syntax }),
-            DEFINE_MULTI_DIR => Dir::DefineMultiDir(DefineMultiDir { syntax }),
             LOAD_DIR => Dir::LoadDir(LoadDir { syntax }),
             ASSERT_DIR => Dir::AssertDir(AssertDir { syntax }),
             ASSERT_CLOSED_DIR => Dir::AssertClosedDir(AssertClosedDir { syntax }),
@@ -3955,6 +3927,12 @@ impl AstNode for Dir {
             PREFIX_MODULE_DIR => {
                 Dir::ModuleDir(ModuleDir::PrefixModuleDir(PrefixModuleDir { syntax }))
             }
+            INFIX_DEFINE_DIR => {
+                Dir::DefineDir(DefineDir::InfixDefineDir(InfixDefineDir { syntax }))
+            }
+            PREFIX_DEFINE_DIR => {
+                Dir::DefineDir(DefineDir::PrefixDefineDir(PrefixDefineDir { syntax }))
+            }
             _ => return None,
         };
         Some(res)
@@ -3963,9 +3941,6 @@ impl AstNode for Dir {
         match self {
             Dir::DomainDir(it) => &it.syntax,
             Dir::DomainsDir(it) => &it.syntax,
-            Dir::DefineDir(it) => &it.syntax,
-            Dir::DefineProcDir(it) => &it.syntax,
-            Dir::DefineMultiDir(it) => &it.syntax,
             Dir::LoadDir(it) => &it.syntax,
             Dir::AssertDir(it) => &it.syntax,
             Dir::AssertClosedDir(it) => &it.syntax,
@@ -3974,6 +3949,7 @@ impl AstNode for Dir {
             Dir::ExtendModuleDir(it) => &it.syntax,
             Dir::OpenDir(it) => &it.syntax,
             Dir::AssociativityDir(it) => &it.syntax,
+            Dir::DefineDir(it) => it.syntax(),
             Dir::ModuleDir(it) => it.syntax(),
         }
     }
@@ -4066,6 +4042,35 @@ impl AstNode for ModuleDir {
         match self {
             ModuleDir::InfixModuleDir(it) => &it.syntax,
             ModuleDir::PrefixModuleDir(it) => &it.syntax,
+        }
+    }
+}
+impl From<InfixDefineDir> for DefineDir {
+    fn from(node: InfixDefineDir) -> DefineDir {
+        DefineDir::InfixDefineDir(node)
+    }
+}
+impl From<PrefixDefineDir> for DefineDir {
+    fn from(node: PrefixDefineDir) -> DefineDir {
+        DefineDir::PrefixDefineDir(node)
+    }
+}
+impl AstNode for DefineDir {
+    fn can_cast(kind: SyntaxKind) -> bool {
+        matches!(kind, INFIX_DEFINE_DIR | PREFIX_DEFINE_DIR)
+    }
+    fn cast(syntax: SyntaxNode) -> Option<Self> {
+        let res = match syntax.kind() {
+            INFIX_DEFINE_DIR => DefineDir::InfixDefineDir(InfixDefineDir { syntax }),
+            PREFIX_DEFINE_DIR => DefineDir::PrefixDefineDir(PrefixDefineDir { syntax }),
+            _ => return None,
+        };
+        Some(res)
+    }
+    fn syntax(&self) -> &SyntaxNode {
+        match self {
+            DefineDir::InfixDefineDir(it) => &it.syntax,
+            DefineDir::PrefixDefineDir(it) => &it.syntax,
         }
     }
 }
@@ -4282,9 +4287,19 @@ impl From<DefineNamedPattern> for DefineName {
         DefineName::DefineNamedPattern(node)
     }
 }
+impl From<DefineProc> for DefineName {
+    fn from(node: DefineProc) -> DefineName {
+        DefineName::DefineProc(node)
+    }
+}
+impl From<ListPat> for DefineName {
+    fn from(node: ListPat) -> DefineName {
+        DefineName::ListPat(node)
+    }
+}
 impl AstNode for DefineName {
     fn can_cast(kind: SyntaxKind) -> bool {
-        matches!(kind, IDENTIFIER | DEFINE_NAMED_PATTERN)
+        matches!(kind, IDENTIFIER | DEFINE_NAMED_PATTERN | DEFINE_PROC | LIST_PAT)
     }
     fn cast(syntax: SyntaxNode) -> Option<Self> {
         let res = match syntax.kind() {
@@ -4292,6 +4307,8 @@ impl AstNode for DefineName {
             DEFINE_NAMED_PATTERN => {
                 DefineName::DefineNamedPattern(DefineNamedPattern { syntax })
             }
+            DEFINE_PROC => DefineName::DefineProc(DefineProc { syntax }),
+            LIST_PAT => DefineName::ListPat(ListPat { syntax }),
             _ => return None,
         };
         Some(res)
@@ -4300,123 +4317,8 @@ impl AstNode for DefineName {
         match self {
             DefineName::Identifier(it) => &it.syntax,
             DefineName::DefineNamedPattern(it) => &it.syntax,
-        }
-    }
-}
-impl From<IdentPat> for Pat {
-    fn from(node: IdentPat) -> Pat {
-        Pat::IdentPat(node)
-    }
-}
-impl From<VarPat> for Pat {
-    fn from(node: VarPat) -> Pat {
-        Pat::VarPat(node)
-    }
-}
-impl From<MetaIdentPat> for Pat {
-    fn from(node: MetaIdentPat) -> Pat {
-        Pat::MetaIdentPat(node)
-    }
-}
-impl From<LiteralPat> for Pat {
-    fn from(node: LiteralPat) -> Pat {
-        Pat::LiteralPat(node)
-    }
-}
-impl From<UnitPat> for Pat {
-    fn from(node: UnitPat) -> Pat {
-        Pat::UnitPat(node)
-    }
-}
-impl From<WildcardPat> for Pat {
-    fn from(node: WildcardPat) -> Pat {
-        Pat::WildcardPat(node)
-    }
-}
-impl From<NamedPat> for Pat {
-    fn from(node: NamedPat) -> Pat {
-        Pat::NamedPat(node)
-    }
-}
-impl From<ValOfPat> for Pat {
-    fn from(node: ValOfPat) -> Pat {
-        Pat::ValOfPat(node)
-    }
-}
-impl From<ListOfPat> for Pat {
-    fn from(node: ListOfPat) -> Pat {
-        Pat::ListOfPat(node)
-    }
-}
-impl From<SplitPat> for Pat {
-    fn from(node: SplitPat) -> Pat {
-        Pat::SplitPat(node)
-    }
-}
-impl From<ListPat> for Pat {
-    fn from(node: ListPat) -> Pat {
-        Pat::ListPat(node)
-    }
-}
-impl From<CompoundPat> for Pat {
-    fn from(node: CompoundPat) -> Pat {
-        Pat::CompoundPat(node)
-    }
-}
-impl From<WherePat> for Pat {
-    fn from(node: WherePat) -> Pat {
-        Pat::WherePat(node)
-    }
-}
-impl From<SomeThingPat> for Pat {
-    fn from(node: SomeThingPat) -> Pat {
-        Pat::SomeThingPat(node)
-    }
-}
-impl AstNode for Pat {
-    fn can_cast(kind: SyntaxKind) -> bool {
-        matches!(
-            kind, IDENT_PAT | VAR_PAT | META_IDENT_PAT | LITERAL_PAT | UNIT_PAT |
-            WILDCARD_PAT | NAMED_PAT | VAL_OF_PAT | LIST_OF_PAT | SPLIT_PAT | LIST_PAT |
-            COMPOUND_PAT | WHERE_PAT | SOME_THING_PAT
-        )
-    }
-    fn cast(syntax: SyntaxNode) -> Option<Self> {
-        let res = match syntax.kind() {
-            IDENT_PAT => Pat::IdentPat(IdentPat { syntax }),
-            VAR_PAT => Pat::VarPat(VarPat { syntax }),
-            META_IDENT_PAT => Pat::MetaIdentPat(MetaIdentPat { syntax }),
-            LITERAL_PAT => Pat::LiteralPat(LiteralPat { syntax }),
-            UNIT_PAT => Pat::UnitPat(UnitPat { syntax }),
-            WILDCARD_PAT => Pat::WildcardPat(WildcardPat { syntax }),
-            NAMED_PAT => Pat::NamedPat(NamedPat { syntax }),
-            VAL_OF_PAT => Pat::ValOfPat(ValOfPat { syntax }),
-            LIST_OF_PAT => Pat::ListOfPat(ListOfPat { syntax }),
-            SPLIT_PAT => Pat::SplitPat(SplitPat { syntax }),
-            LIST_PAT => Pat::ListPat(ListPat { syntax }),
-            COMPOUND_PAT => Pat::CompoundPat(CompoundPat { syntax }),
-            WHERE_PAT => Pat::WherePat(WherePat { syntax }),
-            SOME_THING_PAT => Pat::SomeThingPat(SomeThingPat { syntax }),
-            _ => return None,
-        };
-        Some(res)
-    }
-    fn syntax(&self) -> &SyntaxNode {
-        match self {
-            Pat::IdentPat(it) => &it.syntax,
-            Pat::VarPat(it) => &it.syntax,
-            Pat::MetaIdentPat(it) => &it.syntax,
-            Pat::LiteralPat(it) => &it.syntax,
-            Pat::UnitPat(it) => &it.syntax,
-            Pat::WildcardPat(it) => &it.syntax,
-            Pat::NamedPat(it) => &it.syntax,
-            Pat::ValOfPat(it) => &it.syntax,
-            Pat::ListOfPat(it) => &it.syntax,
-            Pat::SplitPat(it) => &it.syntax,
-            Pat::ListPat(it) => &it.syntax,
-            Pat::CompoundPat(it) => &it.syntax,
-            Pat::WherePat(it) => &it.syntax,
-            Pat::SomeThingPat(it) => &it.syntax,
+            DefineName::DefineProc(it) => &it.syntax,
+            DefineName::ListPat(it) => &it.syntax,
         }
     }
 }
@@ -4571,6 +4473,123 @@ impl AstNode for Ded {
             Ded::TryDed(it) => &it.syntax,
             Ded::ConcludeDed(it) => &it.syntax,
             Ded::InferBlockDed(it) => &it.syntax,
+        }
+    }
+}
+impl From<IdentPat> for Pat {
+    fn from(node: IdentPat) -> Pat {
+        Pat::IdentPat(node)
+    }
+}
+impl From<VarPat> for Pat {
+    fn from(node: VarPat) -> Pat {
+        Pat::VarPat(node)
+    }
+}
+impl From<MetaIdentPat> for Pat {
+    fn from(node: MetaIdentPat) -> Pat {
+        Pat::MetaIdentPat(node)
+    }
+}
+impl From<LiteralPat> for Pat {
+    fn from(node: LiteralPat) -> Pat {
+        Pat::LiteralPat(node)
+    }
+}
+impl From<UnitPat> for Pat {
+    fn from(node: UnitPat) -> Pat {
+        Pat::UnitPat(node)
+    }
+}
+impl From<WildcardPat> for Pat {
+    fn from(node: WildcardPat) -> Pat {
+        Pat::WildcardPat(node)
+    }
+}
+impl From<NamedPat> for Pat {
+    fn from(node: NamedPat) -> Pat {
+        Pat::NamedPat(node)
+    }
+}
+impl From<ValOfPat> for Pat {
+    fn from(node: ValOfPat) -> Pat {
+        Pat::ValOfPat(node)
+    }
+}
+impl From<ListOfPat> for Pat {
+    fn from(node: ListOfPat) -> Pat {
+        Pat::ListOfPat(node)
+    }
+}
+impl From<SplitPat> for Pat {
+    fn from(node: SplitPat) -> Pat {
+        Pat::SplitPat(node)
+    }
+}
+impl From<ListPat> for Pat {
+    fn from(node: ListPat) -> Pat {
+        Pat::ListPat(node)
+    }
+}
+impl From<CompoundPat> for Pat {
+    fn from(node: CompoundPat) -> Pat {
+        Pat::CompoundPat(node)
+    }
+}
+impl From<WherePat> for Pat {
+    fn from(node: WherePat) -> Pat {
+        Pat::WherePat(node)
+    }
+}
+impl From<SomeThingPat> for Pat {
+    fn from(node: SomeThingPat) -> Pat {
+        Pat::SomeThingPat(node)
+    }
+}
+impl AstNode for Pat {
+    fn can_cast(kind: SyntaxKind) -> bool {
+        matches!(
+            kind, IDENT_PAT | VAR_PAT | META_IDENT_PAT | LITERAL_PAT | UNIT_PAT |
+            WILDCARD_PAT | NAMED_PAT | VAL_OF_PAT | LIST_OF_PAT | SPLIT_PAT | LIST_PAT |
+            COMPOUND_PAT | WHERE_PAT | SOME_THING_PAT
+        )
+    }
+    fn cast(syntax: SyntaxNode) -> Option<Self> {
+        let res = match syntax.kind() {
+            IDENT_PAT => Pat::IdentPat(IdentPat { syntax }),
+            VAR_PAT => Pat::VarPat(VarPat { syntax }),
+            META_IDENT_PAT => Pat::MetaIdentPat(MetaIdentPat { syntax }),
+            LITERAL_PAT => Pat::LiteralPat(LiteralPat { syntax }),
+            UNIT_PAT => Pat::UnitPat(UnitPat { syntax }),
+            WILDCARD_PAT => Pat::WildcardPat(WildcardPat { syntax }),
+            NAMED_PAT => Pat::NamedPat(NamedPat { syntax }),
+            VAL_OF_PAT => Pat::ValOfPat(ValOfPat { syntax }),
+            LIST_OF_PAT => Pat::ListOfPat(ListOfPat { syntax }),
+            SPLIT_PAT => Pat::SplitPat(SplitPat { syntax }),
+            LIST_PAT => Pat::ListPat(ListPat { syntax }),
+            COMPOUND_PAT => Pat::CompoundPat(CompoundPat { syntax }),
+            WHERE_PAT => Pat::WherePat(WherePat { syntax }),
+            SOME_THING_PAT => Pat::SomeThingPat(SomeThingPat { syntax }),
+            _ => return None,
+        };
+        Some(res)
+    }
+    fn syntax(&self) -> &SyntaxNode {
+        match self {
+            Pat::IdentPat(it) => &it.syntax,
+            Pat::VarPat(it) => &it.syntax,
+            Pat::MetaIdentPat(it) => &it.syntax,
+            Pat::LiteralPat(it) => &it.syntax,
+            Pat::UnitPat(it) => &it.syntax,
+            Pat::WildcardPat(it) => &it.syntax,
+            Pat::NamedPat(it) => &it.syntax,
+            Pat::ValOfPat(it) => &it.syntax,
+            Pat::ListOfPat(it) => &it.syntax,
+            Pat::SplitPat(it) => &it.syntax,
+            Pat::ListPat(it) => &it.syntax,
+            Pat::CompoundPat(it) => &it.syntax,
+            Pat::WherePat(it) => &it.syntax,
+            Pat::SomeThingPat(it) => &it.syntax,
         }
     }
 }
@@ -4761,6 +4780,11 @@ impl std::fmt::Display for ModuleDir {
         std::fmt::Display::fmt(self.syntax(), f)
     }
 }
+impl std::fmt::Display for DefineDir {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        std::fmt::Display::fmt(self.syntax(), f)
+    }
+}
 impl std::fmt::Display for Expr {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         std::fmt::Display::fmt(self.syntax(), f)
@@ -4771,12 +4795,12 @@ impl std::fmt::Display for DefineName {
         std::fmt::Display::fmt(self.syntax(), f)
     }
 }
-impl std::fmt::Display for Pat {
+impl std::fmt::Display for Ded {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         std::fmt::Display::fmt(self.syntax(), f)
     }
 }
-impl std::fmt::Display for Ded {
+impl std::fmt::Display for Pat {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         std::fmt::Display::fmt(self.syntax(), f)
     }
@@ -4916,21 +4940,6 @@ impl std::fmt::Display for DomainsDir {
         std::fmt::Display::fmt(self.syntax(), f)
     }
 }
-impl std::fmt::Display for DefineDir {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        std::fmt::Display::fmt(self.syntax(), f)
-    }
-}
-impl std::fmt::Display for DefineProcDir {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        std::fmt::Display::fmt(self.syntax(), f)
-    }
-}
-impl std::fmt::Display for DefineMultiDir {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        std::fmt::Display::fmt(self.syntax(), f)
-    }
-}
 impl std::fmt::Display for LoadDir {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         std::fmt::Display::fmt(self.syntax(), f)
@@ -5011,7 +5020,27 @@ impl std::fmt::Display for DeclareAttr {
         std::fmt::Display::fmt(self.syntax(), f)
     }
 }
+impl std::fmt::Display for InfixDefineDir {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        std::fmt::Display::fmt(self.syntax(), f)
+    }
+}
+impl std::fmt::Display for PrefixDefineDir {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        std::fmt::Display::fmt(self.syntax(), f)
+    }
+}
 impl std::fmt::Display for DefineNamedPattern {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        std::fmt::Display::fmt(self.syntax(), f)
+    }
+}
+impl std::fmt::Display for DefineProc {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        std::fmt::Display::fmt(self.syntax(), f)
+    }
+}
+impl std::fmt::Display for ListPat {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         std::fmt::Display::fmt(self.syntax(), f)
     }
@@ -5387,11 +5416,6 @@ impl std::fmt::Display for ListOfPat {
     }
 }
 impl std::fmt::Display for SplitPat {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        std::fmt::Display::fmt(self.syntax(), f)
-    }
-}
-impl std::fmt::Display for ListPat {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         std::fmt::Display::fmt(self.syntax(), f)
     }

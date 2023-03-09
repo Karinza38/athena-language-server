@@ -3,20 +3,21 @@ source: crates/parser/src/tests.rs
 description: "private define [a b] := [1 2]\n"
 input_file: crates/parser/test_data/parser/inline/ok/dir/0112_define_multi_private.ath
 ---
-DEFINE_MULTI_DIR
+INFIX_DEFINE_DIR
   PRIVATE_KW "private"
   WHITESPACE " "
   DEFINE_KW "define"
   WHITESPACE " "
-  L_BRACK "["
-  IDENT_PAT
-    IDENTIFIER
-      IDENT "a"
-  WHITESPACE " "
-  IDENT_PAT
-    IDENTIFIER
-      IDENT "b"
-  R_BRACK "]"
+  LIST_PAT
+    L_BRACK "["
+    IDENT_PAT
+      IDENTIFIER
+        IDENT "a"
+    WHITESPACE " "
+    IDENT_PAT
+      IDENTIFIER
+        IDENT "b"
+    R_BRACK "]"
   WHITESPACE " "
   COLON_EQ ":="
   WHITESPACE " "

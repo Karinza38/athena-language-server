@@ -367,7 +367,7 @@ SOURCE_FILE
             R_PAREN ")"
       WHITESPACE "\n\n    "
       DIR_STMT
-        DEFINE_DIR
+        INFIX_DEFINE_DIR
           DEFINE_KW "define"
           WHITESPACE " "
           IDENTIFIER
@@ -414,7 +414,7 @@ SOURCE_FILE
               R_PAREN ")"
       WHITESPACE "\n    \n    "
       DIR_STMT
-        DEFINE_DIR
+        INFIX_DEFINE_DIR
           DEFINE_KW "define"
           WHITESPACE " "
           IDENTIFIER
@@ -480,7 +480,7 @@ SOURCE_FILE
               R_PAREN ")"
       WHITESPACE "\n    "
       DIR_STMT
-        DEFINE_DIR
+        INFIX_DEFINE_DIR
           DEFINE_KW "define"
           WHITESPACE " "
           IDENTIFIER
@@ -570,7 +570,7 @@ SOURCE_FILE
               R_PAREN ")"
       WHITESPACE "\n\n\t"
       DIR_STMT
-        DEFINE_DIR
+        INFIX_DEFINE_DIR
           DEFINE_KW "define"
           WHITESPACE " "
           IDENTIFIER

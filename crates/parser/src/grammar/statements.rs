@@ -1,5 +1,5 @@
 use crate::{
-    grammar::{identifier, sorts::SORT_DECL_START},
+    grammar::{directives::DIR_AFTER_LPAREN, identifier, sorts::SORT_DECL_START},
     parser::Parser,
     token_set::TokenSet,
     SyntaxKind::{self, IDENT},
@@ -238,10 +238,18 @@ pub(crate) fn stmt(p: &mut Parser) -> bool {
     #[cfg(test)]
     eprintln!("stmt: {:?} {:?} {:?}", p.current(), p.nth(1), p.nth(2));
 
-    if p.at_one_of(DIR_START_SET) {
+    if p.at_one_of(DIR_START_SET.subtract(PHRASE_START_SET)) {
         dir_stmt(p);
-    } else if p.at_one_of(PHRASE_START_SET) {
+    } else if p.at_one_of(PHRASE_START_SET.subtract(DIR_START_SET)) {
         phrase_stmt(p);
+    } else if p.at_one_of(PHRASE_START_SET.intersect(DIR_START_SET)) {
+        assert!(p.at(T!['(']));
+
+        if p.peek_at_one_of(DIR_AFTER_LPAREN) {
+            dir_stmt(p);
+        } else {
+            phrase_stmt(p);
+        }
     } else {
         match p.current() {
             T![structure] => structure_stmt(p),

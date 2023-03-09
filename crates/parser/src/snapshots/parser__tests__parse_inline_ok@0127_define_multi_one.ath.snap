@@ -3,14 +3,15 @@ source: crates/parser/src/tests.rs
 description: "define [foo] := true\n"
 input_file: crates/parser/test_data/parser/inline/ok/dir/0127_define_multi_one.ath
 ---
-DEFINE_MULTI_DIR
+INFIX_DEFINE_DIR
   DEFINE_KW "define"
   WHITESPACE " "
-  L_BRACK "["
-  IDENT_PAT
-    IDENTIFIER
-      IDENT "foo"
-  R_BRACK "]"
+  LIST_PAT
+    L_BRACK "["
+    IDENT_PAT
+      IDENTIFIER
+        IDENT "foo"
+    R_BRACK "]"
   WHITESPACE " "
   COLON_EQ ":="
   WHITESPACE " "

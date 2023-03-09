@@ -1,0 +1,13 @@
+---
+source: crates/parser/src/tests.rs
+description: "(define)\n"
+input_file: crates/parser/test_data/parser/inline/err/dir/0145_define_prefix_no_name.ath
+---
+PREFIX_DEFINE_DIR
+  L_PAREN "("
+  DEFINE_KW "define"
+  R_PAREN ")"
+  WHITESPACE "\n"
+error 7: expected definition name
+error 7: expected value for define
+

@@ -250,7 +250,7 @@ fn list_of_pat(p: &mut Parser) {
 
 // test(pat) list_pat_empty
 // []
-fn list_pat(p: &mut Parser) {
+pub(crate) fn list_pat(p: &mut Parser) {
     assert!(p.at(T!['[']));
 
     let m = p.start();

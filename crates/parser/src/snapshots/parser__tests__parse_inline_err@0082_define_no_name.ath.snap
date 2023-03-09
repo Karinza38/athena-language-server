@@ -3,7 +3,7 @@ source: crates/parser/src/tests.rs
 description: "define := true\n"
 input_file: crates/parser/test_data/parser/inline/err/dir/0082_define_no_name.ath
 ---
-DEFINE_DIR
+INFIX_DEFINE_DIR
   DEFINE_KW "define"
   WHITESPACE " "
   COLON_EQ ":="

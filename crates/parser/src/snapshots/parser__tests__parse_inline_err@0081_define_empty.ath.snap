@@ -3,7 +3,7 @@ source: crates/parser/src/tests.rs
 description: "define foo :=\n"
 input_file: crates/parser/test_data/parser/inline/err/dir/0081_define_empty.ath
 ---
-DEFINE_DIR
+INFIX_DEFINE_DIR
   DEFINE_KW "define"
   WHITESPACE " "
   IDENTIFIER

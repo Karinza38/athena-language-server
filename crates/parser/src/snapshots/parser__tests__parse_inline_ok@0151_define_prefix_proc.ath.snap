@@ -1,9 +1,10 @@
 ---
 source: crates/parser/src/tests.rs
-description: "define (foo a b) := lambda () b\n"
-input_file: crates/parser/test_data/parser/inline/ok/dir/0082_define_proc.ath
+description: "(define (foo a b) (lambda () b))\n"
+input_file: crates/parser/test_data/parser/inline/ok/dir/0151_define_prefix_proc.ath
 ---
-INFIX_DEFINE_DIR
+PREFIX_DEFINE_DIR
+  L_PAREN "("
   DEFINE_KW "define"
   WHITESPACE " "
   DEFINE_PROC
@@ -20,17 +21,19 @@ INFIX_DEFINE_DIR
         IDENT "b"
     R_PAREN ")"
   WHITESPACE " "
-  COLON_EQ ":="
-  WHITESPACE " "
   EXPR_PHRASE
-    LAMBDA_EXPR
-      LAMBDA_KW "lambda"
-      WHITESPACE " "
+    APPLICATION_EXPR
       L_PAREN "("
+      LAMBDA_EXPR
+        LAMBDA_KW "lambda"
+        WHITESPACE " "
+        L_PAREN "("
+        R_PAREN ")"
+        WHITESPACE " "
+        IDENT_EXPR
+          IDENTIFIER
+            IDENT "b"
       R_PAREN ")"
-      WHITESPACE " "
-      IDENT_EXPR
-        IDENTIFIER
-          IDENT "b"
+  R_PAREN ")"
   WHITESPACE "\n"
 

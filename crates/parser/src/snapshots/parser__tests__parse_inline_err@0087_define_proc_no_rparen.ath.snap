@@ -3,12 +3,13 @@ source: crates/parser/src/tests.rs
 description: "define (foo := lambda () true\n"
 input_file: crates/parser/test_data/parser/inline/err/dir/0087_define_proc_no_rparen.ath
 ---
-DEFINE_PROC_DIR
+INFIX_DEFINE_DIR
   DEFINE_KW "define"
   WHITESPACE " "
-  L_PAREN "("
-  IDENTIFIER
-    IDENT "foo"
+  DEFINE_PROC
+    L_PAREN "("
+    IDENTIFIER
+      IDENT "foo"
   WHITESPACE " "
   COLON_EQ ":="
   WHITESPACE " "

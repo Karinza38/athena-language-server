@@ -1,6 +1,5 @@
 ---
 source: crates/parser/src/tests.rs
-assertion_line: 117
 description: "(|| (!claim A))\n"
 input_file: crates/parser/test_data/parser/inline/err/pat/0144_or_pat_bad_pat.ath
 ---
