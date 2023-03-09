@@ -61,7 +61,7 @@ MaybeWildcardTypedParam =
     | '_'
 
 OpAnnotatedParam =
-    Identifier ':' '(' 'OP' Identifier ')'
+    Identifier ':' '(' 'OP' Identifier Identifier? ')'
 
 //*******//
 // Sorts //
@@ -564,6 +564,9 @@ CompoundPat =
 
 WherePat =
     '(' Pat 'where' Expr ')'
+
+OrPat =
+    '(' '||' Pat* ')'
 
 SomeThing =
     'some-var'

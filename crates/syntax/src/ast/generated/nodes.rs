@@ -2115,6 +2115,25 @@ impl SomeThingPat {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
+pub struct OrPat {
+    pub(crate) syntax: SyntaxNode,
+}
+impl OrPat {
+    pub fn l_paren_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T!['('])
+    }
+    pub fn pipepipe_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T![||])
+    }
+    pub fn pats(&self) -> AstChildren<Pat> {
+        support::children(&self.syntax)
+    }
+    pub fn r_paren_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T![')'])
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct SomeThing {
     pub(crate) syntax: SyntaxNode,
 }
@@ -3672,6 +3691,17 @@ impl AstNode for WherePat {
 impl AstNode for SomeThingPat {
     fn can_cast(kind: SyntaxKind) -> bool {
         kind == SOME_THING_PAT
+    }
+    fn cast(syntax: SyntaxNode) -> Option<Self> {
+        if Self::can_cast(syntax.kind()) { Some(Self { syntax }) } else { None }
+    }
+    fn syntax(&self) -> &SyntaxNode {
+        &self.syntax
+    }
+}
+impl AstNode for OrPat {
+    fn can_cast(kind: SyntaxKind) -> bool {
+        kind == OR_PAT
     }
     fn cast(syntax: SyntaxNode) -> Option<Self> {
         if Self::can_cast(syntax.kind()) { Some(Self { syntax }) } else { None }
@@ -5377,6 +5407,11 @@ impl std::fmt::Display for WherePat {
     }
 }
 impl std::fmt::Display for SomeThingPat {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        std::fmt::Display::fmt(self.syntax(), f)
+    }
+}
+impl std::fmt::Display for OrPat {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         std::fmt::Display::fmt(self.syntax(), f)
     }

@@ -299,54 +299,95 @@ fn compound_or_where_pat(p: &mut Parser) {
     }
 }
 
+// test(pat) or_pat
+// (|| a b c)
+fn or_pat(p: &mut Parser) {
+    assert!(p.at(T!['(']) && p.peek_at(T![||]));
+
+    let m = p.start();
+    p.bump(T!['(']);
+    p.bump(T![||]);
+
+    while !p.at_end() && !p.at(T![')']) {
+        if !pat(p) {
+            // test_err(pat) or_pat_bad_pat
+            // (|| (!claim A))
+            p.err_recover("expected a pattern", TokenSet::new(&[T![')']]));
+        }
+    }
+    p.expect(T![')']);
+    m.complete(p, SyntaxKind::OR_PAT);
+}
+
 pub(crate) const PAT_START_SET: TokenSet =
     TokenSet::new(&[IDENT, T![?], T!['\''], T![_], T!['('], T![bind], T!['[']]).union(LIT_SET);
 
 pub(crate) fn pat(p: &mut Parser) -> bool {
     #[cfg(test)]
     eprintln!("parsing pat: {:?} {:?}", p.current(), p.nth(1));
-    if p.at(IDENT) {
-        if p.peek_at(T![:]) {
-            annotated_ident_pat(p);
-        } else {
-            ident_pat(p);
-        }
-    } else if p.at(T![?]) {
-        var_pat(p);
-    } else if p.at_one_of(LIT_SET) {
-        literal_pat(p);
-    } else if p.at(T!['\'']) {
-        meta_ident_pat(p);
-    } else if p.at(T!['(']) {
-        if p.peek_at(T![')']) {
-            unit_pat(p);
-        } else if p.peek_at(IDENT) {
-            if p.nth_at(2, T![as]) {
-                named_pat(p);
+    match p.current() {
+        IDENT => {
+            if p.peek_at(T![:]) {
+                annotated_ident_pat(p);
             } else {
-                compound_or_where_pat(p);
+                ident_pat(p);
             }
-        } else if p.peek_at(T![bind]) {
-            named_pat(p);
-        } else if p.peek_at_one_of(SOME_THING_SET) {
-            some_thing_pat(p);
-        } else if p.peek_at(T![val - of]) {
-            val_of_pat(p);
-        } else if p.peek_at(T![list - of]) {
-            list_of_pat(p);
-        } else if p.peek_at(T![split]) {
-            split_pat(p);
-        } else if p.peek_at_one_of(PAT_START_SET) {
-            compound_or_where_pat(p);
-        } else {
-            return false;
         }
-    } else if p.at(T![_]) {
-        wildcard_pat(p);
-    } else if p.at(T!['[']) {
-        list_pat(p);
-    } else {
-        return false;
+        c if LIT_SET.contains(c) => {
+            literal_pat(p);
+        }
+        T![?] => {
+            var_pat(p);
+        }
+        T!['\''] => {
+            meta_ident_pat(p);
+        }
+        T!['('] => {
+            let peek = p.nth(1);
+            match peek {
+                T![')'] => {
+                    unit_pat(p);
+                }
+                IDENT => {
+                    if p.nth_at(2, T![as]) {
+                        named_pat(p);
+                    } else {
+                        compound_or_where_pat(p);
+                    }
+                }
+                T![bind] => {
+                    named_pat(p);
+                }
+                T![||] => {
+                    or_pat(p);
+                }
+                pk if SOME_THING_SET.contains(pk) => {
+                    some_thing_pat(p);
+                }
+                T![val - of] => {
+                    val_of_pat(p);
+                }
+                T![list - of] => {
+                    list_of_pat(p);
+                }
+                T![split] => {
+                    split_pat(p);
+                }
+                pk if PAT_START_SET.contains(pk) => {
+                    compound_or_where_pat(p);
+                }
+                _ => {
+                    return false;
+                }
+            }
+        }
+        T![_] => {
+            wildcard_pat(p);
+        }
+        T!['['] => {
+            list_pat(p);
+        }
+        _ => return false,
     }
 
     true

@@ -193,6 +193,7 @@ pub enum SyntaxKind {
     WHERE_PAT,
     SOME_THING_PAT,
     SOME_THING,
+    OR_PAT,
     MATCH_ARM,
     TRY_ARM,
     LET_PART,

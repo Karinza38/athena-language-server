@@ -1,0 +1,28 @@
+---
+source: crates/parser/src/tests.rs
+assertion_line: 117
+description: "(|| (!claim A))\n"
+input_file: crates/parser/test_data/parser/inline/err/pat/0144_or_pat_bad_pat.ath
+---
+ERROR
+  OR_PAT
+    L_PAREN "("
+    PIPE2 "||"
+    WHITESPACE " "
+    ERROR
+      L_PAREN "("
+    ERROR
+      BANG "!"
+    IDENT_PAT
+      IDENTIFIER
+        IDENT "claim"
+    WHITESPACE " "
+    IDENT_PAT
+      IDENTIFIER
+        IDENT "A"
+    R_PAREN ")"
+  R_PAREN ")"
+  WHITESPACE "\n"
+error 4: expected a pattern
+error 5: expected a pattern
+

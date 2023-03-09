@@ -1,0 +1,4 @@
+match p {
+	(|| (some-atom _) (~ (some-atom _))) => true
+| _  => false
+}

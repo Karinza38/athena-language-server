@@ -188,6 +188,7 @@ KindsSrc(
         "WHERE_PAT",
         "SOME_THING_PAT",
         "SOME_THING",
+        "OR_PAT",
         // Misc
         "MATCH_ARM",
         "TRY_ARM",
