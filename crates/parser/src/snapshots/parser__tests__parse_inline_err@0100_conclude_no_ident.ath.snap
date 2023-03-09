@@ -10,9 +10,10 @@ CONCLUDE_DED
   WHITESPACE " "
   APPLICATION_EXPR
     L_PAREN "("
-    IDENT_EXPR
-      IDENTIFIER
-        IDENT "factorial"
+    EXPR_PHRASE
+      IDENT_EXPR
+        IDENTIFIER
+          IDENT "factorial"
     WHITESPACE " "
     EXPR_PHRASE
       APPLICATION_EXPR

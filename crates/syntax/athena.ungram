@@ -271,7 +271,7 @@ LiteralExpr =
     Literal
 
 UnitExpr =
-    Unit
+    '(' ')'
 
 MetaIdentExpr =
     MetaIdent
@@ -486,6 +486,9 @@ InferFrom =
 
 InferBy =
     Expr ('by' by_expr:Expr)? 'on' (Phrase (',' Phrase)*)
+
+ByDed =
+    '(' Expr 'by' Ded ')' 
 
 //**********//
 // Patterns //

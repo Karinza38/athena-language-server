@@ -28,9 +28,10 @@ LET_REC_EXPR
     WHITESPACE " "
     APPLICATION_EXPR
       L_PAREN "("
-      IDENT_EXPR
-        IDENTIFIER
-          IDENT "myfun"
+      EXPR_PHRASE
+        IDENT_EXPR
+          IDENTIFIER
+            IDENT "myfun"
       WHITESPACE " "
       EXPR_PHRASE
         LITERAL_EXPR

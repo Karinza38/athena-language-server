@@ -13,9 +13,10 @@ WHILE_EXPR
   WHITESPACE " "
   APPLICATION_EXPR
     L_PAREN "("
-    IDENT_EXPR
-      IDENTIFIER
-        IDENT "print"
+    EXPR_PHRASE
+      IDENT_EXPR
+        IDENTIFIER
+          IDENT "print"
     WHITESPACE " "
     EXPR_PHRASE
       LITERAL_EXPR

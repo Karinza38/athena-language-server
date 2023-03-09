@@ -1,0 +1,17 @@
+---
+source: crates/parser/src/tests.rs
+description: "(A by )\n"
+input_file: crates/parser/test_data/parser/inline/err/ded/0136_by_ded_partial_no_ded.ath
+---
+BY_DED
+  L_PAREN "("
+  IDENT_EXPR
+    IDENTIFIER
+      IDENT "A"
+  WHITESPACE " "
+  BY_KW "by"
+  WHITESPACE " "
+  R_PAREN ")"
+  WHITESPACE "\n"
+error 5: expected a deduction
+

@@ -92,9 +92,10 @@ SOURCE_FILE
           WHITESPACE " "
           APPLICATION_EXPR
             L_PAREN "("
-            IDENT_EXPR
-              IDENTIFIER
-                IDENT "forall"
+            EXPR_PHRASE
+              IDENT_EXPR
+                IDENTIFIER
+                  IDENT "forall"
             WHITESPACE " "
             EXPR_PHRASE
               IDENT_EXPR
@@ -158,9 +159,10 @@ SOURCE_FILE
           WHITESPACE " "
           APPLICATION_EXPR
             L_PAREN "("
-            IDENT_EXPR
-              IDENTIFIER
-                IDENT "forall"
+            EXPR_PHRASE
+              IDENT_EXPR
+                IDENTIFIER
+                  IDENT "forall"
             WHITESPACE " "
             EXPR_PHRASE
               IDENT_EXPR
@@ -261,9 +263,10 @@ SOURCE_FILE
           WHITESPACE " "
           APPLICATION_EXPR
             L_PAREN "("
-            IDENT_EXPR
-              IDENTIFIER
-                IDENT "forall"
+            EXPR_PHRASE
+              IDENT_EXPR
+                IDENTIFIER
+                  IDENT "forall"
             WHITESPACE " "
             EXPR_PHRASE
               IDENT_EXPR
@@ -609,9 +612,10 @@ SOURCE_FILE
                 WHITESPACE " "
                 APPLICATION_EXPR
                   L_PAREN "("
-                  IDENT_EXPR
-                    IDENTIFIER
-                      IDENT "factorial"
+                  EXPR_PHRASE
+                    IDENT_EXPR
+                      IDENTIFIER
+                        IDENT "factorial"
                   WHITESPACE " "
                   EXPR_PHRASE
                     APPLICATION_EXPR
@@ -694,30 +698,31 @@ SOURCE_FILE
                 WHITESPACE " "
                 APPLICATION_EXPR
                   L_PAREN "("
-                  APPLICATION_EXPR
-                    L_PAREN "("
-                    IDENT_EXPR
-                      IDENTIFIER
-                        IDENT "factorial"
-                    WHITESPACE " "
-                    EXPR_PHRASE
-                      APPLICATION_EXPR
-                        L_PAREN "("
-                        IDENT_EXPR
-                          IDENTIFIER
-                            IDENT "m"
-                        WHITESPACE " "
-                        EXPR_PHRASE
+                  EXPR_PHRASE
+                    APPLICATION_EXPR
+                      L_PAREN "("
+                      IDENT_EXPR
+                        IDENTIFIER
+                          IDENT "factorial"
+                      WHITESPACE " "
+                      EXPR_PHRASE
+                        APPLICATION_EXPR
+                          L_PAREN "("
                           IDENT_EXPR
                             IDENTIFIER
-                              IDENT "-"
-                        WHITESPACE " "
-                        EXPR_PHRASE
-                          IDENT_EXPR
-                            IDENTIFIER
-                              IDENT "one"
-                        R_PAREN ")"
-                    R_PAREN ")"
+                              IDENT "m"
+                          WHITESPACE " "
+                          EXPR_PHRASE
+                            IDENT_EXPR
+                              IDENTIFIER
+                                IDENT "-"
+                          WHITESPACE " "
+                          EXPR_PHRASE
+                            IDENT_EXPR
+                              IDENTIFIER
+                                IDENT "one"
+                          R_PAREN ")"
+                      R_PAREN ")"
                   WHITESPACE " "
                   EXPR_PHRASE
                     IDENT_EXPR

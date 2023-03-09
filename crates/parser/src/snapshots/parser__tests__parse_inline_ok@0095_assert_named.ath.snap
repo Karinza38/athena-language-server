@@ -13,9 +13,10 @@ ASSERT_DIR
   WHITESPACE " "
   APPLICATION_EXPR
     L_PAREN "("
-    IDENT_EXPR
-      IDENTIFIER
-        IDENT "bar"
+    EXPR_PHRASE
+      IDENT_EXPR
+        IDENTIFIER
+          IDENT "bar"
     WHITESPACE " "
     EXPR_PHRASE
       IDENT_EXPR

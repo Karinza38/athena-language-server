@@ -1,0 +1,16 @@
+---
+source: crates/parser/src/tests.rs
+description: "(B )\n"
+input_file: crates/parser/test_data/parser/inline/err/ded/0139_by_ded_no_ded.ath
+---
+BY_DED
+  L_PAREN "("
+  IDENT_EXPR
+    IDENTIFIER
+      IDENT "B"
+  WHITESPACE " "
+  R_PAREN ")"
+  WHITESPACE "\n"
+error 2: expected to find `by`
+error 2: expected a deduction
+

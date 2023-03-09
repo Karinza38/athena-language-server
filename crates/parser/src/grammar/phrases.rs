@@ -548,18 +548,37 @@ pub(crate) fn expr_or_ded(p: &mut Parser) -> Option<ExprOrDed> {
             (T![try], _) => {
                 return Some(try_expr_or_ded(p, None));
             }
-            (T!['('], peek) if DED_AFTER_LPAREN_SET.contains(peek) => {
+            (T!['('], peek)
+                if DED_AFTER_LPAREN_SET
+                    .subtract(EXPR_AFTER_LPAREN_SET)
+                    .contains(peek) =>
+            {
                 if !ded(p) {
                     p.error("expected deduction");
                 }
                 return Some(ExprOrDed::Ded);
             }
             (T!['('], peek) if EXPR_AFTER_LPAREN_SET.contains(peek) => {
-                if !expr(p) {
-                    p.error("expected expression");
-                    return Some(ExprOrDed::Ambig);
+                let m = p.start();
+                p.bump(T!['(']);
+
+                if p.at_one_of(EXPR_START_SET) {
+                    if !expr(p) {
+                        p.error("expected expression");
+                        m.abandon(p);
+                        return Some(ExprOrDed::Ambig);
+                    }
+                    if p.at(T![by]) {
+                        super::deductions::by_ded_partial(p, m);
+                        return Some(ExprOrDed::Ded);
+                    } else {
+                        super::expressions::opened_application_expr(p, m);
+                        return Some(ExprOrDed::Expr);
+                    }
+                } else {
+                    super::expressions::opened_expr(p, m);
+                    return Some(ExprOrDed::Expr);
                 }
-                return Some(ExprOrDed::Expr);
             }
             (T![let], _) => {
                 return Some(let_expr_or_ded(p, None));
@@ -581,8 +600,6 @@ pub(crate) fn expr_or_ded(p: &mut Parser) -> Option<ExprOrDed> {
 
     None
 }
-
-// pub(crate) fn opt_phrase(p: &mut Parser) -> Result<(), Marker
 
 const AMBIG_START: TokenSet = EXPR_START_SET.intersect(DED_START_SET);
 

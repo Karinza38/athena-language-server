@@ -4,8 +4,7 @@ description: "()\n"
 input_file: crates/parser/test_data/parser/inline/ok/expr/0003_simple_unit_expr.ath
 ---
 UNIT_EXPR
-  UNIT
-    L_PAREN "("
-    R_PAREN ")"
+  L_PAREN "("
+  R_PAREN ")"
   WHITESPACE "\n"
 

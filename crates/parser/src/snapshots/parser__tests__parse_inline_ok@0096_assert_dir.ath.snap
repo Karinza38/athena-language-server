@@ -8,9 +8,10 @@ ASSERT_DIR
   WHITESPACE " "
   APPLICATION_EXPR
     L_PAREN "("
-    IDENT_EXPR
-      IDENTIFIER
-        IDENT "foo"
+    EXPR_PHRASE
+      IDENT_EXPR
+        IDENTIFIER
+          IDENT "foo"
     WHITESPACE " "
     EXPR_PHRASE
       IDENT_EXPR

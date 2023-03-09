@@ -1,11 +1,11 @@
 use super::{
     identifier, literal,
-    phrases::{phrase, ExprOrDed},
+    phrases::{phrase, ExprOrDed, PHRASE_START_SET},
     LIT_SET,
 };
 use crate::{
     grammar::deductions::ded,
-    parser::Parser,
+    parser::{Marker, Parser},
     token_set::TokenSet,
     SyntaxKind::{self, IDENT, IDENT_EXPR, UNIT_EXPR},
     T,
@@ -34,10 +34,10 @@ fn literal_expr(p: &mut Parser) {
 
 // test(expr) simple_unit_expr
 // ()
-fn unit_expr(p: &mut Parser) {
-    assert!(p.at(T!['(']));
-    let m = p.start();
-    super::unit(p);
+
+/// parses a unit expression with the opening '(' already consumed
+fn opened_unit_expr(p: &mut Parser, m: Marker) {
+    p.expect(T![')']);
     m.complete(p, UNIT_EXPR);
 }
 
@@ -106,19 +106,22 @@ fn lambda_expr(p: &mut Parser) {
 
 // test(expr) simple_application_expr
 // (foo bar baz)
-fn application_expr(p: &mut Parser) {
-    assert!(p.at(T!['(']));
 
-    let m = p.start();
-    p.bump(T!['(']);
-
-    expr(p);
-
+/// parses an application expression with the opening '(' already consumed
+pub(crate) fn opened_application_expr(p: &mut Parser, m: Marker) {
     // test(expr) application_expr_no_args
     // (foo)
-    while phrase(p) {
+    while !p.at(T![')']) && !p.at_end() {
         // test(expr) nested_application_expr
         // (foo (bar baz))
+        if !phrase(p) {
+            // test_err(expr) application_expr_error
+            // (foo domain D)
+            p.err_recover(
+                "Expected to find a phrase for the application argument",
+                TokenSet::new(&[T![')']]).union(PHRASE_START_SET),
+            );
+        }
     }
 
     p.expect(T![')']);
@@ -145,17 +148,22 @@ fn list_expr(p: &mut Parser) {
 
 // test(expr) simple_and_expr
 // (&& foo bar true)
-fn and_expr(p: &mut Parser) {
-    assert!(p.at(T!['(']));
 
-    let m = p.start();
-    p.bump(T!['(']);
-
+/// parses an and expression with the opening '(' already consumed
+fn opened_and_expr(p: &mut Parser, m: Marker) {
     p.bump(T![&&]);
 
-    while phrase(p) {
+    while !p.at(T![')']) && !p.at_end() {
         // test(expr) nested_and_expr
         // (&& bar (&& baz))
+        if !phrase(p) {
+            // test_err(expr) and_expr_error
+            // (&& bar domain D)
+            p.err_recover(
+                "Expected to find a phrase in the and expression",
+                TokenSet::new(&[T![')']]).union(PHRASE_START_SET),
+            );
+        }
     }
 
     p.expect(T![')']);
@@ -164,36 +172,46 @@ fn and_expr(p: &mut Parser) {
 
 // test(expr) simple_or_expr
 // (|| foo bar true)
-fn or_expr(p: &mut Parser) {
-    assert!(p.at(T!['(']));
 
-    let m = p.start();
-    p.bump(T!['(']);
-
+/// parses an or expression with the opening '(' already consumed
+fn opened_or_expr(p: &mut Parser, m: Marker) {
     p.bump(T![||]);
 
-    while phrase(p) {
+    while !p.at(T![')']) && !p.at_end() {
         // test(expr) nested_or_expr
         // (|| bar (|| baz))
+        if !phrase(p) {
+            // test_err(expr) or_expr_error
+            // (|| bar domain D)
+            p.err_recover(
+                "Expected to find a phrase in the or expression",
+                TokenSet::new(&[T![')']]).union(PHRASE_START_SET),
+            );
+        }
     }
 
     p.expect(T![')']);
     m.complete(p, SyntaxKind::OR_EXPR);
 }
 
+// seq expression with the opening '(' already consumed
+
 // test(expr) simple_seq_expr
 // (seq foo bar baz)
-fn seq_expr(p: &mut Parser) {
-    assert!(p.at(T!['(']));
-
-    let m = p.start();
-    p.bump(T!['(']);
-
+fn opened_seq_expr(p: &mut Parser, m: Marker) {
     p.bump(T![seq]);
 
-    while phrase(p) {
+    while !p.at(T![')']) && !p.at_end() {
         // test(expr) nested_seq_expr
         // (seq bar (seq baz))
+        if !phrase(p) {
+            // test_err(expr) seq_expr_error
+            // (seq bar domain D)
+            p.err_recover(
+                "Expected to find a phrase in the seq expression",
+                TokenSet::new(&[T![')']]).union(PHRASE_START_SET),
+            );
+        }
     }
 
     p.expect(T![')']);
@@ -455,6 +473,32 @@ fn wildcard_expr(p: &mut Parser) {
     m.complete(p, SyntaxKind::WILDCARD_EXPR);
 }
 
+pub(crate) fn opened_expr(p: &mut Parser, m: Marker) {
+    match p.current() {
+        T![')'] => {
+            opened_unit_expr(p, m);
+        }
+        T![||] => {
+            opened_or_expr(p, m);
+        }
+        T![&&] => {
+            opened_and_expr(p, m);
+        }
+        T![seq] => {
+            opened_seq_expr(p, m);
+        }
+        c if PHRASE_START_SET.contains(c) => {
+            opened_application_expr(p, m);
+        }
+        _ => {
+            p.err_recover(
+                "Expected to find a valid expression",
+                TokenSet::new(&[T![')']]).union(PHRASE_START_SET),
+            );
+        }
+    }
+}
+
 pub(crate) const EXPR_START_SET: TokenSet = TokenSet::new(&[
     IDENT,
     T!['('],
@@ -495,17 +539,9 @@ pub(crate) fn expr(p: &mut Parser) -> bool {
     } else if p.at_one_of(super::LIT_SET) {
         literal_expr(p);
     } else if p.at(T!['(']) {
-        if p.nth_at(1, T![')']) {
-            unit_expr(p);
-        } else if p.nth_at(1, T![&&]) {
-            and_expr(p);
-        } else if p.nth_at(1, T![||]) {
-            or_expr(p);
-        } else if p.nth_at(1, T![seq]) {
-            seq_expr(p);
-        } else {
-            application_expr(p);
-        }
+        let m = p.start();
+        p.bump(T!['(']);
+        opened_expr(p, m);
     } else if p.at(T![?]) {
         term_var_expr(p);
     } else if p.at(T!['\'']) {

@@ -16,9 +16,10 @@ LET_REC_EXPR
     WHITESPACE " "
     APPLICATION_EXPR
       L_PAREN "("
-      IDENT_EXPR
-        IDENTIFIER
-          IDENT "hotline"
+      EXPR_PHRASE
+        IDENT_EXPR
+          IDENTIFIER
+            IDENT "hotline"
       WHITESPACE " "
       EXPR_PHRASE
         IDENT_EXPR

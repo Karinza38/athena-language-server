@@ -30,9 +30,10 @@ INDUCT_DED
       WHITESPACE " "
       APPLICATION_EXPR
         L_PAREN "("
-        IDENT_EXPR
-          IDENTIFIER
-            IDENT "factorial"
+        EXPR_PHRASE
+          IDENT_EXPR
+            IDENTIFIER
+              IDENT "factorial"
         WHITESPACE " "
         EXPR_PHRASE
           APPLICATION_EXPR
@@ -115,30 +116,31 @@ INDUCT_DED
       WHITESPACE " "
       APPLICATION_EXPR
         L_PAREN "("
-        APPLICATION_EXPR
-          L_PAREN "("
-          IDENT_EXPR
-            IDENTIFIER
-              IDENT "factorial"
-          WHITESPACE " "
-          EXPR_PHRASE
-            APPLICATION_EXPR
-              L_PAREN "("
-              IDENT_EXPR
-                IDENTIFIER
-                  IDENT "m"
-              WHITESPACE " "
-              EXPR_PHRASE
+        EXPR_PHRASE
+          APPLICATION_EXPR
+            L_PAREN "("
+            IDENT_EXPR
+              IDENTIFIER
+                IDENT "factorial"
+            WHITESPACE " "
+            EXPR_PHRASE
+              APPLICATION_EXPR
+                L_PAREN "("
                 IDENT_EXPR
                   IDENTIFIER
-                    IDENT "-"
-              WHITESPACE " "
-              EXPR_PHRASE
-                IDENT_EXPR
-                  IDENTIFIER
-                    IDENT "one"
-              R_PAREN ")"
-          R_PAREN ")"
+                    IDENT "m"
+                WHITESPACE " "
+                EXPR_PHRASE
+                  IDENT_EXPR
+                    IDENTIFIER
+                      IDENT "-"
+                WHITESPACE " "
+                EXPR_PHRASE
+                  IDENT_EXPR
+                    IDENTIFIER
+                      IDENT "one"
+                R_PAREN ")"
+            R_PAREN ")"
         WHITESPACE " "
         EXPR_PHRASE
           IDENT_EXPR

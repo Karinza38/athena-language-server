@@ -1,7 +1,7 @@
 ---
 source: crates/parser/src/tests.rs
-description: "(foo bar baz)\n"
-input_file: crates/parser/test_data/parser/inline/ok/expr/0012_simple_application_expr.ath
+description: "(foo domain D)\n"
+input_file: crates/parser/test_data/parser/inline/err/expr/0140_application_expr_error.ath
 ---
 APPLICATION_EXPR
   L_PAREN "("
@@ -10,15 +10,14 @@ APPLICATION_EXPR
       IDENTIFIER
         IDENT "foo"
   WHITESPACE " "
-  EXPR_PHRASE
-    IDENT_EXPR
-      IDENTIFIER
-        IDENT "bar"
+  ERROR
+    DOMAIN_KW "domain"
   WHITESPACE " "
   EXPR_PHRASE
     IDENT_EXPR
       IDENTIFIER
-        IDENT "baz"
+        IDENT "D"
   R_PAREN ")"
   WHITESPACE "\n"
+error 5: Expected to find a phrase for the application argument
 

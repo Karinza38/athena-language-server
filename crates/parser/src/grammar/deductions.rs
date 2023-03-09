@@ -784,6 +784,52 @@ fn infer_block_ded(p: &mut Parser) -> bool {
     true
 }
 
+pub(crate) fn by_ded_partial(p: &mut Parser, m: Marker) {
+    assert!(p.at(T![by]));
+
+    p.bump(T![by]);
+
+    if !ded(p) {
+        // test_err(ded) by_ded_partial_no_ded
+        // (A by )
+        p.error("expected a deduction");
+    }
+
+    p.expect(T![')']);
+
+    m.complete(p, SyntaxKind::BY_DED);
+}
+
+// test(ded) by_ded
+// (A by (!claim B))
+fn by_ded(p: &mut Parser) {
+    assert!(p.at(T!['(']));
+
+    let m = p.start();
+    p.bump(T!['(']);
+
+    if !expr(p) {
+        // test_err(ded) by_ded_no_expr
+        // ( by (!claim A))
+        p.error("expected an expression");
+    }
+
+    if p.at(T![by]) {
+        by_ded_partial(p, m);
+    } else {
+        // test_err(ded) by_ded_no_by
+        // (B (!claim A))
+        p.error("expected to find `by`");
+        if !ded(p) {
+            // test_err(ded) by_ded_no_ded
+            // (B )
+            p.error("expected a deduction");
+        }
+        p.expect(T![')']);
+        m.complete(p, SyntaxKind::BY_DED);
+    }
+}
+
 pub(crate) const DED_START_SET: TokenSet = TokenSet::new(&[
     T!['('],
     T![assume],
@@ -805,7 +851,8 @@ pub(crate) const DED_START_SET: TokenSet = TokenSet::new(&[
     T![begin],
 ]);
 
-pub(crate) const DED_AFTER_LPAREN_SET: TokenSet = TokenSet::new(&[T![apply - method], T![!]]);
+pub(crate) const DED_AFTER_LPAREN_SET: TokenSet =
+    TokenSet::new(&[T![apply - method], T![!]]).union(EXPR_START_SET);
 
 pub(crate) fn ded(p: &mut Parser) -> bool {
     #[cfg(test)]
@@ -816,6 +863,8 @@ pub(crate) fn ded(p: &mut Parser) -> bool {
                 apply_method_call_ded(p);
             } else if p.peek_at(T![!]) {
                 bang_method_call_ded(p);
+            } else if p.peek_at_one_of(EXPR_START_SET) || p.peek_at(T![by]) {
+                by_ded(p);
             } else {
                 return false;
             }

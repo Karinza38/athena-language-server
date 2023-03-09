@@ -1835,6 +1835,28 @@ impl InferBy {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
+pub struct ByDed {
+    pub(crate) syntax: SyntaxNode,
+}
+impl ByDed {
+    pub fn l_paren_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T!['('])
+    }
+    pub fn expr(&self) -> Option<Expr> {
+        support::child(&self.syntax)
+    }
+    pub fn by_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T![by])
+    }
+    pub fn ded(&self) -> Option<Ded> {
+        support::child(&self.syntax)
+    }
+    pub fn r_paren_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T![')'])
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct VarPat {
     pub(crate) syntax: SyntaxNode,
 }
@@ -3423,6 +3445,17 @@ impl AstNode for InferFrom {
 impl AstNode for InferBy {
     fn can_cast(kind: SyntaxKind) -> bool {
         kind == INFER_BY
+    }
+    fn cast(syntax: SyntaxNode) -> Option<Self> {
+        if Self::can_cast(syntax.kind()) { Some(Self { syntax }) } else { None }
+    }
+    fn syntax(&self) -> &SyntaxNode {
+        &self.syntax
+    }
+}
+impl AstNode for ByDed {
+    fn can_cast(kind: SyntaxKind) -> bool {
+        kind == BY_DED
     }
     fn cast(syntax: SyntaxNode) -> Option<Self> {
         if Self::can_cast(syntax.kind()) { Some(Self { syntax }) } else { None }
@@ -5142,6 +5175,11 @@ impl std::fmt::Display for InferFrom {
     }
 }
 impl std::fmt::Display for InferBy {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        std::fmt::Display::fmt(self.syntax(), f)
+    }
+}
+impl std::fmt::Display for ByDed {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         std::fmt::Display::fmt(self.syntax(), f)
     }

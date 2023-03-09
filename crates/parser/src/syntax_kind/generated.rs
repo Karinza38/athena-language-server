@@ -164,6 +164,7 @@ pub enum SyntaxKind {
     LET_DED,
     LET_REC_DED,
     TRY_DED,
+    BY_DED,
     TRY_DED_ARM,
     MATCH_DED_ARM,
     CHECK_DED_ARM,
