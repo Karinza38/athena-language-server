@@ -2,7 +2,7 @@ use crate::grammar::expressions::expr;
 use crate::grammar::identifier;
 use crate::grammar::patterns::pat;
 use crate::grammar::phrases::phrase;
-use crate::grammar::sorts::sort_decl;
+use crate::grammar::sorts::{sort_decl, SORT_DECL_START};
 use crate::grammar::statements::{stmt, STMT_START_SET};
 use crate::parser::Parser;
 use crate::token_set::TokenSet;
@@ -295,6 +295,7 @@ fn func_sorts(p: &mut Parser) {
     m.complete(p, SyntaxKind::FUNC_SORTS);
 }
 
+/// Parses a sort variable declaration (e.g. `(A,B,C)` in `declare foo: (A,B,C) -> Int`)
 fn sort_vars_decl(p: &mut Parser) {
     assert!(p.at(T!['(']));
 
@@ -379,6 +380,58 @@ fn declare_attrs(p: &mut Parser) {
     m.complete(p, SyntaxKind::DECLARE_ATTRS);
 }
 
+enum SortVarsOrConstantSort {
+    SortVars,
+    ConstantSort,
+    Ambig,
+}
+
+fn sort_vars_or_constant_sort(p: &mut Parser) -> SortVarsOrConstantSort {
+    assert!(p.at(T!['(']));
+
+    let peek1 = p.nth(1);
+    let peek2 = p.nth(2);
+
+    match (peek1, peek2) {
+        (T![')'], _) => {
+            let m = p.start();
+            p.bump(T!['(']);
+            p.bump(T![')']);
+
+            if p.at(T!['[']) {
+                p.error("Must have at least one sort variable in sort variable declaration");
+                m.complete(p, SyntaxKind::SORT_VARS_DECL);
+                return SortVarsOrConstantSort::SortVars;
+            } else {
+                m.complete(p, SyntaxKind::COMPOUND_SORT_DECL);
+                return SortVarsOrConstantSort::ConstantSort;
+            }
+        }
+        (IDENT, T![,]) | (IDENT, T![')']) => {
+            sort_vars_decl(p);
+            return SortVarsOrConstantSort::SortVars;
+        }
+        (IDENT, IDENT) | (IDENT, T!['(']) => {
+            if !sort_decl(p) {
+                p.error("expected a sort declaration");
+            }
+            return SortVarsOrConstantSort::ConstantSort;
+        }
+        _ => {
+            p.error("expected a sort variable declaration or a constant sort");
+            p.err_recover(
+                "expected a sort variable declaration or a constant sort",
+                TokenSet::new(&[T![')'], T!['['], T![->]]).union(SORT_DECL_START), // FIXME: unsure about this recovery set
+            );
+            if p.at(T!['[']) {
+                return SortVarsOrConstantSort::SortVars;
+            } else {
+                return SortVarsOrConstantSort::Ambig;
+            }
+        }
+    }
+}
+
 // test(dir) declare_directive
 // declare foo : [Int] -> Int
 fn declare_dir(p: &mut Parser) {
@@ -411,7 +464,19 @@ fn declare_dir(p: &mut Parser) {
     if p.at(T!['(']) {
         // test(dir) declare_sort_vars
         // declare foo : (A) [A] -> (List A)
-        sort_vars_decl(p);
+
+        match sort_vars_or_constant_sort(p) {
+            SortVarsOrConstantSort::SortVars => {}
+            SortVarsOrConstantSort::ConstantSort => {
+                // test(dir) declare_constant_compound_sort
+                // declare foo : (List A)
+                m.complete(p, SyntaxKind::CONSTANT_DECLARE_DIR);
+                return;
+            }
+            SortVarsOrConstantSort::Ambig => {
+                p.error("ambiguous declare directive");
+            }
+        }
     }
 
     // test(dir) declare_no_args

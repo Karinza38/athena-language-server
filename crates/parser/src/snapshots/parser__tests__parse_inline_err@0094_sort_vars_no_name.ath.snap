@@ -26,5 +26,5 @@ DECLARE_DIR
     IDENTIFIER
       IDENT "Int"
   WHITESPACE "\n"
-error 15: expected sort variable name
+error 17: Must have at least one sort variable in sort variable declaration
 

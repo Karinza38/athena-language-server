@@ -148,6 +148,7 @@ Dir =
     | AssertDir
     | AssertClosedDir
     | DeclareDir
+    | ConstantDeclareDir
     | ExtendModuleDir
     | OpenDir
     | AssociativityDir
@@ -178,8 +179,11 @@ SortDecl =
 CompoundSortDecl =
     '(' SortDecl* ')'
 
+ConstantDeclareDir =
+    'declare' (Identifier (',' Identifier)*) ':' SortDecl
+
 DeclareDir =
-    'declare' (Identifier (',' Identifier)*) ':' SortVarsDecl? ( FuncSorts '->' )? return_sort:SortDecl DeclareAttrs?
+    'declare' (Identifier (',' Identifier)*) ':' SortVarsDecl? FuncSorts '->' return_sort:SortDecl DeclareAttrs?
 
 InputTransformDecl =
     '[' Expr Expr* ']'

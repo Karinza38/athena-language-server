@@ -479,6 +479,25 @@ impl DeclareDir {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
+pub struct ConstantDeclareDir {
+    pub(crate) syntax: SyntaxNode,
+}
+impl ConstantDeclareDir {
+    pub fn declare_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T![declare])
+    }
+    pub fn identifiers(&self) -> AstChildren<Identifier> {
+        support::children(&self.syntax)
+    }
+    pub fn colon_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T![:])
+    }
+    pub fn sort_decl(&self) -> Option<SortDecl> {
+        support::child(&self.syntax)
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct ExtendModuleDir {
     pub(crate) syntax: SyntaxNode,
 }
@@ -751,8 +770,11 @@ pub struct UnitExpr {
     pub(crate) syntax: SyntaxNode,
 }
 impl UnitExpr {
-    pub fn unit(&self) -> Option<Unit> {
-        support::child(&self.syntax)
+    pub fn l_paren_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T!['('])
+    }
+    pub fn r_paren_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T![')'])
     }
 }
 
@@ -2184,6 +2206,7 @@ pub enum Dir {
     AssertDir(AssertDir),
     AssertClosedDir(AssertClosedDir),
     DeclareDir(DeclareDir),
+    ConstantDeclareDir(ConstantDeclareDir),
     ExtendModuleDir(ExtendModuleDir),
     OpenDir(OpenDir),
     AssociativityDir(AssociativityDir),
@@ -2637,6 +2660,17 @@ impl AstNode for AssertClosedDir {
 impl AstNode for DeclareDir {
     fn can_cast(kind: SyntaxKind) -> bool {
         kind == DECLARE_DIR
+    }
+    fn cast(syntax: SyntaxNode) -> Option<Self> {
+        if Self::can_cast(syntax.kind()) { Some(Self { syntax }) } else { None }
+    }
+    fn syntax(&self) -> &SyntaxNode {
+        &self.syntax
+    }
+}
+impl AstNode for ConstantDeclareDir {
+    fn can_cast(kind: SyntaxKind) -> bool {
+        kind == CONSTANT_DECLARE_DIR
     }
     fn cast(syntax: SyntaxNode) -> Option<Self> {
         if Self::can_cast(syntax.kind()) { Some(Self { syntax }) } else { None }
@@ -3834,6 +3868,11 @@ impl From<DeclareDir> for Dir {
         Dir::DeclareDir(node)
     }
 }
+impl From<ConstantDeclareDir> for Dir {
+    fn from(node: ConstantDeclareDir) -> Dir {
+        Dir::ConstantDeclareDir(node)
+    }
+}
 impl From<ExtendModuleDir> for Dir {
     fn from(node: ExtendModuleDir) -> Dir {
         Dir::ExtendModuleDir(node)
@@ -3859,8 +3898,8 @@ impl AstNode for Dir {
         matches!(
             kind, DOMAIN_DIR | DOMAINS_DIR | DEFINE_DIR | DEFINE_PROC_DIR |
             DEFINE_MULTI_DIR | LOAD_DIR | ASSERT_DIR | ASSERT_CLOSED_DIR | DECLARE_DIR |
-            EXTEND_MODULE_DIR | OPEN_DIR | ASSOCIATIVITY_DIR | INFIX_MODULE_DIR |
-            PREFIX_MODULE_DIR
+            CONSTANT_DECLARE_DIR | EXTEND_MODULE_DIR | OPEN_DIR | ASSOCIATIVITY_DIR |
+            INFIX_MODULE_DIR | PREFIX_MODULE_DIR
         )
     }
     fn cast(syntax: SyntaxNode) -> Option<Self> {
@@ -3874,6 +3913,9 @@ impl AstNode for Dir {
             ASSERT_DIR => Dir::AssertDir(AssertDir { syntax }),
             ASSERT_CLOSED_DIR => Dir::AssertClosedDir(AssertClosedDir { syntax }),
             DECLARE_DIR => Dir::DeclareDir(DeclareDir { syntax }),
+            CONSTANT_DECLARE_DIR => {
+                Dir::ConstantDeclareDir(ConstantDeclareDir { syntax })
+            }
             EXTEND_MODULE_DIR => Dir::ExtendModuleDir(ExtendModuleDir { syntax }),
             OPEN_DIR => Dir::OpenDir(OpenDir { syntax }),
             ASSOCIATIVITY_DIR => Dir::AssociativityDir(AssociativityDir { syntax }),
@@ -3898,6 +3940,7 @@ impl AstNode for Dir {
             Dir::AssertDir(it) => &it.syntax,
             Dir::AssertClosedDir(it) => &it.syntax,
             Dir::DeclareDir(it) => &it.syntax,
+            Dir::ConstantDeclareDir(it) => &it.syntax,
             Dir::ExtendModuleDir(it) => &it.syntax,
             Dir::OpenDir(it) => &it.syntax,
             Dir::AssociativityDir(it) => &it.syntax,
@@ -4874,6 +4917,11 @@ impl std::fmt::Display for AssertClosedDir {
     }
 }
 impl std::fmt::Display for DeclareDir {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        std::fmt::Display::fmt(self.syntax(), f)
+    }
+}
+impl std::fmt::Display for ConstantDeclareDir {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         std::fmt::Display::fmt(self.syntax(), f)
     }
