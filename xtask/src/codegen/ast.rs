@@ -158,17 +158,17 @@ impl AstEnumSrc {
             .collect()
     }
 
-    fn kinds(&self) -> Vec<Ident> {
-        self.variants
+    fn kinds(&self, grammar: &AstSrc) -> Vec<Ident> {
+        self.variants(grammar)
             .iter()
-            .map(|variant| format_ident!("{}", to_upper_snake_case(variant)))
+            .map(|variant| format_ident!("{}", to_upper_snake_case(&*variant.to_string())))
             .collect()
     }
 
     fn kinds_inlined(&self, grammar: &AstSrc) -> Vec<Ident> {
         self.variants
             .iter()
-            .filter_map(|v| Some(grammar.get_enum_node(v)?.kinds()))
+            .filter_map(|v| Some(grammar.get_enum_node(v)?.kinds(grammar)))
             .flatten()
             .collect()
     }
@@ -253,7 +253,7 @@ fn generate_nodes(kinds: &KindsSrc, grammar: &AstSrc) -> String {
         .map(|en| {
             let variants = en.variants(grammar);
             let name = en.name();
-            let kinds = en.kinds();
+            let kinds = en.kinds(grammar);
 
             let (inlined_variant_parents, inlined_variants): (Vec<_>, Vec<_>) =
                 en.variants_inlined(grammar).into_iter().unzip();
@@ -275,7 +275,7 @@ fn generate_nodes(kinds: &KindsSrc, grammar: &AstSrc) -> String {
                 quote! {
                     impl AstNode for #name {
                         fn can_cast(kind: SyntaxKind) -> bool {
-                            matches!(kind, #(#kinds)|*)
+                            matches!(kind, #(#kinds)|* #(| #inlined_kinds)*)
                         }
                         fn cast(syntax: SyntaxNode) -> Option<Self> {
                             let res = match syntax.kind() {
