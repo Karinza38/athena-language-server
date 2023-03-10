@@ -38,6 +38,7 @@ impl fmt::Display for CodeBin {
 
 fn install_client(sh: &Shell, code_bin: &str) -> Result<()> {
     let _cd = sh.push_dir("./client");
+    cmd!(sh, "npm install").run()?;
     cmd!(sh, "npm run package --scripts-prepend-node-path").run()?;
 
     cmd!(
