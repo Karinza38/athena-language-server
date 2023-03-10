@@ -1,0 +1,4 @@
+(define (complement p)
+  (match p
+    ((not q) q)
+    (_ (not p))))

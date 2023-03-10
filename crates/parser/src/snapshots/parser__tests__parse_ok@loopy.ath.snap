@@ -62,9 +62,10 @@ SOURCE_FILE
         EXPR_PHRASE
           APPLICATION_EXPR
             L_PAREN "("
-            IDENT_EXPR
-              IDENTIFIER
-                IDENT "transform-output"
+            EXPR_PHRASE
+              IDENT_EXPR
+                IDENTIFIER
+                  IDENT "transform-output"
             WHITESPACE " "
             EXPR_PHRASE
               IDENT_EXPR
@@ -197,9 +198,10 @@ SOURCE_FILE
             EXPR_PHRASE
               APPLICATION_EXPR
                 L_PAREN "("
-                IDENT_EXPR
-                  IDENTIFIER
-                    IDENT "factorial"
+                EXPR_PHRASE
+                  IDENT_EXPR
+                    IDENTIFIER
+                      IDENT "factorial"
                 WHITESPACE " "
                 EXPR_PHRASE
                   IDENT_EXPR
@@ -215,9 +217,10 @@ SOURCE_FILE
             EXPR_PHRASE
               APPLICATION_EXPR
                 L_PAREN "("
-                IDENT_EXPR
-                  IDENTIFIER
-                    IDENT "x"
+                EXPR_PHRASE
+                  IDENT_EXPR
+                    IDENTIFIER
+                      IDENT "x"
                 WHITESPACE " "
                 EXPR_PHRASE
                   IDENT_EXPR
@@ -227,16 +230,18 @@ SOURCE_FILE
                 EXPR_PHRASE
                   APPLICATION_EXPR
                     L_PAREN "("
-                    IDENT_EXPR
-                      IDENTIFIER
-                        IDENT "factorial"
+                    EXPR_PHRASE
+                      IDENT_EXPR
+                        IDENTIFIER
+                          IDENT "factorial"
                     WHITESPACE " "
                     EXPR_PHRASE
                       APPLICATION_EXPR
                         L_PAREN "("
-                        IDENT_EXPR
-                          IDENTIFIER
-                            IDENT "x"
+                        EXPR_PHRASE
+                          IDENT_EXPR
+                            IDENTIFIER
+                              IDENT "x"
                         WHITESPACE " "
                         EXPR_PHRASE
                           IDENT_EXPR
@@ -301,9 +306,10 @@ SOURCE_FILE
             EXPR_PHRASE
               APPLICATION_EXPR
                 L_PAREN "("
-                IDENT_EXPR
-                  IDENTIFIER
-                    IDENT "factorial"
+                EXPR_PHRASE
+                  IDENT_EXPR
+                    IDENTIFIER
+                      IDENT "factorial"
                 WHITESPACE " "
                 EXPR_PHRASE
                   IDENT_EXPR
@@ -326,16 +332,18 @@ SOURCE_FILE
         EXPR_PHRASE
           APPLICATION_EXPR
             L_PAREN "("
-            IDENT_EXPR
-              IDENTIFIER
-                IDENT "eval"
+            EXPR_PHRASE
+              IDENT_EXPR
+                IDENTIFIER
+                  IDENT "eval"
             WHITESPACE " "
             EXPR_PHRASE
               APPLICATION_EXPR
                 L_PAREN "("
-                IDENT_EXPR
-                  IDENTIFIER
-                    IDENT "factorial"
+                EXPR_PHRASE
+                  IDENT_EXPR
+                    IDENTIFIER
+                      IDENT "factorial"
                 WHITESPACE " "
                 EXPR_PHRASE
                   IDENT_EXPR
@@ -348,16 +356,18 @@ SOURCE_FILE
         EXPR_PHRASE
           APPLICATION_EXPR
             L_PAREN "("
-            IDENT_EXPR
-              IDENTIFIER
-                IDENT "eval"
+            EXPR_PHRASE
+              IDENT_EXPR
+                IDENTIFIER
+                  IDENT "eval"
             WHITESPACE " "
             EXPR_PHRASE
               APPLICATION_EXPR
                 L_PAREN "("
-                IDENT_EXPR
-                  IDENTIFIER
-                    IDENT "factorial"
+                EXPR_PHRASE
+                  IDENT_EXPR
+                    IDENTIFIER
+                      IDENT "factorial"
                 WHITESPACE " "
                 EXPR_PHRASE
                   IDENT_EXPR
@@ -378,9 +388,10 @@ SOURCE_FILE
           EXPR_PHRASE
             APPLICATION_EXPR
               L_PAREN "("
-              IDENT_EXPR
-                IDENTIFIER
-                  IDENT "forall"
+              EXPR_PHRASE
+                IDENT_EXPR
+                  IDENTIFIER
+                    IDENT "forall"
               WHITESPACE " "
               EXPR_PHRASE
                 IDENT_EXPR
@@ -425,9 +436,10 @@ SOURCE_FILE
           EXPR_PHRASE
             APPLICATION_EXPR
               L_PAREN "("
-              IDENT_EXPR
-                IDENTIFIER
-                  IDENT "forall"
+              EXPR_PHRASE
+                IDENT_EXPR
+                  IDENTIFIER
+                    IDENT "forall"
               WHITESPACE " "
               EXPR_PHRASE
                 IDENT_EXPR
@@ -447,9 +459,10 @@ SOURCE_FILE
               EXPR_PHRASE
                 APPLICATION_EXPR
                   L_PAREN "("
-                  IDENT_EXPR
-                    IDENTIFIER
-                      IDENT "x"
+                  EXPR_PHRASE
+                    IDENT_EXPR
+                      IDENTIFIER
+                        IDENT "x"
                   WHITESPACE " "
                   EXPR_PHRASE
                     IDENT_EXPR
@@ -491,9 +504,10 @@ SOURCE_FILE
           EXPR_PHRASE
             APPLICATION_EXPR
               L_PAREN "("
-              IDENT_EXPR
-                IDENTIFIER
-                  IDENT "forall"
+              EXPR_PHRASE
+                IDENT_EXPR
+                  IDENTIFIER
+                    IDENT "forall"
               WHITESPACE " "
               EXPR_PHRASE
                 IDENT_EXPR
@@ -513,9 +527,10 @@ SOURCE_FILE
               EXPR_PHRASE
                 APPLICATION_EXPR
                   L_PAREN "("
-                  IDENT_EXPR
-                    IDENTIFIER
-                      IDENT "x"
+                  EXPR_PHRASE
+                    IDENT_EXPR
+                      IDENTIFIER
+                        IDENT "x"
                   WHITESPACE " "
                   EXPR_PHRASE
                     IDENT_EXPR
@@ -620,9 +635,10 @@ SOURCE_FILE
                   EXPR_PHRASE
                     APPLICATION_EXPR
                       L_PAREN "("
-                      IDENT_EXPR
-                        IDENTIFIER
-                          IDENT "zero"
+                      EXPR_PHRASE
+                        IDENT_EXPR
+                          IDENTIFIER
+                            IDENT "zero"
                       WHITESPACE " "
                       EXPR_PHRASE
                         IDENT_EXPR
@@ -701,16 +717,18 @@ SOURCE_FILE
                   EXPR_PHRASE
                     APPLICATION_EXPR
                       L_PAREN "("
-                      IDENT_EXPR
-                        IDENTIFIER
-                          IDENT "factorial"
+                      EXPR_PHRASE
+                        IDENT_EXPR
+                          IDENTIFIER
+                            IDENT "factorial"
                       WHITESPACE " "
                       EXPR_PHRASE
                         APPLICATION_EXPR
                           L_PAREN "("
-                          IDENT_EXPR
-                            IDENTIFIER
-                              IDENT "m"
+                          EXPR_PHRASE
+                            IDENT_EXPR
+                              IDENTIFIER
+                                IDENT "m"
                           WHITESPACE " "
                           EXPR_PHRASE
                             IDENT_EXPR
@@ -732,9 +750,10 @@ SOURCE_FILE
                   EXPR_PHRASE
                     APPLICATION_EXPR
                       L_PAREN "("
-                      IDENT_EXPR
-                        IDENTIFIER
-                          IDENT "factorial"
+                      EXPR_PHRASE
+                        IDENT_EXPR
+                          IDENTIFIER
+                            IDENT "factorial"
                       WHITESPACE " "
                       EXPR_PHRASE
                         IDENT_EXPR

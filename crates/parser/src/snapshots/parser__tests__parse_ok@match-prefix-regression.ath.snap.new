@@ -1,0 +1,72 @@
+---
+source: crates/parser/src/tests.rs
+assertion_line: 87
+description: "(define (complement p)\n  (match p\n    ((not q) q)\n    (_ (not p))))\n"
+input_file: crates/parser/test_data/parser/ok/file/match-prefix-regression.ath
+---
+SOURCE_FILE
+  DIR_STMT
+    PREFIX_DEFINE_DIR
+      L_PAREN "("
+      DEFINE_KW "define"
+      WHITESPACE " "
+      DEFINE_PROC
+        L_PAREN "("
+        IDENTIFIER
+          IDENT "complement"
+        WHITESPACE " "
+        MAYBE_WILDCARD_TYPED_PARAM
+          IDENTIFIER
+            IDENT "p"
+        R_PAREN ")"
+      WHITESPACE "\n  "
+      EXPR_PHRASE
+        PREFIX_MATCH_EXPR
+          L_PAREN "("
+          MATCH_KW "match"
+          WHITESPACE " "
+          EXPR_PHRASE
+            IDENT_EXPR
+              IDENTIFIER
+                IDENT "p"
+          WHITESPACE "\n    "
+          MATCH_CLAUSE
+            L_PAREN "("
+            COMPOUND_PAT
+              L_PAREN "("
+              IDENT_PAT
+                IDENTIFIER
+                  IDENT "not"
+              WHITESPACE " "
+              IDENT_PAT
+                IDENTIFIER
+                  IDENT "q"
+              R_PAREN ")"
+            WHITESPACE " "
+            IDENT_EXPR
+              IDENTIFIER
+                IDENT "q"
+            R_PAREN ")"
+          WHITESPACE "\n    "
+          MATCH_CLAUSE
+            L_PAREN "("
+            WILDCARD_PAT
+              UNDERSCORE "_"
+            WHITESPACE " "
+            APPLICATION_EXPR
+              L_PAREN "("
+              EXPR_PHRASE
+                IDENT_EXPR
+                  IDENTIFIER
+                    IDENT "not"
+              WHITESPACE " "
+              EXPR_PHRASE
+                IDENT_EXPR
+                  IDENTIFIER
+                    IDENT "p"
+              R_PAREN ")"
+            R_PAREN ")"
+          R_PAREN ")"
+      R_PAREN ")"
+  WHITESPACE "\n"
+

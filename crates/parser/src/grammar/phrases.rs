@@ -194,7 +194,6 @@ pub(crate) fn match_expr_or_ded_partial(
                 p.expect(T![')']);
                 inner.abandon(p);
 
-                eprintln!("{}", std::backtrace::Backtrace::capture());
                 outer.complete(p, SyntaxKind::PREFIX_MATCH_EXPR);
                 (ExprOrDed::Expr, PrefixOrInfix::Prefix)
             } else {
@@ -634,7 +633,7 @@ pub(crate) fn expr_or_ded(p: &mut Parser) -> Option<ExprOrDed> {
         return Some(ExprOrDed::Ded);
     } else if p.at_one_of(AMBIG_START) {
         #[cfg(test)]
-        eprintln!("Ambiguous phrase start: {:?}", p.current());
+        eprintln!("Ambiguous phrase starty: {:?}", p.current());
         match (p.current(), p.nth(1)) {
             (T![match], _) => {
                 return Some(match_expr_or_ded(p, None));
@@ -659,19 +658,9 @@ pub(crate) fn expr_or_ded(p: &mut Parser) -> Option<ExprOrDed> {
                 let m = p.start();
                 p.bump(T!['(']);
 
-                if p.at_one_of(EXPR_START_SET) {
-                    if !expr(p) {
-                        p.error("expected expression");
-                        m.abandon(p);
-                        return Some(ExprOrDed::Ambig);
-                    }
-                    if p.at(T![by]) {
-                        super::deductions::by_ded_partial(p, m);
-                        return Some(ExprOrDed::Ded);
-                    } else {
-                        super::expressions::opened_application_expr(p, m);
-                        return Some(ExprOrDed::Expr);
-                    }
+                if p.at(T![by]) {
+                    super::deductions::by_ded_partial(p, m);
+                    return Some(ExprOrDed::Ded);
                 } else {
                     super::expressions::opened_expr(p, m);
                     return Some(ExprOrDed::Expr);

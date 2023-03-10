@@ -558,6 +558,9 @@ fn prefix_let_expr(p: &mut Parser, m: Marker) {
 }
 
 pub(crate) fn opened_expr(p: &mut Parser, m: Marker) {
+    #[cfg(test)]
+    eprintln!("opened_expr: {:?} {:?}", p.current(), p.nth(1));
+
     match p.current() {
         T![')'] => {
             opened_unit_expr(p, m);
