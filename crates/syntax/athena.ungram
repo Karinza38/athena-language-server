@@ -362,10 +362,20 @@ LetRecExpr =
     'letrec' '{' LetRecPart* '}' Expr
 
 MatchExpr =
+    InfixMatchExpr
+    | PrefixMatchExpr
+
+InfixMatchExpr =
     'match' Phrase '{' arms:MatchArm* '}'
+
+PrefixMatchExpr =
+    '(' 'match' Phrase clauses:MatchClause* ')'
 
 MatchArm = 
     '|'? Pat '=>' Expr
+
+MatchClause =
+    '(' Pat Expr ')'
 
 TryExpr =
     'try' '{' TryArm* '}'
@@ -497,7 +507,17 @@ CheckDedArm =
     '|'? Phrase '=>' Ded
 
 MatchDed =
+    InfixMatchDed
+    | PrefixMatchDed
+
+InfixMatchDed =
     'match' Phrase '{' arms:MatchDedArm* '}'
+
+PrefixMatchDed =
+    '(' 'dmatch' Phrase clauses:MatchDedClause* ')'
+
+MatchDedClause = 
+    '(' Pat Ded ')'
 
 MatchDedArm =
     '|'? Pat '=>' Ded

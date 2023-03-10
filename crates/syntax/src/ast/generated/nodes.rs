@@ -367,56 +367,6 @@ impl AssertClosedDir {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
-pub struct DeclareDir {
-    pub(crate) syntax: SyntaxNode,
-}
-impl DeclareDir {
-    pub fn declare_token(&self) -> Option<SyntaxToken> {
-        support::token(&self.syntax, T![declare])
-    }
-    pub fn identifiers(&self) -> AstChildren<Identifier> {
-        support::children(&self.syntax)
-    }
-    pub fn colon_token(&self) -> Option<SyntaxToken> {
-        support::token(&self.syntax, T![:])
-    }
-    pub fn sort_vars_decl(&self) -> Option<SortVarsDecl> {
-        support::child(&self.syntax)
-    }
-    pub fn func_sorts(&self) -> Option<FuncSorts> {
-        support::child(&self.syntax)
-    }
-    pub fn thin_arrow_token(&self) -> Option<SyntaxToken> {
-        support::token(&self.syntax, T![->])
-    }
-    pub fn return_sort(&self) -> Option<SortDecl> {
-        support::child(&self.syntax)
-    }
-    pub fn declare_attrs(&self) -> Option<DeclareAttrs> {
-        support::child(&self.syntax)
-    }
-}
-
-#[derive(Debug, Clone, PartialEq, Eq, Hash)]
-pub struct ConstantDeclareDir {
-    pub(crate) syntax: SyntaxNode,
-}
-impl ConstantDeclareDir {
-    pub fn declare_token(&self) -> Option<SyntaxToken> {
-        support::token(&self.syntax, T![declare])
-    }
-    pub fn identifiers(&self) -> AstChildren<Identifier> {
-        support::children(&self.syntax)
-    }
-    pub fn colon_token(&self) -> Option<SyntaxToken> {
-        support::token(&self.syntax, T![:])
-    }
-    pub fn sort_decl(&self) -> Option<SortDecl> {
-        support::child(&self.syntax)
-    }
-}
-
-#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct ExtendModuleDir {
     pub(crate) syntax: SyntaxNode,
 }
@@ -528,6 +478,208 @@ impl CompoundSortDecl {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
+pub struct InfixConstantDeclare {
+    pub(crate) syntax: SyntaxNode,
+}
+impl InfixConstantDeclare {
+    pub fn declare_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T![declare])
+    }
+    pub fn identifiers(&self) -> AstChildren<Identifier> {
+        support::children(&self.syntax)
+    }
+    pub fn colon_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T![:])
+    }
+    pub fn sort_decl(&self) -> Option<SortDecl> {
+        support::child(&self.syntax)
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+pub struct PrefixConstantDeclare {
+    pub(crate) syntax: SyntaxNode,
+}
+impl PrefixConstantDeclare {
+    pub fn l_paren_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T!['('])
+    }
+    pub fn declare_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T![declare])
+    }
+    pub fn prefix_declare_symbols(&self) -> Option<PrefixDeclareSymbols> {
+        support::child(&self.syntax)
+    }
+    pub fn sort_decl(&self) -> Option<SortDecl> {
+        support::child(&self.syntax)
+    }
+    pub fn r_paren_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T![')'])
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+pub struct PrefixDeclareDir {
+    pub(crate) syntax: SyntaxNode,
+}
+impl PrefixDeclareDir {
+    pub fn l_paren_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T!['('])
+    }
+    pub fn declare_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T![declare])
+    }
+    pub fn prefix_declare_symbols(&self) -> Option<PrefixDeclareSymbols> {
+        support::child(&self.syntax)
+    }
+    pub fn prefix_sort_vars_decl(&self) -> Option<PrefixSortVarsDecl> {
+        support::child(&self.syntax)
+    }
+    pub fn thin_arrow_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T![->])
+    }
+    pub fn sort_decls(&self) -> AstChildren<SortDecl> {
+        support::children(&self.syntax)
+    }
+    pub fn r_paren_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T![')'])
+    }
+    pub fn sort_decl(&self) -> Option<SortDecl> {
+        support::child(&self.syntax)
+    }
+    pub fn prefix_declare_attrs(&self) -> Option<PrefixDeclareAttrs> {
+        support::child(&self.syntax)
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+pub struct PrefixSortVarsDecl {
+    pub(crate) syntax: SyntaxNode,
+}
+impl PrefixSortVarsDecl {
+    pub fn l_paren_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T!['('])
+    }
+    pub fn ident_sorts(&self) -> AstChildren<IdentSort> {
+        support::children(&self.syntax)
+    }
+    pub fn r_paren_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T![')'])
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+pub struct PrefixDeclareAttrs {
+    pub(crate) syntax: SyntaxNode,
+}
+impl PrefixDeclareAttrs {
+    pub fn l_paren_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T!['('])
+    }
+    pub fn declare_attrs(&self) -> AstChildren<DeclareAttr> {
+        support::children(&self.syntax)
+    }
+    pub fn input_transform_decl(&self) -> Option<InputTransformDecl> {
+        support::child(&self.syntax)
+    }
+    pub fn r_paren_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T![')'])
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+pub struct PrefixSingleSymbol {
+    pub(crate) syntax: SyntaxNode,
+}
+impl PrefixSingleSymbol {
+    pub fn identifier(&self) -> Option<Identifier> {
+        support::child(&self.syntax)
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+pub struct PrefixMultiSymbols {
+    pub(crate) syntax: SyntaxNode,
+}
+impl PrefixMultiSymbols {
+    pub fn l_paren_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T!['('])
+    }
+    pub fn identifiers(&self) -> AstChildren<Identifier> {
+        support::children(&self.syntax)
+    }
+    pub fn r_paren_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T![')'])
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+pub struct DeclareAttr {
+    pub(crate) syntax: SyntaxNode,
+}
+impl DeclareAttr {
+    pub fn left_assoc_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T![left - assoc])
+    }
+    pub fn right_assoc_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T![right - assoc])
+    }
+    pub fn identifier(&self) -> Option<Identifier> {
+        support::child(&self.syntax)
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+pub struct InputTransformDecl {
+    pub(crate) syntax: SyntaxNode,
+}
+impl InputTransformDecl {
+    pub fn l_brack_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T!['['])
+    }
+    pub fn expr(&self) -> Option<Expr> {
+        support::child(&self.syntax)
+    }
+    pub fn exprs(&self) -> AstChildren<Expr> {
+        support::children(&self.syntax)
+    }
+    pub fn r_brack_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T![']'])
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+pub struct InfixDeclareDir {
+    pub(crate) syntax: SyntaxNode,
+}
+impl InfixDeclareDir {
+    pub fn declare_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T![declare])
+    }
+    pub fn identifiers(&self) -> AstChildren<Identifier> {
+        support::children(&self.syntax)
+    }
+    pub fn colon_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T![:])
+    }
+    pub fn sort_vars_decl(&self) -> Option<SortVarsDecl> {
+        support::child(&self.syntax)
+    }
+    pub fn func_sorts(&self) -> Option<FuncSorts> {
+        support::child(&self.syntax)
+    }
+    pub fn thin_arrow_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T![->])
+    }
+    pub fn return_sort(&self) -> Option<SortDecl> {
+        support::child(&self.syntax)
+    }
+    pub fn declare_attrs(&self) -> Option<DeclareAttrs> {
+        support::child(&self.syntax)
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct SortVarsDecl {
     pub(crate) syntax: SyntaxNode,
 }
@@ -575,41 +727,6 @@ impl DeclareAttrs {
     }
     pub fn r_brack_token(&self) -> Option<SyntaxToken> {
         support::token(&self.syntax, T![']'])
-    }
-}
-
-#[derive(Debug, Clone, PartialEq, Eq, Hash)]
-pub struct InputTransformDecl {
-    pub(crate) syntax: SyntaxNode,
-}
-impl InputTransformDecl {
-    pub fn l_brack_token(&self) -> Option<SyntaxToken> {
-        support::token(&self.syntax, T!['['])
-    }
-    pub fn expr(&self) -> Option<Expr> {
-        support::child(&self.syntax)
-    }
-    pub fn exprs(&self) -> AstChildren<Expr> {
-        support::children(&self.syntax)
-    }
-    pub fn r_brack_token(&self) -> Option<SyntaxToken> {
-        support::token(&self.syntax, T![']'])
-    }
-}
-
-#[derive(Debug, Clone, PartialEq, Eq, Hash)]
-pub struct DeclareAttr {
-    pub(crate) syntax: SyntaxNode,
-}
-impl DeclareAttr {
-    pub fn left_assoc_token(&self) -> Option<SyntaxToken> {
-        support::token(&self.syntax, T![left - assoc])
-    }
-    pub fn right_assoc_token(&self) -> Option<SyntaxToken> {
-        support::token(&self.syntax, T![right - assoc])
-    }
-    pub fn identifier(&self) -> Option<Identifier> {
-        support::child(&self.syntax)
     }
 }
 
@@ -982,28 +1099,6 @@ impl LetRecExpr {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
-pub struct MatchExpr {
-    pub(crate) syntax: SyntaxNode,
-}
-impl MatchExpr {
-    pub fn match_token(&self) -> Option<SyntaxToken> {
-        support::token(&self.syntax, T![match])
-    }
-    pub fn phrase(&self) -> Option<Phrase> {
-        support::child(&self.syntax)
-    }
-    pub fn l_curly_token(&self) -> Option<SyntaxToken> {
-        support::token(&self.syntax, T!['{'])
-    }
-    pub fn arms(&self) -> AstChildren<MatchArm> {
-        support::children(&self.syntax)
-    }
-    pub fn r_curly_token(&self) -> Option<SyntaxToken> {
-        support::token(&self.syntax, T!['}'])
-    }
-}
-
-#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct TryExpr {
     pub(crate) syntax: SyntaxNode,
 }
@@ -1276,6 +1371,50 @@ impl LetRecPart {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
+pub struct InfixMatchExpr {
+    pub(crate) syntax: SyntaxNode,
+}
+impl InfixMatchExpr {
+    pub fn match_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T![match])
+    }
+    pub fn phrase(&self) -> Option<Phrase> {
+        support::child(&self.syntax)
+    }
+    pub fn l_curly_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T!['{'])
+    }
+    pub fn arms(&self) -> AstChildren<MatchArm> {
+        support::children(&self.syntax)
+    }
+    pub fn r_curly_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T!['}'])
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+pub struct PrefixMatchExpr {
+    pub(crate) syntax: SyntaxNode,
+}
+impl PrefixMatchExpr {
+    pub fn l_paren_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T!['('])
+    }
+    pub fn match_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T![match])
+    }
+    pub fn phrase(&self) -> Option<Phrase> {
+        support::child(&self.syntax)
+    }
+    pub fn clauses(&self) -> AstChildren<MatchClause> {
+        support::children(&self.syntax)
+    }
+    pub fn r_paren_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T![')'])
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct MatchArm {
     pub(crate) syntax: SyntaxNode,
 }
@@ -1291,6 +1430,25 @@ impl MatchArm {
     }
     pub fn expr(&self) -> Option<Expr> {
         support::child(&self.syntax)
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+pub struct MatchClause {
+    pub(crate) syntax: SyntaxNode,
+}
+impl MatchClause {
+    pub fn l_paren_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T!['('])
+    }
+    pub fn pat(&self) -> Option<Pat> {
+        support::child(&self.syntax)
+    }
+    pub fn expr(&self) -> Option<Expr> {
+        support::child(&self.syntax)
+    }
+    pub fn r_paren_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T![')'])
     }
 }
 
@@ -1580,28 +1738,6 @@ impl CheckDed {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
-pub struct MatchDed {
-    pub(crate) syntax: SyntaxNode,
-}
-impl MatchDed {
-    pub fn match_token(&self) -> Option<SyntaxToken> {
-        support::token(&self.syntax, T![match])
-    }
-    pub fn phrase(&self) -> Option<Phrase> {
-        support::child(&self.syntax)
-    }
-    pub fn l_curly_token(&self) -> Option<SyntaxToken> {
-        support::token(&self.syntax, T!['{'])
-    }
-    pub fn arms(&self) -> AstChildren<MatchDedArm> {
-        support::children(&self.syntax)
-    }
-    pub fn r_curly_token(&self) -> Option<SyntaxToken> {
-        support::token(&self.syntax, T!['}'])
-    }
-}
-
-#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct LetDed {
     pub(crate) syntax: SyntaxNode,
 }
@@ -1820,6 +1956,50 @@ impl CheckDedArm {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
+pub struct InfixMatchDed {
+    pub(crate) syntax: SyntaxNode,
+}
+impl InfixMatchDed {
+    pub fn match_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T![match])
+    }
+    pub fn phrase(&self) -> Option<Phrase> {
+        support::child(&self.syntax)
+    }
+    pub fn l_curly_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T!['{'])
+    }
+    pub fn arms(&self) -> AstChildren<MatchDedArm> {
+        support::children(&self.syntax)
+    }
+    pub fn r_curly_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T!['}'])
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+pub struct PrefixMatchDed {
+    pub(crate) syntax: SyntaxNode,
+}
+impl PrefixMatchDed {
+    pub fn l_paren_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T!['('])
+    }
+    pub fn match_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T![match])
+    }
+    pub fn phrase(&self) -> Option<Phrase> {
+        support::child(&self.syntax)
+    }
+    pub fn clauses(&self) -> AstChildren<MatchDedClause> {
+        support::children(&self.syntax)
+    }
+    pub fn r_paren_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T![')'])
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct MatchDedArm {
     pub(crate) syntax: SyntaxNode,
 }
@@ -1835,6 +2015,25 @@ impl MatchDedArm {
     }
     pub fn ded(&self) -> Option<Ded> {
         support::child(&self.syntax)
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+pub struct MatchDedClause {
+    pub(crate) syntax: SyntaxNode,
+}
+impl MatchDedClause {
+    pub fn l_paren_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T!['('])
+    }
+    pub fn pat(&self) -> Option<Pat> {
+        support::child(&self.syntax)
+    }
+    pub fn ded(&self) -> Option<Ded> {
+        support::child(&self.syntax)
+    }
+    pub fn r_paren_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T![')'])
     }
 }
 
@@ -2250,11 +2449,11 @@ pub enum Dir {
     LoadDir(LoadDir),
     AssertDir(AssertDir),
     AssertClosedDir(AssertClosedDir),
-    DeclareDir(DeclareDir),
-    ConstantDeclareDir(ConstantDeclareDir),
     ExtendModuleDir(ExtendModuleDir),
     OpenDir(OpenDir),
     AssociativityDir(AssociativityDir),
+    ConstantDeclareDir(ConstantDeclareDir),
+    DeclareDir(DeclareDir),
     DefineDir(DefineDir),
     ModuleDir(ModuleDir),
 }
@@ -2284,6 +2483,24 @@ pub enum DefineDir {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
+pub enum DeclareDir {
+    PrefixDeclareDir(PrefixDeclareDir),
+    InfixDeclareDir(InfixDeclareDir),
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+pub enum ConstantDeclareDir {
+    InfixConstantDeclare(InfixConstantDeclare),
+    PrefixConstantDeclare(PrefixConstantDeclare),
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+pub enum PrefixDeclareSymbols {
+    PrefixSingleSymbol(PrefixSingleSymbol),
+    PrefixMultiSymbols(PrefixMultiSymbols),
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub enum Expr {
     IdentExpr(IdentExpr),
     LiteralExpr(LiteralExpr),
@@ -2297,7 +2514,6 @@ pub enum Expr {
     MethodExpr(MethodExpr),
     LetExpr(LetExpr),
     LetRecExpr(LetRecExpr),
-    MatchExpr(MatchExpr),
     TryExpr(TryExpr),
     CellExpr(CellExpr),
     SetExpr(SetExpr),
@@ -2311,6 +2527,7 @@ pub enum Expr {
     OrExpr(OrExpr),
     MapExpr(MapExpr),
     WildcardExpr(WildcardExpr),
+    MatchExpr(MatchExpr),
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
@@ -2342,12 +2559,18 @@ pub enum Ded {
     InductDed(InductDed),
     CasesDed(CasesDed),
     CheckDed(CheckDed),
-    MatchDed(MatchDed),
     LetDed(LetDed),
     LetRecDed(LetRecDed),
     TryDed(TryDed),
     ConcludeDed(ConcludeDed),
     InferBlockDed(InferBlockDed),
+    MatchDed(MatchDed),
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+pub enum MatchExpr {
+    InfixMatchExpr(InfixMatchExpr),
+    PrefixMatchExpr(PrefixMatchExpr),
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
@@ -2366,6 +2589,12 @@ pub enum Pat {
     CompoundPat(CompoundPat),
     WherePat(WherePat),
     SomeThingPat(SomeThingPat),
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+pub enum MatchDed {
+    InfixMatchDed(InfixMatchDed),
+    PrefixMatchDed(PrefixMatchDed),
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
@@ -2684,28 +2913,6 @@ impl AstNode for AssertClosedDir {
         &self.syntax
     }
 }
-impl AstNode for DeclareDir {
-    fn can_cast(kind: SyntaxKind) -> bool {
-        kind == DECLARE_DIR
-    }
-    fn cast(syntax: SyntaxNode) -> Option<Self> {
-        if Self::can_cast(syntax.kind()) { Some(Self { syntax }) } else { None }
-    }
-    fn syntax(&self) -> &SyntaxNode {
-        &self.syntax
-    }
-}
-impl AstNode for ConstantDeclareDir {
-    fn can_cast(kind: SyntaxKind) -> bool {
-        kind == CONSTANT_DECLARE_DIR
-    }
-    fn cast(syntax: SyntaxNode) -> Option<Self> {
-        if Self::can_cast(syntax.kind()) { Some(Self { syntax }) } else { None }
-    }
-    fn syntax(&self) -> &SyntaxNode {
-        &self.syntax
-    }
-}
 impl AstNode for ExtendModuleDir {
     fn can_cast(kind: SyntaxKind) -> bool {
         kind == EXTEND_MODULE_DIR
@@ -2772,6 +2979,116 @@ impl AstNode for CompoundSortDecl {
         &self.syntax
     }
 }
+impl AstNode for InfixConstantDeclare {
+    fn can_cast(kind: SyntaxKind) -> bool {
+        kind == INFIX_CONSTANT_DECLARE
+    }
+    fn cast(syntax: SyntaxNode) -> Option<Self> {
+        if Self::can_cast(syntax.kind()) { Some(Self { syntax }) } else { None }
+    }
+    fn syntax(&self) -> &SyntaxNode {
+        &self.syntax
+    }
+}
+impl AstNode for PrefixConstantDeclare {
+    fn can_cast(kind: SyntaxKind) -> bool {
+        kind == PREFIX_CONSTANT_DECLARE
+    }
+    fn cast(syntax: SyntaxNode) -> Option<Self> {
+        if Self::can_cast(syntax.kind()) { Some(Self { syntax }) } else { None }
+    }
+    fn syntax(&self) -> &SyntaxNode {
+        &self.syntax
+    }
+}
+impl AstNode for PrefixDeclareDir {
+    fn can_cast(kind: SyntaxKind) -> bool {
+        kind == PREFIX_DECLARE_DIR
+    }
+    fn cast(syntax: SyntaxNode) -> Option<Self> {
+        if Self::can_cast(syntax.kind()) { Some(Self { syntax }) } else { None }
+    }
+    fn syntax(&self) -> &SyntaxNode {
+        &self.syntax
+    }
+}
+impl AstNode for PrefixSortVarsDecl {
+    fn can_cast(kind: SyntaxKind) -> bool {
+        kind == PREFIX_SORT_VARS_DECL
+    }
+    fn cast(syntax: SyntaxNode) -> Option<Self> {
+        if Self::can_cast(syntax.kind()) { Some(Self { syntax }) } else { None }
+    }
+    fn syntax(&self) -> &SyntaxNode {
+        &self.syntax
+    }
+}
+impl AstNode for PrefixDeclareAttrs {
+    fn can_cast(kind: SyntaxKind) -> bool {
+        kind == PREFIX_DECLARE_ATTRS
+    }
+    fn cast(syntax: SyntaxNode) -> Option<Self> {
+        if Self::can_cast(syntax.kind()) { Some(Self { syntax }) } else { None }
+    }
+    fn syntax(&self) -> &SyntaxNode {
+        &self.syntax
+    }
+}
+impl AstNode for PrefixSingleSymbol {
+    fn can_cast(kind: SyntaxKind) -> bool {
+        kind == PREFIX_SINGLE_SYMBOL
+    }
+    fn cast(syntax: SyntaxNode) -> Option<Self> {
+        if Self::can_cast(syntax.kind()) { Some(Self { syntax }) } else { None }
+    }
+    fn syntax(&self) -> &SyntaxNode {
+        &self.syntax
+    }
+}
+impl AstNode for PrefixMultiSymbols {
+    fn can_cast(kind: SyntaxKind) -> bool {
+        kind == PREFIX_MULTI_SYMBOLS
+    }
+    fn cast(syntax: SyntaxNode) -> Option<Self> {
+        if Self::can_cast(syntax.kind()) { Some(Self { syntax }) } else { None }
+    }
+    fn syntax(&self) -> &SyntaxNode {
+        &self.syntax
+    }
+}
+impl AstNode for DeclareAttr {
+    fn can_cast(kind: SyntaxKind) -> bool {
+        kind == DECLARE_ATTR
+    }
+    fn cast(syntax: SyntaxNode) -> Option<Self> {
+        if Self::can_cast(syntax.kind()) { Some(Self { syntax }) } else { None }
+    }
+    fn syntax(&self) -> &SyntaxNode {
+        &self.syntax
+    }
+}
+impl AstNode for InputTransformDecl {
+    fn can_cast(kind: SyntaxKind) -> bool {
+        kind == INPUT_TRANSFORM_DECL
+    }
+    fn cast(syntax: SyntaxNode) -> Option<Self> {
+        if Self::can_cast(syntax.kind()) { Some(Self { syntax }) } else { None }
+    }
+    fn syntax(&self) -> &SyntaxNode {
+        &self.syntax
+    }
+}
+impl AstNode for InfixDeclareDir {
+    fn can_cast(kind: SyntaxKind) -> bool {
+        kind == INFIX_DECLARE_DIR
+    }
+    fn cast(syntax: SyntaxNode) -> Option<Self> {
+        if Self::can_cast(syntax.kind()) { Some(Self { syntax }) } else { None }
+    }
+    fn syntax(&self) -> &SyntaxNode {
+        &self.syntax
+    }
+}
 impl AstNode for SortVarsDecl {
     fn can_cast(kind: SyntaxKind) -> bool {
         kind == SORT_VARS_DECL
@@ -2797,28 +3114,6 @@ impl AstNode for FuncSorts {
 impl AstNode for DeclareAttrs {
     fn can_cast(kind: SyntaxKind) -> bool {
         kind == DECLARE_ATTRS
-    }
-    fn cast(syntax: SyntaxNode) -> Option<Self> {
-        if Self::can_cast(syntax.kind()) { Some(Self { syntax }) } else { None }
-    }
-    fn syntax(&self) -> &SyntaxNode {
-        &self.syntax
-    }
-}
-impl AstNode for InputTransformDecl {
-    fn can_cast(kind: SyntaxKind) -> bool {
-        kind == INPUT_TRANSFORM_DECL
-    }
-    fn cast(syntax: SyntaxNode) -> Option<Self> {
-        if Self::can_cast(syntax.kind()) { Some(Self { syntax }) } else { None }
-    }
-    fn syntax(&self) -> &SyntaxNode {
-        &self.syntax
-    }
-}
-impl AstNode for DeclareAttr {
-    fn can_cast(kind: SyntaxKind) -> bool {
-        kind == DECLARE_ATTR
     }
     fn cast(syntax: SyntaxNode) -> Option<Self> {
         if Self::can_cast(syntax.kind()) { Some(Self { syntax }) } else { None }
@@ -3047,17 +3342,6 @@ impl AstNode for LetRecExpr {
         &self.syntax
     }
 }
-impl AstNode for MatchExpr {
-    fn can_cast(kind: SyntaxKind) -> bool {
-        kind == MATCH_EXPR
-    }
-    fn cast(syntax: SyntaxNode) -> Option<Self> {
-        if Self::can_cast(syntax.kind()) { Some(Self { syntax }) } else { None }
-    }
-    fn syntax(&self) -> &SyntaxNode {
-        &self.syntax
-    }
-}
 impl AstNode for TryExpr {
     fn can_cast(kind: SyntaxKind) -> bool {
         kind == TRY_EXPR
@@ -3245,9 +3529,42 @@ impl AstNode for LetRecPart {
         &self.syntax
     }
 }
+impl AstNode for InfixMatchExpr {
+    fn can_cast(kind: SyntaxKind) -> bool {
+        kind == INFIX_MATCH_EXPR
+    }
+    fn cast(syntax: SyntaxNode) -> Option<Self> {
+        if Self::can_cast(syntax.kind()) { Some(Self { syntax }) } else { None }
+    }
+    fn syntax(&self) -> &SyntaxNode {
+        &self.syntax
+    }
+}
+impl AstNode for PrefixMatchExpr {
+    fn can_cast(kind: SyntaxKind) -> bool {
+        kind == PREFIX_MATCH_EXPR
+    }
+    fn cast(syntax: SyntaxNode) -> Option<Self> {
+        if Self::can_cast(syntax.kind()) { Some(Self { syntax }) } else { None }
+    }
+    fn syntax(&self) -> &SyntaxNode {
+        &self.syntax
+    }
+}
 impl AstNode for MatchArm {
     fn can_cast(kind: SyntaxKind) -> bool {
         kind == MATCH_ARM
+    }
+    fn cast(syntax: SyntaxNode) -> Option<Self> {
+        if Self::can_cast(syntax.kind()) { Some(Self { syntax }) } else { None }
+    }
+    fn syntax(&self) -> &SyntaxNode {
+        &self.syntax
+    }
+}
+impl AstNode for MatchClause {
+    fn can_cast(kind: SyntaxKind) -> bool {
+        kind == MATCH_CLAUSE
     }
     fn cast(syntax: SyntaxNode) -> Option<Self> {
         if Self::can_cast(syntax.kind()) { Some(Self { syntax }) } else { None }
@@ -3421,17 +3738,6 @@ impl AstNode for CheckDed {
         &self.syntax
     }
 }
-impl AstNode for MatchDed {
-    fn can_cast(kind: SyntaxKind) -> bool {
-        kind == MATCH_DED
-    }
-    fn cast(syntax: SyntaxNode) -> Option<Self> {
-        if Self::can_cast(syntax.kind()) { Some(Self { syntax }) } else { None }
-    }
-    fn syntax(&self) -> &SyntaxNode {
-        &self.syntax
-    }
-}
 impl AstNode for LetDed {
     fn can_cast(kind: SyntaxKind) -> bool {
         kind == LET_DED
@@ -3553,9 +3859,42 @@ impl AstNode for CheckDedArm {
         &self.syntax
     }
 }
+impl AstNode for InfixMatchDed {
+    fn can_cast(kind: SyntaxKind) -> bool {
+        kind == INFIX_MATCH_DED
+    }
+    fn cast(syntax: SyntaxNode) -> Option<Self> {
+        if Self::can_cast(syntax.kind()) { Some(Self { syntax }) } else { None }
+    }
+    fn syntax(&self) -> &SyntaxNode {
+        &self.syntax
+    }
+}
+impl AstNode for PrefixMatchDed {
+    fn can_cast(kind: SyntaxKind) -> bool {
+        kind == PREFIX_MATCH_DED
+    }
+    fn cast(syntax: SyntaxNode) -> Option<Self> {
+        if Self::can_cast(syntax.kind()) { Some(Self { syntax }) } else { None }
+    }
+    fn syntax(&self) -> &SyntaxNode {
+        &self.syntax
+    }
+}
 impl AstNode for MatchDedArm {
     fn can_cast(kind: SyntaxKind) -> bool {
         kind == MATCH_DED_ARM
+    }
+    fn cast(syntax: SyntaxNode) -> Option<Self> {
+        if Self::can_cast(syntax.kind()) { Some(Self { syntax }) } else { None }
+    }
+    fn syntax(&self) -> &SyntaxNode {
+        &self.syntax
+    }
+}
+impl AstNode for MatchDedClause {
+    fn can_cast(kind: SyntaxKind) -> bool {
+        kind == MATCH_DED_CLAUSE
     }
     fn cast(syntax: SyntaxNode) -> Option<Self> {
         if Self::can_cast(syntax.kind()) { Some(Self { syntax }) } else { None }
@@ -3941,16 +4280,6 @@ impl From<AssertClosedDir> for Dir {
         Dir::AssertClosedDir(node)
     }
 }
-impl From<DeclareDir> for Dir {
-    fn from(node: DeclareDir) -> Dir {
-        Dir::DeclareDir(node)
-    }
-}
-impl From<ConstantDeclareDir> for Dir {
-    fn from(node: ConstantDeclareDir) -> Dir {
-        Dir::ConstantDeclareDir(node)
-    }
-}
 impl From<ExtendModuleDir> for Dir {
     fn from(node: ExtendModuleDir) -> Dir {
         Dir::ExtendModuleDir(node)
@@ -3964,6 +4293,16 @@ impl From<OpenDir> for Dir {
 impl From<AssociativityDir> for Dir {
     fn from(node: AssociativityDir) -> Dir {
         Dir::AssociativityDir(node)
+    }
+}
+impl From<ConstantDeclareDir> for Dir {
+    fn from(node: ConstantDeclareDir) -> Dir {
+        Dir::ConstantDeclareDir(node)
+    }
+}
+impl From<DeclareDir> for Dir {
+    fn from(node: DeclareDir) -> Dir {
+        Dir::DeclareDir(node)
     }
 }
 impl From<DefineDir> for Dir {
@@ -3980,9 +4319,9 @@ impl AstNode for Dir {
     fn can_cast(kind: SyntaxKind) -> bool {
         matches!(
             kind, DOMAIN_DIR | DOMAINS_DIR | LOAD_DIR | ASSERT_DIR | ASSERT_CLOSED_DIR |
-            DECLARE_DIR | CONSTANT_DECLARE_DIR | EXTEND_MODULE_DIR | OPEN_DIR |
-            ASSOCIATIVITY_DIR | INFIX_MODULE_DIR | PREFIX_MODULE_DIR | INFIX_DEFINE_DIR |
-            PREFIX_DEFINE_DIR
+            EXTEND_MODULE_DIR | OPEN_DIR | ASSOCIATIVITY_DIR | INFIX_MODULE_DIR |
+            PREFIX_MODULE_DIR | INFIX_DEFINE_DIR | PREFIX_DEFINE_DIR | PREFIX_DECLARE_DIR
+            | INFIX_DECLARE_DIR | INFIX_CONSTANT_DECLARE | PREFIX_CONSTANT_DECLARE
         )
     }
     fn cast(syntax: SyntaxNode) -> Option<Self> {
@@ -3992,10 +4331,6 @@ impl AstNode for Dir {
             LOAD_DIR => Dir::LoadDir(LoadDir { syntax }),
             ASSERT_DIR => Dir::AssertDir(AssertDir { syntax }),
             ASSERT_CLOSED_DIR => Dir::AssertClosedDir(AssertClosedDir { syntax }),
-            DECLARE_DIR => Dir::DeclareDir(DeclareDir { syntax }),
-            CONSTANT_DECLARE_DIR => {
-                Dir::ConstantDeclareDir(ConstantDeclareDir { syntax })
-            }
             EXTEND_MODULE_DIR => Dir::ExtendModuleDir(ExtendModuleDir { syntax }),
             OPEN_DIR => Dir::OpenDir(OpenDir { syntax }),
             ASSOCIATIVITY_DIR => Dir::AssociativityDir(AssociativityDir { syntax }),
@@ -4011,6 +4346,28 @@ impl AstNode for Dir {
             PREFIX_DEFINE_DIR => {
                 Dir::DefineDir(DefineDir::PrefixDefineDir(PrefixDefineDir { syntax }))
             }
+            PREFIX_DECLARE_DIR => {
+                Dir::DeclareDir(
+                    DeclareDir::PrefixDeclareDir(PrefixDeclareDir { syntax }),
+                )
+            }
+            INFIX_DECLARE_DIR => {
+                Dir::DeclareDir(DeclareDir::InfixDeclareDir(InfixDeclareDir { syntax }))
+            }
+            INFIX_CONSTANT_DECLARE => {
+                Dir::ConstantDeclareDir(
+                    ConstantDeclareDir::InfixConstantDeclare(InfixConstantDeclare {
+                        syntax,
+                    }),
+                )
+            }
+            PREFIX_CONSTANT_DECLARE => {
+                Dir::ConstantDeclareDir(
+                    ConstantDeclareDir::PrefixConstantDeclare(PrefixConstantDeclare {
+                        syntax,
+                    }),
+                )
+            }
             _ => return None,
         };
         Some(res)
@@ -4022,11 +4379,11 @@ impl AstNode for Dir {
             Dir::LoadDir(it) => &it.syntax,
             Dir::AssertDir(it) => &it.syntax,
             Dir::AssertClosedDir(it) => &it.syntax,
-            Dir::DeclareDir(it) => &it.syntax,
-            Dir::ConstantDeclareDir(it) => &it.syntax,
             Dir::ExtendModuleDir(it) => &it.syntax,
             Dir::OpenDir(it) => &it.syntax,
             Dir::AssociativityDir(it) => &it.syntax,
+            Dir::ConstantDeclareDir(it) => it.syntax(),
+            Dir::DeclareDir(it) => it.syntax(),
             Dir::DefineDir(it) => it.syntax(),
             Dir::ModuleDir(it) => it.syntax(),
         }
@@ -4152,6 +4509,105 @@ impl AstNode for DefineDir {
         }
     }
 }
+impl From<PrefixDeclareDir> for DeclareDir {
+    fn from(node: PrefixDeclareDir) -> DeclareDir {
+        DeclareDir::PrefixDeclareDir(node)
+    }
+}
+impl From<InfixDeclareDir> for DeclareDir {
+    fn from(node: InfixDeclareDir) -> DeclareDir {
+        DeclareDir::InfixDeclareDir(node)
+    }
+}
+impl AstNode for DeclareDir {
+    fn can_cast(kind: SyntaxKind) -> bool {
+        matches!(kind, PREFIX_DECLARE_DIR | INFIX_DECLARE_DIR)
+    }
+    fn cast(syntax: SyntaxNode) -> Option<Self> {
+        let res = match syntax.kind() {
+            PREFIX_DECLARE_DIR => {
+                DeclareDir::PrefixDeclareDir(PrefixDeclareDir { syntax })
+            }
+            INFIX_DECLARE_DIR => DeclareDir::InfixDeclareDir(InfixDeclareDir { syntax }),
+            _ => return None,
+        };
+        Some(res)
+    }
+    fn syntax(&self) -> &SyntaxNode {
+        match self {
+            DeclareDir::PrefixDeclareDir(it) => &it.syntax,
+            DeclareDir::InfixDeclareDir(it) => &it.syntax,
+        }
+    }
+}
+impl From<InfixConstantDeclare> for ConstantDeclareDir {
+    fn from(node: InfixConstantDeclare) -> ConstantDeclareDir {
+        ConstantDeclareDir::InfixConstantDeclare(node)
+    }
+}
+impl From<PrefixConstantDeclare> for ConstantDeclareDir {
+    fn from(node: PrefixConstantDeclare) -> ConstantDeclareDir {
+        ConstantDeclareDir::PrefixConstantDeclare(node)
+    }
+}
+impl AstNode for ConstantDeclareDir {
+    fn can_cast(kind: SyntaxKind) -> bool {
+        matches!(kind, INFIX_CONSTANT_DECLARE | PREFIX_CONSTANT_DECLARE)
+    }
+    fn cast(syntax: SyntaxNode) -> Option<Self> {
+        let res = match syntax.kind() {
+            INFIX_CONSTANT_DECLARE => {
+                ConstantDeclareDir::InfixConstantDeclare(InfixConstantDeclare { syntax })
+            }
+            PREFIX_CONSTANT_DECLARE => {
+                ConstantDeclareDir::PrefixConstantDeclare(PrefixConstantDeclare {
+                    syntax,
+                })
+            }
+            _ => return None,
+        };
+        Some(res)
+    }
+    fn syntax(&self) -> &SyntaxNode {
+        match self {
+            ConstantDeclareDir::InfixConstantDeclare(it) => &it.syntax,
+            ConstantDeclareDir::PrefixConstantDeclare(it) => &it.syntax,
+        }
+    }
+}
+impl From<PrefixSingleSymbol> for PrefixDeclareSymbols {
+    fn from(node: PrefixSingleSymbol) -> PrefixDeclareSymbols {
+        PrefixDeclareSymbols::PrefixSingleSymbol(node)
+    }
+}
+impl From<PrefixMultiSymbols> for PrefixDeclareSymbols {
+    fn from(node: PrefixMultiSymbols) -> PrefixDeclareSymbols {
+        PrefixDeclareSymbols::PrefixMultiSymbols(node)
+    }
+}
+impl AstNode for PrefixDeclareSymbols {
+    fn can_cast(kind: SyntaxKind) -> bool {
+        matches!(kind, PREFIX_SINGLE_SYMBOL | PREFIX_MULTI_SYMBOLS)
+    }
+    fn cast(syntax: SyntaxNode) -> Option<Self> {
+        let res = match syntax.kind() {
+            PREFIX_SINGLE_SYMBOL => {
+                PrefixDeclareSymbols::PrefixSingleSymbol(PrefixSingleSymbol { syntax })
+            }
+            PREFIX_MULTI_SYMBOLS => {
+                PrefixDeclareSymbols::PrefixMultiSymbols(PrefixMultiSymbols { syntax })
+            }
+            _ => return None,
+        };
+        Some(res)
+    }
+    fn syntax(&self) -> &SyntaxNode {
+        match self {
+            PrefixDeclareSymbols::PrefixSingleSymbol(it) => &it.syntax,
+            PrefixDeclareSymbols::PrefixMultiSymbols(it) => &it.syntax,
+        }
+    }
+}
 impl From<IdentExpr> for Expr {
     fn from(node: IdentExpr) -> Expr {
         Expr::IdentExpr(node)
@@ -4210,11 +4666,6 @@ impl From<LetExpr> for Expr {
 impl From<LetRecExpr> for Expr {
     fn from(node: LetRecExpr) -> Expr {
         Expr::LetRecExpr(node)
-    }
-}
-impl From<MatchExpr> for Expr {
-    fn from(node: MatchExpr) -> Expr {
-        Expr::MatchExpr(node)
     }
 }
 impl From<TryExpr> for Expr {
@@ -4282,14 +4733,20 @@ impl From<WildcardExpr> for Expr {
         Expr::WildcardExpr(node)
     }
 }
+impl From<MatchExpr> for Expr {
+    fn from(node: MatchExpr) -> Expr {
+        Expr::MatchExpr(node)
+    }
+}
 impl AstNode for Expr {
     fn can_cast(kind: SyntaxKind) -> bool {
         matches!(
             kind, IDENT_EXPR | LITERAL_EXPR | UNIT_EXPR | TERM_VAR_EXPR | META_IDENT |
             CHECK_EXPR | LAMBDA_EXPR | APPLICATION_EXPR | LIST_EXPR | METHOD_EXPR |
-            LET_EXPR | LET_REC_EXPR | MATCH_EXPR | TRY_EXPR | CELL_EXPR | SET_EXPR |
-            REF_EXPR | WHILE_EXPR | MAKE_VECTOR_EXPR | VECTOR_SUB_EXPR | VECTOR_SET_EXPR
-            | SEQ_EXPR | AND_EXPR | OR_EXPR | MAP_EXPR | WILDCARD_EXPR
+            LET_EXPR | LET_REC_EXPR | TRY_EXPR | CELL_EXPR | SET_EXPR | REF_EXPR |
+            WHILE_EXPR | MAKE_VECTOR_EXPR | VECTOR_SUB_EXPR | VECTOR_SET_EXPR | SEQ_EXPR
+            | AND_EXPR | OR_EXPR | MAP_EXPR | WILDCARD_EXPR | INFIX_MATCH_EXPR |
+            PREFIX_MATCH_EXPR
         )
     }
     fn cast(syntax: SyntaxNode) -> Option<Self> {
@@ -4306,7 +4763,6 @@ impl AstNode for Expr {
             METHOD_EXPR => Expr::MethodExpr(MethodExpr { syntax }),
             LET_EXPR => Expr::LetExpr(LetExpr { syntax }),
             LET_REC_EXPR => Expr::LetRecExpr(LetRecExpr { syntax }),
-            MATCH_EXPR => Expr::MatchExpr(MatchExpr { syntax }),
             TRY_EXPR => Expr::TryExpr(TryExpr { syntax }),
             CELL_EXPR => Expr::CellExpr(CellExpr { syntax }),
             SET_EXPR => Expr::SetExpr(SetExpr { syntax }),
@@ -4320,6 +4776,12 @@ impl AstNode for Expr {
             OR_EXPR => Expr::OrExpr(OrExpr { syntax }),
             MAP_EXPR => Expr::MapExpr(MapExpr { syntax }),
             WILDCARD_EXPR => Expr::WildcardExpr(WildcardExpr { syntax }),
+            INFIX_MATCH_EXPR => {
+                Expr::MatchExpr(MatchExpr::InfixMatchExpr(InfixMatchExpr { syntax }))
+            }
+            PREFIX_MATCH_EXPR => {
+                Expr::MatchExpr(MatchExpr::PrefixMatchExpr(PrefixMatchExpr { syntax }))
+            }
             _ => return None,
         };
         Some(res)
@@ -4338,7 +4800,6 @@ impl AstNode for Expr {
             Expr::MethodExpr(it) => &it.syntax,
             Expr::LetExpr(it) => &it.syntax,
             Expr::LetRecExpr(it) => &it.syntax,
-            Expr::MatchExpr(it) => &it.syntax,
             Expr::TryExpr(it) => &it.syntax,
             Expr::CellExpr(it) => &it.syntax,
             Expr::SetExpr(it) => &it.syntax,
@@ -4352,6 +4813,7 @@ impl AstNode for Expr {
             Expr::OrExpr(it) => &it.syntax,
             Expr::MapExpr(it) => &it.syntax,
             Expr::WildcardExpr(it) => &it.syntax,
+            Expr::MatchExpr(it) => it.syntax(),
         }
     }
 }
@@ -4494,11 +4956,6 @@ impl From<CheckDed> for Ded {
         Ded::CheckDed(node)
     }
 }
-impl From<MatchDed> for Ded {
-    fn from(node: MatchDed) -> Ded {
-        Ded::MatchDed(node)
-    }
-}
 impl From<LetDed> for Ded {
     fn from(node: LetDed) -> Ded {
         Ded::LetDed(node)
@@ -4524,14 +4981,19 @@ impl From<InferBlockDed> for Ded {
         Ded::InferBlockDed(node)
     }
 }
+impl From<MatchDed> for Ded {
+    fn from(node: MatchDed) -> Ded {
+        Ded::MatchDed(node)
+    }
+}
 impl AstNode for Ded {
     fn can_cast(kind: SyntaxKind) -> bool {
         matches!(
             kind, METHOD_CALL_DED | BANG_METHOD_CALL_DED | ASSUME_DED | NAMED_ASSUME_DED
             | PROOF_BY_CONTRA_DED | GENERALIZE_OVER_DED | PICK_ANY_DED | WITH_WITNESS_DED
             | PICK_WITNESS_DED | PICK_WITNESSES_DED | INDUCT_DED | CASES_DED | CHECK_DED
-            | MATCH_DED | LET_DED | LET_REC_DED | TRY_DED | CONCLUDE_DED |
-            INFER_BLOCK_DED
+            | LET_DED | LET_REC_DED | TRY_DED | CONCLUDE_DED | INFER_BLOCK_DED |
+            INFIX_MATCH_DED | PREFIX_MATCH_DED
         )
     }
     fn cast(syntax: SyntaxNode) -> Option<Self> {
@@ -4549,12 +5011,17 @@ impl AstNode for Ded {
             INDUCT_DED => Ded::InductDed(InductDed { syntax }),
             CASES_DED => Ded::CasesDed(CasesDed { syntax }),
             CHECK_DED => Ded::CheckDed(CheckDed { syntax }),
-            MATCH_DED => Ded::MatchDed(MatchDed { syntax }),
             LET_DED => Ded::LetDed(LetDed { syntax }),
             LET_REC_DED => Ded::LetRecDed(LetRecDed { syntax }),
             TRY_DED => Ded::TryDed(TryDed { syntax }),
             CONCLUDE_DED => Ded::ConcludeDed(ConcludeDed { syntax }),
             INFER_BLOCK_DED => Ded::InferBlockDed(InferBlockDed { syntax }),
+            INFIX_MATCH_DED => {
+                Ded::MatchDed(MatchDed::InfixMatchDed(InfixMatchDed { syntax }))
+            }
+            PREFIX_MATCH_DED => {
+                Ded::MatchDed(MatchDed::PrefixMatchDed(PrefixMatchDed { syntax }))
+            }
             _ => return None,
         };
         Some(res)
@@ -4574,12 +5041,41 @@ impl AstNode for Ded {
             Ded::InductDed(it) => &it.syntax,
             Ded::CasesDed(it) => &it.syntax,
             Ded::CheckDed(it) => &it.syntax,
-            Ded::MatchDed(it) => &it.syntax,
             Ded::LetDed(it) => &it.syntax,
             Ded::LetRecDed(it) => &it.syntax,
             Ded::TryDed(it) => &it.syntax,
             Ded::ConcludeDed(it) => &it.syntax,
             Ded::InferBlockDed(it) => &it.syntax,
+            Ded::MatchDed(it) => it.syntax(),
+        }
+    }
+}
+impl From<InfixMatchExpr> for MatchExpr {
+    fn from(node: InfixMatchExpr) -> MatchExpr {
+        MatchExpr::InfixMatchExpr(node)
+    }
+}
+impl From<PrefixMatchExpr> for MatchExpr {
+    fn from(node: PrefixMatchExpr) -> MatchExpr {
+        MatchExpr::PrefixMatchExpr(node)
+    }
+}
+impl AstNode for MatchExpr {
+    fn can_cast(kind: SyntaxKind) -> bool {
+        matches!(kind, INFIX_MATCH_EXPR | PREFIX_MATCH_EXPR)
+    }
+    fn cast(syntax: SyntaxNode) -> Option<Self> {
+        let res = match syntax.kind() {
+            INFIX_MATCH_EXPR => MatchExpr::InfixMatchExpr(InfixMatchExpr { syntax }),
+            PREFIX_MATCH_EXPR => MatchExpr::PrefixMatchExpr(PrefixMatchExpr { syntax }),
+            _ => return None,
+        };
+        Some(res)
+    }
+    fn syntax(&self) -> &SyntaxNode {
+        match self {
+            MatchExpr::InfixMatchExpr(it) => &it.syntax,
+            MatchExpr::PrefixMatchExpr(it) => &it.syntax,
         }
     }
 }
@@ -4700,6 +5196,35 @@ impl AstNode for Pat {
         }
     }
 }
+impl From<InfixMatchDed> for MatchDed {
+    fn from(node: InfixMatchDed) -> MatchDed {
+        MatchDed::InfixMatchDed(node)
+    }
+}
+impl From<PrefixMatchDed> for MatchDed {
+    fn from(node: PrefixMatchDed) -> MatchDed {
+        MatchDed::PrefixMatchDed(node)
+    }
+}
+impl AstNode for MatchDed {
+    fn can_cast(kind: SyntaxKind) -> bool {
+        matches!(kind, INFIX_MATCH_DED | PREFIX_MATCH_DED)
+    }
+    fn cast(syntax: SyntaxNode) -> Option<Self> {
+        let res = match syntax.kind() {
+            INFIX_MATCH_DED => MatchDed::InfixMatchDed(InfixMatchDed { syntax }),
+            PREFIX_MATCH_DED => MatchDed::PrefixMatchDed(PrefixMatchDed { syntax }),
+            _ => return None,
+        };
+        Some(res)
+    }
+    fn syntax(&self) -> &SyntaxNode {
+        match self {
+            MatchDed::InfixMatchDed(it) => &it.syntax,
+            MatchDed::PrefixMatchDed(it) => &it.syntax,
+        }
+    }
+}
 impl From<IdentPat> for RestrictedPat {
     fn from(node: IdentPat) -> RestrictedPat {
         RestrictedPat::IdentPat(node)
@@ -4761,8 +5286,8 @@ impl AstNode for Inference {
             kind, INFER_FROM | INFER_BY | METHOD_CALL_DED | BANG_METHOD_CALL_DED |
             ASSUME_DED | NAMED_ASSUME_DED | PROOF_BY_CONTRA_DED | GENERALIZE_OVER_DED |
             PICK_ANY_DED | WITH_WITNESS_DED | PICK_WITNESS_DED | PICK_WITNESSES_DED |
-            INDUCT_DED | CASES_DED | CHECK_DED | MATCH_DED | LET_DED | LET_REC_DED |
-            TRY_DED | CONCLUDE_DED | INFER_BLOCK_DED
+            INDUCT_DED | CASES_DED | CHECK_DED | LET_DED | LET_REC_DED | TRY_DED |
+            CONCLUDE_DED | INFER_BLOCK_DED
         )
     }
     fn cast(syntax: SyntaxNode) -> Option<Self> {
@@ -4798,7 +5323,6 @@ impl AstNode for Inference {
             INDUCT_DED => Inference::Ded(Ded::InductDed(InductDed { syntax })),
             CASES_DED => Inference::Ded(Ded::CasesDed(CasesDed { syntax })),
             CHECK_DED => Inference::Ded(Ded::CheckDed(CheckDed { syntax })),
-            MATCH_DED => Inference::Ded(Ded::MatchDed(MatchDed { syntax })),
             LET_DED => Inference::Ded(Ded::LetDed(LetDed { syntax })),
             LET_REC_DED => Inference::Ded(Ded::LetRecDed(LetRecDed { syntax })),
             TRY_DED => Inference::Ded(Ded::TryDed(TryDed { syntax })),
@@ -4892,6 +5416,21 @@ impl std::fmt::Display for DefineDir {
         std::fmt::Display::fmt(self.syntax(), f)
     }
 }
+impl std::fmt::Display for DeclareDir {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        std::fmt::Display::fmt(self.syntax(), f)
+    }
+}
+impl std::fmt::Display for ConstantDeclareDir {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        std::fmt::Display::fmt(self.syntax(), f)
+    }
+}
+impl std::fmt::Display for PrefixDeclareSymbols {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        std::fmt::Display::fmt(self.syntax(), f)
+    }
+}
 impl std::fmt::Display for Expr {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         std::fmt::Display::fmt(self.syntax(), f)
@@ -4912,7 +5451,17 @@ impl std::fmt::Display for Ded {
         std::fmt::Display::fmt(self.syntax(), f)
     }
 }
+impl std::fmt::Display for MatchExpr {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        std::fmt::Display::fmt(self.syntax(), f)
+    }
+}
 impl std::fmt::Display for Pat {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        std::fmt::Display::fmt(self.syntax(), f)
+    }
+}
+impl std::fmt::Display for MatchDed {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         std::fmt::Display::fmt(self.syntax(), f)
     }
@@ -5067,16 +5616,6 @@ impl std::fmt::Display for AssertClosedDir {
         std::fmt::Display::fmt(self.syntax(), f)
     }
 }
-impl std::fmt::Display for DeclareDir {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        std::fmt::Display::fmt(self.syntax(), f)
-    }
-}
-impl std::fmt::Display for ConstantDeclareDir {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        std::fmt::Display::fmt(self.syntax(), f)
-    }
-}
 impl std::fmt::Display for ExtendModuleDir {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         std::fmt::Display::fmt(self.syntax(), f)
@@ -5107,6 +5646,56 @@ impl std::fmt::Display for CompoundSortDecl {
         std::fmt::Display::fmt(self.syntax(), f)
     }
 }
+impl std::fmt::Display for InfixConstantDeclare {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        std::fmt::Display::fmt(self.syntax(), f)
+    }
+}
+impl std::fmt::Display for PrefixConstantDeclare {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        std::fmt::Display::fmt(self.syntax(), f)
+    }
+}
+impl std::fmt::Display for PrefixDeclareDir {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        std::fmt::Display::fmt(self.syntax(), f)
+    }
+}
+impl std::fmt::Display for PrefixSortVarsDecl {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        std::fmt::Display::fmt(self.syntax(), f)
+    }
+}
+impl std::fmt::Display for PrefixDeclareAttrs {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        std::fmt::Display::fmt(self.syntax(), f)
+    }
+}
+impl std::fmt::Display for PrefixSingleSymbol {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        std::fmt::Display::fmt(self.syntax(), f)
+    }
+}
+impl std::fmt::Display for PrefixMultiSymbols {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        std::fmt::Display::fmt(self.syntax(), f)
+    }
+}
+impl std::fmt::Display for DeclareAttr {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        std::fmt::Display::fmt(self.syntax(), f)
+    }
+}
+impl std::fmt::Display for InputTransformDecl {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        std::fmt::Display::fmt(self.syntax(), f)
+    }
+}
+impl std::fmt::Display for InfixDeclareDir {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        std::fmt::Display::fmt(self.syntax(), f)
+    }
+}
 impl std::fmt::Display for SortVarsDecl {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         std::fmt::Display::fmt(self.syntax(), f)
@@ -5118,16 +5707,6 @@ impl std::fmt::Display for FuncSorts {
     }
 }
 impl std::fmt::Display for DeclareAttrs {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        std::fmt::Display::fmt(self.syntax(), f)
-    }
-}
-impl std::fmt::Display for InputTransformDecl {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        std::fmt::Display::fmt(self.syntax(), f)
-    }
-}
-impl std::fmt::Display for DeclareAttr {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         std::fmt::Display::fmt(self.syntax(), f)
     }
@@ -5232,11 +5811,6 @@ impl std::fmt::Display for LetRecExpr {
         std::fmt::Display::fmt(self.syntax(), f)
     }
 }
-impl std::fmt::Display for MatchExpr {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        std::fmt::Display::fmt(self.syntax(), f)
-    }
-}
 impl std::fmt::Display for TryExpr {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         std::fmt::Display::fmt(self.syntax(), f)
@@ -5322,7 +5896,22 @@ impl std::fmt::Display for LetRecPart {
         std::fmt::Display::fmt(self.syntax(), f)
     }
 }
+impl std::fmt::Display for InfixMatchExpr {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        std::fmt::Display::fmt(self.syntax(), f)
+    }
+}
+impl std::fmt::Display for PrefixMatchExpr {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        std::fmt::Display::fmt(self.syntax(), f)
+    }
+}
 impl std::fmt::Display for MatchArm {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        std::fmt::Display::fmt(self.syntax(), f)
+    }
+}
+impl std::fmt::Display for MatchClause {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         std::fmt::Display::fmt(self.syntax(), f)
     }
@@ -5402,11 +5991,6 @@ impl std::fmt::Display for CheckDed {
         std::fmt::Display::fmt(self.syntax(), f)
     }
 }
-impl std::fmt::Display for MatchDed {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        std::fmt::Display::fmt(self.syntax(), f)
-    }
-}
 impl std::fmt::Display for LetDed {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         std::fmt::Display::fmt(self.syntax(), f)
@@ -5462,7 +6046,22 @@ impl std::fmt::Display for CheckDedArm {
         std::fmt::Display::fmt(self.syntax(), f)
     }
 }
+impl std::fmt::Display for InfixMatchDed {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        std::fmt::Display::fmt(self.syntax(), f)
+    }
+}
+impl std::fmt::Display for PrefixMatchDed {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        std::fmt::Display::fmt(self.syntax(), f)
+    }
+}
 impl std::fmt::Display for MatchDedArm {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        std::fmt::Display::fmt(self.syntax(), f)
+    }
+}
+impl std::fmt::Display for MatchDedClause {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         std::fmt::Display::fmt(self.syntax(), f)
     }
