@@ -1,7 +1,7 @@
 ---
 source: crates/parser/src/tests.rs
 description: "(foo as )\n"
-input_file: crates/parser/test_data/parser/inline/err/pat/0037_named_as_pat_no_pat.ath
+input_file: crates/parser/test_data/parser/inline/err/pat/0165_named_as_pat_no_pat.ath
 ---
 NAMED_PAT
   L_PAREN "("

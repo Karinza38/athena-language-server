@@ -102,22 +102,38 @@ pub(crate) fn wildcard_pat(p: &mut Parser) {
 // (foo as "hello")
 fn named_pat(p: &mut Parser) {
     assert!(p.at(T!['(']));
-    assert!(p.peek_at(IDENT) || p.peek_at(T![bind]));
+    assert!(p.peek_at(IDENT) || p.peek_at(T![bind]) || p.peek_at(T![as]));
 
     let m = p.start();
     p.bump(T!['(']);
 
     if p.at(IDENT) {
         identifier(p);
-        p.expect(T![as]);
+        if p.at(T![as]) {
+            p.bump(T![as]);
+        } else if p.at(T![bind]) {
+            // test(pat) named_pat_bind_in_middle
+            // (foo bind bar)
+            p.bump(T![bind]);
+        } else {
+            // test_err(pat) named_pat_no_as_or_bind
+            // (foo )
+            p.error("expected `as` or `bind`");
+        }
         if !pat(p) {
             // test_err(pat) named_as_pat_no_pat
             // (foo as )
             p.error("expected a pattern to bind to");
         }
     } else {
-        assert!(p.at(T![bind]));
-        p.bump(T![bind]);
+        assert!(p.at(T![bind]) || p.at(T![as]));
+        if p.at(T![as]) {
+            // test(pat) named_pat_as_start
+            // (as foo bar)
+            p.bump(T![as]);
+        } else {
+            p.bump(T![bind]);
+        }
         identifier(p);
         if !pat(p) {
             // test_err(pat) named_bind_pat_no_pat
@@ -315,8 +331,17 @@ fn or_pat(p: &mut Parser) {
     m.complete(p, SyntaxKind::OR_PAT);
 }
 
-pub(crate) const PAT_START_SET: TokenSet =
-    TokenSet::new(&[IDENT, T![?], T!['\''], T![_], T!['('], T![bind], T!['[']]).union(LIT_SET);
+pub(crate) const PAT_START_SET: TokenSet = TokenSet::new(&[
+    IDENT,
+    T![?],
+    T!['\''],
+    T![_],
+    T!['('],
+    T![bind],
+    T!['['],
+    T![as],
+])
+.union(LIT_SET);
 
 pub(crate) fn pat(p: &mut Parser) -> bool {
     #[cfg(test)]
@@ -345,13 +370,13 @@ pub(crate) fn pat(p: &mut Parser) -> bool {
                     unit_pat(p);
                 }
                 IDENT => {
-                    if p.nth_at(2, T![as]) {
+                    if p.nth_at(2, T![as]) || p.nth_at(2, T![bind]) {
                         named_pat(p);
                     } else {
                         compound_or_where_pat(p);
                     }
                 }
-                T![bind] => {
+                T![bind] | T![as] => {
                     named_pat(p);
                 }
                 T![||] => {
@@ -371,19 +396,6 @@ pub(crate) fn pat(p: &mut Parser) -> bool {
                 }
                 pk if PAT_START_SET.contains(pk) => {
                     compound_or_where_pat(p);
-                }
-                T![as] => {
-                    let m = p.start();
-                    p.error("a named pattern must have a name");
-                    p.bump(T!['(']);
-                    p.bump(T![as]);
-                    if !pat(p) {
-                        // test_err(pat) as_pat_no_pat
-                        // (as )
-                        p.error("expected a pattern to bind to");
-                    }
-                    p.expect(T![')']);
-                    m.complete(p, SyntaxKind::NAMED_PAT);
                 }
                 _ => {
                     return false;

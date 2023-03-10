@@ -2265,6 +2265,9 @@ impl NamedPat {
     pub fn bind_token(&self) -> Option<SyntaxToken> {
         support::token(&self.syntax, T![bind])
     }
+    pub fn as_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T![as])
+    }
     pub fn identifier(&self) -> Option<Identifier> {
         support::child(&self.syntax)
     }
@@ -2273,9 +2276,6 @@ impl NamedPat {
     }
     pub fn r_paren_token(&self) -> Option<SyntaxToken> {
         support::token(&self.syntax, T![')'])
-    }
-    pub fn as_token(&self) -> Option<SyntaxToken> {
-        support::token(&self.syntax, T![as])
     }
 }
 

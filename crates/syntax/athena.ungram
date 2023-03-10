@@ -618,8 +618,8 @@ UnitPat =
     Unit
 
 NamedPat =
-    '(' 'bind' Identifier Pat ')'
-    | '(' Identifier 'as' Pat ')'
+    '(' ('bind' | 'as') Identifier Pat ')'
+    | '(' Identifier ('bind' | 'as') Pat ')'
 
 ValOfPat =
     '(' 'val-of' Identifier ')'
