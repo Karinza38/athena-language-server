@@ -448,10 +448,10 @@ SeqExpr =
     '(' 'seq' Phrase* ')'
 
 AndExpr =
-    '(' '&&' Phrase* ')'
+    '(' '&&' Phrase* ')' // also can be infix but it doesn't affect the tree
 
 OrExpr =
-    '(' '||' Phrase* ')'
+    '(' '||' Phrase* ')' // also can be infix but it doesn't affect the tree
 
 MapExpr =
     '|{' (MapBinding (',' MapBinding)*) '}|'

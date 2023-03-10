@@ -125,6 +125,16 @@ pub(crate) fn opened_application_expr(p: &mut Parser, m: Marker) {
             // but it's the most convenient point to identify a by deduction
             super::deductions::by_ded_partial(p, m);
             return;
+        } else if p.at(T![&&]) {
+            // test(expr) infix_and_expr
+            // (foo && bar baz)
+            opened_and_expr(p, m);
+            return;
+        } else if p.at(T![||]) {
+            // test(expr) infix_or_expr
+            // (foo || bar baz)
+            opened_or_expr(p, m);
+            return;
         }
         // test(expr) nested_application_expr
         // (foo (bar baz))
@@ -164,6 +174,7 @@ fn list_expr(p: &mut Parser) {
 // (&& foo bar true)
 
 /// parses an and expression with the opening '(' already consumed
+/// and potentially the first phrase (if this is infix)
 fn opened_and_expr(p: &mut Parser, m: Marker) {
     p.bump(T![&&]);
 
