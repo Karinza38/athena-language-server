@@ -95,6 +95,7 @@ KindsSrc(
         "by",
         "OP",
         "primitive-method",
+        "dmatch",
     ],
     contextual_keywords: ["|"],
     literals: ["INT_NUMBER", "STRING", "CHAR"],
@@ -123,6 +124,7 @@ KindsSrc(
         "APPLICATION_EXPR",
         "LIST_EXPR",
         "METHOD_EXPR",
+        "PREFIX_LET_EXPR",
         "LET_EXPR",
         "LET_REC_EXPR",
         "INFIX_MATCH_EXPR",
@@ -204,6 +206,7 @@ KindsSrc(
         "MAYBE_WILDCARD_TYPED_PARAM",
         "OP_ANNOTATED_PARAM",
         "MAYBE_WILDCARD_OP_ANNOTATED_PARAM",
+        "PREFIX_BINDING",
         // Directives
         "FUNC_SORTS",
         "SORT_VARS_DECL",

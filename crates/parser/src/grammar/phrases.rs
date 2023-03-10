@@ -185,10 +185,16 @@ pub(crate) fn match_expr_or_ded_partial(
             } else if p.at(T!['(']) {
                 while !p.at(T![')']) && !p.at_end() {
                     super::expressions::prefix_match_clause(p);
+
+                    if p.step_count() > 100 {
+                        p.err_and_bump("infinite loop in match expression");
+                    }
                 }
 
                 p.expect(T![')']);
                 inner.abandon(p);
+
+                eprintln!("{}", std::backtrace::Backtrace::capture());
                 outer.complete(p, SyntaxKind::PREFIX_MATCH_EXPR);
                 (ExprOrDed::Expr, PrefixOrInfix::Prefix)
             } else {
@@ -671,7 +677,10 @@ pub(crate) fn expr_or_ded(p: &mut Parser) -> Option<ExprOrDed> {
                     return Some(ExprOrDed::Expr);
                 }
             }
-            (T![let], _) => {
+            (T![let], T!['{']) => {
+                return Some(let_expr_or_ded(p, None));
+            }
+            (T![let], T!['(']) => {
                 return Some(let_expr_or_ded(p, None));
             }
             (T![letrec], _) => {

@@ -1,0 +1,38 @@
+---
+source: crates/parser/src/tests.rs
+description: "(let ((foo 1) (bar 2)))\n"
+input_file: crates/parser/test_data/parser/inline/err/expr/0157_prefix_let_expr_no_body.ath
+---
+PREFIX_LET_EXPR
+  L_PAREN "("
+  LET_KW "let"
+  WHITESPACE " "
+  L_PAREN "("
+  PREFIX_BINDING
+    L_PAREN "("
+    IDENT_PAT
+      IDENTIFIER
+        IDENT "foo"
+    WHITESPACE " "
+    EXPR_PHRASE
+      IDENT_EXPR
+        IDENTIFIER
+          IDENT "1"
+    R_PAREN ")"
+  WHITESPACE " "
+  PREFIX_BINDING
+    L_PAREN "("
+    IDENT_PAT
+      IDENTIFIER
+        IDENT "bar"
+    WHITESPACE " "
+    EXPR_PHRASE
+      IDENT_EXPR
+        IDENTIFIER
+          IDENT "2"
+    R_PAREN ")"
+  R_PAREN ")"
+  R_PAREN ")"
+  WHITESPACE "\n"
+error 22: Expected to find a body (phrase) for the prefix let expression
+

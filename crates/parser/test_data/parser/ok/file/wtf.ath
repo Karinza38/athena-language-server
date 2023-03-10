@@ -1,0 +1,20 @@
+(match p 
+    ((some-atom _) (let  (
+            (res (match (eval-silent (apply-env p))
+                                (() false) (res res)))
+                        )
+                    res))
+    ((not q) (falsify q))
+    ((and (some-list args)) (for-each args verify))
+    ((or (some-list args)) (for-some args verify))
+    ((if p1 p2) (verify (or (not p1) p2)))
+    ((iff p1 p2) (&& (verify (if p1 p2))
+                    (verify (if p2 p1))))
+    ((forall x q) (check ((member? x (fv q)) false)
+                        (else false)))
+    ((exists x q) (let ((terms (st (make-all-ground-terms (sort-of x)) (get-bound N x))))
+                    (for-some terms
+                            (lambda (t)
+                                (let ((_ (table-add T [x --> t]))
+                                    (_ (table-add vars-of-interest [x --> t])))
+                                (verify q)))))))

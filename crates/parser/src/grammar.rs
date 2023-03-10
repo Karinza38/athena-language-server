@@ -10,7 +10,7 @@ use crate::{parser::Parser, token_set::TokenSet, SyntaxKind, T};
 use SyntaxKind::{CHAR, IDENT, STRING};
 
 pub(crate) mod entry {
-    use super::{statements::STMT_START_SET, *};
+    use super::*;
 
     pub(crate) fn expr(p: &mut Parser) {
         let m = p.start();
@@ -104,8 +104,9 @@ pub(crate) mod entry {
             //    domain Bar ]][]
             //    declare Func: [Bar] -> Bar
             // }
-            if !super::statements::stmt(p) {
-                p.err_recover("invalid statement", STMT_START_SET);
+            if !super::statements::stmt(p) || p.step_count() > 100 {
+                // p.err_recover("invalid statement", STMT_START_SET);
+                p.err_and_bump("invalid statement");
             }
             // test(file) source_file_with_semicolon
             // domain Bar;

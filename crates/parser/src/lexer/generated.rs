@@ -160,6 +160,8 @@ pub(crate) enum LexerToken {
     DatatypeCases(usize),
     #[token("on", |lex|lex.slice().len())]
     On(usize),
+    #[token("dmatch", |lex|lex.slice().len())]
+    Dmatch(usize),
     #[token("begin", |lex|lex.slice().len())]
     Begin(usize),
     #[token("end", |lex|lex.slice().len())]
@@ -284,6 +286,7 @@ impl LexerToken {
             Self::ByInduction(..) => T![by - induction],
             Self::DatatypeCases(..) => T![datatype - cases],
             Self::On(..) => T![on],
+            Self::Dmatch(..) => T![dmatch],
             Self::Begin(..) => T![begin],
             Self::End(..) => T![end],
             Self::From(..) => T![from],
@@ -387,6 +390,7 @@ impl LexerToken {
             Self::ByInduction(len) => len,
             Self::DatatypeCases(len) => len,
             Self::On(len) => len,
+            Self::Dmatch(len) => len,
             Self::Begin(len) => len,
             Self::End(len) => len,
             Self::From(len) => len,

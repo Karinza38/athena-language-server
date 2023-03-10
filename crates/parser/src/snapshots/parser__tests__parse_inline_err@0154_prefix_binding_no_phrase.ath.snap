@@ -1,0 +1,24 @@
+---
+source: crates/parser/src/tests.rs
+description: "(let (foo ) foo)\n"
+input_file: crates/parser/test_data/parser/inline/err/expr/0154_prefix_binding_no_phrase.ath
+---
+PREFIX_LET_EXPR
+  L_PAREN "("
+  LET_KW "let"
+  WHITESPACE " "
+  L_PAREN "("
+  ERROR
+    IDENT "foo"
+  WHITESPACE " "
+  R_PAREN ")"
+  WHITESPACE " "
+  EXPR_PHRASE
+    IDENT_EXPR
+      IDENTIFIER
+        IDENT "foo"
+  R_PAREN ")"
+  WHITESPACE "\n"
+error 6: Expected to find a prefix binding in parens
+error 6: expected a binding in the prefix let expression
+

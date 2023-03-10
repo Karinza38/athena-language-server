@@ -22,6 +22,10 @@ impl<'i> Parser<'i> {
         }
     }
 
+    pub(crate) fn step_count(&self) -> u32 {
+        self.steps.get()
+    }
+
     pub(crate) fn current(&self) -> SyntaxKind {
         self.nth(0)
     }

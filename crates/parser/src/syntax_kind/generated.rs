@@ -102,6 +102,7 @@ pub enum SyntaxKind {
     BY_KW,
     O_P_KW,
     PRIMITIVE_METHOD_KW,
+    DMATCH_KW,
     PIPE,
     INT_NUMBER,
     STRING,
@@ -130,6 +131,7 @@ pub enum SyntaxKind {
     APPLICATION_EXPR,
     LIST_EXPR,
     METHOD_EXPR,
+    PREFIX_LET_EXPR,
     LET_EXPR,
     LET_REC_EXPR,
     INFIX_MATCH_EXPR,
@@ -208,6 +210,7 @@ pub enum SyntaxKind {
     MAYBE_WILDCARD_TYPED_PARAM,
     OP_ANNOTATED_PARAM,
     MAYBE_WILDCARD_OP_ANNOTATED_PARAM,
+    PREFIX_BINDING,
     FUNC_SORTS,
     SORT_VARS_DECL,
     COMPOUND_SORT_DECL,
@@ -273,7 +276,7 @@ impl SyntaxKind {
             ASSERT_STAR_KW | LEFT_ASSOC_KW | RIGHT_ASSOC_KW | DATATYPE_KW | STRUCTURE_KW
             | DATATYPES_KW | STRUCTURES_KW | EXTEND_MODULE_KW | PRIVATE_KW | OPEN_KW |
             ON_KW | BEGIN_KW | END_KW | FROM_KW | BY_KW | O_P_KW | PRIMITIVE_METHOD_KW |
-            PIPE
+            DMATCH_KW | PIPE
         )
     }
     pub fn is_punct(self) -> bool {
@@ -361,6 +364,7 @@ impl SyntaxKind {
             "by" => BY_KW,
             "OP" => O_P_KW,
             "primitive-method" => PRIMITIVE_METHOD_KW,
+            "dmatch" => DMATCH_KW,
             _ => return None,
         };
         Some(kw)
@@ -675,6 +679,9 @@ macro_rules! T {
     };
     [primitive - method] => {
         $crate ::SyntaxKind::PRIMITIVE_METHOD_KW
+    };
+    [dmatch] => {
+        $crate ::SyntaxKind::DMATCH_KW
     };
     [|] => {
         $crate ::SyntaxKind::PIPE

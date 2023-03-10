@@ -63,6 +63,12 @@ MaybeWildcardTypedParam =
 OpAnnotatedParam =
     Identifier ':' '(' 'OP' Identifier Identifier? ')'
 
+//*********//
+//  Misc   //
+//*********//
+PrefixBinding =
+    '(' Pat Phrase ')'
+
 //*******//
 // Sorts //
 //*******//
@@ -354,6 +360,9 @@ ListExpr =
 
 MethodExpr =
     'method' '(' MaybeWildcardTypedParam* ')' Ded
+
+PrefixLetExpr =
+    '(' 'let' '(' PrefixBinding* ')' Expr ')' 
 
 LetExpr =
     'let' '{' LetPart* '}' Expr
