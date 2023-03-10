@@ -178,9 +178,36 @@ CompoundSortDecl =
     '(' SortDecl* ')'
 
 ConstantDeclareDir =
+    InfixConstantDeclare
+    | PrefixConstantDeclare
+
+InfixConstantDeclare =
     'declare' (Identifier (',' Identifier)*) ':' SortDecl
 
+PrefixConstantDeclare =
+    '(' 'declare' PrefixDeclareSymbols SortDecl ')'
+
+PrefixDeclareDir =
+    '(' 'declare' PrefixDeclareSymbols '(' PrefixSortVarsDecl?  '->' '(' SortDecl* ')' SortDecl ')' PrefixDeclareAttrs? ')'
+
+PrefixDeclareSymbols =
+    PrefixSingleSymbol
+    | PrefixMultiSymbols
+
+PrefixSingleSymbol =
+    Identifier
+
+PrefixMultiSymbols =
+    '(' Identifier* ')'
+
+PrefixDeclareAttrs =
+    '(' DeclareAttr* InputTransformDecl? ')'
+
 DeclareDir =
+    PrefixDeclareDir
+    | InfixDeclareDir
+
+InfixDeclareDir =
     'declare' (Identifier (',' Identifier)*) ':' SortVarsDecl? FuncSorts '->' return_sort:SortDecl DeclareAttrs?
 
 InputTransformDecl =
@@ -199,6 +226,9 @@ FuncSorts =
 
 SortVarsDecl =
     '(' (IdentSort (',' IdentSort)*) ')'
+
+PrefixSortVarsDecl =
+    '(' IdentSort* ')'
 
 DefineDir =
     InfixDefineDir
