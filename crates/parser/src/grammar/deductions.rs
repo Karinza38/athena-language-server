@@ -595,6 +595,7 @@ fn maybe_named_inference(p: &mut Parser) -> bool {
                 maybe_wildcard_op_annotated_param(p);
                 p.expect(T![:=]);
                 named = true;
+                break;
             }
         }
     }
