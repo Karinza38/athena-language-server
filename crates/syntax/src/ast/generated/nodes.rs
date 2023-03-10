@@ -904,6 +904,22 @@ impl PrefixRuleDir {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
+pub struct ExpandInputDir {
+    pub(crate) syntax: SyntaxNode,
+}
+impl ExpandInputDir {
+    pub fn expand_input_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T![expand - input])
+    }
+    pub fn phrases(&self) -> AstChildren<Phrase> {
+        support::children(&self.syntax)
+    }
+    pub fn expander(&self) -> Option<Phrase> {
+        support::child(&self.syntax)
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct ExprPhrase {
     pub(crate) syntax: SyntaxNode,
 }
@@ -3289,6 +3305,17 @@ impl AstNode for InfixRuleDir {
 impl AstNode for PrefixRuleDir {
     fn can_cast(kind: SyntaxKind) -> bool {
         kind == PREFIX_RULE_DIR
+    }
+    fn cast(syntax: SyntaxNode) -> Option<Self> {
+        if Self::can_cast(syntax.kind()) { Some(Self { syntax }) } else { None }
+    }
+    fn syntax(&self) -> &SyntaxNode {
+        &self.syntax
+    }
+}
+impl AstNode for ExpandInputDir {
+    fn can_cast(kind: SyntaxKind) -> bool {
+        kind == EXPAND_INPUT_DIR
     }
     fn cast(syntax: SyntaxNode) -> Option<Self> {
         if Self::can_cast(syntax.kind()) { Some(Self { syntax }) } else { None }
@@ -5894,6 +5921,11 @@ impl std::fmt::Display for InfixRuleDir {
     }
 }
 impl std::fmt::Display for PrefixRuleDir {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        std::fmt::Display::fmt(self.syntax(), f)
+    }
+}
+impl std::fmt::Display for ExpandInputDir {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         std::fmt::Display::fmt(self.syntax(), f)
     }

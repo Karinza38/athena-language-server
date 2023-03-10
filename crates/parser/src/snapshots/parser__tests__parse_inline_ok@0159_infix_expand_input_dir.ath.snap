@@ -1,0 +1,35 @@
+---
+source: crates/parser/src/tests.rs
+description: "expand-input foo, bar, baz [nat->int]\n"
+input_file: crates/parser/test_data/parser/inline/ok/dir/0159_infix_expand_input_dir.ath
+---
+EXPAND_INPUT_DIR
+  EXPAND_INPUT_KW "expand-input"
+  WHITESPACE " "
+  EXPR_PHRASE
+    IDENT_EXPR
+      IDENTIFIER
+        IDENT "foo"
+  COMMA ","
+  WHITESPACE " "
+  EXPR_PHRASE
+    IDENT_EXPR
+      IDENTIFIER
+        IDENT "bar"
+  COMMA ","
+  WHITESPACE " "
+  EXPR_PHRASE
+    IDENT_EXPR
+      IDENTIFIER
+        IDENT "baz"
+  WHITESPACE " "
+  EXPR_PHRASE
+    LIST_EXPR
+      L_BRACK "["
+      EXPR_PHRASE
+        IDENT_EXPR
+          IDENTIFIER
+            IDENT "nat->int"
+      R_BRACK "]"
+  WHITESPACE "\n"
+

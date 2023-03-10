@@ -96,6 +96,7 @@ KindsSrc(
         "OP",
         "primitive-method",
         "dmatch",
+        "expand-input",
     ],
     contextual_keywords: ["|"],
     literals: ["INT_NUMBER", "STRING", "CHAR"],
@@ -242,6 +243,7 @@ KindsSrc(
         "INFIX_CONSTANT_DECLARE",
         "PREFIX_MULTI_SYMBOLS",
         "PREFIX_DECLARE_ATTRS",
+        "EXPAND_INPUT_DIR",
         // Statements
         "DIR_STMT",
         "PHRASE_STMT",

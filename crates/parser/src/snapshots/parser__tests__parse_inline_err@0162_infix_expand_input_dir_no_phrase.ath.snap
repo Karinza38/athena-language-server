@@ -1,0 +1,11 @@
+---
+source: crates/parser/src/tests.rs
+description: "expand-input\n"
+input_file: crates/parser/test_data/parser/inline/err/dir/0162_infix_expand_input_dir_no_phrase.ath
+---
+EXPAND_INPUT_DIR
+  EXPAND_INPUT_KW "expand-input"
+  WHITESPACE "\n"
+error 12: expected phrase to expand input for
+error 12: expected input expansion
+

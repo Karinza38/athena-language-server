@@ -1,0 +1,21 @@
+---
+source: crates/parser/src/tests.rs
+description: "expand-input foo, bar\n"
+input_file: crates/parser/test_data/parser/inline/err/dir/0164_infix_expand_input_dir_no_third_phrase.ath
+---
+EXPAND_INPUT_DIR
+  EXPAND_INPUT_KW "expand-input"
+  WHITESPACE " "
+  EXPR_PHRASE
+    IDENT_EXPR
+      IDENTIFIER
+        IDENT "foo"
+  COMMA ","
+  WHITESPACE " "
+  EXPR_PHRASE
+    IDENT_EXPR
+      IDENTIFIER
+        IDENT "bar"
+  WHITESPACE "\n"
+error 21: expected input expansion
+

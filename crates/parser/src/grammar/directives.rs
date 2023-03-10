@@ -729,6 +729,37 @@ fn prefix_rule_dir(p: &mut Parser) {
     m.complete(p, SyntaxKind::PREFIX_RULE_DIR);
 }
 
+// test(dir) infix_expand_input_dir
+// expand-input foo, bar, baz [nat->int]
+fn expand_input_dir(p: &mut Parser) {
+    assert!(p.at(T![expand - input]));
+
+    let m = p.start();
+    p.bump(T![expand - input]);
+
+    if !phrase(p) {
+        // test_err(dir) infix_expand_input_dir_no_phrase
+        // expand-input
+        p.error("expected phrase to expand input for");
+    }
+
+    while p.eat(T![,]) {
+        if !phrase(p) {
+            // test_err(dir) infix_expand_input_dir_no_second_phrase
+            // expand-input foo,
+            p.error("expected phrase after comma");
+        }
+    }
+
+    if !phrase(p) {
+        // test_err(dir) infix_expand_input_dir_no_third_phrase
+        // expand-input foo, bar
+        p.error("expected input expansion");
+    }
+
+    m.complete(p, SyntaxKind::EXPAND_INPUT_DIR);
+}
+
 const ASSOCIATIVITY_SET: TokenSet = TokenSet::new(&[T![left - assoc], T![right - assoc]]);
 
 pub(crate) const DIR_START_SET: TokenSet = TokenSet::new(&[
@@ -747,6 +778,7 @@ pub(crate) const DIR_START_SET: TokenSet = TokenSet::new(&[
     T![right - assoc],
     T!['('],
     T![primitive - method],
+    T![expand - input],
 ]);
 
 pub(crate) const DIR_AFTER_LPAREN: TokenSet = TokenSet::new(&[
@@ -809,6 +841,9 @@ pub(crate) fn dir(p: &mut Parser) -> bool {
         }
         T![primitive - method] => {
             infix_rule_dir(p);
+        }
+        T![expand - input] => {
+            expand_input_dir(p);
         }
         T!['('] => match p.nth(1) {
             T![primitive - method] => {

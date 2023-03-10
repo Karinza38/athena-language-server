@@ -36,8 +36,6 @@ fn method_call_ded(p: &mut Parser, kind: SyntaxKind) -> Marker {
         // do nothing
     }
 
-    eprintln!("DONE");
-
     p.expect(T![')']);
     m
 }
@@ -486,7 +484,6 @@ fn induct_ded(p: &mut Parser) {
     }
 
     while p.at_contextual_kw(T![|]) {
-        eprintln!("ARM");
         // test(ded) induct_multiple
         // by-induction a { a => (!claim a) | b => (!claim b) }
         restricted_match_arm(p, true);
@@ -891,8 +888,6 @@ fn prefix_match_ded(p: &mut Parser) {
         p.error("Expected to find a scrutinee (phrase) for the prefix match deduction");
     }
 
-    eprintln!("HERE");
-
     if !p.at(T!['(']) {
         // test_err(ded) prefix_match_ded_no_clauses
         // (dmatch foo )
@@ -903,7 +898,6 @@ fn prefix_match_ded(p: &mut Parser) {
     }
 
     while !p.at(T![')']) && !p.at_end() {
-        eprintln!("HERE {:?} {:?}", p.current(), p.nth(1));
         if !prefix_match_ded_clause(p) {
             p.err_recover("Invalid prefix match clause", TokenSet::new(&[T![')']]));
         }
@@ -950,7 +944,6 @@ pub(crate) fn ded(p: &mut Parser) -> bool {
             } else if p.peek_at(T![dmatch]) {
                 prefix_match_ded(p);
             } else if p.peek_at_one_of(EXPR_START_SET) || p.peek_at(T![by]) {
-                eprintln!("BY DED");
                 by_ded(p);
             } else {
                 return false;

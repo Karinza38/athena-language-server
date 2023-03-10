@@ -1,0 +1,17 @@
+---
+source: crates/parser/src/tests.rs
+description: "expand-input foo,\n"
+input_file: crates/parser/test_data/parser/inline/err/dir/0163_infix_expand_input_dir_no_second_phrase.ath
+---
+EXPAND_INPUT_DIR
+  EXPAND_INPUT_KW "expand-input"
+  WHITESPACE " "
+  EXPR_PHRASE
+    IDENT_EXPR
+      IDENTIFIER
+        IDENT "foo"
+  COMMA ","
+  WHITESPACE "\n"
+error 17: expected phrase after comma
+error 17: expected input expansion
+

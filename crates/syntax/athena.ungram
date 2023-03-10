@@ -283,6 +283,9 @@ InfixRuleDir =
 PrefixRuleDir =
     '(' 'primitive-method' '(' Identifier MaybeWildcardTypedParam* ')' Expr ')'
 
+ExpandInputDir =
+    'expand-input' (Phrase (',' Phrase)*) expander:Phrase
+
 //****************************//
 // Expressions and Deductions //
 //****************************//
