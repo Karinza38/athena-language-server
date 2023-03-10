@@ -105,6 +105,7 @@ pub enum SyntaxKind {
     DMATCH_KW,
     EXPAND_INPUT_KW,
     DEFINE_SORT_KW,
+    ASSUME_LET_KW,
     PIPE,
     INT_NUMBER,
     STRING,
@@ -188,6 +189,9 @@ pub enum SyntaxKind {
     INFERENCE,
     MAYBE_NAMED_INFERENCE,
     INFER_BLOCK_DED,
+    PREFIX_NAMED_ASSUME_DED,
+    PREFIX_SINGLE_ASSUME_DED,
+    PREFIX_ASSUME_LET_DED,
     IDENT_PAT,
     ANNOTATED_IDENT_PAT,
     VAR_PAT,
@@ -283,7 +287,7 @@ impl SyntaxKind {
             ASSERT_STAR_KW | LEFT_ASSOC_KW | RIGHT_ASSOC_KW | DATATYPE_KW | STRUCTURE_KW
             | DATATYPES_KW | STRUCTURES_KW | EXTEND_MODULE_KW | PRIVATE_KW | OPEN_KW |
             ON_KW | BEGIN_KW | END_KW | FROM_KW | BY_KW | O_P_KW | PRIMITIVE_METHOD_KW |
-            DMATCH_KW | EXPAND_INPUT_KW | DEFINE_SORT_KW | PIPE
+            DMATCH_KW | EXPAND_INPUT_KW | DEFINE_SORT_KW | ASSUME_LET_KW | PIPE
         )
     }
     pub fn is_punct(self) -> bool {
@@ -374,6 +378,7 @@ impl SyntaxKind {
             "dmatch" => DMATCH_KW,
             "expand-input" => EXPAND_INPUT_KW,
             "define-sort" => DEFINE_SORT_KW,
+            "assume-let" => ASSUME_LET_KW,
             _ => return None,
         };
         Some(kw)
@@ -697,6 +702,9 @@ macro_rules! T {
     };
     [define - sort] => {
         $crate ::SyntaxKind::DEFINE_SORT_KW
+    };
+    [assume - let] => {
+        $crate ::SyntaxKind::ASSUME_LET_KW
     };
     [|] => {
         $crate ::SyntaxKind::PIPE

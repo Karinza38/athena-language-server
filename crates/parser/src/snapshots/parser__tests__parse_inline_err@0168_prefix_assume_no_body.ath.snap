@@ -1,0 +1,17 @@
+---
+source: crates/parser/src/tests.rs
+description: "(assume a)\n"
+input_file: crates/parser/test_data/parser/inline/err/ded/0168_prefix_assume_no_body.ath
+---
+PREFIX_SINGLE_ASSUME_DED
+  L_PAREN "("
+  ASSUME_KW "assume"
+  WHITESPACE " "
+  EXPR_PHRASE
+    IDENT_EXPR
+      IDENTIFIER
+        IDENT "a"
+  R_PAREN ")"
+  WHITESPACE "\n"
+error 9: expected body for assumption
+

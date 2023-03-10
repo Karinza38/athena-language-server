@@ -1,0 +1,33 @@
+---
+source: crates/parser/src/tests.rs
+description: "(assume := b (!claim C))\n"
+input_file: crates/parser/test_data/parser/inline/err/ded/0169_prefix_assume_no_ident.ath
+---
+PREFIX_NAMED_ASSUME_DED
+  L_PAREN "("
+  ASSUME_KW "assume"
+  WHITESPACE " "
+  ERROR
+    COLON_EQ ":="
+  WHITESPACE " "
+  EXPR_PHRASE
+    IDENT_EXPR
+      IDENTIFIER
+        IDENT "b"
+  WHITESPACE " "
+  BANG_METHOD_CALL_DED
+    L_PAREN "("
+    BANG "!"
+    IDENT_EXPR
+      IDENTIFIER
+        IDENT "claim"
+    WHITESPACE " "
+    EXPR_PHRASE
+      IDENT_EXPR
+        IDENTIFIER
+          IDENT "C"
+    R_PAREN ")"
+  R_PAREN ")"
+  WHITESPACE "\n"
+error 8: expected identifier in assume binding
+

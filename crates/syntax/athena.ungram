@@ -483,6 +483,7 @@ Ded =
     | TryDed // ✅
     | ConcludeDed
     | InferBlockDed
+    | PrefixAssumeDed
 
 ConcludeDed =
     'conclude' (Identifier ':=')? Expr Ded
@@ -501,6 +502,20 @@ NamedAssumeDed =
 
 AssumePart =
     ';'? Identifier ':=' Phrase
+
+PrefixAssumeDed =
+    PrefixNamedAssumeDed
+    | PrefixSingleAssumeDed
+    | PrefixAssumeLetDed
+
+PrefixNamedAssumeDed =
+    '(' 'assume' Identifier ':=' Phrase Ded ')'
+
+PrefixSingleAssumeDed =
+    '(' 'assume' Phrase Ded ')'
+
+PrefixAssumeLetDed =
+    '(' 'assume-let' PrefixBinding Ded ')'
 
 ProofByContraDed =
     'suppose-absurd' Phrase Ded

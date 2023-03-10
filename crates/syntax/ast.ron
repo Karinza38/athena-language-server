@@ -98,6 +98,7 @@ KindsSrc(
         "dmatch",
         "expand-input",
         "define-sort",
+        "assume-let",
     ],
     contextual_keywords: ["|"],
     literals: ["INT_NUMBER", "STRING", "CHAR"],
@@ -182,6 +183,9 @@ KindsSrc(
         "INFERENCE",
         "MAYBE_NAMED_INFERENCE",
         "INFER_BLOCK_DED",
+        "PREFIX_NAMED_ASSUME_DED",
+        "PREFIX_SINGLE_ASSUME_DED",
+        "PREFIX_ASSUME_LET_DED",
         // Patterns
         "IDENT_PAT",
         "ANNOTATED_IDENT_PAT",

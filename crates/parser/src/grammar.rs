@@ -225,3 +225,28 @@ fn meta_ident(p: &mut Parser) {
 
     m.complete(p, SyntaxKind::META_IDENT);
 }
+
+fn prefix_binding(p: &mut Parser) -> bool {
+    let m = p.start();
+    if !p.at(T!['(']) {
+        p.error("Expected to find a prefix binding in parens");
+        m.abandon(p);
+        return false;
+    }
+    p.bump(T!['(']);
+    if !patterns::pat(p) {
+        // test_err(expr) prefix_binding_no_pat
+        // (let ( 1) foo)
+        p.error("Expected to find a pattern for the binding");
+    }
+
+    if !phrases::phrase(p) {
+        // test_err(expr) prefix_binding_no_phrase
+        // (let (foo ) foo)
+        p.error("Expected to find a value (phrase) for the binding");
+    }
+
+    p.expect(T![')']);
+    m.complete(p, SyntaxKind::PREFIX_BINDING);
+    true
+}

@@ -127,6 +127,75 @@ fn named_assume_ded(p: &mut Parser) {
     m.complete(p, SyntaxKind::NAMED_ASSUME_DED);
 }
 
+fn prefix_assume_ded(p: &mut Parser) {
+    assert!(p.at_prefix_kw(T![assume]));
+
+    let m = p.start();
+    p.bump(T!['(']);
+    p.bump(T![assume]);
+
+    let phrase_ded_r_paren = |p: &mut Parser| {
+        if !phrase(p) {
+            // test_err(ded) prefix_assume_no_phrase
+            // (assume )
+            p.error("expected assumption (phrase) in prefix assumption");
+        }
+        if !ded(p) {
+            // test_err(ded) prefix_assume_no_body
+            // (assume a)
+            p.error("expected body for assumption");
+        }
+        p.expect(T![')']);
+    };
+
+    if (p.at(IDENT) && p.peek_at(T![:=])) || p.at(T![:=]) {
+        if p.at(T![:=]) {
+            // test_err(ded) prefix_assume_no_ident
+            // (assume := b (!claim C))
+            p.err_and_bump("expected identifier in assume binding");
+        } else {
+            identifier(p);
+            p.bump(T![:=]);
+        }
+        phrase_ded_r_paren(p);
+        m.complete(p, SyntaxKind::PREFIX_NAMED_ASSUME_DED);
+    } else {
+        phrase_ded_r_paren(p);
+        m.complete(p, SyntaxKind::PREFIX_SINGLE_ASSUME_DED);
+    }
+}
+
+// test(ded) prefix_assume_let_ded
+// (assume-let (x A) (!claim x))
+fn prefix_assume_let_ded(p: &mut Parser) {
+    assert!(p.at_prefix_kw(T![assume-let]));
+
+    let m = p.start();
+    p.bump(T!['(']);
+    p.bump(T![assume - let]);
+
+    if !super::prefix_binding(p) {
+        // test_err(ded) prefix_assume_let_no_binding
+        // (assume-let  (!claim foo))
+        p.err_recover(
+            "expected a binding in the assume-let deduction",
+            TokenSet::new(&[T![')']]).union(DED_START_SET),
+        );
+    }
+
+    if !ded(p) {
+        // test_err(ded) prefix_assume_let_no_body
+        // (assume-let (x A) )
+        p.err_recover(
+            "expected a body in the assume-let deduction",
+            TokenSet::new(&[T![')']]), // FIXME: questionable
+        );
+    }
+
+    p.expect(T![')']);
+    m.complete(p, SyntaxKind::PREFIX_ASSUME_LET_DED);
+}
+
 // test(ded) match_ded
 // match A { B => (!claim C) }
 fn match_ded(p: &mut Parser) {
@@ -859,26 +928,42 @@ pub(crate) const DED_START_SET: TokenSet = TokenSet::new(&[
     T![begin],
 ]);
 
-pub(crate) const DED_AFTER_LPAREN_SET: TokenSet =
-    TokenSet::new(&[T![apply - method], T![!], T![dmatch]]).union(EXPR_START_SET);
+pub(crate) const DED_AFTER_LPAREN_SET: TokenSet = TokenSet::new(&[
+    T![apply - method],
+    T![!],
+    T![dmatch],
+    T![assume],
+    T![assume-let],
+])
+.union(EXPR_START_SET);
 
 pub(crate) fn ded(p: &mut Parser) -> bool {
     #[cfg(test)]
     eprintln!("ded: {:?} {:?}", p.current(), p.nth(1));
     match p.current() {
-        T!['('] => {
-            if p.peek_at(T![apply - method]) {
+        T!['('] => match p.nth(1) {
+            T![apply - method] => {
                 apply_method_call_ded(p);
-            } else if p.peek_at(T![!]) {
+            }
+            T![!] => {
                 bang_method_call_ded(p);
-            } else if p.peek_at(T![dmatch]) {
+            }
+            T![dmatch] => {
                 prefix_match_ded(p);
-            } else if p.peek_at_one_of(EXPR_START_SET) || p.peek_at(T![by]) {
+            }
+            pk if EXPR_START_SET.contains(pk) || pk == T![by] => {
                 by_ded(p);
-            } else {
+            }
+            T![assume] => {
+                prefix_assume_ded(p);
+            }
+            T![assume-let] => {
+                prefix_assume_let_ded(p);
+            }
+            _ => {
                 return false;
             }
-        }
+        },
         T![assume] => {
             // might need to be smarter to handle missing identifier
             if p.peek_at(IDENT) && p.nth_at(2, T![:=]) {

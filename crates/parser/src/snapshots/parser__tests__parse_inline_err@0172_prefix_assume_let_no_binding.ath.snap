@@ -1,0 +1,26 @@
+---
+source: crates/parser/src/tests.rs
+description: "(assume-let  (!claim foo))\n"
+input_file: crates/parser/test_data/parser/inline/err/ded/0172_prefix_assume_let_no_binding.ath
+---
+ERROR
+  PREFIX_ASSUME_LET_DED
+    L_PAREN "("
+    ASSUME_LET_KW "assume-let"
+    WHITESPACE "  "
+    PREFIX_BINDING
+      L_PAREN "("
+    ERROR
+      BANG "!"
+  IDENT "claim"
+  WHITESPACE " "
+  IDENT "foo"
+  R_PAREN ")"
+  R_PAREN ")"
+  WHITESPACE "\n"
+error 14: Expected to find a pattern for the binding
+error 14: Expected to find a value (phrase) for the binding
+error 14: expected R_PAREN
+error 14: expected a body in the assume-let deduction
+error 15: expected R_PAREN
+

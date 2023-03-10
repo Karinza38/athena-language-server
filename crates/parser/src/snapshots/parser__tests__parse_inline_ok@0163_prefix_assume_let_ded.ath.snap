@@ -1,0 +1,36 @@
+---
+source: crates/parser/src/tests.rs
+description: "(assume-let (x A) (!claim x))\n"
+input_file: crates/parser/test_data/parser/inline/ok/ded/0163_prefix_assume_let_ded.ath
+---
+PREFIX_ASSUME_LET_DED
+  L_PAREN "("
+  ASSUME_LET_KW "assume-let"
+  WHITESPACE " "
+  PREFIX_BINDING
+    L_PAREN "("
+    IDENT_PAT
+      IDENTIFIER
+        IDENT "x"
+    WHITESPACE " "
+    EXPR_PHRASE
+      IDENT_EXPR
+        IDENTIFIER
+          IDENT "A"
+    R_PAREN ")"
+  WHITESPACE " "
+  BANG_METHOD_CALL_DED
+    L_PAREN "("
+    BANG "!"
+    IDENT_EXPR
+      IDENTIFIER
+        IDENT "claim"
+    WHITESPACE " "
+    EXPR_PHRASE
+      IDENT_EXPR
+        IDENTIFIER
+          IDENT "x"
+    R_PAREN ")"
+  R_PAREN ")"
+  WHITESPACE "\n"
+

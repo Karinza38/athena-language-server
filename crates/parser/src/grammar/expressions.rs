@@ -502,30 +502,6 @@ fn wildcard_expr(p: &mut Parser) {
     m.complete(p, SyntaxKind::WILDCARD_EXPR);
 }
 
-fn prefix_binding(p: &mut Parser) -> bool {
-    let m = p.start();
-    if !p.eat(T!['(']) {
-        p.error("Expected to find a prefix binding in parens");
-        m.abandon(p);
-        return false;
-    }
-    if !pat(p) {
-        // test_err(expr) prefix_binding_no_pat
-        // (let ( 1) foo)
-        p.error("Expected to find a pattern for the binding");
-    }
-
-    if !phrase(p) {
-        // test_err(expr) prefix_binding_no_phrase
-        // (let (foo ) foo)
-        p.error("Expected to find a value (phrase) for the binding");
-    }
-
-    p.expect(T![')']);
-    m.complete(p, SyntaxKind::PREFIX_BINDING);
-    true
-}
-
 // test(expr) prefix_let_expr
 // (let ((foo 1) (bar 2)) foo)
 
@@ -538,7 +514,7 @@ fn prefix_let_expr(p: &mut Parser, m: Marker) {
     p.bump(T!['(']);
 
     while !p.at(T![')']) && !p.at_end() {
-        if !prefix_binding(p) {
+        if !super::prefix_binding(p) {
             // test_err(expr) prefix_let_expr_no_binding
             // (let (domain Foo) foo)
             p.err_recover(

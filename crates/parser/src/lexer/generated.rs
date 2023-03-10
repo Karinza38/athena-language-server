@@ -144,6 +144,8 @@ pub(crate) enum LexerToken {
     Assume(usize),
     #[token(";", |lex|lex.slice().len())]
     Semicolon(usize),
+    #[token("assume-let", |lex|lex.slice().len())]
+    AssumeLet(usize),
     #[token("suppose-absurd", |lex|lex.slice().len())]
     SupposeAbsurd(usize),
     #[token("generalize-over", |lex|lex.slice().len())]
@@ -282,6 +284,7 @@ impl LexerToken {
             Self::Bang(..) => T![!],
             Self::Assume(..) => T![assume],
             Self::Semicolon(..) => T![;],
+            Self::AssumeLet(..) => T![assume - let],
             Self::SupposeAbsurd(..) => T![suppose - absurd],
             Self::GeneralizeOver(..) => T![generalize - over],
             Self::PickAny(..) => T![pick - any],
@@ -388,6 +391,7 @@ impl LexerToken {
             Self::Bang(len) => len,
             Self::Assume(len) => len,
             Self::Semicolon(len) => len,
+            Self::AssumeLet(len) => len,
             Self::SupposeAbsurd(len) => len,
             Self::GeneralizeOver(len) => len,
             Self::PickAny(len) => len,

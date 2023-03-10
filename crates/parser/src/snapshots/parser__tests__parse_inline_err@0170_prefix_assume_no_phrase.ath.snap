@@ -1,0 +1,14 @@
+---
+source: crates/parser/src/tests.rs
+description: "(assume )\n"
+input_file: crates/parser/test_data/parser/inline/err/ded/0170_prefix_assume_no_phrase.ath
+---
+PREFIX_SINGLE_ASSUME_DED
+  L_PAREN "("
+  ASSUME_KW "assume"
+  WHITESPACE " "
+  R_PAREN ")"
+  WHITESPACE "\n"
+error 7: expected assumption (phrase) in prefix assumption
+error 7: expected body for assumption
+

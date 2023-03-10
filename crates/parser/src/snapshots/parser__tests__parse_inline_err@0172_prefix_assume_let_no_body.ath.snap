@@ -1,0 +1,25 @@
+---
+source: crates/parser/src/tests.rs
+description: "(assume-let (x A) )\n"
+input_file: crates/parser/test_data/parser/inline/err/ded/0172_prefix_assume_let_no_body.ath
+---
+PREFIX_ASSUME_LET_DED
+  L_PAREN "("
+  ASSUME_LET_KW "assume-let"
+  WHITESPACE " "
+  PREFIX_BINDING
+    L_PAREN "("
+    IDENT_PAT
+      IDENTIFIER
+        IDENT "x"
+    WHITESPACE " "
+    EXPR_PHRASE
+      IDENT_EXPR
+        IDENTIFIER
+          IDENT "A"
+    R_PAREN ")"
+  WHITESPACE " "
+  R_PAREN ")"
+  WHITESPACE "\n"
+error 17: expected a body in the assume-let deduction
+
