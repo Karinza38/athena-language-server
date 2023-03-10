@@ -286,6 +286,9 @@ PrefixRuleDir =
 ExpandInputDir =
     'expand-input' (Phrase (',' Phrase)*) expander:Phrase
 
+DefineSortDir =
+    'define-sort' Identifier ':=' Sort
+
 //****************************//
 // Expressions and Deductions //
 //****************************//

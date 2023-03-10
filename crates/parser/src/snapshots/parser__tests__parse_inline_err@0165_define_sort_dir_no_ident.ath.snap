@@ -1,0 +1,12 @@
+---
+source: crates/parser/src/tests.rs
+description: "define-sort\n"
+input_file: crates/parser/test_data/parser/inline/err/dir/0165_define_sort_dir_no_ident.ath
+---
+DEFINE_SORT_DIR
+  DEFINE_SORT_KW "define-sort"
+  WHITESPACE "\n"
+error 11: expected identifier for sort definition
+error 11: expected COLON_EQ
+error 11: expected phrase for sort definition
+

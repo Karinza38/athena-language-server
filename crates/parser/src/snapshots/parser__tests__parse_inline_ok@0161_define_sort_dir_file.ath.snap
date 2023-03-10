@@ -1,0 +1,21 @@
+---
+source: crates/parser/src/tests.rs
+description: "define-sort Foo := Int\n"
+input_file: crates/parser/test_data/parser/inline/ok/file/0161_define_sort_dir_file.ath
+---
+SOURCE_FILE
+  DIR_STMT
+    DEFINE_SORT_DIR
+      DEFINE_SORT_KW "define-sort"
+      WHITESPACE " "
+      IDENTIFIER
+        IDENT "Foo"
+      WHITESPACE " "
+      COLON_EQ ":="
+      WHITESPACE " "
+      EXPR_PHRASE
+        IDENT_EXPR
+          IDENTIFIER
+            IDENT "Int"
+  WHITESPACE "\n"
+

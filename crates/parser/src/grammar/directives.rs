@@ -760,6 +760,36 @@ fn expand_input_dir(p: &mut Parser) {
     m.complete(p, SyntaxKind::EXPAND_INPUT_DIR);
 }
 
+// test(dir) define_sort_dir
+// define-sort Foo := Int
+fn define_sort_dir(p: &mut Parser) {
+    assert!(p.at(T![define - sort]));
+
+    // test(file) define_sort_dir_file
+    // define-sort Foo := Int
+
+    let m = p.start();
+    p.bump(T![define - sort]);
+
+    if !p.at(IDENT) {
+        // test_err(dir) define_sort_dir_no_ident
+        // define-sort
+        p.error("expected identifier for sort definition");
+    } else {
+        identifier(p);
+    }
+
+    p.expect(T![:=]);
+
+    if !phrase(p) {
+        // test_err(dir) define_sort_dir_no_phrase
+        // define-sort Foo :=
+        p.error("expected phrase for sort definition");
+    }
+
+    m.complete(p, SyntaxKind::DEFINE_SORT_DIR);
+}
+
 const ASSOCIATIVITY_SET: TokenSet = TokenSet::new(&[T![left - assoc], T![right - assoc]]);
 
 pub(crate) const DIR_START_SET: TokenSet = TokenSet::new(&[
@@ -779,6 +809,7 @@ pub(crate) const DIR_START_SET: TokenSet = TokenSet::new(&[
     T!['('],
     T![primitive - method],
     T![expand - input],
+    T![define - sort],
 ]);
 
 pub(crate) const DIR_AFTER_LPAREN: TokenSet = TokenSet::new(&[
@@ -844,6 +875,9 @@ pub(crate) fn dir(p: &mut Parser) -> bool {
         }
         T![expand - input] => {
             expand_input_dir(p);
+        }
+        T![define - sort] => {
+            define_sort_dir(p);
         }
         T!['('] => match p.nth(1) {
             T![primitive - method] => {
