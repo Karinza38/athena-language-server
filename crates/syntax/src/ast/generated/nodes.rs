@@ -2318,8 +2318,14 @@ impl SplitPat {
     pub fn split_token(&self) -> Option<SyntaxToken> {
         support::token(&self.syntax, T![split])
     }
-    pub fn pat(&self) -> Option<Pat> {
+    pub fn first(&self) -> Option<Pat> {
         support::child(&self.syntax)
+    }
+    pub fn second(&self) -> Option<Pat> {
+        support::child(&self.syntax)
+    }
+    pub fn rest(&self) -> AstChildren<Pat> {
+        support::children(&self.syntax)
     }
     pub fn r_paren_token(&self) -> Option<SyntaxToken> {
         support::token(&self.syntax, T![')'])

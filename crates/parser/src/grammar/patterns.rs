@@ -204,7 +204,7 @@ fn val_of_pat(p: &mut Parser) {
 }
 
 // parses a rule of the form ('keyword' Pat Pat)
-fn two_pat_pat(p: &mut Parser, kw: SyntaxKind, node: SyntaxKind) {
+fn two_pat_pat(p: &mut Parser, kw: SyntaxKind, node: SyntaxKind, more: bool) {
     assert!(p.at(T!['(']) && p.peek_at(kw));
 
     let m = p.start();
@@ -229,6 +229,16 @@ fn two_pat_pat(p: &mut Parser, kw: SyntaxKind, node: SyntaxKind) {
         p.error("expected a second pattern");
     }
 
+    if more {
+        while !p.at(T![')']) && !p.at_end() {
+            if !pat(p) {
+                // test(pat) split_three_pat
+                // (split pat pat pat)
+                p.error("expected a pattern");
+            }
+        }
+    }
+
     p.expect(T![')']);
     m.complete(p, node);
 }
@@ -236,13 +246,13 @@ fn two_pat_pat(p: &mut Parser, kw: SyntaxKind, node: SyntaxKind) {
 // test(pat) split_pat
 // (split a b)
 fn split_pat(p: &mut Parser) {
-    two_pat_pat(p, T![split], SyntaxKind::SPLIT_PAT);
+    two_pat_pat(p, T![split], SyntaxKind::SPLIT_PAT, true);
 }
 
 // test(pat) list_of_pat
 // (list-of a b)
 fn list_of_pat(p: &mut Parser) {
-    two_pat_pat(p, T![list - of], SyntaxKind::LIST_OF_PAT);
+    two_pat_pat(p, T![list - of], SyntaxKind::LIST_OF_PAT, false);
 }
 
 // test(pat) list_pat

@@ -623,7 +623,7 @@ ListOfPat =
     '(' 'list-of' Pat Pat ')'
 
 SplitPat =
-    '(' 'split' Pat Pat ')'
+    '(' 'split' first:Pat second:Pat rest:Pat* ')'
 
 SimplePat =
     IdentPat

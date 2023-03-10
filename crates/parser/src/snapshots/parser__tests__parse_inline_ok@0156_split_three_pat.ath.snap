@@ -1,0 +1,23 @@
+---
+source: crates/parser/src/tests.rs
+description: "(split pat pat pat)\n"
+input_file: crates/parser/test_data/parser/inline/ok/pat/0156_split_three_pat.ath
+---
+SPLIT_PAT
+  L_PAREN "("
+  SPLIT_KW "split"
+  WHITESPACE " "
+  IDENT_PAT
+    IDENTIFIER
+      IDENT "pat"
+  WHITESPACE " "
+  IDENT_PAT
+    IDENTIFIER
+      IDENT "pat"
+  WHITESPACE " "
+  IDENT_PAT
+    IDENTIFIER
+      IDENT "pat"
+  R_PAREN ")"
+  WHITESPACE "\n"
+
