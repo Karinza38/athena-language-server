@@ -10,9 +10,8 @@ LET_EXPR
   WHITESPACE " "
   LET_PART
     IDENT_PAT
-      MAYBE_WILDCARD_TYPED_PARAM
-        IDENTIFIER
-          IDENT "foo"
+      IDENTIFIER
+        IDENT "foo"
     WHITESPACE " "
     COLON_EQ ":="
     WHITESPACE " "

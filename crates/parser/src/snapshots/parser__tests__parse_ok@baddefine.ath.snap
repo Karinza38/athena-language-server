@@ -26,23 +26,22 @@ SOURCE_FILE
               SOME_ATOM_KW "some-atom"
               WHITESPACE " "
               IDENT_PAT
-                MAYBE_WILDCARD_TYPED_PARAM
+                WILDCARD
                   UNDERSCORE "_"
               R_PAREN ")"
             WHITESPACE " "
             COMPOUND_PAT
               L_PAREN "("
               IDENT_PAT
-                MAYBE_WILDCARD_TYPED_PARAM
-                  IDENTIFIER
-                    IDENT "~"
+                IDENTIFIER
+                  IDENT "~"
               WHITESPACE " "
               SOME_THING_PAT
                 L_PAREN "("
                 SOME_ATOM_KW "some-atom"
                 WHITESPACE " "
                 IDENT_PAT
-                  MAYBE_WILDCARD_TYPED_PARAM
+                  WILDCARD
                     UNDERSCORE "_"
                 R_PAREN ")"
               R_PAREN ")"

@@ -17,9 +17,8 @@ INFIX_MATCH_EXPR
     PIPE "|"
     WHITESPACE " "
     IDENT_PAT
-      MAYBE_WILDCARD_TYPED_PARAM
-        IDENTIFIER
-          IDENT "bar"
+      IDENTIFIER
+        IDENT "bar"
     WHITESPACE " "
     FAT_ARROW "=>"
     WHITESPACE " "

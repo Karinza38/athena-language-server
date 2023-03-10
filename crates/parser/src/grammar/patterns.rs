@@ -372,6 +372,19 @@ pub(crate) fn pat(p: &mut Parser) -> bool {
                 pk if PAT_START_SET.contains(pk) => {
                     compound_or_where_pat(p);
                 }
+                T![as] => {
+                    let m = p.start();
+                    p.error("a named pattern must have a name");
+                    p.bump(T!['(']);
+                    p.bump(T![as]);
+                    if !pat(p) {
+                        // test_err(pat) as_pat_no_pat
+                        // (as )
+                        p.error("expected a pattern to bind to");
+                    }
+                    p.expect(T![')']);
+                    m.complete(p, SyntaxKind::NAMED_PAT);
+                }
                 _ => {
                     return false;
                 }

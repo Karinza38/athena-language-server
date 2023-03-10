@@ -14,9 +14,8 @@ SOURCE_FILE
         IDENTIFIER
           IDENT "complement"
         WHITESPACE " "
-        MAYBE_WILDCARD_TYPED_PARAM
-          IDENTIFIER
-            IDENT "p"
+        IDENTIFIER
+          IDENT "p"
         R_PAREN ")"
       WHITESPACE "\n  "
       EXPR_PHRASE
@@ -34,14 +33,12 @@ SOURCE_FILE
             COMPOUND_PAT
               L_PAREN "("
               IDENT_PAT
-                MAYBE_WILDCARD_TYPED_PARAM
-                  IDENTIFIER
-                    IDENT "not"
+                IDENTIFIER
+                  IDENT "not"
               WHITESPACE " "
               IDENT_PAT
-                MAYBE_WILDCARD_TYPED_PARAM
-                  IDENTIFIER
-                    IDENT "q"
+                IDENTIFIER
+                  IDENT "q"
               R_PAREN ")"
             WHITESPACE " "
             IDENT_EXPR

@@ -35,5 +35,5 @@ error 16: expected `from` or `by` or `on`
 error 16: expected at least one inference
 error 16: expected deduction
 error 16: expected L_CURLY
-error 17: failed to parse restricted pattern
+error 17: expected pattern in match arm
 

@@ -16,9 +16,8 @@ PREFIX_MATCH_EXPR
     L_PAREN "("
     WHITESPACE " "
     IDENT_PAT
-      MAYBE_WILDCARD_TYPED_PARAM
-        IDENTIFIER
-          IDENT "B"
+      IDENTIFIER
+        IDENT "B"
     R_PAREN ")"
   WHITESPACE "\n"
 error 14: Expected to find an expression for the prefix match clause

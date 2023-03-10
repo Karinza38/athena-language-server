@@ -13,9 +13,8 @@ INFIX_DEFINE_DIR
     IDENTIFIER
       IDENT "foo"
     WHITESPACE " "
-    MAYBE_WILDCARD_TYPED_PARAM
-      IDENTIFIER
-        IDENT "b"
+    IDENTIFIER
+      IDENT "b"
     R_PAREN ")"
   WHITESPACE " "
   COLON_EQ ":="

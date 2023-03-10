@@ -28,7 +28,7 @@ SOURCE_FILE
               LAMBDA_KW "lambda"
               WHITESPACE " "
               L_PAREN "("
-              MAYBE_WILDCARD_TYPED_PARAM
+              WILDCARD
                 UNDERSCORE "_"
               R_PAREN ")"
               WHITESPACE " "

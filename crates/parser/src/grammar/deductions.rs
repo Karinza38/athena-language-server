@@ -11,10 +11,7 @@ use crate::{
     T,
 };
 
-use super::{
-    identifier,
-    patterns::{self, pat},
-};
+use super::{identifier, patterns::pat};
 
 fn method_call_ded(p: &mut Parser, kind: SyntaxKind) -> Marker {
     assert!(p.at(T!['(']) && p.peek_at(kind));
@@ -349,79 +346,6 @@ fn pick_witnesses_ded(p: &mut Parser) {
     m.complete(p, SyntaxKind::PICK_WITNESSES_DED);
 }
 
-// test(ded) restricted_apply_pat
-// by-induction a { (foo bar) => (!claim bar) }
-fn restricted_apply_pat(p: &mut Parser) {
-    assert!(p.at(T!['(']));
-
-    let m = p.start();
-    p.bump(T!['(']);
-
-    if !p.at(IDENT) {
-        p.error("expected identifier in restricted apply pattern");
-    } else {
-        identifier(p);
-    }
-
-    restricted_pat(p);
-
-    while !p.at(T![')']) {
-        if !restricted_pat(p) {
-            p.err_recover(
-                "invalid pattern in compound pattern",
-                TokenSet::new(&[T![')']]),
-            );
-
-            break;
-        }
-    }
-
-    p.expect(T![')']);
-
-    m.complete(p, SyntaxKind::RESTRICTED_APPLY_PAT);
-}
-
-// test(ded) restricted_named_pat
-// by-induction a { (foo as bar) => (!claim bar) }
-fn restricted_named_pat(p: &mut Parser) {
-    assert!(p.at(T!['(']));
-
-    let m = p.start();
-    p.bump(T!['(']);
-
-    if !p.at(IDENT) {
-        // test_err(ded) restricted_named_pat_no_ident
-        // by-induction a { ( as bar) => (!claim bar) }
-        p.error("expected identifier in restricted named pattern");
-    } else {
-        identifier(p);
-    }
-
-    p.expect(T![as]);
-
-    restricted_pat(p);
-
-    p.expect(T![')']);
-
-    m.complete(p, SyntaxKind::RESTRICTED_NAMED_PAT);
-}
-
-fn restricted_pat(p: &mut Parser) -> bool {
-    if p.at(IDENT) || p.at(T![_]) {
-        patterns::ident_pat(p);
-    } else if p.at(T!['(']) {
-        if p.peek_at(T![as]) || p.nth_at(2, T![as]) {
-            restricted_named_pat(p);
-        } else {
-            restricted_apply_pat(p);
-        }
-    } else {
-        p.error("failed to parse restricted pattern");
-        return false;
-    }
-    true
-}
-
 fn restricted_match_arm(p: &mut Parser, leading_pipe: bool) {
     let m = if leading_pipe {
         assert!(p.at_contextual_kw(T![|]));
@@ -432,7 +356,9 @@ fn restricted_match_arm(p: &mut Parser, leading_pipe: bool) {
         p.start()
     };
 
-    restricted_pat(p);
+    if !pat(p) {
+        p.error("expected pattern in match arm");
+    }
 
     p.expect(T![=>]);
 

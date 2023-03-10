@@ -1,1 +1,0 @@
-by-induction a { (foo as bar) => (!claim bar) }

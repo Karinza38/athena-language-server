@@ -58,7 +58,10 @@ TypedParam =
 
 MaybeWildcardTypedParam =
     MaybeTypedParam
-    | '_'
+    | Wildcard
+
+Wildcard =
+    '_'
 
 OpAnnotatedParam =
     Identifier ':' '(' 'OP' Identifier Identifier? ')'
@@ -502,22 +505,11 @@ PickWitnessDed =
 PickWitnessesDed =
     'pick-witnesses' Identifier Identifier* 'for' Phrase Identifier? Ded
 
-RestrictedApplyPat =
-    '(' Identifier RestrictedPat RestrictedPat* ')'
-
-RestrictedNamedPat =
-    '(' Identifier 'as' RestrictedPat ')'
-
-RestrictedPat =
-    IdentPat
-    | RestrictedApplyPat
-    | RestrictedNamedPat
-
 InductDed =
     'by-induction' Phrase '{' RestrictedMatchDed* '}'
 
 RestrictedMatchDed =
-    '|'? RestrictedPat '=>' Ded
+    '|'? Pat '=>' Ded
 
 CasesDed =
     'datatype-cases' Phrase ('on' Expr)? '{' RestrictedMatchDed* '}'

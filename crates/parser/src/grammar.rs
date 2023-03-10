@@ -176,18 +176,16 @@ fn maybe_typed_param(p: &mut Parser) {
 }
 
 fn maybe_wildcard_typed_param(p: &mut Parser) -> bool {
-    let m = p.start();
-
     if p.at(T![_]) {
+        let m = p.start();
         p.bump(T![_]);
+        m.complete(p, SyntaxKind::WILDCARD);
     } else if p.at(IDENT) {
         maybe_typed_param(p);
     } else {
-        m.abandon(p);
         return false;
     }
 
-    m.complete(p, SyntaxKind::MAYBE_WILDCARD_TYPED_PARAM);
     true
 }
 

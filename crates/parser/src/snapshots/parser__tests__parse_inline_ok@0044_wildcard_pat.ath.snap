@@ -3,7 +3,7 @@ source: crates/parser/src/tests.rs
 description: "_\n"
 input_file: crates/parser/test_data/parser/inline/ok/pat/0044_wildcard_pat.ath
 ---
-WILDCARD_PAT
+IDENT_PAT
   UNDERSCORE "_"
   WHITESPACE "\n"
 

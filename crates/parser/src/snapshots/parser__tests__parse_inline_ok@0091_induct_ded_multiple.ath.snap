@@ -87,17 +87,18 @@ INDUCT_DED
   RESTRICTED_MATCH_DED
     PIPE "|"
     WHITESPACE " "
-    RESTRICTED_NAMED_PAT
+    NAMED_PAT
       L_PAREN "("
       IDENTIFIER
         IDENT "m"
       WHITESPACE " "
       AS_KW "as"
       WHITESPACE " "
-      RESTRICTED_APPLY_PAT
+      COMPOUND_PAT
         L_PAREN "("
-        IDENTIFIER
-          IDENT "S"
+        IDENT_PAT
+          IDENTIFIER
+            IDENT "S"
         WHITESPACE " "
         IDENT_PAT
           IDENTIFIER
