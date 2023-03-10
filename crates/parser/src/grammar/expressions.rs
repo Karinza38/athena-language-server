@@ -120,6 +120,12 @@ pub(crate) fn opened_application_expr(p: &mut Parser, m: Marker) {
     // test(expr) application_expr_no_args
     // (foo)
     while !p.at(T![')']) && !p.at_end() {
+        if p.at(T![by]) {
+            // FIXME: this isn't really a proper place to put this,
+            // but it's the most convenient point to identify a by deduction
+            super::deductions::by_ded_partial(p, m);
+            return;
+        }
         // test(expr) nested_application_expr
         // (foo (bar baz))
         if !phrase(p) {

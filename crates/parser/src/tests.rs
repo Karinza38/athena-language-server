@@ -75,17 +75,7 @@ macro_rules! test_glob {
 
 #[test]
 fn parse_ok() {
-    insta::glob!("../test_data", "parser/ok/file/*.ath", |path| {
-        let case = TestCase::read(path);
-        eprintln!("running test: {}", case.ath.display());
-        let (actual, errors) = parse(case.entry.as_parse_entry(), &case.text);
-        assert!(
-            !errors && !actual.starts_with("ERROR"),
-            "errors in an OK file {}:\n{actual}",
-            case.ath.display()
-        );
-        insta::with_settings!({description => &case.text, omit_expression => true }, { assert_snapshot!(actual) });
-    });
+    test_glob!(ok "ok/file");
 }
 
 #[test]
@@ -154,13 +144,13 @@ fn parse(entry: EntryPoint, text: &str) -> (String, bool) {
             errors.push(format!("error {pos}: {msg}\n"))
         }
     });
-    // assert_eq!(
-    //     len,
-    //     text.len(),
-    //     "didn't parse all text.\nParsed:\n{}\n\nAll:\n{}\n",
-    //     &text[..len],
-    //     text
-    // );
+    assert_eq!(
+        len,
+        text.len(),
+        "didn't parse all text.\nParsed:\n{}\n\nAll:\n{}\n",
+        &text[..len],
+        text
+    );
 
     for (token, msg) in lexed.errors() {
         let pos = lexed.text_start(token);

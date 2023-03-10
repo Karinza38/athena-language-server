@@ -813,7 +813,7 @@ fn by_ded(p: &mut Parser) {
     let m = p.start();
     p.bump(T!['(']);
 
-    if !expr(p) {
+    if !phrase(p) {
         // test_err(ded) by_ded_no_expr
         // ( by (!claim A))
         p.error("expected an expression");

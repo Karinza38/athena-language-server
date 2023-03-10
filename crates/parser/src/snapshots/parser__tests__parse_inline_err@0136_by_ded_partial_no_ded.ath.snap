@@ -5,9 +5,10 @@ input_file: crates/parser/test_data/parser/inline/err/ded/0136_by_ded_partial_no
 ---
 BY_DED
   L_PAREN "("
-  IDENT_EXPR
-    IDENTIFIER
-      IDENT "A"
+  EXPR_PHRASE
+    IDENT_EXPR
+      IDENTIFIER
+        IDENT "A"
   WHITESPACE " "
   BY_KW "by"
   WHITESPACE " "

@@ -2209,7 +2209,7 @@ impl ByDed {
     pub fn l_paren_token(&self) -> Option<SyntaxToken> {
         support::token(&self.syntax, T!['('])
     }
-    pub fn expr(&self) -> Option<Expr> {
+    pub fn phrase(&self) -> Option<Phrase> {
         support::child(&self.syntax)
     }
     pub fn by_token(&self) -> Option<SyntaxToken> {

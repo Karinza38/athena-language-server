@@ -579,7 +579,7 @@ InferBy =
     Expr ('by' by_expr:Expr)? 'on' (Phrase (',' Phrase)*)
 
 ByDed =
-    '(' Expr 'by' Ded ')' 
+    '(' Phrase 'by' Ded ')' 
 
 //**********//
 // Patterns //
