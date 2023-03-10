@@ -1,0 +1,22 @@
+---
+source: crates/parser/src/tests.rs
+description: "{ A := B }\n"
+input_file: crates/parser/test_data/parser/inline/ok/ded/0159_inference_no_from_by_on.ath
+---
+INFER_BLOCK_DED
+  L_CURLY "{"
+  WHITESPACE " "
+  MAYBE_NAMED_INFERENCE
+    MAYBE_WILDCARD_OP_ANNOTATED_PARAM
+      IDENTIFIER
+        IDENT "A"
+    WHITESPACE " "
+    COLON_EQ ":="
+    WHITESPACE " "
+    IDENT_EXPR
+      IDENTIFIER
+        IDENT "B"
+  WHITESPACE " "
+  R_CURLY "}"
+  WHITESPACE "\n"
+

@@ -558,7 +558,11 @@ InferBlockDed =
     ('{' | 'begin') (MaybeNamedInference (';' MaybeNamedInference )*) ('}' | 'end')
 
 MaybeNamedInference =
-    (MaybeWildcardOpAnnotatedParam ':=')? Inference
+    (MaybeWildcardOpAnnotatedParam ':=')? InferOrExpr
+
+InferOrExpr =
+    Inference
+    | Expr
 
 MaybeWildcardOpAnnotatedParam =
     '_'

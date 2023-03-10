@@ -653,14 +653,11 @@ impl InputTransformDecl {
     pub fn l_brack_token(&self) -> Option<SyntaxToken> {
         support::token(&self.syntax, T!['['])
     }
-    pub fn expr(&self) -> Option<Expr> {
-        support::child(&self.syntax)
-    }
-    pub fn exprs(&self) -> AstChildren<Expr> {
-        support::children(&self.syntax)
-    }
     pub fn r_brack_token(&self) -> Option<SyntaxToken> {
         support::token(&self.syntax, T![']'])
+    }
+    pub fn infer_or_expr(&self) -> Option<InferOrExpr> {
+        support::child(&self.syntax)
     }
 }
 
@@ -2120,7 +2117,7 @@ impl MaybeNamedInference {
     pub fn colon_eq_token(&self) -> Option<SyntaxToken> {
         support::token(&self.syntax, T![:=])
     }
-    pub fn inference(&self) -> Option<Inference> {
+    pub fn infer_or_expr(&self) -> Option<InferOrExpr> {
         support::child(&self.syntax)
     }
 }
@@ -2162,20 +2159,17 @@ pub struct InferBy {
     pub(crate) syntax: SyntaxNode,
 }
 impl InferBy {
-    pub fn expr(&self) -> Option<Expr> {
-        support::child(&self.syntax)
-    }
     pub fn by_token(&self) -> Option<SyntaxToken> {
         support::token(&self.syntax, T![by])
-    }
-    pub fn by_expr(&self) -> Option<Expr> {
-        support::child(&self.syntax)
     }
     pub fn on_token(&self) -> Option<SyntaxToken> {
         support::token(&self.syntax, T![on])
     }
     pub fn phrases(&self) -> AstChildren<Phrase> {
         support::children(&self.syntax)
+    }
+    pub fn infer_or_expr(&self) -> Option<InferOrExpr> {
+        support::child(&self.syntax)
     }
 }
 
@@ -2664,6 +2658,12 @@ pub enum MatchExpr {
 pub enum MatchDed {
     InfixMatchDed(InfixMatchDed),
     PrefixMatchDed(PrefixMatchDed),
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+pub enum InferOrExpr {
+    Expr(Expr),
+    Inference(Inference),
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
@@ -5357,6 +5357,82 @@ impl AstNode for MatchDed {
         }
     }
 }
+impl From<Expr> for InferOrExpr {
+    fn from(node: Expr) -> InferOrExpr {
+        InferOrExpr::Expr(node)
+    }
+}
+impl From<Inference> for InferOrExpr {
+    fn from(node: Inference) -> InferOrExpr {
+        InferOrExpr::Inference(node)
+    }
+}
+impl AstNode for InferOrExpr {
+    fn can_cast(kind: SyntaxKind) -> bool {
+        matches!(
+            kind, | INFER_FROM | INFER_BY | IDENT_EXPR | LITERAL_EXPR | UNIT_EXPR |
+            TERM_VAR_EXPR | META_IDENT | CHECK_EXPR | LAMBDA_EXPR | APPLICATION_EXPR |
+            LIST_EXPR | METHOD_EXPR | LET_EXPR | LET_REC_EXPR | TRY_EXPR | CELL_EXPR |
+            SET_EXPR | REF_EXPR | WHILE_EXPR | MAKE_VECTOR_EXPR | VECTOR_SUB_EXPR |
+            VECTOR_SET_EXPR | SEQ_EXPR | AND_EXPR | OR_EXPR | MAP_EXPR | WILDCARD_EXPR |
+            PREFIX_CHECK_EXPR
+        )
+    }
+    fn cast(syntax: SyntaxNode) -> Option<Self> {
+        let res = match syntax.kind() {
+            INFER_FROM => {
+                InferOrExpr::Inference(Inference::InferFrom(InferFrom { syntax }))
+            }
+            INFER_BY => InferOrExpr::Inference(Inference::InferBy(InferBy { syntax })),
+            IDENT_EXPR => InferOrExpr::Expr(Expr::IdentExpr(IdentExpr { syntax })),
+            LITERAL_EXPR => InferOrExpr::Expr(Expr::LiteralExpr(LiteralExpr { syntax })),
+            UNIT_EXPR => InferOrExpr::Expr(Expr::UnitExpr(UnitExpr { syntax })),
+            TERM_VAR_EXPR => InferOrExpr::Expr(Expr::TermVarExpr(TermVarExpr { syntax })),
+            META_IDENT => InferOrExpr::Expr(Expr::MetaIdent(MetaIdent { syntax })),
+            CHECK_EXPR => InferOrExpr::Expr(Expr::CheckExpr(CheckExpr { syntax })),
+            LAMBDA_EXPR => InferOrExpr::Expr(Expr::LambdaExpr(LambdaExpr { syntax })),
+            APPLICATION_EXPR => {
+                InferOrExpr::Expr(Expr::ApplicationExpr(ApplicationExpr { syntax }))
+            }
+            LIST_EXPR => InferOrExpr::Expr(Expr::ListExpr(ListExpr { syntax })),
+            METHOD_EXPR => InferOrExpr::Expr(Expr::MethodExpr(MethodExpr { syntax })),
+            LET_EXPR => InferOrExpr::Expr(Expr::LetExpr(LetExpr { syntax })),
+            LET_REC_EXPR => InferOrExpr::Expr(Expr::LetRecExpr(LetRecExpr { syntax })),
+            TRY_EXPR => InferOrExpr::Expr(Expr::TryExpr(TryExpr { syntax })),
+            CELL_EXPR => InferOrExpr::Expr(Expr::CellExpr(CellExpr { syntax })),
+            SET_EXPR => InferOrExpr::Expr(Expr::SetExpr(SetExpr { syntax })),
+            REF_EXPR => InferOrExpr::Expr(Expr::RefExpr(RefExpr { syntax })),
+            WHILE_EXPR => InferOrExpr::Expr(Expr::WhileExpr(WhileExpr { syntax })),
+            MAKE_VECTOR_EXPR => {
+                InferOrExpr::Expr(Expr::MakeVectorExpr(MakeVectorExpr { syntax }))
+            }
+            VECTOR_SUB_EXPR => {
+                InferOrExpr::Expr(Expr::VectorSubExpr(VectorSubExpr { syntax }))
+            }
+            VECTOR_SET_EXPR => {
+                InferOrExpr::Expr(Expr::VectorSetExpr(VectorSetExpr { syntax }))
+            }
+            SEQ_EXPR => InferOrExpr::Expr(Expr::SeqExpr(SeqExpr { syntax })),
+            AND_EXPR => InferOrExpr::Expr(Expr::AndExpr(AndExpr { syntax })),
+            OR_EXPR => InferOrExpr::Expr(Expr::OrExpr(OrExpr { syntax })),
+            MAP_EXPR => InferOrExpr::Expr(Expr::MapExpr(MapExpr { syntax })),
+            WILDCARD_EXPR => {
+                InferOrExpr::Expr(Expr::WildcardExpr(WildcardExpr { syntax }))
+            }
+            PREFIX_CHECK_EXPR => {
+                InferOrExpr::Expr(Expr::PrefixCheckExpr(PrefixCheckExpr { syntax }))
+            }
+            _ => return None,
+        };
+        Some(res)
+    }
+    fn syntax(&self) -> &SyntaxNode {
+        match self {
+            InferOrExpr::Expr(it) => it.syntax(),
+            InferOrExpr::Inference(it) => it.syntax(),
+        }
+    }
+}
 impl From<InferFrom> for Inference {
     fn from(node: InferFrom) -> Inference {
         Inference::InferFrom(node)
@@ -5530,6 +5606,11 @@ impl std::fmt::Display for MatchExpr {
     }
 }
 impl std::fmt::Display for MatchDed {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        std::fmt::Display::fmt(self.syntax(), f)
+    }
+}
+impl std::fmt::Display for InferOrExpr {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         std::fmt::Display::fmt(self.syntax(), f)
     }

@@ -574,6 +574,7 @@ fn infer_by(p: &mut Parser, m: Marker) {
 fn maybe_named_inference(p: &mut Parser) -> bool {
     let m = p.start();
 
+    let mut named = false;
     if p.at_one_of(NAMED_INFER_START) {
         // test(ded) named_inference
         // { A := (!claim B) }
@@ -593,11 +594,12 @@ fn maybe_named_inference(p: &mut Parser) -> bool {
             if p.nth_at(n, T![:=]) {
                 maybe_wildcard_op_annotated_param(p);
                 p.expect(T![:=]);
+                named = true;
             }
         }
     }
 
-    if !inference(p) {
+    if !inference(p, named) {
         // test_err(ded) named_inference_no_inference
         // { A := }
         m.abandon(p);
@@ -630,7 +632,7 @@ fn maybe_wildcard_op_annotated_param(p: &mut Parser) {
     m.complete(p, SyntaxKind::MAYBE_WILDCARD_OP_ANNOTATED_PARAM);
 }
 
-fn inference(p: &mut Parser) -> bool {
+fn inference(p: &mut Parser, allow_expr: bool) -> bool {
     let m = p.start();
     let m2 = p.start();
     if let Some(res) = super::phrases::expr_or_ded(p) {
@@ -641,6 +643,13 @@ fn inference(p: &mut Parser) -> bool {
                 } else if p.at(T![by]) || p.at(T![on]) {
                     infer_by(p, m2);
                 } else {
+                    if allow_expr {
+                        // test(ded) inference_no_from_by_on
+                        // { A := B }
+                        m2.abandon(p);
+                        m.abandon(p);
+                        return true;
+                    }
                     // test_err(ded) inference_no_from_by_on
                     // { A }
                     m2.abandon(p);
