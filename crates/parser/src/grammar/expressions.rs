@@ -555,6 +555,45 @@ fn prefix_let_expr(p: &mut Parser, m: Marker) {
     m.complete(p, SyntaxKind::PREFIX_LET_EXPR);
 }
 
+fn prefix_check_clause(p: &mut Parser) {
+    if !p.at(T!['(']) {
+        p.error("Expected to find a prefix check clause in parens");
+        return;
+    }
+
+    let m = p.start();
+    p.bump(T!['(']);
+
+    if !phrase(p) {
+        p.error("Expected to find a condition for the prefix check clause");
+    }
+
+    if !expr(p) {
+        // test_err(expr) prefix_check_clause_no_expr
+        // (check (B ))
+        p.error("Expected to find a body for the prefix check clause");
+    }
+
+    p.expect(T![')']);
+    m.complete(p, SyntaxKind::CHECK_CLAUSE);
+}
+
+// test(expr) prefix_check
+// (check (A B) (else D))
+fn prefix_check_expr(p: &mut Parser, m: Marker) {
+    assert!(p.at(T![check]) && p.peek_at(T!['(']));
+
+    p.bump(T![check]);
+
+    while !p.at(T![')']) && !p.at_end() {
+        prefix_check_clause(p);
+    }
+
+    p.expect(T![')']);
+
+    m.complete(p, SyntaxKind::PREFIX_CHECK_EXPR);
+}
+
 pub(crate) fn opened_expr(p: &mut Parser, m: Marker) {
     #[cfg(test)]
     eprintln!("opened_expr: {:?} {:?}", p.current(), p.nth(1));
@@ -575,6 +614,13 @@ pub(crate) fn opened_expr(p: &mut Parser, m: Marker) {
         T![let] => {
             if p.peek_at(T!['(']) {
                 prefix_let_expr(p, m);
+            } else {
+                opened_application_expr(p, m);
+            }
+        }
+        T![check] => {
+            if p.peek_at(T!['(']) {
+                prefix_check_expr(p, m);
             } else {
                 opened_application_expr(p, m);
             }
@@ -634,7 +680,7 @@ pub(crate) const EXPR_START_SET: TokenSet = TokenSet::new(&[
 .union(LIT_SET);
 
 pub(crate) const EXPR_AFTER_LPAREN_SET: TokenSet =
-    TokenSet::new(&[T![')'], T![&&], T![||], T![seq], T![match]]).union(EXPR_START_SET);
+    TokenSet::new(&[T![')'], T![&&], T![||], T![seq], T![match], T![check]]).union(EXPR_START_SET);
 
 // test(expr) simple_string_expr
 // "hello world"

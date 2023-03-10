@@ -1323,6 +1323,25 @@ impl WildcardExpr {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
+pub struct PrefixCheckExpr {
+    pub(crate) syntax: SyntaxNode,
+}
+impl PrefixCheckExpr {
+    pub fn l_paren_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T!['('])
+    }
+    pub fn check_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T![check])
+    }
+    pub fn check_clauses(&self) -> AstChildren<CheckClause> {
+        support::children(&self.syntax)
+    }
+    pub fn r_paren_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T![')'])
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct MetaIdentExpr {
     pub(crate) syntax: SyntaxNode,
 }
@@ -1348,6 +1367,25 @@ impl CheckArm {
     }
     pub fn expr(&self) -> Option<Expr> {
         support::child(&self.syntax)
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+pub struct CheckClause {
+    pub(crate) syntax: SyntaxNode,
+}
+impl CheckClause {
+    pub fn l_paren_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T!['('])
+    }
+    pub fn phrase(&self) -> Option<Phrase> {
+        support::child(&self.syntax)
+    }
+    pub fn expr(&self) -> Option<Expr> {
+        support::child(&self.syntax)
+    }
+    pub fn r_paren_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T![')'])
     }
 }
 
@@ -2592,6 +2630,7 @@ pub enum Expr {
     OrExpr(OrExpr),
     MapExpr(MapExpr),
     WildcardExpr(WildcardExpr),
+    PrefixCheckExpr(PrefixCheckExpr),
     MatchExpr(MatchExpr),
 }
 
@@ -3543,6 +3582,17 @@ impl AstNode for WildcardExpr {
         &self.syntax
     }
 }
+impl AstNode for PrefixCheckExpr {
+    fn can_cast(kind: SyntaxKind) -> bool {
+        kind == PREFIX_CHECK_EXPR
+    }
+    fn cast(syntax: SyntaxNode) -> Option<Self> {
+        if Self::can_cast(syntax.kind()) { Some(Self { syntax }) } else { None }
+    }
+    fn syntax(&self) -> &SyntaxNode {
+        &self.syntax
+    }
+}
 impl AstNode for MetaIdentExpr {
     fn can_cast(kind: SyntaxKind) -> bool {
         kind == META_IDENT_EXPR
@@ -3557,6 +3607,17 @@ impl AstNode for MetaIdentExpr {
 impl AstNode for CheckArm {
     fn can_cast(kind: SyntaxKind) -> bool {
         kind == CHECK_ARM
+    }
+    fn cast(syntax: SyntaxNode) -> Option<Self> {
+        if Self::can_cast(syntax.kind()) { Some(Self { syntax }) } else { None }
+    }
+    fn syntax(&self) -> &SyntaxNode {
+        &self.syntax
+    }
+}
+impl AstNode for CheckClause {
+    fn can_cast(kind: SyntaxKind) -> bool {
+        kind == CHECK_CLAUSE
     }
     fn cast(syntax: SyntaxNode) -> Option<Self> {
         if Self::can_cast(syntax.kind()) { Some(Self { syntax }) } else { None }
@@ -4919,6 +4980,11 @@ impl From<WildcardExpr> for Expr {
         Expr::WildcardExpr(node)
     }
 }
+impl From<PrefixCheckExpr> for Expr {
+    fn from(node: PrefixCheckExpr) -> Expr {
+        Expr::PrefixCheckExpr(node)
+    }
+}
 impl From<MatchExpr> for Expr {
     fn from(node: MatchExpr) -> Expr {
         Expr::MatchExpr(node)
@@ -4931,8 +4997,8 @@ impl AstNode for Expr {
             CHECK_EXPR | LAMBDA_EXPR | APPLICATION_EXPR | LIST_EXPR | METHOD_EXPR |
             LET_EXPR | LET_REC_EXPR | TRY_EXPR | CELL_EXPR | SET_EXPR | REF_EXPR |
             WHILE_EXPR | MAKE_VECTOR_EXPR | VECTOR_SUB_EXPR | VECTOR_SET_EXPR | SEQ_EXPR
-            | AND_EXPR | OR_EXPR | MAP_EXPR | WILDCARD_EXPR | INFIX_MATCH_EXPR |
-            PREFIX_MATCH_EXPR
+            | AND_EXPR | OR_EXPR | MAP_EXPR | WILDCARD_EXPR | PREFIX_CHECK_EXPR |
+            INFIX_MATCH_EXPR | PREFIX_MATCH_EXPR
         )
     }
     fn cast(syntax: SyntaxNode) -> Option<Self> {
@@ -4962,6 +5028,7 @@ impl AstNode for Expr {
             OR_EXPR => Expr::OrExpr(OrExpr { syntax }),
             MAP_EXPR => Expr::MapExpr(MapExpr { syntax }),
             WILDCARD_EXPR => Expr::WildcardExpr(WildcardExpr { syntax }),
+            PREFIX_CHECK_EXPR => Expr::PrefixCheckExpr(PrefixCheckExpr { syntax }),
             INFIX_MATCH_EXPR => {
                 Expr::MatchExpr(MatchExpr::InfixMatchExpr(InfixMatchExpr { syntax }))
             }
@@ -4999,6 +5066,7 @@ impl AstNode for Expr {
             Expr::OrExpr(it) => &it.syntax,
             Expr::MapExpr(it) => &it.syntax,
             Expr::WildcardExpr(it) => &it.syntax,
+            Expr::PrefixCheckExpr(it) => &it.syntax,
             Expr::MatchExpr(it) => it.syntax(),
         }
     }
@@ -5950,12 +6018,22 @@ impl std::fmt::Display for WildcardExpr {
         std::fmt::Display::fmt(self.syntax(), f)
     }
 }
+impl std::fmt::Display for PrefixCheckExpr {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        std::fmt::Display::fmt(self.syntax(), f)
+    }
+}
 impl std::fmt::Display for MetaIdentExpr {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         std::fmt::Display::fmt(self.syntax(), f)
     }
 }
 impl std::fmt::Display for CheckArm {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        std::fmt::Display::fmt(self.syntax(), f)
+    }
+}
+impl std::fmt::Display for CheckClause {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         std::fmt::Display::fmt(self.syntax(), f)
     }

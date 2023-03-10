@@ -324,6 +324,7 @@ Expr =
     | OrExpr // ✅
     | MapExpr
     | WildcardExpr
+    | PrefixCheckExpr
 
 IdentExpr =
     MaybeTypedParam
@@ -344,10 +345,16 @@ WildcardExpr =
     '_'
 
 CheckExpr =
-    'check' '{' CheckArm*  '}'
+    'check' '{' CheckArm* '}'
 
 CheckArm = 
     '|'? Phrase '=>' Expr
+
+PrefixCheckExpr =
+    '(' 'check' CheckClause* ')'
+
+CheckClause =
+    '(' Phrase Expr ')'
 
 LambdaExpr =
     'lambda' '(' MaybeWildcardTypedParam* ')' Expr
@@ -452,7 +459,6 @@ Ded =
     | TryDed // ✅
     | ConcludeDed
     | InferBlockDed
-    | PrefixMatchDed
 
 ConcludeDed =
     'conclude' (Identifier ':=')? Expr Ded

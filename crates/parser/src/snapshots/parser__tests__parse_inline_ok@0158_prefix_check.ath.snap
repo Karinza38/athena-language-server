@@ -1,0 +1,35 @@
+---
+source: crates/parser/src/tests.rs
+description: "(check (A B) (else D))\n"
+input_file: crates/parser/test_data/parser/inline/ok/expr/0158_prefix_check.ath
+---
+PREFIX_CHECK_EXPR
+  L_PAREN "("
+  CHECK_KW "check"
+  WHITESPACE " "
+  CHECK_CLAUSE
+    L_PAREN "("
+    EXPR_PHRASE
+      IDENT_EXPR
+        IDENTIFIER
+          IDENT "A"
+    WHITESPACE " "
+    IDENT_EXPR
+      IDENTIFIER
+        IDENT "B"
+    R_PAREN ")"
+  WHITESPACE " "
+  CHECK_CLAUSE
+    L_PAREN "("
+    EXPR_PHRASE
+      IDENT_EXPR
+        IDENTIFIER
+          IDENT "else"
+    WHITESPACE " "
+    IDENT_EXPR
+      IDENTIFIER
+        IDENT "D"
+    R_PAREN ")"
+  R_PAREN ")"
+  WHITESPACE "\n"
+

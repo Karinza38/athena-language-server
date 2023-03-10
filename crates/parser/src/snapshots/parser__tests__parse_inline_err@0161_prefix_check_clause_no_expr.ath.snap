@@ -1,0 +1,21 @@
+---
+source: crates/parser/src/tests.rs
+description: "(check (B ))\n"
+input_file: crates/parser/test_data/parser/inline/err/expr/0161_prefix_check_clause_no_expr.ath
+---
+PREFIX_CHECK_EXPR
+  L_PAREN "("
+  CHECK_KW "check"
+  WHITESPACE " "
+  CHECK_CLAUSE
+    L_PAREN "("
+    EXPR_PHRASE
+      IDENT_EXPR
+        IDENTIFIER
+          IDENT "B"
+    WHITESPACE " "
+    R_PAREN ")"
+  R_PAREN ")"
+  WHITESPACE "\n"
+error 9: Expected to find a body for the prefix check clause
+

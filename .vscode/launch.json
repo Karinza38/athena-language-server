@@ -12,7 +12,8 @@
       "autoAttachChildProcesses": true,
       "preLaunchTask": {
         "type": "npm",
-        "script": "watch"
+        "script": "watch",
+        "path": "${workspaceRoot}/client"
       },
       "env": {
         "SERVER_PATH": "${workspaceRoot}/target/release/athena-language-server"

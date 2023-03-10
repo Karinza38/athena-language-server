@@ -120,6 +120,8 @@ KindsSrc(
         "META_IDENT_EXPR",
         "TERM_VAR_EXPR",
         "CHECK_EXPR",
+        "PREFIX_CHECK_EXPR",
+        "CHECK_CLAUSE",
         "LAMBDA_EXPR",
         "APPLICATION_EXPR",
         "LIST_EXPR",
