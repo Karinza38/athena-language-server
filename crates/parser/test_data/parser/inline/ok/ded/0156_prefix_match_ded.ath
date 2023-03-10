@@ -1,0 +1,1 @@
+(dmatch foo (A (!claim B)) (C (!claim D)))

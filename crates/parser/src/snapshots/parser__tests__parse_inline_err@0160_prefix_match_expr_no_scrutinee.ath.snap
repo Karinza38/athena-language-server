@@ -1,7 +1,7 @@
 ---
 source: crates/parser/src/tests.rs
 description: "(match (A B))\n"
-input_file: crates/parser/test_data/parser/inline/err/expr/0151_prefix_match_expr_no_scrutinee.ath
+input_file: crates/parser/test_data/parser/inline/err/expr/0160_prefix_match_expr_no_scrutinee.ath
 ---
 APPLICATION_EXPR
   L_PAREN "("
@@ -11,9 +11,10 @@ APPLICATION_EXPR
     EXPR_PHRASE
       APPLICATION_EXPR
         L_PAREN "("
-        IDENT_EXPR
-          IDENTIFIER
-            IDENT "A"
+        EXPR_PHRASE
+          IDENT_EXPR
+            IDENTIFIER
+              IDENT "A"
         WHITESPACE " "
         EXPR_PHRASE
           IDENT_EXPR

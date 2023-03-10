@@ -25,9 +25,10 @@ TRY_EXPR
     WHITESPACE " "
     APPLICATION_EXPR
       L_PAREN "("
-      IDENT_EXPR
-        IDENTIFIER
-          IDENT "func"
+      EXPR_PHRASE
+        IDENT_EXPR
+          IDENTIFIER
+            IDENT "func"
       WHITESPACE " "
       EXPR_PHRASE
         IDENT_EXPR

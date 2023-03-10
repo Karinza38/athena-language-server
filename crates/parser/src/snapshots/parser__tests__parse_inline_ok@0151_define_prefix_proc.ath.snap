@@ -24,15 +24,16 @@ PREFIX_DEFINE_DIR
   EXPR_PHRASE
     APPLICATION_EXPR
       L_PAREN "("
-      LAMBDA_EXPR
-        LAMBDA_KW "lambda"
-        WHITESPACE " "
-        L_PAREN "("
-        R_PAREN ")"
-        WHITESPACE " "
-        IDENT_EXPR
-          IDENTIFIER
-            IDENT "b"
+      EXPR_PHRASE
+        LAMBDA_EXPR
+          LAMBDA_KW "lambda"
+          WHITESPACE " "
+          L_PAREN "("
+          R_PAREN ")"
+          WHITESPACE " "
+          IDENT_EXPR
+            IDENTIFIER
+              IDENT "b"
       R_PAREN ")"
   R_PAREN ")"
   WHITESPACE "\n"

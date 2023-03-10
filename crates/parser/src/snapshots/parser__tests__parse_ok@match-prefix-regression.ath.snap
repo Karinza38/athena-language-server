@@ -1,6 +1,5 @@
 ---
 source: crates/parser/src/tests.rs
-assertion_line: 87
 description: "(define (complement p)\n  (match p\n    ((not q) q)\n    (_ (not p))))\n"
 input_file: crates/parser/test_data/parser/ok/file/match-prefix-regression.ath
 ---

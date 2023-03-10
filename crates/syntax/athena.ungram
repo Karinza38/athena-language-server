@@ -452,6 +452,7 @@ Ded =
     | TryDed // ✅
     | ConcludeDed
     | InferBlockDed
+    | PrefixMatchDed
 
 ConcludeDed =
     'conclude' (Identifier ':=')? Expr Ded

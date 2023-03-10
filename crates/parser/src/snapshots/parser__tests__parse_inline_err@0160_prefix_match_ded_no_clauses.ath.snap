@@ -1,0 +1,18 @@
+---
+source: crates/parser/src/tests.rs
+description: "(dmatch foo )\n"
+input_file: crates/parser/test_data/parser/inline/err/ded/0160_prefix_match_ded_no_clauses.ath
+---
+PREFIX_MATCH_DED
+  L_PAREN "("
+  DMATCH_KW "dmatch"
+  WHITESPACE " "
+  EXPR_PHRASE
+    IDENT_EXPR
+      IDENTIFIER
+        IDENT "foo"
+  WHITESPACE " "
+  R_PAREN ")"
+  WHITESPACE "\n"
+error 11: Expected to find a prefix match clause in parens
+

@@ -22,9 +22,10 @@ INFIX_MATCH_EXPR
     WHITESPACE " "
     APPLICATION_EXPR
       L_PAREN "("
-      IDENT_EXPR
-        IDENTIFIER
-          IDENT "baz"
+      EXPR_PHRASE
+        IDENT_EXPR
+          IDENTIFIER
+            IDENT "baz"
       WHITESPACE " "
       EXPR_PHRASE
         IDENT_EXPR

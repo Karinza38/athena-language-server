@@ -18,9 +18,10 @@ CONCLUDE_DED
     EXPR_PHRASE
       APPLICATION_EXPR
         L_PAREN "("
-        IDENT_EXPR
-          IDENTIFIER
-            IDENT "zero"
+        EXPR_PHRASE
+          IDENT_EXPR
+            IDENTIFIER
+              IDENT "zero"
         WHITESPACE " "
         EXPR_PHRASE
           IDENT_EXPR

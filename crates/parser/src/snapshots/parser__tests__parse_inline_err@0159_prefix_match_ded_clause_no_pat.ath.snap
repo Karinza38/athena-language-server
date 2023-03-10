@@ -1,0 +1,56 @@
+---
+source: crates/parser/src/tests.rs
+description: "(dmatch foo ( (B by (!claim C))))\n"
+input_file: crates/parser/test_data/parser/inline/err/ded/0159_prefix_match_ded_clause_no_pat.ath
+---
+ERROR
+  PREFIX_MATCH_DED
+    L_PAREN "("
+    DMATCH_KW "dmatch"
+    WHITESPACE " "
+    EXPR_PHRASE
+      IDENT_EXPR
+        IDENTIFIER
+          IDENT "foo"
+    WHITESPACE " "
+    MATCH_DED_CLAUSE
+      L_PAREN "("
+      WHITESPACE " "
+      COMPOUND_PAT
+        L_PAREN "("
+        IDENT_PAT
+          IDENTIFIER
+            IDENT "B"
+    WHITESPACE " "
+    ERROR
+      BY_KW "by"
+    WHITESPACE " "
+    MATCH_DED_CLAUSE
+      L_PAREN "("
+    ERROR
+      BANG "!"
+    ERROR
+      IDENT "claim"
+    WHITESPACE " "
+    ERROR
+      IDENT "C"
+    R_PAREN ")"
+  R_PAREN ")"
+  R_PAREN ")"
+  R_PAREN ")"
+  WHITESPACE "\n"
+error 16: expected R_PAREN
+error 16: Expected to find an deduction for the prefix match clause
+error 16: expected R_PAREN
+error 16: Expected to find a prefix match clause in parens
+error 17: Invalid prefix match clause
+error 21: Expected to find a pattern for the prefix match clause
+error 21: Expected to find an deduction for the prefix match clause
+error 21: expected R_PAREN
+error 21: Expected to find a prefix match clause in parens
+error 21: Invalid prefix match clause
+error 22: Expected to find a prefix match clause in parens
+error 22: Invalid prefix match clause
+error 27: Expected to find a prefix match clause in parens
+error 28: Invalid prefix match clause
+

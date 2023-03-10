@@ -22,9 +22,10 @@ PREFIX_RULE_DIR
     EXPR_PHRASE
       APPLICATION_EXPR
         L_PAREN "("
-        IDENT_EXPR
-          IDENTIFIER
-            IDENT "false"
+        EXPR_PHRASE
+          IDENT_EXPR
+            IDENTIFIER
+              IDENT "false"
         R_PAREN ")"
     R_PAREN ")"
   R_PAREN ")"

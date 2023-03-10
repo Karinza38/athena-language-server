@@ -434,8 +434,6 @@ pub(crate) fn prefix_match_clause(p: &mut Parser) {
     p.bump(T!['(']);
 
     if !pat(p) {
-        // test_err(expr) prefix_match_clause_no_pat
-        // (match foo ( B)
         p.error("Expected to find a pattern for the prefix match clause");
     }
 

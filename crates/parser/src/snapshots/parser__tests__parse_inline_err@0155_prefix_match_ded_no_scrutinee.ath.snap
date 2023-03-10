@@ -1,0 +1,14 @@
+---
+source: crates/parser/src/tests.rs
+description: "(dmatch )\n"
+input_file: crates/parser/test_data/parser/inline/err/ded/0155_prefix_match_ded_no_scrutinee.ath
+---
+PREFIX_MATCH_DED
+  L_PAREN "("
+  DMATCH_KW "dmatch"
+  WHITESPACE " "
+  R_PAREN ")"
+  WHITESPACE "\n"
+error 7: Expected to find a scrutinee (phrase) for the prefix match deduction
+error 7: Expected to find a prefix match clause in parens
+

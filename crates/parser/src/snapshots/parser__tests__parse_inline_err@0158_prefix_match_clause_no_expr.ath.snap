@@ -1,7 +1,7 @@
 ---
 source: crates/parser/src/tests.rs
 description: "(match foo ( B)\n"
-input_file: crates/parser/test_data/parser/inline/err/expr/0153_prefix_match_clause_no_expr.ath
+input_file: crates/parser/test_data/parser/inline/err/expr/0158_prefix_match_clause_no_expr.ath
 ---
 PREFIX_MATCH_EXPR
   L_PAREN "("

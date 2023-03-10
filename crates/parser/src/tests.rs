@@ -51,7 +51,7 @@ macro_rules! test_glob {
             eprintln!("running test: {}", case.ath.display());
             let (actual, errors) = parse(case.entry.as_parse_entry(), &case.text);
             assert!(
-                !errors,
+                !errors && !actual.starts_with("ERROR"),
                 "errors in an OK file {}:\n{actual}",
                 case.ath.display()
             );
@@ -80,7 +80,7 @@ fn parse_ok() {
         eprintln!("running test: {}", case.ath.display());
         let (actual, errors) = parse(case.entry.as_parse_entry(), &case.text);
         assert!(
-            !errors,
+            !errors && !actual.starts_with("ERROR"),
             "errors in an OK file {}:\n{actual}",
             case.ath.display()
         );

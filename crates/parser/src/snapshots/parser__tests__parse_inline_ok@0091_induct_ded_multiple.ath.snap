@@ -38,9 +38,10 @@ INDUCT_DED
         EXPR_PHRASE
           APPLICATION_EXPR
             L_PAREN "("
-            IDENT_EXPR
-              IDENTIFIER
-                IDENT "zero"
+            EXPR_PHRASE
+              IDENT_EXPR
+                IDENTIFIER
+                  IDENT "zero"
             WHITESPACE " "
             EXPR_PHRASE
               IDENT_EXPR
@@ -119,16 +120,18 @@ INDUCT_DED
         EXPR_PHRASE
           APPLICATION_EXPR
             L_PAREN "("
-            IDENT_EXPR
-              IDENTIFIER
-                IDENT "factorial"
+            EXPR_PHRASE
+              IDENT_EXPR
+                IDENTIFIER
+                  IDENT "factorial"
             WHITESPACE " "
             EXPR_PHRASE
               APPLICATION_EXPR
                 L_PAREN "("
-                IDENT_EXPR
-                  IDENTIFIER
-                    IDENT "m"
+                EXPR_PHRASE
+                  IDENT_EXPR
+                    IDENTIFIER
+                      IDENT "m"
                 WHITESPACE " "
                 EXPR_PHRASE
                   IDENT_EXPR
@@ -150,9 +153,10 @@ INDUCT_DED
         EXPR_PHRASE
           APPLICATION_EXPR
             L_PAREN "("
-            IDENT_EXPR
-              IDENTIFIER
-                IDENT "factorial"
+            EXPR_PHRASE
+              IDENT_EXPR
+                IDENTIFIER
+                  IDENT "factorial"
             WHITESPACE " "
             EXPR_PHRASE
               IDENT_EXPR

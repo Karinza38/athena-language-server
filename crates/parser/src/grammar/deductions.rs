@@ -11,7 +11,10 @@ use crate::{
     T,
 };
 
-use super::{identifier, patterns};
+use super::{
+    identifier,
+    patterns::{self, pat},
+};
 
 fn method_call_ded(p: &mut Parser, kind: SyntaxKind) -> Marker {
     assert!(p.at(T!['(']) && p.peek_at(kind));
@@ -32,6 +35,8 @@ fn method_call_ded(p: &mut Parser, kind: SyntaxKind) -> Marker {
     while !p.at(T![')']) && phrase(p) {
         // do nothing
     }
+
+    eprintln!("DONE");
 
     p.expect(T![')']);
     m
@@ -830,6 +835,73 @@ fn by_ded(p: &mut Parser) {
     }
 }
 
+fn prefix_match_ded_clause(p: &mut Parser) -> bool {
+    if !p.at(T!['(']) {
+        p.error("Expected to find a prefix match clause in parens");
+        return false;
+    }
+
+    let m = p.start();
+    p.bump(T!['(']);
+
+    if !pat(p) {
+        // test_err(ded) prefix_match_ded_clause_no_pat
+        // (dmatch foo ( (B by (!claim C))))
+
+        // FIXME: this error message doesn't really get hit in the case above. It's rough though
+        p.error("Expected to find a pattern for the prefix match clause");
+    }
+
+    if !ded(p) {
+        // test_err(ded) prefix_match_ded_clause_no_ded
+        // (dmatch foo (B ))
+        p.error("Expected to find an deduction for the prefix match clause");
+    }
+
+    p.expect(T![')']);
+    m.complete(p, SyntaxKind::MATCH_DED_CLAUSE);
+
+    true
+}
+
+// test(ded) prefix_match_ded
+// (dmatch foo (A (!claim B)) (C (!claim D)))
+fn prefix_match_ded(p: &mut Parser) {
+    assert!(p.at_prefix_kw(T![dmatch]));
+
+    let m = p.start();
+    p.bump(T!['(']);
+    p.bump(T![dmatch]);
+
+    if !phrase(p) {
+        // test_err(ded) prefix_match_ded_no_scrutinee
+        // (dmatch )
+        p.error("Expected to find a scrutinee (phrase) for the prefix match deduction");
+    }
+
+    eprintln!("HERE");
+
+    if !p.at(T!['(']) {
+        // test_err(ded) prefix_match_ded_no_clauses
+        // (dmatch foo )
+        p.error("Expected to find a prefix match clause in parens");
+        p.expect(T![')']);
+        m.complete(p, SyntaxKind::PREFIX_MATCH_DED);
+        return;
+    }
+
+    while !p.at(T![')']) && !p.at_end() {
+        eprintln!("HERE {:?} {:?}", p.current(), p.nth(1));
+        if !prefix_match_ded_clause(p) {
+            p.err_recover("Invalid prefix match clause", TokenSet::new(&[T![')']]));
+        }
+    }
+
+    p.expect(T![')']); // end of dmatch
+
+    m.complete(p, SyntaxKind::PREFIX_MATCH_DED);
+}
+
 pub(crate) const DED_START_SET: TokenSet = TokenSet::new(&[
     T!['('],
     T![assume],
@@ -852,7 +924,7 @@ pub(crate) const DED_START_SET: TokenSet = TokenSet::new(&[
 ]);
 
 pub(crate) const DED_AFTER_LPAREN_SET: TokenSet =
-    TokenSet::new(&[T![apply - method], T![!], T![match]]).union(EXPR_START_SET);
+    TokenSet::new(&[T![apply - method], T![!], T![dmatch]]).union(EXPR_START_SET);
 
 pub(crate) fn ded(p: &mut Parser) -> bool {
     #[cfg(test)]
@@ -863,7 +935,10 @@ pub(crate) fn ded(p: &mut Parser) -> bool {
                 apply_method_call_ded(p);
             } else if p.peek_at(T![!]) {
                 bang_method_call_ded(p);
+            } else if p.peek_at(T![dmatch]) {
+                prefix_match_ded(p);
             } else if p.peek_at_one_of(EXPR_START_SET) || p.peek_at(T![by]) {
+                eprintln!("BY DED");
                 by_ded(p);
             } else {
                 return false;

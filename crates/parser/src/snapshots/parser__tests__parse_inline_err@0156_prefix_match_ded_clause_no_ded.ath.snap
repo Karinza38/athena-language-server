@@ -1,0 +1,25 @@
+---
+source: crates/parser/src/tests.rs
+description: "(dmatch foo (B ))\n"
+input_file: crates/parser/test_data/parser/inline/err/ded/0156_prefix_match_ded_clause_no_ded.ath
+---
+PREFIX_MATCH_DED
+  L_PAREN "("
+  DMATCH_KW "dmatch"
+  WHITESPACE " "
+  EXPR_PHRASE
+    IDENT_EXPR
+      IDENTIFIER
+        IDENT "foo"
+  WHITESPACE " "
+  MATCH_DED_CLAUSE
+    L_PAREN "("
+    IDENT_PAT
+      IDENTIFIER
+        IDENT "B"
+    WHITESPACE " "
+    R_PAREN ")"
+  R_PAREN ")"
+  WHITESPACE "\n"
+error 14: Expected to find an deduction for the prefix match clause
+
