@@ -1,0 +1,45 @@
+---
+source: crates/parser/src/tests.rs
+description: "(match foo { _ => lambda (_) 1} 0)"
+input_file: crates/parser/test_data/parser/ok/file/hardmatch.ath
+---
+SOURCE_FILE
+  PHRASE_STMT
+    EXPR_PHRASE
+      APPLICATION_EXPR
+        L_PAREN "("
+        INFIX_MATCH_EXPR
+          MATCH_KW "match"
+          WHITESPACE " "
+          EXPR_PHRASE
+            IDENT_EXPR
+              IDENTIFIER
+                IDENT "foo"
+          WHITESPACE " "
+          L_CURLY "{"
+          WHITESPACE " "
+          MATCH_ARM
+            WILDCARD_PAT
+              UNDERSCORE "_"
+            WHITESPACE " "
+            FAT_ARROW "=>"
+            WHITESPACE " "
+            LAMBDA_EXPR
+              LAMBDA_KW "lambda"
+              WHITESPACE " "
+              L_PAREN "("
+              MAYBE_WILDCARD_TYPED_PARAM
+                UNDERSCORE "_"
+              R_PAREN ")"
+              WHITESPACE " "
+              IDENT_EXPR
+                IDENTIFIER
+                  IDENT "1"
+          R_CURLY "}"
+        WHITESPACE " "
+        EXPR_PHRASE
+          IDENT_EXPR
+            IDENTIFIER
+              IDENT "0"
+        R_PAREN ")"
+

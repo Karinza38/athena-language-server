@@ -852,7 +852,7 @@ pub(crate) const DED_START_SET: TokenSet = TokenSet::new(&[
 ]);
 
 pub(crate) const DED_AFTER_LPAREN_SET: TokenSet =
-    TokenSet::new(&[T![apply - method], T![!]]).union(EXPR_START_SET);
+    TokenSet::new(&[T![apply - method], T![!], T![match]]).union(EXPR_START_SET);
 
 pub(crate) fn ded(p: &mut Parser) -> bool {
     #[cfg(test)]

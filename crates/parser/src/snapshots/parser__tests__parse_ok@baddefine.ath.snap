@@ -6,7 +6,7 @@ input_file: crates/parser/test_data/parser/ok/file/baddefine.ath
 SOURCE_FILE
   PHRASE_STMT
     EXPR_PHRASE
-      MATCH_EXPR
+      INFIX_MATCH_EXPR
         MATCH_KW "match"
         WHITESPACE " "
         EXPR_PHRASE

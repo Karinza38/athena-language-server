@@ -422,7 +422,6 @@ fn sort_vars_or_constant_sort(p: &mut Parser) -> SortVarsOrConstantSort {
             return SortVarsOrConstantSort::ConstantSort;
         }
         _ => {
-            p.error("expected a sort variable declaration or a constant sort");
             p.err_recover(
                 "expected a sort variable declaration or a constant sort",
                 TokenSet::new(&[T![')'], T!['['], T![->]]).union(SORT_DECL_START), // FIXME: unsure about this recovery set

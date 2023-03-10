@@ -1,5 +1,6 @@
 use super::{
     identifier, literal,
+    patterns::pat,
     phrases::{phrase, ExprOrDed, PHRASE_START_SET},
     LIT_SET,
 };
@@ -421,10 +422,31 @@ fn let_rec_expr(p: &mut Parser) {
     super::phrases::let_rec_expr_or_ded(p, Some(super::phrases::ExprOrDed::Expr));
 }
 
-// test(expr) simple_match_expr
-// match foo { bar => (baz boo) }
-fn match_expr(p: &mut Parser) {
-    super::phrases::match_expr_or_ded(p, Some(super::phrases::ExprOrDed::Expr));
+// test(expr) prefix_match
+// (match foo (A B) (C D))
+pub(crate) fn prefix_match_clause(p: &mut Parser) {
+    if !p.at(T!['(']) {
+        p.error("Expected to find a prefix match clause in parens");
+        return;
+    }
+
+    let m = p.start();
+    p.bump(T!['(']);
+
+    if !pat(p) {
+        // test_err(expr) prefix_match_clause_no_pat
+        // (match foo ( B)
+        p.error("Expected to find a pattern for the prefix match clause");
+    }
+
+    if !expr(p) {
+        // test_err(expr) prefix_match_clause_no_expr
+        // (match foo ( B)
+        p.error("Expected to find an expression for the prefix match clause");
+    }
+
+    p.expect(T![')']);
+    m.complete(p, SyntaxKind::MATCH_CLAUSE);
 }
 
 fn map_binding(p: &mut Parser) {
@@ -490,6 +512,21 @@ pub(crate) fn opened_expr(p: &mut Parser, m: Marker) {
         T![seq] => {
             opened_seq_expr(p, m);
         }
+        T![match] => {
+            // test(expr) simple_match_expr
+            // match foo { bar => (baz boo) }
+            let (_, pos) = super::phrases::match_expr_or_ded_partial(
+                p,
+                None,
+                super::phrases::MatchParseState::Match(Some(m)),
+            );
+            match pos {
+                super::phrases::PrefixOrInfix::Prefix => {}
+                super::phrases::PrefixOrInfix::Infix(m) => {
+                    opened_application_expr(p, m);
+                }
+            }
+        }
         c if PHRASE_START_SET.contains(c) => {
             opened_application_expr(p, m);
         }
@@ -530,7 +567,7 @@ pub(crate) const EXPR_START_SET: TokenSet = TokenSet::new(&[
 .union(LIT_SET);
 
 pub(crate) const EXPR_AFTER_LPAREN_SET: TokenSet =
-    TokenSet::new(&[T![')'], T![&&], T![||], T![seq]]).union(EXPR_START_SET);
+    TokenSet::new(&[T![')'], T![&&], T![||], T![seq], T![match]]).union(EXPR_START_SET);
 
 // test(expr) simple_string_expr
 // "hello world"
@@ -596,7 +633,7 @@ pub(crate) fn expr(p: &mut Parser) -> bool {
             let_rec_expr(p);
         }
         T![match] => {
-            match_expr(p);
+            super::phrases::match_expr_or_ded(p, Some(ExprOrDed::Expr));
         }
         T![method] => {
             method_expr(p);

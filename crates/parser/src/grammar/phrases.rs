@@ -3,7 +3,7 @@ use crate::{
         deductions::DED_AFTER_LPAREN_SET, expressions::EXPR_AFTER_LPAREN_SET,
         patterns::PAT_START_SET,
     },
-    parser::Parser,
+    parser::{Marker, Parser},
     token_set::TokenSet,
     SyntaxKind::{self, IDENT},
     T,
@@ -23,26 +23,23 @@ pub(crate) enum ExprOrDed {
     Ambig,
 }
 
-fn match_arm(p: &mut Parser, want: Option<ExprOrDed>) -> ExprOrDed {
-    let m = p.start();
-
-    p.eat_contextual_kw(T![|]);
-
-    if !pat(p) {
-        // test_err(expr) match_arm_no_pat
-        // match foo { => bar }
-        p.error("Expected to find a pattern for the match arm");
-    }
-
-    p.expect(T![=>]);
-
-    match expr_or_ded(p) {
+fn expr_or_ded_opt_fallback(
+    p: &mut Parser,
+    m: crate::parser::Marker,
+    to_node: impl Fn(ExprOrDed) -> SyntaxKind,
+    want: Option<ExprOrDed>,
+    actual: Option<ExprOrDed>,
+    ctx: Option<&str>,
+) -> ExprOrDed {
+    let ded_node = to_node(ExprOrDed::Ded);
+    let expr_node = to_node(ExprOrDed::Expr);
+    let res = match actual {
         Some(ExprOrDed::Expr) => {
-            m.complete(p, SyntaxKind::MATCH_ARM);
+            m.complete(p, expr_node);
             ExprOrDed::Expr
         }
         Some(ExprOrDed::Ded) => {
-            m.complete(p, SyntaxKind::MATCH_DED_ARM);
+            m.complete(p, ded_node);
             ExprOrDed::Ded
         }
         Some(ExprOrDed::Ambig) => {
@@ -54,15 +51,33 @@ fn match_arm(p: &mut Parser, want: Option<ExprOrDed>) -> ExprOrDed {
             // match foo { bar => }
             if want == Some(ExprOrDed::Expr) {
                 p.error("Expected to find an expression for the match arm");
-                m.complete(p, SyntaxKind::MATCH_ARM);
+                m.complete(p, expr_node);
                 ExprOrDed::Expr
             } else {
                 p.error("Expected to find a deduction for the match arm");
-                m.complete(p, SyntaxKind::MATCH_DED_ARM);
+                m.complete(p, ded_node);
                 ExprOrDed::Ded
             }
         }
+    };
+
+    if want.is_some() && actual.is_some() && actual.unwrap() != want.unwrap() {
+        let ctx = match ctx {
+            Some(ctx) => format!(" for {}", ctx),
+            None => String::new(),
+        };
+        p.error(format!(
+            "Expected to find {}{}",
+            match want.unwrap() {
+                ExprOrDed::Expr => "an expression",
+                ExprOrDed::Ded => "a deduction",
+                ExprOrDed::Ambig => unreachable!(),
+            },
+            ctx
+        ));
     }
+
+    res
 }
 
 fn expr_or_ded_fallback(
@@ -71,6 +86,7 @@ fn expr_or_ded_fallback(
     to_node: impl Fn(ExprOrDed) -> SyntaxKind,
     want: Option<ExprOrDed>,
     actual: ExprOrDed,
+    ctx: Option<&str>,
 ) {
     let node_from_res = to_node(actual);
 
@@ -90,69 +106,139 @@ fn expr_or_ded_fallback(
     }
 
     if want.is_some() && actual != want.unwrap() {
+        let ctx = match ctx {
+            Some(ctx) => format!(" for {}", ctx),
+            None => String::new(),
+        };
         p.error(format!(
-            "Expected to find {}",
+            "Expected to find {}{}",
             match want.unwrap() {
                 ExprOrDed::Expr => "an expression",
                 ExprOrDed::Ded => "a deduction",
                 ExprOrDed::Ambig => unreachable!(),
-            }
+            },
+            ctx
         ));
     }
 }
 
-// test(expr) match_leading_pipe
-// match foo { | bar => 1 }
-pub(crate) fn match_expr_or_ded(p: &mut Parser, want: Option<ExprOrDed>) -> ExprOrDed {
-    assert!(p.at(T![match]));
+pub(crate) enum MatchParseState {
+    /// Haven't consumed anything yet
+    /// Some if we ate an opening paren
+    Match(Option<Marker>),
+    /// Consumed the `match` keyword
+    Scrutinee(Marker, Marker),
+    /// Consumed the scrutinee
+    Clauses(Marker, Marker),
+}
 
-    let m = p.start();
-    p.bump(T![match]);
+pub(crate) enum PrefixOrInfix {
+    Prefix,
+    Infix(Marker),
+}
 
-    if !phrase(p) {
-        // test_err(expr) match_expr_no_scrutinee
-        // match { foo => bar }
-        p.error("Expected to find a scrutinee (phrase) for the match expression");
-    }
-
-    p.expect(T!['{']);
-
-    let res = if !p.at_one_of(super::patterns::PAT_START_SET)
-        && !p.peek_at_one_of(super::patterns::PAT_START_SET)
-    {
-        // test_err(expr) match_expr_no_arm
-        // match foo {  }
-        if !p.at(T![=>]) {
-            p.error("Expected at least one arm in the match expression");
-            want.unwrap_or(ExprOrDed::Ambig)
-        } else {
-            match_arm(p, want)
+pub(crate) fn match_expr_or_ded_partial(
+    p: &mut Parser,
+    want: Option<ExprOrDed>,
+    state: MatchParseState,
+) -> (ExprOrDed, PrefixOrInfix) {
+    match state {
+        MatchParseState::Match(m) => {
+            let outer = if let Some(m) = m { m } else { p.start() };
+            let inner = p.start();
+            p.bump(T![match]);
+            match_expr_or_ded_partial(p, want, MatchParseState::Scrutinee(outer, inner))
         }
-    } else {
-        match_arm(p, want)
-    };
+        MatchParseState::Scrutinee(outer, inner) => {
+            // test_err(expr) prefix_match_expr_no_scrutinee
+            // (match (A B))
+            if !phrase(p) {
+                // test_err(expr) match_expr_no_scrutinee
+                // match { foo => bar }
+                p.error("Expected to find a scrutinee (phrase) for the match expression");
+            }
+            match_expr_or_ded_partial(p, want, MatchParseState::Clauses(outer, inner))
+        }
+        MatchParseState::Clauses(outer, inner) => {
+            if p.eat(T!['{']) {
+                let res = match_arm(p, want);
 
-    while p.at_contextual_kw(T![|]) {
-        // test(expr) match_expr_multiple_arms
-        // match foo { bar => baz | qux => (quux "cool") }
-        match_arm(p, want);
+                while p.at_contextual_kw(T![|]) {
+                    // test(expr) match_expr_multiple_arms
+                    // match foo { bar => baz | qux => (quux "cool") }
+                    match_arm(p, want);
+                }
+
+                p.expect(T!['}']);
+                expr_or_ded_fallback(
+                    p,
+                    inner,
+                    |eod| match eod {
+                        ExprOrDed::Expr | ExprOrDed::Ambig => SyntaxKind::INFIX_MATCH_EXPR,
+                        ExprOrDed::Ded => SyntaxKind::INFIX_MATCH_DED,
+                    },
+                    want,
+                    res,
+                    None,
+                );
+                (res, PrefixOrInfix::Infix(outer))
+            } else if p.at(T!['(']) {
+                while !p.at(T![')']) && !p.at_end() {
+                    super::expressions::prefix_match_clause(p);
+                }
+
+                p.expect(T![')']);
+                inner.abandon(p);
+                outer.complete(p, SyntaxKind::PREFIX_MATCH_EXPR);
+                (ExprOrDed::Expr, PrefixOrInfix::Prefix)
+            } else {
+                // test_err(expr) match_no_clauses
+                // match foo
+                p.error("Expected to find clauses for the match");
+                inner.complete(p, SyntaxKind::INFIX_MATCH_EXPR);
+                (ExprOrDed::Expr, PrefixOrInfix::Infix(outer))
+            }
+        }
+    }
+}
+
+pub(crate) fn match_expr_or_ded(p: &mut Parser, want: Option<ExprOrDed>) -> ExprOrDed {
+    let (res, fix) = match_expr_or_ded_partial(p, want, MatchParseState::Match(None));
+    match fix {
+        PrefixOrInfix::Prefix => {}
+        PrefixOrInfix::Infix(m) => m.abandon(p),
+    }
+    res
+}
+
+fn match_arm(p: &mut Parser, want: Option<ExprOrDed>) -> ExprOrDed {
+    let m = p.start();
+
+    // test(expr) match_leading_pipe
+    // match foo { | bar => 1 }
+    p.eat_contextual_kw(T![|]);
+
+    if !pat(p) {
+        // test_err(expr) match_arm_no_pat
+        // match foo { => bar }
+        p.error("Expected to find a pattern for the match arm");
     }
 
-    p.expect(T!['}']);
+    p.expect(T![=>]);
 
-    expr_or_ded_fallback(
+    let res = expr_or_ded(p);
+
+    expr_or_ded_opt_fallback(
         p,
         m,
         |eod| match eod {
-            ExprOrDed::Expr => SyntaxKind::MATCH_EXPR,
-            ExprOrDed::Ded => SyntaxKind::MATCH_DED,
-            ExprOrDed::Ambig => SyntaxKind::MATCH_EXPR,
+            ExprOrDed::Expr | ExprOrDed::Ambig => SyntaxKind::MATCH_ARM,
+            ExprOrDed::Ded => SyntaxKind::MATCH_DED_ARM,
         },
         want,
         res,
-    );
-
-    res
+        Some("match arm"),
+    )
 }
 
 fn check_arm(p: &mut Parser, leading_pipe: bool, want: Option<ExprOrDed>) -> ExprOrDed {
@@ -203,6 +289,7 @@ fn check_arm(p: &mut Parser, leading_pipe: bool, want: Option<ExprOrDed>) -> Exp
         },
         want,
         res,
+        None,
     );
 
     res
@@ -251,7 +338,7 @@ pub(crate) fn check_expr_or_ded(p: &mut Parser, want: Option<ExprOrDed>) -> Expr
 
     p.expect(T!['}']);
 
-    expr_or_ded_fallback(p, m, to_node, want, res);
+    expr_or_ded_fallback(p, m, to_node, want, res, None);
 
     res
 }
@@ -338,6 +425,7 @@ pub(crate) fn let_expr_or_ded(p: &mut Parser, want: Option<ExprOrDed>) -> ExprOr
         },
         want,
         res,
+        None,
     );
 
     res
@@ -427,6 +515,7 @@ pub(crate) fn let_rec_expr_or_ded(p: &mut Parser, want: Option<ExprOrDed>) -> Ex
         },
         want,
         res,
+        None,
     );
 
     res
@@ -466,6 +555,7 @@ fn try_arm(p: &mut Parser, leading_pipe: bool, want: Option<ExprOrDed>) -> ExprO
         },
         want,
         res,
+        None,
     );
 
     res
@@ -517,6 +607,7 @@ pub(crate) fn try_expr_or_ded(p: &mut Parser, want: Option<ExprOrDed>) -> ExprOr
         },
         want,
         res,
+        None,
     );
 
     res

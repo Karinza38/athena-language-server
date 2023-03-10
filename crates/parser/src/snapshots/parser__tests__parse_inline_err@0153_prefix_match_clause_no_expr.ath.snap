@@ -1,0 +1,25 @@
+---
+source: crates/parser/src/tests.rs
+description: "(match foo ( B)\n"
+input_file: crates/parser/test_data/parser/inline/err/expr/0153_prefix_match_clause_no_expr.ath
+---
+PREFIX_MATCH_EXPR
+  L_PAREN "("
+  MATCH_KW "match"
+  WHITESPACE " "
+  EXPR_PHRASE
+    IDENT_EXPR
+      IDENTIFIER
+        IDENT "foo"
+  WHITESPACE " "
+  MATCH_CLAUSE
+    L_PAREN "("
+    WHITESPACE " "
+    IDENT_PAT
+      IDENTIFIER
+        IDENT "B"
+    R_PAREN ")"
+  WHITESPACE "\n"
+error 14: Expected to find an expression for the prefix match clause
+error 15: expected R_PAREN
+

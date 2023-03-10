@@ -1,0 +1,15 @@
+---
+source: crates/parser/src/tests.rs
+description: "match foo\n"
+input_file: crates/parser/test_data/parser/inline/err/expr/0152_match_no_clauses.ath
+---
+INFIX_MATCH_EXPR
+  MATCH_KW "match"
+  WHITESPACE " "
+  EXPR_PHRASE
+    IDENT_EXPR
+      IDENTIFIER
+        IDENT "foo"
+  WHITESPACE "\n"
+error 9: Expected to find clauses for the match
+

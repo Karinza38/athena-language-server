@@ -3,28 +3,25 @@ source: crates/parser/src/tests.rs
 description: "match { foo => bar }\n"
 input_file: crates/parser/test_data/parser/inline/err/expr/0030_match_expr_no_scrutinee.ath
 ---
-MATCH_EXPR
-  MATCH_KW "match"
-  WHITESPACE " "
-  DED_PHRASE
-    L_CURLY "{"
+ERROR
+  INFIX_MATCH_EXPR
+    MATCH_KW "match"
     WHITESPACE " "
-    IDENT_EXPR
-      IDENTIFIER
-        IDENT "foo"
+    DED_PHRASE
+      L_CURLY "{"
+      WHITESPACE " "
+      IDENT_EXPR
+        IDENTIFIER
+          IDENT "foo"
   WHITESPACE " "
-  MATCH_ARM
-    FAT_ARROW "=>"
-    WHITESPACE " "
-    IDENT_EXPR
-      IDENTIFIER
-        IDENT "bar"
+  FAT_ARROW "=>"
+  WHITESPACE " "
+  IDENT "bar"
   WHITESPACE " "
   R_CURLY "}"
   WHITESPACE "\n"
 error 11: expected `from` or `by` or `on`
 error 11: expected at least one inference
 error 11: expected deduction
-error 11: expected L_CURLY
-error 12: Expected to find a pattern for the match arm
+error 11: Expected to find clauses for the match
 

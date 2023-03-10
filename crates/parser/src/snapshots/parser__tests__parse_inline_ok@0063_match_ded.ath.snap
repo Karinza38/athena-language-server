@@ -3,7 +3,7 @@ source: crates/parser/src/tests.rs
 description: "match A { B => (!claim C) }\n"
 input_file: crates/parser/test_data/parser/inline/ok/ded/0063_match_ded.ath
 ---
-MATCH_DED
+INFIX_MATCH_DED
   MATCH_KW "match"
   WHITESPACE " "
   EXPR_PHRASE

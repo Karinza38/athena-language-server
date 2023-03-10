@@ -3,7 +3,7 @@ source: crates/parser/src/tests.rs
 description: "match foo { => bar }\n"
 input_file: crates/parser/test_data/parser/inline/err/expr/0031_match_arm_no_pat.ath
 ---
-MATCH_EXPR
+INFIX_MATCH_EXPR
   MATCH_KW "match"
   WHITESPACE " "
   EXPR_PHRASE

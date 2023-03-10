@@ -1,0 +1,1 @@
+(match foo { _ => lambda (_) 1} 0)

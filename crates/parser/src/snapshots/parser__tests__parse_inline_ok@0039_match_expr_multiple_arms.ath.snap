@@ -3,7 +3,7 @@ source: crates/parser/src/tests.rs
 description: "match foo { bar => baz | qux => (quux \"cool\") }\n"
 input_file: crates/parser/test_data/parser/inline/ok/expr/0039_match_expr_multiple_arms.ath
 ---
-MATCH_EXPR
+INFIX_MATCH_EXPR
   MATCH_KW "match"
   WHITESPACE " "
   EXPR_PHRASE
