@@ -244,7 +244,14 @@ DefineDir =
     | PrefixDefineDir
 
 PrefixDefineDir =
-    '(' 'define' Identifier Phrase ')'
+    PrefixDefine
+    | PrefixDefineBlocks
+
+PrefixDefine =
+    '(' 'define' DefineName Phrase ')'
+
+PrefixDefineBlocks =
+    '(' 'define' PrefixDefineBlock* ')'
 
 InfixDefineDir =
     'private'? 'define' DefineName ':=' Phrase
@@ -291,6 +298,14 @@ ExpandInputDir =
 
 DefineSortDir =
     'define-sort' Identifier ':=' Sort
+
+PrefixDefineBlock =
+    DefineProc ':='? Phrase
+
+//     '(' Id MWPL* ')' Ded
+//     | '(' Id ':' '(' 'OP' Id Id ')' MWPL* ')' Expr
+//     | '(' Id ':' '(' 'OP' Id ')' MWPL* ')' ':='? Expr
+//     | '(' Id MWPL* ')' ':='? Expr
 
 //****************************//
 // Expressions and Deductions //

@@ -116,8 +116,7 @@ fn named_pat(p: &mut Parser) {
             // (foo bind bar)
             p.bump(T![bind]);
         } else {
-            // test_err(pat) named_pat_no_as_or_bind
-            // (foo )
+            // potentially unreachable
             p.error("expected `as` or `bind`");
         }
         if !pat(p) {

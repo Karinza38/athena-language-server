@@ -1,0 +1,33 @@
+---
+source: crates/parser/src/tests.rs
+description: "(define (foo a b) a b)\n"
+input_file: crates/parser/test_data/parser/inline/err/dir/0168_define_prefix_no_block.ath
+---
+PREFIX_DEFINE_BLOCKS
+  L_PAREN "("
+  DEFINE_KW "define"
+  WHITESPACE " "
+  PREFIX_DEFINE_BLOCK
+    DEFINE_PROC
+      L_PAREN "("
+      IDENTIFIER
+        IDENT "foo"
+      WHITESPACE " "
+      IDENTIFIER
+        IDENT "a"
+      WHITESPACE " "
+      IDENTIFIER
+        IDENT "b"
+      R_PAREN ")"
+    WHITESPACE " "
+    EXPR_PHRASE
+      IDENT_EXPR
+        IDENTIFIER
+          IDENT "a"
+  WHITESPACE " "
+  ERROR
+    IDENT "b"
+  R_PAREN ")"
+  WHITESPACE "\n"
+error 20: expected define block
+

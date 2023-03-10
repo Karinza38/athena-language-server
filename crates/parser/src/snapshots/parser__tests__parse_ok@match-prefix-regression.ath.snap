@@ -5,66 +5,67 @@ input_file: crates/parser/test_data/parser/ok/file/match-prefix-regression.ath
 ---
 SOURCE_FILE
   DIR_STMT
-    PREFIX_DEFINE_DIR
+    PREFIX_DEFINE_BLOCKS
       L_PAREN "("
       DEFINE_KW "define"
       WHITESPACE " "
-      DEFINE_PROC
-        L_PAREN "("
-        IDENTIFIER
-          IDENT "complement"
-        WHITESPACE " "
-        IDENTIFIER
-          IDENT "p"
-        R_PAREN ")"
-      WHITESPACE "\n  "
-      EXPR_PHRASE
-        PREFIX_MATCH_EXPR
+      PREFIX_DEFINE_BLOCK
+        DEFINE_PROC
           L_PAREN "("
-          MATCH_KW "match"
+          IDENTIFIER
+            IDENT "complement"
           WHITESPACE " "
-          EXPR_PHRASE
-            IDENT_EXPR
-              IDENTIFIER
-                IDENT "p"
-          WHITESPACE "\n    "
-          MATCH_CLAUSE
+          IDENTIFIER
+            IDENT "p"
+          R_PAREN ")"
+        WHITESPACE "\n  "
+        EXPR_PHRASE
+          PREFIX_MATCH_EXPR
             L_PAREN "("
-            COMPOUND_PAT
-              L_PAREN "("
-              IDENT_PAT
+            MATCH_KW "match"
+            WHITESPACE " "
+            EXPR_PHRASE
+              IDENT_EXPR
                 IDENTIFIER
-                  IDENT "not"
+                  IDENT "p"
+            WHITESPACE "\n    "
+            MATCH_CLAUSE
+              L_PAREN "("
+              COMPOUND_PAT
+                L_PAREN "("
+                IDENT_PAT
+                  IDENTIFIER
+                    IDENT "not"
+                WHITESPACE " "
+                IDENT_PAT
+                  IDENTIFIER
+                    IDENT "q"
+                R_PAREN ")"
               WHITESPACE " "
-              IDENT_PAT
+              IDENT_EXPR
                 IDENTIFIER
                   IDENT "q"
               R_PAREN ")"
-            WHITESPACE " "
-            IDENT_EXPR
-              IDENTIFIER
-                IDENT "q"
-            R_PAREN ")"
-          WHITESPACE "\n    "
-          MATCH_CLAUSE
-            L_PAREN "("
-            IDENT_PAT
-              UNDERSCORE "_"
-            WHITESPACE " "
-            APPLICATION_EXPR
+            WHITESPACE "\n    "
+            MATCH_CLAUSE
               L_PAREN "("
-              EXPR_PHRASE
-                IDENT_EXPR
-                  IDENTIFIER
-                    IDENT "not"
+              IDENT_PAT
+                UNDERSCORE "_"
               WHITESPACE " "
-              EXPR_PHRASE
-                IDENT_EXPR
-                  IDENTIFIER
-                    IDENT "p"
+              APPLICATION_EXPR
+                L_PAREN "("
+                EXPR_PHRASE
+                  IDENT_EXPR
+                    IDENTIFIER
+                      IDENT "not"
+                WHITESPACE " "
+                EXPR_PHRASE
+                  IDENT_EXPR
+                    IDENTIFIER
+                      IDENT "p"
+                R_PAREN ")"
               R_PAREN ")"
             R_PAREN ")"
-          R_PAREN ")"
       R_PAREN ")"
   WHITESPACE "\n"
 

@@ -3,36 +3,37 @@ source: crates/parser/src/tests.rs
 description: "(define (foo a b) (lambda () b))\n"
 input_file: crates/parser/test_data/parser/inline/ok/dir/0151_define_prefix_proc.ath
 ---
-PREFIX_DEFINE_DIR
+PREFIX_DEFINE_BLOCKS
   L_PAREN "("
   DEFINE_KW "define"
   WHITESPACE " "
-  DEFINE_PROC
-    L_PAREN "("
-    IDENTIFIER
-      IDENT "foo"
-    WHITESPACE " "
-    IDENTIFIER
-      IDENT "a"
-    WHITESPACE " "
-    IDENTIFIER
-      IDENT "b"
-    R_PAREN ")"
-  WHITESPACE " "
-  EXPR_PHRASE
-    APPLICATION_EXPR
+  PREFIX_DEFINE_BLOCK
+    DEFINE_PROC
       L_PAREN "("
-      EXPR_PHRASE
-        LAMBDA_EXPR
-          LAMBDA_KW "lambda"
-          WHITESPACE " "
-          L_PAREN "("
-          R_PAREN ")"
-          WHITESPACE " "
-          IDENT_EXPR
-            IDENTIFIER
-              IDENT "b"
+      IDENTIFIER
+        IDENT "foo"
+      WHITESPACE " "
+      IDENTIFIER
+        IDENT "a"
+      WHITESPACE " "
+      IDENTIFIER
+        IDENT "b"
       R_PAREN ")"
+    WHITESPACE " "
+    EXPR_PHRASE
+      APPLICATION_EXPR
+        L_PAREN "("
+        EXPR_PHRASE
+          LAMBDA_EXPR
+            LAMBDA_KW "lambda"
+            WHITESPACE " "
+            L_PAREN "("
+            R_PAREN ")"
+            WHITESPACE " "
+            IDENT_EXPR
+              IDENTIFIER
+                IDENT "b"
+        R_PAREN ")"
   R_PAREN ")"
   WHITESPACE "\n"
 

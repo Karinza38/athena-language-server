@@ -3,7 +3,7 @@ source: crates/parser/src/tests.rs
 description: "(define foo)\n"
 input_file: crates/parser/test_data/parser/inline/err/dir/0146_define_prefix_no_value.ath
 ---
-PREFIX_DEFINE_DIR
+PREFIX_DEFINE
   L_PAREN "("
   DEFINE_KW "define"
   WHITESPACE " "

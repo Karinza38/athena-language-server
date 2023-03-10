@@ -766,17 +766,17 @@ impl InfixDefineDir {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
-pub struct PrefixDefineDir {
+pub struct PrefixDefine {
     pub(crate) syntax: SyntaxNode,
 }
-impl PrefixDefineDir {
+impl PrefixDefine {
     pub fn l_paren_token(&self) -> Option<SyntaxToken> {
         support::token(&self.syntax, T!['('])
     }
     pub fn define_token(&self) -> Option<SyntaxToken> {
         support::token(&self.syntax, T![define])
     }
-    pub fn identifier(&self) -> Option<Identifier> {
+    pub fn define_name(&self) -> Option<DefineName> {
         support::child(&self.syntax)
     }
     pub fn phrase(&self) -> Option<Phrase> {
@@ -784,6 +784,41 @@ impl PrefixDefineDir {
     }
     pub fn r_paren_token(&self) -> Option<SyntaxToken> {
         support::token(&self.syntax, T![')'])
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+pub struct PrefixDefineBlocks {
+    pub(crate) syntax: SyntaxNode,
+}
+impl PrefixDefineBlocks {
+    pub fn l_paren_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T!['('])
+    }
+    pub fn define_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T![define])
+    }
+    pub fn prefix_define_blocks(&self) -> AstChildren<PrefixDefineBlock> {
+        support::children(&self.syntax)
+    }
+    pub fn r_paren_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T![')'])
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+pub struct PrefixDefineBlock {
+    pub(crate) syntax: SyntaxNode,
+}
+impl PrefixDefineBlock {
+    pub fn define_proc(&self) -> Option<DefineProc> {
+        support::child(&self.syntax)
+    }
+    pub fn colon_eq_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T![:=])
+    }
+    pub fn phrase(&self) -> Option<Phrase> {
+        support::child(&self.syntax)
     }
 }
 
@@ -2612,6 +2647,12 @@ pub enum Expr {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
+pub enum PrefixDefineDir {
+    PrefixDefine(PrefixDefine),
+    PrefixDefineBlocks(PrefixDefineBlocks),
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub enum DefineName {
     Identifier(Identifier),
     DefineNamedPattern(DefineNamedPattern),
@@ -3200,9 +3241,31 @@ impl AstNode for InfixDefineDir {
         &self.syntax
     }
 }
-impl AstNode for PrefixDefineDir {
+impl AstNode for PrefixDefine {
     fn can_cast(kind: SyntaxKind) -> bool {
-        kind == PREFIX_DEFINE_DIR
+        kind == PREFIX_DEFINE
+    }
+    fn cast(syntax: SyntaxNode) -> Option<Self> {
+        if Self::can_cast(syntax.kind()) { Some(Self { syntax }) } else { None }
+    }
+    fn syntax(&self) -> &SyntaxNode {
+        &self.syntax
+    }
+}
+impl AstNode for PrefixDefineBlocks {
+    fn can_cast(kind: SyntaxKind) -> bool {
+        kind == PREFIX_DEFINE_BLOCKS
+    }
+    fn cast(syntax: SyntaxNode) -> Option<Self> {
+        if Self::can_cast(syntax.kind()) { Some(Self { syntax }) } else { None }
+    }
+    fn syntax(&self) -> &SyntaxNode {
+        &self.syntax
+    }
+}
+impl AstNode for PrefixDefineBlock {
+    fn can_cast(kind: SyntaxKind) -> bool {
+        kind == PREFIX_DEFINE_BLOCK
     }
     fn cast(syntax: SyntaxNode) -> Option<Self> {
         if Self::can_cast(syntax.kind()) { Some(Self { syntax }) } else { None }
@@ -4562,8 +4625,8 @@ impl AstNode for Dir {
         matches!(
             kind, DOMAIN_DIR | DOMAINS_DIR | LOAD_DIR | ASSERT_DIR | ASSERT_CLOSED_DIR |
             EXTEND_MODULE_DIR | OPEN_DIR | ASSOCIATIVITY_DIR | INFIX_MODULE_DIR |
-            PREFIX_MODULE_DIR | INFIX_DEFINE_DIR | PREFIX_DEFINE_DIR | PREFIX_DECLARE_DIR
-            | INFIX_DECLARE_DIR | INFIX_CONSTANT_DECLARE | PREFIX_CONSTANT_DECLARE
+            PREFIX_MODULE_DIR | INFIX_DEFINE_DIR | PREFIX_DECLARE_DIR | INFIX_DECLARE_DIR
+            | INFIX_CONSTANT_DECLARE | PREFIX_CONSTANT_DECLARE
         )
     }
     fn cast(syntax: SyntaxNode) -> Option<Self> {
@@ -4584,9 +4647,6 @@ impl AstNode for Dir {
             }
             INFIX_DEFINE_DIR => {
                 Dir::DefineDir(DefineDir::InfixDefineDir(InfixDefineDir { syntax }))
-            }
-            PREFIX_DEFINE_DIR => {
-                Dir::DefineDir(DefineDir::PrefixDefineDir(PrefixDefineDir { syntax }))
             }
             PREFIX_DECLARE_DIR => {
                 Dir::DeclareDir(
@@ -4734,12 +4794,21 @@ impl From<PrefixDefineDir> for DefineDir {
 }
 impl AstNode for DefineDir {
     fn can_cast(kind: SyntaxKind) -> bool {
-        matches!(kind, INFIX_DEFINE_DIR | PREFIX_DEFINE_DIR)
+        matches!(kind, INFIX_DEFINE_DIR | PREFIX_DEFINE | PREFIX_DEFINE_BLOCKS)
     }
     fn cast(syntax: SyntaxNode) -> Option<Self> {
         let res = match syntax.kind() {
             INFIX_DEFINE_DIR => DefineDir::InfixDefineDir(InfixDefineDir { syntax }),
-            PREFIX_DEFINE_DIR => DefineDir::PrefixDefineDir(PrefixDefineDir { syntax }),
+            PREFIX_DEFINE => {
+                DefineDir::PrefixDefineDir(
+                    PrefixDefineDir::PrefixDefine(PrefixDefine { syntax }),
+                )
+            }
+            PREFIX_DEFINE_BLOCKS => {
+                DefineDir::PrefixDefineDir(
+                    PrefixDefineDir::PrefixDefineBlocks(PrefixDefineBlocks { syntax }),
+                )
+            }
             _ => return None,
         };
         Some(res)
@@ -4747,7 +4816,7 @@ impl AstNode for DefineDir {
     fn syntax(&self) -> &SyntaxNode {
         match self {
             DefineDir::InfixDefineDir(it) => &it.syntax,
-            DefineDir::PrefixDefineDir(it) => &it.syntax,
+            DefineDir::PrefixDefineDir(it) => it.syntax(),
         }
     }
 }
@@ -5063,6 +5132,37 @@ impl AstNode for Expr {
             Expr::WildcardExpr(it) => &it.syntax,
             Expr::PrefixCheckExpr(it) => &it.syntax,
             Expr::MatchExpr(it) => it.syntax(),
+        }
+    }
+}
+impl From<PrefixDefine> for PrefixDefineDir {
+    fn from(node: PrefixDefine) -> PrefixDefineDir {
+        PrefixDefineDir::PrefixDefine(node)
+    }
+}
+impl From<PrefixDefineBlocks> for PrefixDefineDir {
+    fn from(node: PrefixDefineBlocks) -> PrefixDefineDir {
+        PrefixDefineDir::PrefixDefineBlocks(node)
+    }
+}
+impl AstNode for PrefixDefineDir {
+    fn can_cast(kind: SyntaxKind) -> bool {
+        matches!(kind, PREFIX_DEFINE | PREFIX_DEFINE_BLOCKS)
+    }
+    fn cast(syntax: SyntaxNode) -> Option<Self> {
+        let res = match syntax.kind() {
+            PREFIX_DEFINE => PrefixDefineDir::PrefixDefine(PrefixDefine { syntax }),
+            PREFIX_DEFINE_BLOCKS => {
+                PrefixDefineDir::PrefixDefineBlocks(PrefixDefineBlocks { syntax })
+            }
+            _ => return None,
+        };
+        Some(res)
+    }
+    fn syntax(&self) -> &SyntaxNode {
+        match self {
+            PrefixDefineDir::PrefixDefine(it) => &it.syntax,
+            PrefixDefineDir::PrefixDefineBlocks(it) => &it.syntax,
         }
     }
 }
@@ -5585,6 +5685,11 @@ impl std::fmt::Display for Expr {
         std::fmt::Display::fmt(self.syntax(), f)
     }
 }
+impl std::fmt::Display for PrefixDefineDir {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        std::fmt::Display::fmt(self.syntax(), f)
+    }
+}
 impl std::fmt::Display for DefineName {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         std::fmt::Display::fmt(self.syntax(), f)
@@ -5860,7 +5965,17 @@ impl std::fmt::Display for InfixDefineDir {
         std::fmt::Display::fmt(self.syntax(), f)
     }
 }
-impl std::fmt::Display for PrefixDefineDir {
+impl std::fmt::Display for PrefixDefine {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        std::fmt::Display::fmt(self.syntax(), f)
+    }
+}
+impl std::fmt::Display for PrefixDefineBlocks {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        std::fmt::Display::fmt(self.syntax(), f)
+    }
+}
+impl std::fmt::Display for PrefixDefineBlock {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         std::fmt::Display::fmt(self.syntax(), f)
     }

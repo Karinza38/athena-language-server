@@ -1,0 +1,51 @@
+---
+source: crates/parser/src/tests.rs
+description: "(define (foo a b) := a (foo b c) := b)\n"
+input_file: crates/parser/test_data/parser/inline/ok/dir/0162_prefix_define_blocks.ath
+---
+PREFIX_DEFINE_BLOCKS
+  L_PAREN "("
+  DEFINE_KW "define"
+  WHITESPACE " "
+  PREFIX_DEFINE_BLOCK
+    DEFINE_PROC
+      L_PAREN "("
+      IDENTIFIER
+        IDENT "foo"
+      WHITESPACE " "
+      IDENTIFIER
+        IDENT "a"
+      WHITESPACE " "
+      IDENTIFIER
+        IDENT "b"
+      R_PAREN ")"
+    WHITESPACE " "
+    COLON_EQ ":="
+    WHITESPACE " "
+    EXPR_PHRASE
+      IDENT_EXPR
+        IDENTIFIER
+          IDENT "a"
+  WHITESPACE " "
+  PREFIX_DEFINE_BLOCK
+    DEFINE_PROC
+      L_PAREN "("
+      IDENTIFIER
+        IDENT "foo"
+      WHITESPACE " "
+      IDENTIFIER
+        IDENT "b"
+      WHITESPACE " "
+      IDENTIFIER
+        IDENT "c"
+      R_PAREN ")"
+    WHITESPACE " "
+    COLON_EQ ":="
+    WHITESPACE " "
+    EXPR_PHRASE
+      IDENT_EXPR
+        IDENTIFIER
+          IDENT "b"
+  R_PAREN ")"
+  WHITESPACE "\n"
+

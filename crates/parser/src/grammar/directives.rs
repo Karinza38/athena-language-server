@@ -3,7 +3,7 @@ use crate::grammar::phrases::phrase;
 use crate::grammar::sorts::{sort_decl, SORT_DECL_START};
 use crate::grammar::statements::{stmt, STMT_START_SET};
 use crate::grammar::{identifier, maybe_wildcard_typed_param};
-use crate::parser::Parser;
+use crate::parser::{Marker, Parser};
 use crate::token_set::TokenSet;
 use crate::{
     SyntaxKind::{self, IDENT},
@@ -198,13 +198,20 @@ fn define_proc(p: &mut Parser) {
     m.complete(p, SyntaxKind::DEFINE_PROC);
 }
 
-fn define_name(p: &mut Parser) {
+enum DefineName {
+    Proc,
+    Other,
+}
+
+fn define_name(p: &mut Parser) -> DefineName {
     match p.current() {
         T!['('] => {
             if p.peek_at_one_of(NAME_SET) || p.nth_at_one_of(2, NAME_SET) {
                 define_named_pattern(p);
+                DefineName::Other
             } else {
                 define_proc(p);
+                DefineName::Proc
             }
         }
         T!['['] => {
@@ -217,14 +224,17 @@ fn define_name(p: &mut Parser) {
             // test(dir) define_multi_one
             // define [foo] := true
             super::patterns::list_pat(p);
+            DefineName::Other
         }
         IDENT => {
             identifier(p);
+            DefineName::Other
         }
         _ => {
             // test_err(dir) define_no_name
             // define := true
             p.error("expected definition name");
+            DefineName::Other
         }
     }
 }
@@ -255,6 +265,56 @@ fn define_dir(p: &mut Parser) {
     m.complete(p, SyntaxKind::INFIX_DEFINE_DIR);
 }
 
+enum DefBlockParseState {
+    Start,
+    AteDefineProc(Marker),
+}
+
+fn def_block(p: &mut Parser, state: DefBlockParseState) {
+    fn after_proc(p: &mut Parser, m: Marker) {
+        p.eat(T![:=]);
+
+        if !phrase(p) {
+            // test_err(dir) define_block_empty
+            // (define (foo a b) := )
+            p.error("expected definition value");
+        }
+        m.complete(p, SyntaxKind::PREFIX_DEFINE_BLOCK);
+    }
+
+    match state {
+        DefBlockParseState::Start => {
+            assert!(p.at(T!['(']));
+
+            let m = p.start();
+            define_proc(p);
+
+            after_proc(p, m);
+        }
+        DefBlockParseState::AteDefineProc(m) => after_proc(p, m),
+    }
+}
+
+// test(dir) prefix_define_blocks
+// (define (foo a b) := a (foo b c) := b)
+fn prefix_define_blocks(p: &mut Parser, define: Marker) {
+    // the parse state is after the '(' and 'define' has been eaten
+    // and potentially the first def block
+    while !p.at(T![')']) && !p.at_end() {
+        if p.at(T!['(']) {
+            def_block(p, DefBlockParseState::Start);
+        } else {
+            // test_err(dir) define_prefix_no_block
+            // (define (foo a b) a b)
+            p.err_recover("expected define block", TokenSet::new(&[T![')']]));
+        }
+    }
+
+    p.expect(T![')']);
+
+    define.complete(p, SyntaxKind::PREFIX_DEFINE_BLOCKS);
+}
+
 // test(dir) define_prefix
 // (define A B)
 fn prefix_define(p: &mut Parser) {
@@ -269,17 +329,23 @@ fn prefix_define(p: &mut Parser) {
 
     // test(dir) define_prefix_proc
     // (define (foo a b) (lambda () b))
-    define_name(p);
-
-    if !phrase(p) {
-        // test_err(dir) define_prefix_no_value
-        // (define foo)
-        p.error("expected value for define");
+    let maybe_def_block = p.start();
+    match define_name(p) {
+        DefineName::Proc => {
+            def_block(p, DefBlockParseState::AteDefineProc(maybe_def_block));
+            prefix_define_blocks(p, m);
+        }
+        DefineName::Other => {
+            maybe_def_block.abandon(p); // def blocks are always procedure defs
+            if !phrase(p) {
+                // test_err(dir) define_prefix_no_value
+                // (define foo)
+                p.error("expected value for define");
+            }
+            p.expect(T![')']);
+            m.complete(p, SyntaxKind::PREFIX_DEFINE);
+        }
     }
-
-    p.expect(T![')']);
-
-    m.complete(p, SyntaxKind::PREFIX_DEFINE_DIR);
 }
 
 fn func_sorts(p: &mut Parser) {
