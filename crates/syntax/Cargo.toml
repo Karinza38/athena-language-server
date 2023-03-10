@@ -18,3 +18,4 @@ quote = "1.0.23"
 ungrammar = "1.16.1"
 sourcegen = { path = "../sourcegen" }
 itertools = "0.10.5"
+insta = { version = "1.28.0", features = ["glob"] }

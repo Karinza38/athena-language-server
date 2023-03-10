@@ -3,6 +3,10 @@ mod parsing;
 mod ptr;
 mod syntax_error;
 mod syntax_node;
+mod validation;
+
+#[cfg(test)]
+mod tests;
 
 use std::{marker::PhantomData, sync::Arc};
 
@@ -137,11 +141,10 @@ pub use crate::ast::SourceFile;
 
 impl SourceFile {
     pub fn parse(text: &str) -> Parse<SourceFile> {
-        let (green, errors) = parsing::parse_text(text);
+        let (green, mut errors) = parsing::parse_text(text);
         let root = SyntaxNode::new_root(green.clone());
 
-        // TODO: Add syntax validation
-        // errors.extend(validation::validate(&root));
+        errors.extend(validation::validate(&root));
 
         assert_eq!(root.kind(), SyntaxKind::SOURCE_FILE);
         Parse {
