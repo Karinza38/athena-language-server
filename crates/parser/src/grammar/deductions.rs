@@ -407,14 +407,8 @@ fn restricted_named_pat(p: &mut Parser) {
 }
 
 fn restricted_pat(p: &mut Parser) -> bool {
-    if p.at(IDENT) {
-        if p.peek_at(T![:]) {
-            patterns::annotated_ident_pat(p);
-        } else {
-            patterns::ident_pat(p);
-        }
-    } else if p.at(T![_]) {
-        patterns::wildcard_pat(p);
+    if p.at(IDENT) || p.at(T![_]) {
+        patterns::ident_pat(p);
     } else if p.at(T!['(']) {
         if p.peek_at(T![as]) || p.nth_at(2, T![as]) {
             restricted_named_pat(p);

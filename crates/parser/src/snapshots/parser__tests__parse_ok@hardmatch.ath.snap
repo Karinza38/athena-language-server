@@ -19,7 +19,7 @@ SOURCE_FILE
           L_CURLY "{"
           WHITESPACE " "
           MATCH_ARM
-            WILDCARD_PAT
+            IDENT_PAT
               UNDERSCORE "_"
             WHITESPACE " "
             FAT_ARROW "=>"

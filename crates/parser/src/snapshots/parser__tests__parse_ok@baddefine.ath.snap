@@ -25,22 +25,25 @@ SOURCE_FILE
               L_PAREN "("
               SOME_ATOM_KW "some-atom"
               WHITESPACE " "
-              WILDCARD_PAT
-                UNDERSCORE "_"
+              IDENT_PAT
+                MAYBE_WILDCARD_TYPED_PARAM
+                  UNDERSCORE "_"
               R_PAREN ")"
             WHITESPACE " "
             COMPOUND_PAT
               L_PAREN "("
               IDENT_PAT
-                IDENTIFIER
-                  IDENT "~"
+                MAYBE_WILDCARD_TYPED_PARAM
+                  IDENTIFIER
+                    IDENT "~"
               WHITESPACE " "
               SOME_THING_PAT
                 L_PAREN "("
                 SOME_ATOM_KW "some-atom"
                 WHITESPACE " "
-                WILDCARD_PAT
-                  UNDERSCORE "_"
+                IDENT_PAT
+                  MAYBE_WILDCARD_TYPED_PARAM
+                    UNDERSCORE "_"
                 R_PAREN ")"
               R_PAREN ")"
             R_PAREN ")"
@@ -54,7 +57,7 @@ SOURCE_FILE
         MATCH_ARM
           PIPE "|"
           WHITESPACE " "
-          WILDCARD_PAT
+          IDENT_PAT
             UNDERSCORE "_"
           WHITESPACE "  "
           FAT_ARROW "=>"

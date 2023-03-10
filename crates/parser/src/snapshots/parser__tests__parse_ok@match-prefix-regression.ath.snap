@@ -34,12 +34,14 @@ SOURCE_FILE
             COMPOUND_PAT
               L_PAREN "("
               IDENT_PAT
-                IDENTIFIER
-                  IDENT "not"
+                MAYBE_WILDCARD_TYPED_PARAM
+                  IDENTIFIER
+                    IDENT "not"
               WHITESPACE " "
               IDENT_PAT
-                IDENTIFIER
-                  IDENT "q"
+                MAYBE_WILDCARD_TYPED_PARAM
+                  IDENTIFIER
+                    IDENT "q"
               R_PAREN ")"
             WHITESPACE " "
             IDENT_EXPR
@@ -49,7 +51,7 @@ SOURCE_FILE
           WHITESPACE "\n    "
           MATCH_CLAUSE
             L_PAREN "("
-            WILDCARD_PAT
+            IDENT_PAT
               UNDERSCORE "_"
             WHITESPACE " "
             APPLICATION_EXPR

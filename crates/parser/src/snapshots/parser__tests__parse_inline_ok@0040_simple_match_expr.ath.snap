@@ -15,8 +15,9 @@ INFIX_MATCH_EXPR
   WHITESPACE " "
   MATCH_ARM
     IDENT_PAT
-      IDENTIFIER
-        IDENT "bar"
+      MAYBE_WILDCARD_TYPED_PARAM
+        IDENTIFIER
+          IDENT "bar"
     WHITESPACE " "
     FAT_ARROW "=>"
     WHITESPACE " "

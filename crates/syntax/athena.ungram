@@ -510,7 +510,6 @@ RestrictedNamedPat =
 
 RestrictedPat =
     IdentPat
-    | WildcardPat
     | RestrictedApplyPat
     | RestrictedNamedPat
 
@@ -598,7 +597,6 @@ Pat =
     | MetaIdentPat // ✅
     | LiteralPat // ✅
     | UnitPat // ✅
-    | WildcardPat // ✅
     | NamedPat // ✅
     | ValOfPat // ✅
     | ListOfPat // ✅
@@ -609,7 +607,7 @@ Pat =
     | SomeThingPat // ✅
 
 IdentPat =
-    MaybeTypedParam
+    MaybeWildcardTypedParam
 
 VarPat =
     '?' Identifier ':' Sort
@@ -623,9 +621,6 @@ MetaIdentPat =
 UnitPat =
     Unit
 
-WildcardPat = 
-    '_'
-
 NamedPat =
     '(' 'bind' Identifier Pat ')'
     | '(' Identifier 'as' Pat ')'
@@ -638,10 +633,6 @@ ListOfPat =
 
 SplitPat =
     '(' 'split' first:Pat second:Pat rest:Pat* ')'
-
-SimplePat =
-    IdentPat
-    | WildcardPat
 
 ListPat =
     '[' Pat* ']'
@@ -674,4 +665,4 @@ SomeThing =
     | 'some-char'
 
 SomeThingPat =
-    '(' SomeThing SimplePat ')'
+    '(' SomeThing IdentPat ')'

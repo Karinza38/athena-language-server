@@ -1,5 +1,5 @@
 use crate::grammar::expressions::expr;
-use crate::grammar::{literal, maybe_typed_param, meta_ident, unit};
+use crate::grammar::{literal, maybe_typed_param, maybe_wildcard_typed_param, meta_ident, unit};
 use crate::parser::Parser;
 use crate::token_set::TokenSet;
 use crate::SyntaxKind::{self, IDENT};
@@ -11,10 +11,10 @@ use super::{identifier, LIT_SET};
 // test(pat) simple_ident_pat
 // foopat
 pub(crate) fn ident_pat(p: &mut Parser) {
-    assert!(p.at(IDENT));
+    assert!(p.at(IDENT) || p.at(T![_]));
 
     let m = p.start();
-    identifier(p);
+    assert!(maybe_wildcard_typed_param(p));
     m.complete(p, SyntaxKind::IDENT_PAT);
 }
 
@@ -95,7 +95,7 @@ pub(crate) fn wildcard_pat(p: &mut Parser) {
 
     let m = p.start();
     p.bump(T![_]);
-    m.complete(p, SyntaxKind::WILDCARD_PAT);
+    m.complete(p, SyntaxKind::IDENT_PAT);
 }
 
 // test(pat) named_pat
@@ -131,20 +131,6 @@ fn named_pat(p: &mut Parser) {
     m.complete(p, SyntaxKind::NAMED_PAT);
 }
 
-// test(pat) simple_pat
-// (some-var _)
-fn simple_pat(p: &mut Parser) {
-    assert!(p.at_one_of(SIMPLE_PAT_SET));
-
-    if p.at(IDENT) {
-        ident_pat(p);
-    } else if p.at(T![_]) {
-        wildcard_pat(p);
-    } else {
-        unreachable!()
-    }
-}
-
 const SIMPLE_PAT_SET: TokenSet = TokenSet::new(&[IDENT, T![_]]);
 
 // test(pat) some_thing_pat
@@ -158,7 +144,7 @@ fn some_thing_pat(p: &mut Parser) {
     p.bump_one_of(SOME_THING_SET);
 
     if p.at_one_of(SIMPLE_PAT_SET) {
-        simple_pat(p)
+        ident_pat(p)
     }
 
     p.expect(T![')']);

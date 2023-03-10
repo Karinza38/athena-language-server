@@ -2026,18 +2026,8 @@ pub struct IdentPat {
     pub(crate) syntax: SyntaxNode,
 }
 impl IdentPat {
-    pub fn maybe_typed_param(&self) -> Option<MaybeTypedParam> {
+    pub fn maybe_wildcard_typed_param(&self) -> Option<MaybeWildcardTypedParam> {
         support::child(&self.syntax)
-    }
-}
-
-#[derive(Debug, Clone, PartialEq, Eq, Hash)]
-pub struct WildcardPat {
-    pub(crate) syntax: SyntaxNode,
-}
-impl WildcardPat {
-    pub fn underscore_token(&self) -> Option<SyntaxToken> {
-        support::token(&self.syntax, T![_])
     }
 }
 
@@ -2454,7 +2444,7 @@ impl SomeThingPat {
     pub fn some_thing(&self) -> Option<SomeThing> {
         support::child(&self.syntax)
     }
-    pub fn simple_pat(&self) -> Option<SimplePat> {
+    pub fn ident_pat(&self) -> Option<IdentPat> {
         support::child(&self.syntax)
     }
     pub fn r_paren_token(&self) -> Option<SyntaxToken> {
@@ -2557,7 +2547,6 @@ pub enum Pat {
     MetaIdentPat(MetaIdentPat),
     LiteralPat(LiteralPat),
     UnitPat(UnitPat),
-    WildcardPat(WildcardPat),
     NamedPat(NamedPat),
     ValOfPat(ValOfPat),
     ListOfPat(ListOfPat),
@@ -2721,7 +2710,6 @@ pub enum MatchDed {
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub enum RestrictedPat {
     IdentPat(IdentPat),
-    WildcardPat(WildcardPat),
     RestrictedApplyPat(RestrictedApplyPat),
     RestrictedNamedPat(RestrictedNamedPat),
 }
@@ -2731,12 +2719,6 @@ pub enum Inference {
     InferFrom(InferFrom),
     InferBy(InferBy),
     Ded(Ded),
-}
-
-#[derive(Debug, Clone, PartialEq, Eq, Hash)]
-pub enum SimplePat {
-    IdentPat(IdentPat),
-    WildcardPat(WildcardPat),
 }
 impl AstNode for Identifier {
     fn can_cast(kind: SyntaxKind) -> bool {
@@ -4025,17 +4007,6 @@ impl AstNode for IdentPat {
         &self.syntax
     }
 }
-impl AstNode for WildcardPat {
-    fn can_cast(kind: SyntaxKind) -> bool {
-        kind == WILDCARD_PAT
-    }
-    fn cast(syntax: SyntaxNode) -> Option<Self> {
-        if Self::can_cast(syntax.kind()) { Some(Self { syntax }) } else { None }
-    }
-    fn syntax(&self) -> &SyntaxNode {
-        &self.syntax
-    }
-}
 impl AstNode for RestrictedMatchDed {
     fn can_cast(kind: SyntaxKind) -> bool {
         kind == RESTRICTED_MATCH_DED
@@ -4410,11 +4381,6 @@ impl From<UnitPat> for Pat {
         Pat::UnitPat(node)
     }
 }
-impl From<WildcardPat> for Pat {
-    fn from(node: WildcardPat) -> Pat {
-        Pat::WildcardPat(node)
-    }
-}
 impl From<NamedPat> for Pat {
     fn from(node: NamedPat) -> Pat {
         Pat::NamedPat(node)
@@ -4459,8 +4425,8 @@ impl AstNode for Pat {
     fn can_cast(kind: SyntaxKind) -> bool {
         matches!(
             kind, IDENT_PAT | VAR_PAT | META_IDENT_PAT | LITERAL_PAT | UNIT_PAT |
-            WILDCARD_PAT | NAMED_PAT | VAL_OF_PAT | LIST_OF_PAT | SPLIT_PAT | LIST_PAT |
-            COMPOUND_PAT | WHERE_PAT | SOME_THING_PAT
+            NAMED_PAT | VAL_OF_PAT | LIST_OF_PAT | SPLIT_PAT | LIST_PAT | COMPOUND_PAT |
+            WHERE_PAT | SOME_THING_PAT
         )
     }
     fn cast(syntax: SyntaxNode) -> Option<Self> {
@@ -4470,7 +4436,6 @@ impl AstNode for Pat {
             META_IDENT_PAT => Pat::MetaIdentPat(MetaIdentPat { syntax }),
             LITERAL_PAT => Pat::LiteralPat(LiteralPat { syntax }),
             UNIT_PAT => Pat::UnitPat(UnitPat { syntax }),
-            WILDCARD_PAT => Pat::WildcardPat(WildcardPat { syntax }),
             NAMED_PAT => Pat::NamedPat(NamedPat { syntax }),
             VAL_OF_PAT => Pat::ValOfPat(ValOfPat { syntax }),
             LIST_OF_PAT => Pat::ListOfPat(ListOfPat { syntax }),
@@ -4490,7 +4455,6 @@ impl AstNode for Pat {
             Pat::MetaIdentPat(it) => &it.syntax,
             Pat::LiteralPat(it) => &it.syntax,
             Pat::UnitPat(it) => &it.syntax,
-            Pat::WildcardPat(it) => &it.syntax,
             Pat::NamedPat(it) => &it.syntax,
             Pat::ValOfPat(it) => &it.syntax,
             Pat::ListOfPat(it) => &it.syntax,
@@ -5425,11 +5389,6 @@ impl From<IdentPat> for RestrictedPat {
         RestrictedPat::IdentPat(node)
     }
 }
-impl From<WildcardPat> for RestrictedPat {
-    fn from(node: WildcardPat) -> RestrictedPat {
-        RestrictedPat::WildcardPat(node)
-    }
-}
 impl From<RestrictedApplyPat> for RestrictedPat {
     fn from(node: RestrictedApplyPat) -> RestrictedPat {
         RestrictedPat::RestrictedApplyPat(node)
@@ -5442,14 +5401,11 @@ impl From<RestrictedNamedPat> for RestrictedPat {
 }
 impl AstNode for RestrictedPat {
     fn can_cast(kind: SyntaxKind) -> bool {
-        matches!(
-            kind, IDENT_PAT | WILDCARD_PAT | RESTRICTED_APPLY_PAT | RESTRICTED_NAMED_PAT
-        )
+        matches!(kind, IDENT_PAT | RESTRICTED_APPLY_PAT | RESTRICTED_NAMED_PAT)
     }
     fn cast(syntax: SyntaxNode) -> Option<Self> {
         let res = match syntax.kind() {
             IDENT_PAT => RestrictedPat::IdentPat(IdentPat { syntax }),
-            WILDCARD_PAT => RestrictedPat::WildcardPat(WildcardPat { syntax }),
             RESTRICTED_APPLY_PAT => {
                 RestrictedPat::RestrictedApplyPat(RestrictedApplyPat { syntax })
             }
@@ -5463,7 +5419,6 @@ impl AstNode for RestrictedPat {
     fn syntax(&self) -> &SyntaxNode {
         match self {
             RestrictedPat::IdentPat(it) => &it.syntax,
-            RestrictedPat::WildcardPat(it) => &it.syntax,
             RestrictedPat::RestrictedApplyPat(it) => &it.syntax,
             RestrictedPat::RestrictedNamedPat(it) => &it.syntax,
         }
@@ -5543,35 +5498,6 @@ impl AstNode for Inference {
             Inference::InferFrom(it) => &it.syntax,
             Inference::InferBy(it) => &it.syntax,
             Inference::Ded(it) => it.syntax(),
-        }
-    }
-}
-impl From<IdentPat> for SimplePat {
-    fn from(node: IdentPat) -> SimplePat {
-        SimplePat::IdentPat(node)
-    }
-}
-impl From<WildcardPat> for SimplePat {
-    fn from(node: WildcardPat) -> SimplePat {
-        SimplePat::WildcardPat(node)
-    }
-}
-impl AstNode for SimplePat {
-    fn can_cast(kind: SyntaxKind) -> bool {
-        matches!(kind, IDENT_PAT | WILDCARD_PAT)
-    }
-    fn cast(syntax: SyntaxNode) -> Option<Self> {
-        let res = match syntax.kind() {
-            IDENT_PAT => SimplePat::IdentPat(IdentPat { syntax }),
-            WILDCARD_PAT => SimplePat::WildcardPat(WildcardPat { syntax }),
-            _ => return None,
-        };
-        Some(res)
-    }
-    fn syntax(&self) -> &SyntaxNode {
-        match self {
-            SimplePat::IdentPat(it) => &it.syntax,
-            SimplePat::WildcardPat(it) => &it.syntax,
         }
     }
 }
@@ -5676,11 +5602,6 @@ impl std::fmt::Display for RestrictedPat {
     }
 }
 impl std::fmt::Display for Inference {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        std::fmt::Display::fmt(self.syntax(), f)
-    }
-}
-impl std::fmt::Display for SimplePat {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         std::fmt::Display::fmt(self.syntax(), f)
     }
@@ -6266,11 +6187,6 @@ impl std::fmt::Display for RestrictedNamedPat {
     }
 }
 impl std::fmt::Display for IdentPat {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        std::fmt::Display::fmt(self.syntax(), f)
-    }
-}
-impl std::fmt::Display for WildcardPat {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         std::fmt::Display::fmt(self.syntax(), f)
     }
