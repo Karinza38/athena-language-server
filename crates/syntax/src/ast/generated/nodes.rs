@@ -1997,6 +1997,16 @@ impl IdentPat {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
+pub struct WildcardPat {
+    pub(crate) syntax: SyntaxNode,
+}
+impl WildcardPat {
+    pub fn underscore_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T![_])
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct RestrictedMatchDed {
     pub(crate) syntax: SyntaxNode,
 }
@@ -2269,16 +2279,6 @@ pub struct UnitPat {
 impl UnitPat {
     pub fn unit(&self) -> Option<Unit> {
         support::child(&self.syntax)
-    }
-}
-
-#[derive(Debug, Clone, PartialEq, Eq, Hash)]
-pub struct WildcardPat {
-    pub(crate) syntax: SyntaxNode,
-}
-impl WildcardPat {
-    pub fn underscore_token(&self) -> Option<SyntaxToken> {
-        support::token(&self.syntax, T![_])
     }
 }
 
@@ -2686,6 +2686,7 @@ pub enum MatchDed {
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub enum RestrictedPat {
     IdentPat(IdentPat),
+    WildcardPat(WildcardPat),
     RestrictedApplyPat(RestrictedApplyPat),
     RestrictedNamedPat(RestrictedNamedPat),
 }
@@ -3967,6 +3968,17 @@ impl AstNode for IdentPat {
         &self.syntax
     }
 }
+impl AstNode for WildcardPat {
+    fn can_cast(kind: SyntaxKind) -> bool {
+        kind == WILDCARD_PAT
+    }
+    fn cast(syntax: SyntaxNode) -> Option<Self> {
+        if Self::can_cast(syntax.kind()) { Some(Self { syntax }) } else { None }
+    }
+    fn syntax(&self) -> &SyntaxNode {
+        &self.syntax
+    }
+}
 impl AstNode for RestrictedMatchDed {
     fn can_cast(kind: SyntaxKind) -> bool {
         kind == RESTRICTED_MATCH_DED
@@ -4135,17 +4147,6 @@ impl AstNode for LiteralPat {
 impl AstNode for UnitPat {
     fn can_cast(kind: SyntaxKind) -> bool {
         kind == UNIT_PAT
-    }
-    fn cast(syntax: SyntaxNode) -> Option<Self> {
-        if Self::can_cast(syntax.kind()) { Some(Self { syntax }) } else { None }
-    }
-    fn syntax(&self) -> &SyntaxNode {
-        &self.syntax
-    }
-}
-impl AstNode for WildcardPat {
-    fn can_cast(kind: SyntaxKind) -> bool {
-        kind == WILDCARD_PAT
     }
     fn cast(syntax: SyntaxNode) -> Option<Self> {
         if Self::can_cast(syntax.kind()) { Some(Self { syntax }) } else { None }
@@ -5367,6 +5368,11 @@ impl From<IdentPat> for RestrictedPat {
         RestrictedPat::IdentPat(node)
     }
 }
+impl From<WildcardPat> for RestrictedPat {
+    fn from(node: WildcardPat) -> RestrictedPat {
+        RestrictedPat::WildcardPat(node)
+    }
+}
 impl From<RestrictedApplyPat> for RestrictedPat {
     fn from(node: RestrictedApplyPat) -> RestrictedPat {
         RestrictedPat::RestrictedApplyPat(node)
@@ -5379,11 +5385,14 @@ impl From<RestrictedNamedPat> for RestrictedPat {
 }
 impl AstNode for RestrictedPat {
     fn can_cast(kind: SyntaxKind) -> bool {
-        matches!(kind, IDENT_PAT | RESTRICTED_APPLY_PAT | RESTRICTED_NAMED_PAT)
+        matches!(
+            kind, IDENT_PAT | WILDCARD_PAT | RESTRICTED_APPLY_PAT | RESTRICTED_NAMED_PAT
+        )
     }
     fn cast(syntax: SyntaxNode) -> Option<Self> {
         let res = match syntax.kind() {
             IDENT_PAT => RestrictedPat::IdentPat(IdentPat { syntax }),
+            WILDCARD_PAT => RestrictedPat::WildcardPat(WildcardPat { syntax }),
             RESTRICTED_APPLY_PAT => {
                 RestrictedPat::RestrictedApplyPat(RestrictedApplyPat { syntax })
             }
@@ -5397,6 +5406,7 @@ impl AstNode for RestrictedPat {
     fn syntax(&self) -> &SyntaxNode {
         match self {
             RestrictedPat::IdentPat(it) => &it.syntax,
+            RestrictedPat::WildcardPat(it) => &it.syntax,
             RestrictedPat::RestrictedApplyPat(it) => &it.syntax,
             RestrictedPat::RestrictedNamedPat(it) => &it.syntax,
         }
@@ -6193,6 +6203,11 @@ impl std::fmt::Display for IdentPat {
         std::fmt::Display::fmt(self.syntax(), f)
     }
 }
+impl std::fmt::Display for WildcardPat {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        std::fmt::Display::fmt(self.syntax(), f)
+    }
+}
 impl std::fmt::Display for RestrictedMatchDed {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         std::fmt::Display::fmt(self.syntax(), f)
@@ -6269,11 +6284,6 @@ impl std::fmt::Display for LiteralPat {
     }
 }
 impl std::fmt::Display for UnitPat {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        std::fmt::Display::fmt(self.syntax(), f)
-    }
-}
-impl std::fmt::Display for WildcardPat {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         std::fmt::Display::fmt(self.syntax(), f)
     }

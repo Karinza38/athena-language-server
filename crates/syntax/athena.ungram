@@ -504,6 +504,7 @@ RestrictedNamedPat =
 
 RestrictedPat =
     IdentPat
+    | WildcardPat
     | RestrictedApplyPat
     | RestrictedNamedPat
 

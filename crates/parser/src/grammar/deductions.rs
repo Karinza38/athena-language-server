@@ -368,7 +368,14 @@ fn restricted_apply_pat(p: &mut Parser) {
     restricted_pat(p);
 
     while !p.at(T![')']) {
-        restricted_pat(p);
+        if !restricted_pat(p) {
+            p.err_recover(
+                "invalid pattern in compound pattern",
+                TokenSet::new(&[T![')']]),
+            );
+
+            break;
+        }
     }
 
     p.expect(T![')']);
@@ -401,13 +408,15 @@ fn restricted_named_pat(p: &mut Parser) {
     m.complete(p, SyntaxKind::RESTRICTED_NAMED_PAT);
 }
 
-fn restricted_pat(p: &mut Parser) {
+fn restricted_pat(p: &mut Parser) -> bool {
     if p.at(IDENT) {
         if p.peek_at(T![:]) {
             patterns::annotated_ident_pat(p);
         } else {
             patterns::ident_pat(p);
         }
+    } else if p.at(T![_]) {
+        patterns::wildcard_pat(p);
     } else if p.at(T!['(']) {
         if p.peek_at(T![as]) || p.nth_at(2, T![as]) {
             restricted_named_pat(p);
@@ -416,7 +425,9 @@ fn restricted_pat(p: &mut Parser) {
         }
     } else {
         p.error("failed to parse restricted pattern");
+        return false;
     }
+    true
 }
 
 fn restricted_match_arm(p: &mut Parser, leading_pipe: bool) {
@@ -475,6 +486,7 @@ fn induct_ded(p: &mut Parser) {
     }
 
     while p.at_contextual_kw(T![|]) {
+        eprintln!("ARM");
         // test(ded) induct_multiple
         // by-induction a { a => (!claim a) | b => (!claim b) }
         restricted_match_arm(p, true);

@@ -90,7 +90,7 @@ fn unit_pat(p: &mut Parser) {
 
 // test(pat) wildcard_pat
 // _
-fn wildcard_pat(p: &mut Parser) {
+pub(crate) fn wildcard_pat(p: &mut Parser) {
     assert!(p.at(T![_]));
 
     let m = p.start();
