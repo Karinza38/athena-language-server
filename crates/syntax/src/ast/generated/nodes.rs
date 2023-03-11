@@ -1797,6 +1797,9 @@ pub struct PickAnyDed {
     pub(crate) syntax: SyntaxNode,
 }
 impl PickAnyDed {
+    pub fn l_paren_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T!['('])
+    }
     pub fn pick_any_token(&self) -> Option<SyntaxToken> {
         support::token(&self.syntax, T![pick - any])
     }
@@ -1805,6 +1808,9 @@ impl PickAnyDed {
     }
     pub fn ded(&self) -> Option<Ded> {
         support::child(&self.syntax)
+    }
+    pub fn r_paren_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T![')'])
     }
 }
 

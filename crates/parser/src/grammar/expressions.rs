@@ -83,10 +83,15 @@ fn meta_ident_expr(p: &mut Parser) {
 
 // test(expr) simple_lambda_expr
 // lambda (x y z) "hello world"
-fn lambda_expr(p: &mut Parser) {
-    assert!(p.at(T![lambda]));
+fn lambda_expr(p: &mut Parser, is_prefix: bool) {
+    assert!((is_prefix && p.at_prefix_kw(T![lambda])) || (!is_prefix && p.at(T![lambda])));
 
     let m = p.start();
+
+    if is_prefix {
+        p.bump(T!['(']);
+    }
+
     p.bump(T![lambda]);
     p.expect(T!['(']);
 
@@ -109,6 +114,11 @@ fn lambda_expr(p: &mut Parser) {
         // lambda (x y z) domain D
         p.error("Expected to find an expression for the lambda body");
     }
+
+    if is_prefix {
+        p.expect(T![')']);
+    }
+
     m.complete(p, SyntaxKind::LAMBDA_EXPR);
 }
 
@@ -753,6 +763,7 @@ pub(crate) const EXPR_AFTER_LPAREN_SET: TokenSet = TokenSet::new(&[
     T![check],
     T![let],
     T![letrec],
+    T![lambda],
 ])
 .union(EXPR_START_SET);
 
@@ -781,7 +792,7 @@ pub(crate) fn expr(p: &mut Parser) -> bool {
             meta_ident_expr(p);
         }
         T![lambda] => {
-            lambda_expr(p);
+            lambda_expr(p, false);
         }
         T!['['] => {
             list_expr(p);

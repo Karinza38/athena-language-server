@@ -342,10 +342,15 @@ fn generalize_over_ded(p: &mut Parser) {
 
 // test(ded) pick_any_ded
 // pick-any a : Int (!claim A)
-fn pick_any_ded(p: &mut Parser) {
-    assert!(p.at(T![pick - any]));
+fn pick_any_ded(p: &mut Parser, is_prefix: bool) {
+    assert!((is_prefix && p.at_prefix_kw(T![pick - any])) || (!is_prefix && p.at(T![pick - any])));
 
     let m = p.start();
+    if is_prefix {
+        // test(ded) prefix_pick_any_ded
+        // (pick-any a : Int (!claim A))
+        p.bump(T!['(']);
+    }
     p.bump(T![pick - any]);
 
     if !p.at(IDENT) {
@@ -377,6 +382,10 @@ fn pick_any_ded(p: &mut Parser) {
         // test_err(ded) pick_any_no_body
         // pick-any a : Int
         p.error("expected body for pick any");
+    }
+
+    if is_prefix {
+        p.expect(T![')']);
     }
 
     m.complete(p, SyntaxKind::PICK_ANY_DED);
@@ -1010,6 +1019,7 @@ pub(crate) const DED_AFTER_LPAREN_SET: TokenSet = TokenSet::new(&[
     T![assume-let],
     T![dlet],
     T![dletrec],
+    T![pick - any],
 ])
 .union(EXPR_START_SET);
 
@@ -1041,6 +1051,9 @@ pub(crate) fn ded(p: &mut Parser) -> bool {
             }
             T![dletrec] => {
                 prefix_let_rec_ded(p);
+            }
+            T![pick - any] => {
+                pick_any_ded(p, true);
             }
             _ => {
                 return false;
@@ -1076,7 +1089,7 @@ pub(crate) fn ded(p: &mut Parser) -> bool {
             generalize_over_ded(p);
         }
         T![pick - any] => {
-            pick_any_ded(p);
+            pick_any_ded(p, false);
         }
         T![with - witness] => {
             with_witness_ded(p);

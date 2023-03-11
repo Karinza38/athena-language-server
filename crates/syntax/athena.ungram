@@ -535,7 +535,7 @@ GeneralizeOverDed =
     'generalize-over' Expr Ded
 
 PickAnyDed =
-    'pick-any' MaybeTypedParam* Ded
+    '('? 'pick-any' MaybeTypedParam* Ded ')'?
 
 WithWitnessDed =
     'with-witness' Expr Phrase Ded
