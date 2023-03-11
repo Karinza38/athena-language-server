@@ -98,17 +98,14 @@ fn main() -> color_eyre::Result<()> {
                 let mut other_match = false;
                 for line in output.lines() {
                     let line: RipgrepResult = serde_json::from_str(line)?;
-                    match line {
-                        RipgrepResult::Match { path } => {
-                            if !path.text.contains("generated")
-                                && path.text.ends_with(".rs")
-                                && !kind.is_keyword()
-                            {
-                                other_match = true;
-                                break;
-                            }
+                    if let RipgrepResult::Match { path } = line {
+                        if !path.text.contains("generated")
+                            && path.text.ends_with(".rs")
+                            && !kind.is_keyword()
+                        {
+                            other_match = true;
+                            break;
                         }
-                        _ => {}
                     }
                 }
                 if !other_match {

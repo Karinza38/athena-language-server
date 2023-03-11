@@ -45,7 +45,6 @@ impl EntryPoint {
         parse(&mut p);
         let events = p.finish();
 
-        let res = event::process(events);
-        res
+        event::process(events)
     }
 }

@@ -60,6 +60,10 @@ impl<'i> LexedInput<'i> {
         self.kind.len() - 1 // -1 for EOF
     }
 
+    pub fn is_empty(&self) -> bool {
+        self.len() == 0
+    }
+
     pub fn kind(&self, idx: usize) -> SyntaxKind {
         assert!(idx < self.len());
         self.kind[idx]

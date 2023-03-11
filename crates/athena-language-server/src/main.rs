@@ -190,7 +190,7 @@ impl Backend {
         let index = line_index::LineIndex::new(&params.text);
         let diagnostics = ast
             .errors()
-            .into_iter()
+            .iter()
             .map(|err| {
                 let range = index.range(err.range());
                 Diagnostic::new_simple(range, err.message().to_owned())

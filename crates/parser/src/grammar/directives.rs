@@ -471,21 +471,21 @@ fn sort_vars_or_constant_sort(p: &mut Parser) -> SortVarsOrConstantSort {
             if p.at(T!['[']) {
                 p.error("Must have at least one sort variable in sort variable declaration");
                 m.complete(p, SyntaxKind::SORT_VARS_DECL);
-                return SortVarsOrConstantSort::SortVars;
+                SortVarsOrConstantSort::SortVars
             } else {
                 m.complete(p, SyntaxKind::COMPOUND_SORT_DECL);
-                return SortVarsOrConstantSort::ConstantSort;
+                SortVarsOrConstantSort::ConstantSort
             }
         }
         (IDENT, T![,]) | (IDENT, T![')']) => {
             sort_vars_decl(p);
-            return SortVarsOrConstantSort::SortVars;
+            SortVarsOrConstantSort::SortVars
         }
         (IDENT, IDENT) | (IDENT, T!['(']) => {
             if !sort_decl(p) {
                 p.error("expected a sort declaration");
             }
-            return SortVarsOrConstantSort::ConstantSort;
+            SortVarsOrConstantSort::ConstantSort
         }
         _ => {
             p.err_recover(
@@ -493,9 +493,9 @@ fn sort_vars_or_constant_sort(p: &mut Parser) -> SortVarsOrConstantSort {
                 TokenSet::new(&[T![')'], T!['['], T![->]]).union(SORT_DECL_START), // FIXME: unsure about this recovery set
             );
             if p.at(T!['[']) {
-                return SortVarsOrConstantSort::SortVars;
+                SortVarsOrConstantSort::SortVars
             } else {
-                return SortVarsOrConstantSort::Ambig;
+                SortVarsOrConstantSort::Ambig
             }
         }
     }

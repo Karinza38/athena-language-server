@@ -785,7 +785,7 @@ fn maybe_named_inference(p: &mut Parser) -> bool {
         // test_err(ded) named_inference_no_inference
         // { A := }
         m.abandon(p);
-        return false;
+        false
     } else {
         m.complete(p, SyntaxKind::MAYBE_NAMED_INFERENCE);
         true

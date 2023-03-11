@@ -161,7 +161,7 @@ impl AstEnumSrc {
     fn kinds(&self, grammar: &AstSrc) -> Vec<Ident> {
         self.variants(grammar)
             .iter()
-            .map(|variant| format_ident!("{}", to_upper_snake_case(&*variant.to_string())))
+            .map(|variant| format_ident!("{}", to_upper_snake_case(&variant.to_string())))
             .collect()
     }
 
@@ -623,11 +623,9 @@ fn generate_lexer(grammar: &AstSrc) -> String {
     let mut complex_variant_names = Vec::new();
     for token_def in &grammar.token_defs {
         // FIXME: this whole # thing is gross
-        let simple = token_def.name.starts_with("#");
-        let variant_name = format_ident!(
-            "{}",
-            to_pascal_case(&token_def.name.trim_start_matches('#'))
-        );
+        let simple = token_def.name.starts_with('#');
+        let variant_name =
+            format_ident!("{}", to_pascal_case(token_def.name.trim_start_matches('#')));
         let variant = quote! { #variant_name(usize) };
         let logos_annotation = match &token_def.def {
             AstTokenDef::Regex(reg) => {
@@ -763,11 +761,11 @@ fn pluralize(s: &str) -> String {
 }
 
 fn token_name(name: &str) -> String {
-    let processed_name = if name.starts_with("-") {
+    let processed_name = if name.starts_with('-') {
         name.to_owned()
     } else {
         // FIXME: Should really have a smarter way to handle this
-        name.replace("-", "_").replace("!", "_bang")
+        name.replace('-', "_").replace('!', "_bang")
     };
     match name {
         ";" => "semicolon",
