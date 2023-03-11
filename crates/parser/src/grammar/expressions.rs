@@ -633,7 +633,7 @@ fn prefix_check_expr(p: &mut Parser, m: Marker) {
 // test(expr) prefix_try
 // (try (A B) C D)
 fn prefix_try_expr(p: &mut Parser, m: Marker) {
-    assert!(p.at(T![try]) && (p.peek_at(T!['(']) || p.peek_at(T![')'])));
+    assert!(p.at(T![try]) && !p.peek_at(T!['{']));
 
     p.bump(T![try]);
 
@@ -694,7 +694,7 @@ pub(crate) fn opened_expr(p: &mut Parser, m: Marker) {
             }
         }
         T![try] => {
-            if p.peek_at(T!['(']) || p.peek_at(T![')']) {
+            if !p.peek_at(T!['{']) {
                 prefix_try_expr(p, m);
             } else {
                 opened_application_expr(p, m);

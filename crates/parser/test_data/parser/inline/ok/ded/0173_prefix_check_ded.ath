@@ -1,0 +1,1 @@
+(dcheck (A (!claim B)) (else (!claim D)))

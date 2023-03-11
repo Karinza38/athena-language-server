@@ -555,7 +555,17 @@ RestrictedMatchDed =
 CasesDed =
     'datatype-cases' Phrase ('on' Expr)? '{' RestrictedMatchDed* '}'
 
+CheckDedClause =
+    '(' Phrase Ded ')'
+
 CheckDed =
+    InfixCheckDed
+    | PrefixCheckDed
+
+PrefixCheckDed =
+    '(' 'check' CheckDedClause* ')'
+
+InfixCheckDed =
     'check' '{' arms:CheckDedArm* '}'
 
 CheckDedArm =

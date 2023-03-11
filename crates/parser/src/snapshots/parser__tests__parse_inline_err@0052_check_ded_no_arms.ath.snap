@@ -4,7 +4,7 @@ description: "check { }\n"
 input_file: crates/parser/test_data/parser/inline/err/ded/0052_check_ded_no_arms.ath
 ---
 ERROR
-  CHECK_DED
+  INFIX_CHECK_DED
     CHECK_KW "check"
     WHITESPACE " "
     L_CURLY "{"

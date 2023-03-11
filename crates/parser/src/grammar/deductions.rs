@@ -1014,6 +1014,47 @@ fn prefix_try_ded(p: &mut Parser) {
     m.complete(p, SyntaxKind::PREFIX_TRY_DED);
 }
 
+fn prefix_check_clause(p: &mut Parser) {
+    if !p.at(T!['(']) {
+        p.error("Expected to find a prefix check clause in parens");
+        return;
+    }
+
+    let m = p.start();
+    p.bump(T!['(']);
+
+    if !phrase(p) {
+        p.error("Expected to find a condition for the prefix check clause");
+    }
+
+    if !ded(p) {
+        // test_err(ded) prefix_check_ded_clause_no_expr
+        // (dcheck (B ))
+        p.error("Expected to find a body for the prefix check clause");
+    }
+
+    p.expect(T![')']);
+    m.complete(p, SyntaxKind::CHECK_DED_CLAUSE);
+}
+
+// test(ded) prefix_check_ded
+// (dcheck (A (!claim B)) (else (!claim D)))
+fn prefix_check_ded(p: &mut Parser) {
+    assert!(p.at_prefix_kw(T![dcheck]));
+
+    let m = p.start();
+    p.bump(T!['(']);
+    p.bump(T![dcheck]);
+
+    while !p.at(T![')']) && !p.at_end() {
+        prefix_check_clause(p);
+    }
+
+    p.expect(T![')']);
+
+    m.complete(p, SyntaxKind::PREFIX_CHECK_DED);
+}
+
 pub(crate) const DED_START_SET: TokenSet = TokenSet::new(&[
     T!['('],
     T![assume],
@@ -1045,6 +1086,7 @@ pub(crate) const DED_AFTER_LPAREN_SET: TokenSet = TokenSet::new(&[
     T![dletrec],
     T![pick - any],
     T![dtry],
+    T![dcheck],
 ])
 .union(EXPR_START_SET);
 
@@ -1082,6 +1124,9 @@ pub(crate) fn ded(p: &mut Parser) -> bool {
             }
             T![dtry] => {
                 prefix_try_ded(p);
+            }
+            T![dcheck] => {
+                prefix_check_ded(p);
             }
             _ => {
                 return false;

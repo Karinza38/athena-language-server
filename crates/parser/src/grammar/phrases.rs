@@ -319,7 +319,7 @@ pub(crate) fn check_expr_or_ded(p: &mut Parser, want: Option<ExprOrDed>) -> Expr
 
     let to_node = |eod| match eod {
         ExprOrDed::Expr => SyntaxKind::CHECK_EXPR,
-        ExprOrDed::Ded => SyntaxKind::CHECK_DED,
+        ExprOrDed::Ded => SyntaxKind::INFIX_CHECK_DED,
         ExprOrDed::Ambig => SyntaxKind::CHECK_EXPR,
     };
 

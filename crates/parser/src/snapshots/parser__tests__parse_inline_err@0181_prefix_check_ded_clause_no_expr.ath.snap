@@ -1,0 +1,21 @@
+---
+source: crates/parser/src/tests.rs
+description: "(dcheck (B ))\n"
+input_file: crates/parser/test_data/parser/inline/err/ded/0181_prefix_check_ded_clause_no_expr.ath
+---
+PREFIX_CHECK_DED
+  L_PAREN "("
+  DCHECK_KW "dcheck"
+  WHITESPACE " "
+  CHECK_DED_CLAUSE
+    L_PAREN "("
+    EXPR_PHRASE
+      IDENT_EXPR
+        IDENTIFIER
+          IDENT "B"
+    WHITESPACE " "
+    R_PAREN ")"
+  R_PAREN ")"
+  WHITESPACE "\n"
+error 10: Expected to find a body for the prefix check clause
+

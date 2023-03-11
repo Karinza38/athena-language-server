@@ -3,7 +3,7 @@ source: crates/parser/src/tests.rs
 description: "check { foo => (!claim A)\n| baz => }\n"
 input_file: crates/parser/test_data/parser/inline/err/ded/0051_check_arm_no_ded.ath
 ---
-CHECK_DED
+INFIX_CHECK_DED
   CHECK_KW "check"
   WHITESPACE " "
   L_CURLY "{"

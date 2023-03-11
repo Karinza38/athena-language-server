@@ -1931,25 +1931,6 @@ impl CasesDed {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
-pub struct CheckDed {
-    pub(crate) syntax: SyntaxNode,
-}
-impl CheckDed {
-    pub fn check_token(&self) -> Option<SyntaxToken> {
-        support::token(&self.syntax, T![check])
-    }
-    pub fn l_curly_token(&self) -> Option<SyntaxToken> {
-        support::token(&self.syntax, T!['{'])
-    }
-    pub fn arms(&self) -> AstChildren<CheckDedArm> {
-        support::children(&self.syntax)
-    }
-    pub fn r_curly_token(&self) -> Option<SyntaxToken> {
-        support::token(&self.syntax, T!['}'])
-    }
-}
-
-#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct ConcludeDed {
     pub(crate) syntax: SyntaxNode,
 }
@@ -2100,6 +2081,63 @@ impl RestrictedMatchDed {
     }
     pub fn ded(&self) -> Option<Ded> {
         support::child(&self.syntax)
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+pub struct CheckDedClause {
+    pub(crate) syntax: SyntaxNode,
+}
+impl CheckDedClause {
+    pub fn l_paren_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T!['('])
+    }
+    pub fn phrase(&self) -> Option<Phrase> {
+        support::child(&self.syntax)
+    }
+    pub fn ded(&self) -> Option<Ded> {
+        support::child(&self.syntax)
+    }
+    pub fn r_paren_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T![')'])
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+pub struct InfixCheckDed {
+    pub(crate) syntax: SyntaxNode,
+}
+impl InfixCheckDed {
+    pub fn check_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T![check])
+    }
+    pub fn l_curly_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T!['{'])
+    }
+    pub fn arms(&self) -> AstChildren<CheckDedArm> {
+        support::children(&self.syntax)
+    }
+    pub fn r_curly_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T!['}'])
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+pub struct PrefixCheckDed {
+    pub(crate) syntax: SyntaxNode,
+}
+impl PrefixCheckDed {
+    pub fn l_paren_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T!['('])
+    }
+    pub fn check_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T![check])
+    }
+    pub fn check_ded_clauses(&self) -> AstChildren<CheckDedClause> {
+        support::children(&self.syntax)
+    }
+    pub fn r_paren_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T![')'])
     }
 }
 
@@ -2884,9 +2922,9 @@ pub enum Ded {
     PickWitnessesDed(PickWitnessesDed),
     InductDed(InductDed),
     CasesDed(CasesDed),
-    CheckDed(CheckDed),
     ConcludeDed(ConcludeDed),
     InferBlockDed(InferBlockDed),
+    CheckDed(CheckDed),
     LetDed(LetDed),
     LetRecDed(LetRecDed),
     MatchDed(MatchDed),
@@ -2898,6 +2936,12 @@ pub enum Ded {
 pub enum MatchExpr {
     InfixMatchExpr(InfixMatchExpr),
     PrefixMatchExpr(PrefixMatchExpr),
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+pub enum CheckDed {
+    InfixCheckDed(InfixCheckDed),
+    PrefixCheckDed(PrefixCheckDed),
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
@@ -4175,17 +4219,6 @@ impl AstNode for CasesDed {
         &self.syntax
     }
 }
-impl AstNode for CheckDed {
-    fn can_cast(kind: SyntaxKind) -> bool {
-        kind == CHECK_DED
-    }
-    fn cast(syntax: SyntaxNode) -> Option<Self> {
-        if Self::can_cast(syntax.kind()) { Some(Self { syntax }) } else { None }
-    }
-    fn syntax(&self) -> &SyntaxNode {
-        &self.syntax
-    }
-}
 impl AstNode for ConcludeDed {
     fn can_cast(kind: SyntaxKind) -> bool {
         kind == CONCLUDE_DED
@@ -4255,6 +4288,39 @@ impl AstNode for PrefixAssumeLetDed {
 impl AstNode for RestrictedMatchDed {
     fn can_cast(kind: SyntaxKind) -> bool {
         kind == RESTRICTED_MATCH_DED
+    }
+    fn cast(syntax: SyntaxNode) -> Option<Self> {
+        if Self::can_cast(syntax.kind()) { Some(Self { syntax }) } else { None }
+    }
+    fn syntax(&self) -> &SyntaxNode {
+        &self.syntax
+    }
+}
+impl AstNode for CheckDedClause {
+    fn can_cast(kind: SyntaxKind) -> bool {
+        kind == CHECK_DED_CLAUSE
+    }
+    fn cast(syntax: SyntaxNode) -> Option<Self> {
+        if Self::can_cast(syntax.kind()) { Some(Self { syntax }) } else { None }
+    }
+    fn syntax(&self) -> &SyntaxNode {
+        &self.syntax
+    }
+}
+impl AstNode for InfixCheckDed {
+    fn can_cast(kind: SyntaxKind) -> bool {
+        kind == INFIX_CHECK_DED
+    }
+    fn cast(syntax: SyntaxNode) -> Option<Self> {
+        if Self::can_cast(syntax.kind()) { Some(Self { syntax }) } else { None }
+    }
+    fn syntax(&self) -> &SyntaxNode {
+        &self.syntax
+    }
+}
+impl AstNode for PrefixCheckDed {
+    fn can_cast(kind: SyntaxKind) -> bool {
+        kind == PREFIX_CHECK_DED
     }
     fn cast(syntax: SyntaxNode) -> Option<Self> {
         if Self::can_cast(syntax.kind()) { Some(Self { syntax }) } else { None }
@@ -5629,11 +5695,6 @@ impl From<CasesDed> for Ded {
         Ded::CasesDed(node)
     }
 }
-impl From<CheckDed> for Ded {
-    fn from(node: CheckDed) -> Ded {
-        Ded::CheckDed(node)
-    }
-}
 impl From<ConcludeDed> for Ded {
     fn from(node: ConcludeDed) -> Ded {
         Ded::ConcludeDed(node)
@@ -5642,6 +5703,11 @@ impl From<ConcludeDed> for Ded {
 impl From<InferBlockDed> for Ded {
     fn from(node: InferBlockDed) -> Ded {
         Ded::InferBlockDed(node)
+    }
+}
+impl From<CheckDed> for Ded {
+    fn from(node: CheckDed) -> Ded {
+        Ded::CheckDed(node)
     }
 }
 impl From<LetDed> for Ded {
@@ -5674,11 +5740,11 @@ impl AstNode for Ded {
         matches!(
             kind, METHOD_CALL_DED | BANG_METHOD_CALL_DED | ASSUME_DED | NAMED_ASSUME_DED
             | PROOF_BY_CONTRA_DED | GENERALIZE_OVER_DED | PICK_ANY_DED | WITH_WITNESS_DED
-            | PICK_WITNESS_DED | PICK_WITNESSES_DED | INDUCT_DED | CASES_DED | CHECK_DED
-            | CONCLUDE_DED | INFER_BLOCK_DED | INFIX_MATCH_DED | PREFIX_MATCH_DED |
-            INFIX_LET_DED | PREFIX_LET_DED | INFIX_LET_REC_DED | PREFIX_LET_REC_DED |
-            INFIX_TRY_DED | PREFIX_TRY_DED | PREFIX_NAMED_ASSUME_DED |
-            PREFIX_SINGLE_ASSUME_DED | PREFIX_ASSUME_LET_DED
+            | PICK_WITNESS_DED | PICK_WITNESSES_DED | INDUCT_DED | CASES_DED |
+            CONCLUDE_DED | INFER_BLOCK_DED | INFIX_CHECK_DED | PREFIX_CHECK_DED |
+            INFIX_MATCH_DED | PREFIX_MATCH_DED | INFIX_LET_DED | PREFIX_LET_DED |
+            INFIX_LET_REC_DED | PREFIX_LET_REC_DED | INFIX_TRY_DED | PREFIX_TRY_DED |
+            PREFIX_NAMED_ASSUME_DED | PREFIX_SINGLE_ASSUME_DED | PREFIX_ASSUME_LET_DED
         )
     }
     fn cast(syntax: SyntaxNode) -> Option<Self> {
@@ -5695,9 +5761,14 @@ impl AstNode for Ded {
             PICK_WITNESSES_DED => Ded::PickWitnessesDed(PickWitnessesDed { syntax }),
             INDUCT_DED => Ded::InductDed(InductDed { syntax }),
             CASES_DED => Ded::CasesDed(CasesDed { syntax }),
-            CHECK_DED => Ded::CheckDed(CheckDed { syntax }),
             CONCLUDE_DED => Ded::ConcludeDed(ConcludeDed { syntax }),
             INFER_BLOCK_DED => Ded::InferBlockDed(InferBlockDed { syntax }),
+            INFIX_CHECK_DED => {
+                Ded::CheckDed(CheckDed::InfixCheckDed(InfixCheckDed { syntax }))
+            }
+            PREFIX_CHECK_DED => {
+                Ded::CheckDed(CheckDed::PrefixCheckDed(PrefixCheckDed { syntax }))
+            }
             INFIX_MATCH_DED => {
                 Ded::MatchDed(MatchDed::InfixMatchDed(InfixMatchDed { syntax }))
             }
@@ -5751,9 +5822,9 @@ impl AstNode for Ded {
             Ded::PickWitnessesDed(it) => &it.syntax,
             Ded::InductDed(it) => &it.syntax,
             Ded::CasesDed(it) => &it.syntax,
-            Ded::CheckDed(it) => &it.syntax,
             Ded::ConcludeDed(it) => &it.syntax,
             Ded::InferBlockDed(it) => &it.syntax,
+            Ded::CheckDed(it) => it.syntax(),
             Ded::LetDed(it) => it.syntax(),
             Ded::LetRecDed(it) => it.syntax(),
             Ded::MatchDed(it) => it.syntax(),
@@ -5788,6 +5859,35 @@ impl AstNode for MatchExpr {
         match self {
             MatchExpr::InfixMatchExpr(it) => &it.syntax,
             MatchExpr::PrefixMatchExpr(it) => &it.syntax,
+        }
+    }
+}
+impl From<InfixCheckDed> for CheckDed {
+    fn from(node: InfixCheckDed) -> CheckDed {
+        CheckDed::InfixCheckDed(node)
+    }
+}
+impl From<PrefixCheckDed> for CheckDed {
+    fn from(node: PrefixCheckDed) -> CheckDed {
+        CheckDed::PrefixCheckDed(node)
+    }
+}
+impl AstNode for CheckDed {
+    fn can_cast(kind: SyntaxKind) -> bool {
+        matches!(kind, INFIX_CHECK_DED | PREFIX_CHECK_DED)
+    }
+    fn cast(syntax: SyntaxNode) -> Option<Self> {
+        let res = match syntax.kind() {
+            INFIX_CHECK_DED => CheckDed::InfixCheckDed(InfixCheckDed { syntax }),
+            PREFIX_CHECK_DED => CheckDed::PrefixCheckDed(PrefixCheckDed { syntax }),
+            _ => return None,
+        };
+        Some(res)
+    }
+    fn syntax(&self) -> &SyntaxNode {
+        match self {
+            CheckDed::InfixCheckDed(it) => &it.syntax,
+            CheckDed::PrefixCheckDed(it) => &it.syntax,
         }
     }
 }
@@ -6049,7 +6149,7 @@ impl AstNode for Inference {
             kind, INFER_FROM | INFER_BY | METHOD_CALL_DED | BANG_METHOD_CALL_DED |
             ASSUME_DED | NAMED_ASSUME_DED | PROOF_BY_CONTRA_DED | GENERALIZE_OVER_DED |
             PICK_ANY_DED | WITH_WITNESS_DED | PICK_WITNESS_DED | PICK_WITNESSES_DED |
-            INDUCT_DED | CASES_DED | CHECK_DED | CONCLUDE_DED | INFER_BLOCK_DED
+            INDUCT_DED | CASES_DED | CONCLUDE_DED | INFER_BLOCK_DED
         )
     }
     fn cast(syntax: SyntaxNode) -> Option<Self> {
@@ -6084,7 +6184,6 @@ impl AstNode for Inference {
             }
             INDUCT_DED => Inference::Ded(Ded::InductDed(InductDed { syntax })),
             CASES_DED => Inference::Ded(Ded::CasesDed(CasesDed { syntax })),
-            CHECK_DED => Inference::Ded(Ded::CheckDed(CheckDed { syntax })),
             CONCLUDE_DED => Inference::Ded(Ded::ConcludeDed(ConcludeDed { syntax })),
             INFER_BLOCK_DED => {
                 Inference::Ded(Ded::InferBlockDed(InferBlockDed { syntax }))
@@ -6197,6 +6296,11 @@ impl std::fmt::Display for Ded {
     }
 }
 impl std::fmt::Display for MatchExpr {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        std::fmt::Display::fmt(self.syntax(), f)
+    }
+}
+impl std::fmt::Display for CheckDed {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         std::fmt::Display::fmt(self.syntax(), f)
     }
@@ -6796,11 +6900,6 @@ impl std::fmt::Display for CasesDed {
         std::fmt::Display::fmt(self.syntax(), f)
     }
 }
-impl std::fmt::Display for CheckDed {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        std::fmt::Display::fmt(self.syntax(), f)
-    }
-}
 impl std::fmt::Display for ConcludeDed {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         std::fmt::Display::fmt(self.syntax(), f)
@@ -6832,6 +6931,21 @@ impl std::fmt::Display for PrefixAssumeLetDed {
     }
 }
 impl std::fmt::Display for RestrictedMatchDed {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        std::fmt::Display::fmt(self.syntax(), f)
+    }
+}
+impl std::fmt::Display for CheckDedClause {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        std::fmt::Display::fmt(self.syntax(), f)
+    }
+}
+impl std::fmt::Display for InfixCheckDed {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        std::fmt::Display::fmt(self.syntax(), f)
+    }
+}
+impl std::fmt::Display for PrefixCheckDed {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         std::fmt::Display::fmt(self.syntax(), f)
     }
