@@ -99,6 +99,9 @@ KindsSrc(
         "expand-input",
         "define-sort",
         "assume-let",
+        "dtry",
+        "dlet",
+        "dcheck",
     ],
     contextual_keywords: ["|"],
     literals: ["INT_NUMBER", "STRING", "CHAR"],
@@ -137,6 +140,7 @@ KindsSrc(
         "PREFIX_MATCH_EXPR",
         "MATCH_CLAUSE",
         "TRY_EXPR",
+        "PREFIX_TRY_EXPR",
         "CELL_EXPR",
         "SET_EXPR",
         "REF_EXPR",
@@ -264,5 +268,8 @@ KindsSrc(
         "DATATYPES_STMT",
         "STRUCTURE_STMT",
         "STRUCTURES_STMT",
+
+        // DELETE ME
+        "FAKE",
     ],
 )

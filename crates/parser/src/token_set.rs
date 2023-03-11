@@ -19,6 +19,10 @@ impl TokenSet {
         Self(res)
     }
 
+    pub(crate) const fn single(kind: SyntaxKind) -> TokenSet {
+        TokenSet(mask(kind))
+    }
+
     pub(crate) const fn union(self, other: TokenSet) -> TokenSet {
         TokenSet(self.0 | other.0)
     }

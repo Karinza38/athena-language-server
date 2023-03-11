@@ -8,6 +8,22 @@ use crate::{
 };
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
+pub struct Fake {
+    pub(crate) syntax: SyntaxNode,
+}
+impl Fake {
+    pub fn dtry_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T![dtry])
+    }
+    pub fn dlet_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T![dlet])
+    }
+    pub fn dcheck_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T![dcheck])
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct Identifier {
     pub(crate) syntax: SyntaxNode,
 }
@@ -1637,6 +1653,25 @@ impl TryArm {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
+pub struct PrefixTryExpr {
+    pub(crate) syntax: SyntaxNode,
+}
+impl PrefixTryExpr {
+    pub fn l_paren_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T!['('])
+    }
+    pub fn try_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T![try])
+    }
+    pub fn exprs(&self) -> AstChildren<Expr> {
+        support::children(&self.syntax)
+    }
+    pub fn r_paren_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T![')'])
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct MapBinding {
     pub(crate) syntax: SyntaxNode,
 }
@@ -2821,6 +2856,17 @@ pub enum Inference {
     InferBy(InferBy),
     Ded(Ded),
 }
+impl AstNode for Fake {
+    fn can_cast(kind: SyntaxKind) -> bool {
+        kind == FAKE
+    }
+    fn cast(syntax: SyntaxNode) -> Option<Self> {
+        if Self::can_cast(syntax.kind()) { Some(Self { syntax }) } else { None }
+    }
+    fn syntax(&self) -> &SyntaxNode {
+        &self.syntax
+    }
+}
 impl AstNode for Identifier {
     fn can_cast(kind: SyntaxKind) -> bool {
         kind == IDENTIFIER
@@ -3880,6 +3926,17 @@ impl AstNode for MatchClause {
 impl AstNode for TryArm {
     fn can_cast(kind: SyntaxKind) -> bool {
         kind == TRY_ARM
+    }
+    fn cast(syntax: SyntaxNode) -> Option<Self> {
+        if Self::can_cast(syntax.kind()) { Some(Self { syntax }) } else { None }
+    }
+    fn syntax(&self) -> &SyntaxNode {
+        &self.syntax
+    }
+}
+impl AstNode for PrefixTryExpr {
+    fn can_cast(kind: SyntaxKind) -> bool {
+        kind == PREFIX_TRY_EXPR
     }
     fn cast(syntax: SyntaxNode) -> Option<Self> {
         if Self::can_cast(syntax.kind()) { Some(Self { syntax }) } else { None }
@@ -5953,6 +6010,11 @@ impl std::fmt::Display for Inference {
         std::fmt::Display::fmt(self.syntax(), f)
     }
 }
+impl std::fmt::Display for Fake {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        std::fmt::Display::fmt(self.syntax(), f)
+    }
+}
 impl std::fmt::Display for Identifier {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         std::fmt::Display::fmt(self.syntax(), f)
@@ -6434,6 +6496,11 @@ impl std::fmt::Display for MatchClause {
     }
 }
 impl std::fmt::Display for TryArm {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        std::fmt::Display::fmt(self.syntax(), f)
+    }
+}
+impl std::fmt::Display for PrefixTryExpr {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         std::fmt::Display::fmt(self.syntax(), f)
     }

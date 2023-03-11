@@ -32,6 +32,11 @@ Tokens =
     | 'whitespace = [ \\t\\n\\r]+'
     | 'comment = #.*'
 
+Fake =
+    'dtry'
+    | 'dlet'
+    | 'dcheck'
+
 //********************//
 // Names and Literals //
 //********************//
@@ -425,6 +430,9 @@ TryExpr =
 
 TryArm =
     '|'? Expr
+
+PrefixTryExpr =
+    '(' 'try' Expr* ')' // TODO: validation of >=1 expr
 
 CellExpr =
     'cell' Phrase

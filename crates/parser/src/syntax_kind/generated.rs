@@ -106,6 +106,9 @@ pub enum SyntaxKind {
     EXPAND_INPUT_KW,
     DEFINE_SORT_KW,
     ASSUME_LET_KW,
+    DTRY_KW,
+    DLET_KW,
+    DCHECK_KW,
     PIPE,
     INT_NUMBER,
     STRING,
@@ -144,6 +147,7 @@ pub enum SyntaxKind {
     PREFIX_MATCH_EXPR,
     MATCH_CLAUSE,
     TRY_EXPR,
+    PREFIX_TRY_EXPR,
     CELL_EXPR,
     SET_EXPR,
     REF_EXPR,
@@ -266,6 +270,7 @@ pub enum SyntaxKind {
     DATATYPES_STMT,
     STRUCTURE_STMT,
     STRUCTURES_STMT,
+    FAKE,
     #[doc(hidden)]
     __LAST,
 }
@@ -288,7 +293,8 @@ impl SyntaxKind {
             ASSERT_STAR_KW | LEFT_ASSOC_KW | RIGHT_ASSOC_KW | DATATYPE_KW | STRUCTURE_KW
             | DATATYPES_KW | STRUCTURES_KW | EXTEND_MODULE_KW | PRIVATE_KW | OPEN_KW |
             ON_KW | BEGIN_KW | END_KW | FROM_KW | BY_KW | O_P_KW | PRIMITIVE_METHOD_KW |
-            DMATCH_KW | EXPAND_INPUT_KW | DEFINE_SORT_KW | ASSUME_LET_KW | PIPE
+            DMATCH_KW | EXPAND_INPUT_KW | DEFINE_SORT_KW | ASSUME_LET_KW | DTRY_KW |
+            DLET_KW | DCHECK_KW | PIPE
         )
     }
     pub fn is_punct(self) -> bool {
@@ -380,6 +386,9 @@ impl SyntaxKind {
             "expand-input" => EXPAND_INPUT_KW,
             "define-sort" => DEFINE_SORT_KW,
             "assume-let" => ASSUME_LET_KW,
+            "dtry" => DTRY_KW,
+            "dlet" => DLET_KW,
+            "dcheck" => DCHECK_KW,
             _ => return None,
         };
         Some(kw)
@@ -706,6 +715,15 @@ macro_rules! T {
     };
     [assume - let] => {
         $crate ::SyntaxKind::ASSUME_LET_KW
+    };
+    [dtry] => {
+        $crate ::SyntaxKind::DTRY_KW
+    };
+    [dlet] => {
+        $crate ::SyntaxKind::DLET_KW
+    };
+    [dcheck] => {
+        $crate ::SyntaxKind::DCHECK_KW
     };
     [|] => {
         $crate ::SyntaxKind::PIPE

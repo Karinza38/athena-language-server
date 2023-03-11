@@ -24,6 +24,12 @@ pub(crate) enum LexerToken {
     Whitespace(usize),
     #[regex(r###"#.*"###, |lex|lex.slice().len())]
     Comment(usize),
+    #[token("dtry", |lex|lex.slice().len())]
+    Dtry(usize),
+    #[token("dlet", |lex|lex.slice().len())]
+    Dlet(usize),
+    #[token("dcheck", |lex|lex.slice().len())]
+    Dcheck(usize),
     #[token("'", |lex|lex.slice().len())]
     SingleQuote(usize),
     #[token("(", |lex|lex.slice().len())]
@@ -224,6 +230,9 @@ pub(crate) enum LexerToken {
 impl LexerToken {
     pub(crate) fn to_syntax_kind(self) -> SyntaxKind {
         match self {
+            Self::Dtry(..) => T![dtry],
+            Self::Dlet(..) => T![dlet],
+            Self::Dcheck(..) => T![dcheck],
             Self::SingleQuote(..) => T!['\''],
             Self::LParen(..) => T!['('],
             Self::RParen(..) => T![')'],
@@ -331,6 +340,9 @@ impl LexerToken {
     }
     pub(crate) fn len(self) -> usize {
         match self {
+            Self::Dtry(len) => len,
+            Self::Dlet(len) => len,
+            Self::Dcheck(len) => len,
             Self::SingleQuote(len) => len,
             Self::LParen(len) => len,
             Self::RParen(len) => len,

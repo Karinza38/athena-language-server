@@ -620,6 +620,31 @@ fn prefix_check_expr(p: &mut Parser, m: Marker) {
     m.complete(p, SyntaxKind::PREFIX_CHECK_EXPR);
 }
 
+// test(expr) prefix_try
+// (try (A B) C D)
+fn prefix_try_expr(p: &mut Parser, m: Marker) {
+    assert!(p.at(T![try]) && (p.peek_at(T!['(']) || p.peek_at(T![')'])));
+
+    p.bump(T![try]);
+
+    while !p.at(T![')']) && !p.at_end() {
+        if !expr(p) {
+            // test_err(expr) prefix_try_expr_no_expr
+            // (try domain)
+            p.err_recover(
+                "Expected to find an expression to try",
+                EXPR_START_SET.union(TokenSet::single(T![')'])),
+            );
+        }
+    }
+
+    p.expect(T![')']);
+    m.complete(p, SyntaxKind::PREFIX_TRY_EXPR);
+}
+
+/// parses an expression with the opening paren already consumed.
+/// This is primarily used to do lookahead and disambiguate the
+/// correct production to parse.
 pub(crate) fn opened_expr(p: &mut Parser, m: Marker) {
     #[cfg(test)]
     eprintln!("opened_expr: {:?} {:?}", p.current(), p.nth(1));
@@ -654,6 +679,13 @@ pub(crate) fn opened_expr(p: &mut Parser, m: Marker) {
         T![check] => {
             if p.peek_at(T!['(']) {
                 prefix_check_expr(p, m);
+            } else {
+                opened_application_expr(p, m);
+            }
+        }
+        T![try] => {
+            if p.peek_at(T!['(']) || p.peek_at(T![')']) {
+                prefix_try_expr(p, m);
             } else {
                 opened_application_expr(p, m);
             }
