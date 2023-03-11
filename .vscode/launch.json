@@ -10,7 +10,7 @@
       "args": ["--extensionDevelopmentPath=${workspaceRoot}/client"],
       "outFiles": ["${workspaceRoot}/client/out/**/*.js"],
       "autoAttachChildProcesses": true,
-      "preLaunchTask": "watch-client",
+      "preLaunchTask": "compile-client",
       "env": {
         "SERVER_PATH": "${workspaceRoot}/target/release/athena-language-server"
       }
