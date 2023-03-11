@@ -1,8 +1,11 @@
 //! Utilities for source-code generation.
 
 use std::{
-    fmt, fs, mem,
+    fmt, fs,
+    io::Write,
+    mem,
     path::{Path, PathBuf},
+    process::Stdio,
 };
 
 pub fn list_rust_files(dir: &Path) -> Vec<PathBuf> {
@@ -141,7 +144,20 @@ impl fmt::Display for Location {
 
 pub fn reformat(text: String) -> String {
     let file = syn::parse_file(&text).unwrap();
-    prettyplease::unparse(&file)
+    let prettied = prettyplease::unparse(&file);
+
+    let mut rustfmt = std::process::Command::new("rustfmt")
+        .stdin(Stdio::piped())
+        .stdout(Stdio::piped())
+        .spawn()
+        .unwrap();
+
+    {
+        let mut stdin = rustfmt.stdin.take().unwrap();
+        stdin.write_all(prettied.as_bytes()).unwrap();
+    }
+
+    String::from_utf8(rustfmt.wait_with_output().unwrap().stdout).unwrap()
 }
 
 pub fn add_preamble(generator: &'static str, mut text: String) -> String {

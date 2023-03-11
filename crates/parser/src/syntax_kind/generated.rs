@@ -193,8 +193,6 @@ pub enum SyntaxKind {
     MATCH_DED_CLAUSE,
     CHECK_DED_ARM,
     RESTRICTED_MATCH_DED,
-    RESTRICTED_NAMED_PAT,
-    RESTRICTED_APPLY_PAT,
     ASSUME_PART,
     INFER_FROM,
     INFER_BY,
@@ -241,8 +239,7 @@ pub enum SyntaxKind {
     DOMAIN_DIR,
     DOMAINS_DIR,
     DECLARE_DIR,
-    INFIX_MODULE_DIR,
-    PREFIX_MODULE_DIR,
+    MODULE_DIR,
     LOAD_DIR,
     INFIX_ASSERT_DIR,
     ASSERT_CLOSED_DIR,
@@ -279,7 +276,6 @@ pub enum SyntaxKind {
     DATATYPES_STMT,
     STRUCTURE_STMT,
     STRUCTURES_STMT,
-    FAKE,
     #[doc(hidden)]
     __LAST,
 }
@@ -288,33 +284,281 @@ impl SyntaxKind {
     pub const LAST_TOKEN: SyntaxKind = SyntaxKind::COMMENT;
     pub fn is_keyword(self) -> bool {
         matches!(
-            self, WHILE_KW | LET_KW | LETREC_KW | TRY_KW | CHECK_KW | LAMBDA_KW |
-            METHOD_KW | MATCH_KW | CELL_KW | SETBANG_KW | REF_KW | MAKE_VECTOR_KW |
-            VECTOR_SUB_KW | VECTOR_SETBANG_KW | SEQ_KW | APPLY_METHOD_KW | CONCLUDE_KW |
-            ASSUME_KW | SUPPOSE_ABSURD_KW | GENERALIZE_OVER_KW | PICK_ANY_KW |
-            WITH_WITNESS_KW | PICK_WITNESS_KW | PICK_WITNESSES_KW | BY_INDUCTION_KW |
-            DATATYPE_CASES_KW | SOME_VAR_KW | SOME_SENT_CON_KW | SOME_QUANT_KW |
-            SOME_TERM_KW | SOME_ATOM_KW | SOME_SENTENCE_KW | SOME_LIST_KW | SOME_CELL_KW
-            | SOME_VECTOR_KW | SOME_PROC_KW | SOME_METHOD_KW | SOME_SYMBOL_KW |
-            SOME_TABLE_KW | SOME_MAP_KW | SOME_SUB_KW | SOME_CHAR_KW | SPLIT_KW |
-            WHERE_KW | LIST_OF_KW | VAL_OF_KW | AS_KW | BIND_KW | FOR_KW | DEFINE_KW |
-            MODULE_KW | DECLARE_KW | DOMAIN_KW | DOMAINS_KW | LOAD_KW | ASSERT_KW |
-            ASSERT_STAR_KW | LEFT_ASSOC_KW | RIGHT_ASSOC_KW | DATATYPE_KW | STRUCTURE_KW
-            | DATATYPES_KW | STRUCTURES_KW | EXTEND_MODULE_KW | PRIVATE_KW | OPEN_KW |
-            ON_KW | BEGIN_KW | END_KW | FROM_KW | BY_KW | O_P_KW | PRIMITIVE_METHOD_KW |
-            DMATCH_KW | EXPAND_INPUT_KW | DEFINE_SORT_KW | ASSUME_LET_KW | DTRY_KW |
-            DLET_KW | DCHECK_KW | DLETREC_KW | DSEQ_KW | PIPE
+            self,
+            WHILE_KW
+                | LET_KW
+                | LETREC_KW
+                | TRY_KW
+                | CHECK_KW
+                | LAMBDA_KW
+                | METHOD_KW
+                | MATCH_KW
+                | CELL_KW
+                | SETBANG_KW
+                | REF_KW
+                | MAKE_VECTOR_KW
+                | VECTOR_SUB_KW
+                | VECTOR_SETBANG_KW
+                | SEQ_KW
+                | APPLY_METHOD_KW
+                | CONCLUDE_KW
+                | ASSUME_KW
+                | SUPPOSE_ABSURD_KW
+                | GENERALIZE_OVER_KW
+                | PICK_ANY_KW
+                | WITH_WITNESS_KW
+                | PICK_WITNESS_KW
+                | PICK_WITNESSES_KW
+                | BY_INDUCTION_KW
+                | DATATYPE_CASES_KW
+                | SOME_VAR_KW
+                | SOME_SENT_CON_KW
+                | SOME_QUANT_KW
+                | SOME_TERM_KW
+                | SOME_ATOM_KW
+                | SOME_SENTENCE_KW
+                | SOME_LIST_KW
+                | SOME_CELL_KW
+                | SOME_VECTOR_KW
+                | SOME_PROC_KW
+                | SOME_METHOD_KW
+                | SOME_SYMBOL_KW
+                | SOME_TABLE_KW
+                | SOME_MAP_KW
+                | SOME_SUB_KW
+                | SOME_CHAR_KW
+                | SPLIT_KW
+                | WHERE_KW
+                | LIST_OF_KW
+                | VAL_OF_KW
+                | AS_KW
+                | BIND_KW
+                | FOR_KW
+                | DEFINE_KW
+                | MODULE_KW
+                | DECLARE_KW
+                | DOMAIN_KW
+                | DOMAINS_KW
+                | LOAD_KW
+                | ASSERT_KW
+                | ASSERT_STAR_KW
+                | LEFT_ASSOC_KW
+                | RIGHT_ASSOC_KW
+                | DATATYPE_KW
+                | STRUCTURE_KW
+                | DATATYPES_KW
+                | STRUCTURES_KW
+                | EXTEND_MODULE_KW
+                | PRIVATE_KW
+                | OPEN_KW
+                | ON_KW
+                | BEGIN_KW
+                | END_KW
+                | FROM_KW
+                | BY_KW
+                | O_P_KW
+                | PRIMITIVE_METHOD_KW
+                | DMATCH_KW
+                | EXPAND_INPUT_KW
+                | DEFINE_SORT_KW
+                | ASSUME_LET_KW
+                | DTRY_KW
+                | DLET_KW
+                | DCHECK_KW
+                | DLETREC_KW
+                | DSEQ_KW
+                | PIPE
         )
     }
     pub fn is_punct(self) -> bool {
         matches!(
-            self, L_PAREN | R_PAREN | L_CURLY | R_CURLY | L_BRACK | R_BRACK | QUESTION |
-            UNDERSCORE | COLON | FAT_ARROW | BANG | AMP2 | PIPE2 | COLON_EQ |
-            SINGLE_QUOTE | SEMI | THIN_ARROW | COMMA | PIPE_CURLY | CURLY_PIPE
+            self,
+            L_PAREN
+                | R_PAREN
+                | L_CURLY
+                | R_CURLY
+                | L_BRACK
+                | R_BRACK
+                | QUESTION
+                | UNDERSCORE
+                | COLON
+                | FAT_ARROW
+                | BANG
+                | AMP2
+                | PIPE2
+                | COLON_EQ
+                | SINGLE_QUOTE
+                | SEMI
+                | THIN_ARROW
+                | COMMA
+                | PIPE_CURLY
+                | CURLY_PIPE
         )
     }
     pub fn is_literal(self) -> bool {
         matches!(self, INT_NUMBER | STRING | CHAR)
+    }
+    pub fn is_node(self) -> bool {
+        matches!(
+            self,
+            SOURCE_FILE
+                | IDENTIFIER
+                | LITERAL
+                | META_IDENT
+                | UNIT
+                | IDENT_SORT
+                | VAR_SORT
+                | COMPOUND_SORT
+                | EXPR_PHRASE
+                | DED_PHRASE
+                | IDENT_EXPR
+                | LITERAL_EXPR
+                | UNIT_EXPR
+                | META_IDENT_EXPR
+                | TERM_VAR_EXPR
+                | CHECK_EXPR
+                | PREFIX_CHECK_EXPR
+                | CHECK_CLAUSE
+                | LAMBDA_EXPR
+                | APPLICATION_EXPR
+                | LIST_EXPR
+                | METHOD_EXPR
+                | PREFIX_LET_EXPR
+                | LET_EXPR
+                | LET_REC_EXPR
+                | PREFIX_LET_REC_EXPR
+                | INFIX_MATCH_EXPR
+                | PREFIX_MATCH_EXPR
+                | MATCH_CLAUSE
+                | TRY_EXPR
+                | PREFIX_TRY_EXPR
+                | CELL_EXPR
+                | SET_EXPR
+                | REF_EXPR
+                | WHILE_EXPR
+                | MAKE_VECTOR_EXPR
+                | VECTOR_SUB_EXPR
+                | VECTOR_SET_EXPR
+                | SEQ_EXPR
+                | AND_EXPR
+                | OR_EXPR
+                | MAP_EXPR
+                | MAP_BINDING
+                | WILDCARD_EXPR
+                | CONCLUDE_DED
+                | METHOD_CALL_DED
+                | BANG_METHOD_CALL_DED
+                | ASSUME_DED
+                | NAMED_ASSUME_DED
+                | PROOF_BY_CONTRA_DED
+                | GENERALIZE_OVER_DED
+                | PICK_ANY_DED
+                | WITH_WITNESS_DED
+                | PICK_WITNESS_DED
+                | PICK_WITNESSES_DED
+                | INDUCT_DED
+                | CASES_DED
+                | INFIX_CHECK_DED
+                | PREFIX_CHECK_DED
+                | CHECK_DED_CLAUSE
+                | INFIX_MATCH_DED
+                | PREFIX_MATCH_DED
+                | PREFIX_LET_DED
+                | INFIX_LET_DED
+                | PREFIX_LET_REC_DED
+                | INFIX_LET_REC_DED
+                | INFIX_TRY_DED
+                | PREFIX_TRY_DED
+                | BY_DED
+                | TRY_DED_ARM
+                | MATCH_DED_ARM
+                | MATCH_DED_CLAUSE
+                | CHECK_DED_ARM
+                | RESTRICTED_MATCH_DED
+                | ASSUME_PART
+                | INFER_FROM
+                | INFER_BY
+                | INFERENCE
+                | MAYBE_NAMED_INFERENCE
+                | INFER_BLOCK_DED
+                | PREFIX_NAMED_ASSUME_DED
+                | PREFIX_SINGLE_ASSUME_DED
+                | PREFIX_ASSUME_LET_DED
+                | SEQ_DED
+                | IDENT_PAT
+                | ANNOTATED_IDENT_PAT
+                | VAR_PAT
+                | META_IDENT_PAT
+                | LITERAL_PAT
+                | UNIT_PAT
+                | NAMED_PAT
+                | VAL_OF_PAT
+                | LIST_OF_PAT
+                | SPLIT_PAT
+                | LIST_PAT
+                | COMPOUND_PAT
+                | WHERE_PAT
+                | SOME_THING_PAT
+                | SOME_THING
+                | OR_PAT
+                | MATCH_ARM
+                | TRY_ARM
+                | LET_PART
+                | CHECK_ARM
+                | LET_REC_PART
+                | TYPED_PARAM
+                | OP_ANNOTATED_PARAM
+                | MAYBE_WILDCARD_OP_ANNOTATED_PARAM
+                | PREFIX_BINDING
+                | WILDCARD
+                | FUNC_SORTS
+                | SORT_VARS_DECL
+                | COMPOUND_SORT_DECL
+                | PREFIX_DEFINE
+                | PREFIX_DEFINE_BLOCKS
+                | PREFIX_DEFINE_BLOCK
+                | INFIX_DEFINE_DIR
+                | DOMAIN_DIR
+                | DOMAINS_DIR
+                | DECLARE_DIR
+                | MODULE_DIR
+                | LOAD_DIR
+                | INFIX_ASSERT_DIR
+                | ASSERT_CLOSED_DIR
+                | OPEN_DIR
+                | DECLARE_ATTR
+                | DECLARE_ATTRS
+                | INPUT_TRANSFORM_DECL
+                | EXTEND_MODULE_DIR
+                | DEFINE_NAMED_PATTERN
+                | DEFINE_PROC
+                | ASSOCIATIVITY_DIR
+                | CONSTANT_DECLARE_DIR
+                | INFIX_RULE_DIR
+                | PREFIX_RULE_DIR
+                | PREFIX_SORT_VARS_DECL
+                | PREFIX_SINGLE_SYMBOL
+                | INFIX_DECLARE_DIR
+                | PREFIX_DECLARE_DIR
+                | PREFIX_CONSTANT_DECLARE
+                | INFIX_CONSTANT_DECLARE
+                | PREFIX_MULTI_SYMBOLS
+                | PREFIX_DECLARE_ATTRS
+                | EXPAND_INPUT_DIR
+                | DEFINE_SORT_DIR
+                | PREFIX_ASSERT_DIR
+                | DIR_STMT
+                | PHRASE_STMT
+                | STRUCTURE_NAME_DEF
+                | CONSTANT_CONSTRUCTOR
+                | COMPOUND_CONSTRUCTOR
+                | MAYBE_TAGGED_SORT_DECL
+                | STRUCTURE_DEF
+                | DATATYPE_STMT
+                | DATATYPES_STMT
+                | STRUCTURE_STMT
+                | STRUCTURES_STMT
+        )
     }
     pub fn from_keyword(ident: &str) -> Option<SyntaxKind> {
         let kw = match ident {

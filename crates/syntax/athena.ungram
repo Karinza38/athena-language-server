@@ -33,11 +33,6 @@ Tokens =
     | 'comment = #.*'
     | '#by = by|BY' // # indicates that it should be otherwise treated as a keyword/non complex token
 
-Fake =
-    'dtry'
-    | 'dlet'
-    | 'dcheck'
-
 //********************//
 // Names and Literals //
 //********************//
@@ -167,14 +162,7 @@ Dir =
     | AssociativityDir
 
 ModuleDir =
-    InfixModuleDir
-    | PrefixModuleDir
-
-InfixModuleDir =
     'module' Identifier '{' Stmt* '}'
-
-PrefixModuleDir =
-    '(' 'module' Identifier Stmt* ')'
 
 ExtendModuleDir =
     'extend-module' Identifier '{' Stmt* '}'

@@ -187,8 +187,6 @@ KindsSrc(
         "MATCH_DED_CLAUSE",
         "CHECK_DED_ARM",
         "RESTRICTED_MATCH_DED",
-        "RESTRICTED_NAMED_PAT",
-        "RESTRICTED_APPLY_PAT",
         "ASSUME_PART",
         "INFER_FROM",
         "INFER_BY",
@@ -238,8 +236,7 @@ KindsSrc(
         "DOMAIN_DIR",
         "DOMAINS_DIR",
         "DECLARE_DIR",
-        "INFIX_MODULE_DIR",
-        "PREFIX_MODULE_DIR",
+        "MODULE_DIR",
         "LOAD_DIR",
         "INFIX_ASSERT_DIR",
         "ASSERT_CLOSED_DIR",
@@ -277,8 +274,5 @@ KindsSrc(
         "DATATYPES_STMT",
         "STRUCTURE_STMT",
         "STRUCTURES_STMT",
-
-        // DELETE ME
-        "FAKE",
     ],
 )

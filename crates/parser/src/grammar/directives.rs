@@ -45,7 +45,7 @@ fn module_dir(p: &mut Parser) {
     }
 
     p.expect(T!['}']);
-    m.complete(p, SyntaxKind::INFIX_MODULE_DIR);
+    m.complete(p, SyntaxKind::MODULE_DIR);
 }
 
 // test(dir) extend_module_directive

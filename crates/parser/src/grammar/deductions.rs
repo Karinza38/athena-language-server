@@ -267,7 +267,7 @@ fn prefix_let_rec_ded(p: &mut Parser) {
 
     p.expect(T![')']);
 
-    m.complete(p, SyntaxKind::PREFIX_LET_DED);
+    m.complete(p, SyntaxKind::PREFIX_LET_REC_DED);
 }
 
 // test(ded) match_ded

@@ -283,7 +283,7 @@ fn generate_nodes(kinds: &KindsSrc, grammar: &AstSrc) -> String {
                                 #kinds => #name::#variants(#variants { syntax }),
                                 )*
                                 #(
-                                #inlined_kinds => 
+                                #inlined_kinds =>
                                     #name::#inlined_variant_parents(#inlined_variant_parents::#inlined_variants(#inlined_variants { syntax })),
                                 )*
                                 _ => return None,
@@ -571,6 +571,10 @@ fn generate_syntax_kinds(grammar: &KindsSrc) -> String {
                 matches!(self, #(#literals)|*)
             }
 
+            pub fn is_node(self) -> bool {
+                matches!(self, #(#nodes)|*)
+            }
+
             pub fn from_keyword(ident: &str) -> Option<SyntaxKind> {
                 let kw = match ident {
                     #(#full_keywords_values => #full_keywords,)*
@@ -620,7 +624,10 @@ fn generate_lexer(grammar: &AstSrc) -> String {
     for token_def in &grammar.token_defs {
         // FIXME: this whole # thing is gross
         let simple = token_def.name.starts_with("#");
-        let variant_name = format_ident!("{}", to_pascal_case(&token_def.name.trim_start_matches('#')));
+        let variant_name = format_ident!(
+            "{}",
+            to_pascal_case(&token_def.name.trim_start_matches('#'))
+        );
         let variant = quote! { #variant_name(usize) };
         let logos_annotation = match &token_def.def {
             AstTokenDef::Regex(reg) => {
