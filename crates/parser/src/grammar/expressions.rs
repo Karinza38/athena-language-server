@@ -513,14 +513,13 @@ fn wildcard_expr(p: &mut Parser) {
     m.complete(p, SyntaxKind::WILDCARD_EXPR);
 }
 
-// test(expr) prefix_let_expr
-// (let ((foo 1) (bar 2)) foo)
-
 /// Parses a prefix let expression.
 /// the opening paren is already consumed
 fn prefix_let_expr(p: &mut Parser, m: Marker) {
     assert!(p.at(T![let]) && p.peek_at(T!['(']));
 
+    // test(expr) prefix_let_expr
+    // (let ((foo 1) (bar 2)) foo)
     p.bump(T![let]);
     p.bump(T!['(']);
 
@@ -546,6 +545,40 @@ fn prefix_let_expr(p: &mut Parser, m: Marker) {
     p.expect(T![')']);
 
     m.complete(p, SyntaxKind::PREFIX_LET_EXPR);
+}
+
+/// Parses a prefix letrec expression.
+/// the opening paren is already consumed
+fn prefix_let_rec_expr(p: &mut Parser, m: Marker) {
+    assert!(p.at(T![letrec]) && p.peek_at(T!['(']));
+
+    // test(expr) prefix_let_rec_expr
+    // (letrec ((foo 1) (bar 2)) foo)
+    p.bump(T![letrec]);
+    p.bump(T!['(']);
+
+    while !p.at(T![')']) && !p.at_end() {
+        if !super::prefix_binding(p) {
+            // test_err(expr) prefix_let_rec_expr_no_binding
+            // (letrec (domain Foo) foo)
+            p.err_recover(
+                "expected a binding in the prefix letrec expression",
+                TokenSet::new(&[T![')'], T!['(']]),
+            )
+        }
+    }
+
+    p.expect(T![')']);
+
+    if !phrase(p) {
+        // test_err(expr) prefix_let_rec_expr_no_body
+        // (letrec ((foo 1) (bar 2)))
+        p.error("Expected to find a body (phrase) for the prefix letrec expression");
+    }
+
+    p.expect(T![')']);
+
+    m.complete(p, SyntaxKind::PREFIX_LET_REC_EXPR);
 }
 
 fn prefix_check_clause(p: &mut Parser) {
@@ -611,6 +644,13 @@ pub(crate) fn opened_expr(p: &mut Parser, m: Marker) {
                 opened_application_expr(p, m);
             }
         }
+        T![letrec] => {
+            if p.peek_at(T!['(']) {
+                prefix_let_rec_expr(p, m);
+            } else {
+                opened_application_expr(p, m);
+            }
+        }
         T![check] => {
             if p.peek_at(T!['(']) {
                 prefix_check_expr(p, m);
@@ -672,8 +712,17 @@ pub(crate) const EXPR_START_SET: TokenSet = TokenSet::new(&[
 ])
 .union(LIT_SET);
 
-pub(crate) const EXPR_AFTER_LPAREN_SET: TokenSet =
-    TokenSet::new(&[T![')'], T![&&], T![||], T![seq], T![match], T![check]]).union(EXPR_START_SET);
+pub(crate) const EXPR_AFTER_LPAREN_SET: TokenSet = TokenSet::new(&[
+    T![')'],
+    T![&&],
+    T![||],
+    T![seq],
+    T![match],
+    T![check],
+    T![let],
+    T![letrec],
+])
+.union(EXPR_START_SET);
 
 // test(expr) simple_string_expr
 // "hello world"

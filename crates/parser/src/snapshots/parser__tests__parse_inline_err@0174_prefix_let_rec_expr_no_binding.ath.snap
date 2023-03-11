@@ -1,0 +1,28 @@
+---
+source: crates/parser/src/tests.rs
+description: "(letrec (domain Foo) foo)\n"
+input_file: crates/parser/test_data/parser/inline/err/expr/0174_prefix_let_rec_expr_no_binding.ath
+---
+PREFIX_LET_REC_EXPR
+  L_PAREN "("
+  LETREC_KW "letrec"
+  WHITESPACE " "
+  L_PAREN "("
+  ERROR
+    DOMAIN_KW "domain"
+  WHITESPACE " "
+  ERROR
+    IDENT "Foo"
+  R_PAREN ")"
+  WHITESPACE " "
+  EXPR_PHRASE
+    IDENT_EXPR
+      IDENTIFIER
+        IDENT "foo"
+  R_PAREN ")"
+  WHITESPACE "\n"
+error 9: Expected to find a prefix binding in parens
+error 9: expected a binding in the prefix letrec expression
+error 15: Expected to find a prefix binding in parens
+error 16: expected a binding in the prefix letrec expression
+

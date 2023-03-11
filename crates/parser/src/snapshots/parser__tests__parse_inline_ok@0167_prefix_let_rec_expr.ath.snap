@@ -1,0 +1,42 @@
+---
+source: crates/parser/src/tests.rs
+description: "(letrec ((foo 1) (bar 2)) foo)\n"
+input_file: crates/parser/test_data/parser/inline/ok/expr/0167_prefix_let_rec_expr.ath
+---
+PREFIX_LET_REC_EXPR
+  L_PAREN "("
+  LETREC_KW "letrec"
+  WHITESPACE " "
+  L_PAREN "("
+  PREFIX_BINDING
+    L_PAREN "("
+    IDENT_PAT
+      IDENTIFIER
+        IDENT "foo"
+    WHITESPACE " "
+    EXPR_PHRASE
+      IDENT_EXPR
+        IDENTIFIER
+          IDENT "1"
+    R_PAREN ")"
+  WHITESPACE " "
+  PREFIX_BINDING
+    L_PAREN "("
+    IDENT_PAT
+      IDENTIFIER
+        IDENT "bar"
+    WHITESPACE " "
+    EXPR_PHRASE
+      IDENT_EXPR
+        IDENTIFIER
+          IDENT "2"
+    R_PAREN ")"
+  R_PAREN ")"
+  WHITESPACE " "
+  EXPR_PHRASE
+    IDENT_EXPR
+      IDENTIFIER
+        IDENT "foo"
+  R_PAREN ")"
+  WHITESPACE "\n"
+

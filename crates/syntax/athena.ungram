@@ -398,6 +398,9 @@ PrefixLetExpr =
 LetExpr =
     'let' '{' LetPart* '}' Expr
 
+PrefixLetRecExpr =
+    '(' 'letrec' '(' PrefixBinding* ')' Expr ')'
+
 LetRecExpr =
     'letrec' '{' LetRecPart* '}' Expr
 

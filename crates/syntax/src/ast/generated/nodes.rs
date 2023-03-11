@@ -339,8 +339,14 @@ pub struct LoadDir {
     pub(crate) syntax: SyntaxNode,
 }
 impl LoadDir {
+    pub fn l_paren_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T!['('])
+    }
     pub fn load_token(&self) -> Option<SyntaxToken> {
         support::token(&self.syntax, T![load])
+    }
+    pub fn r_paren_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T![')'])
     }
 }
 
@@ -1490,6 +1496,28 @@ impl LetPart {
         support::token(&self.syntax, T![:=])
     }
     pub fn phrase(&self) -> Option<Phrase> {
+        support::child(&self.syntax)
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+pub struct PrefixLetRecExpr {
+    pub(crate) syntax: SyntaxNode,
+}
+impl PrefixLetRecExpr {
+    pub fn l_paren_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T!['('])
+    }
+    pub fn letrec_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T![letrec])
+    }
+    pub fn prefix_bindings(&self) -> AstChildren<PrefixBinding> {
+        support::children(&self.syntax)
+    }
+    pub fn r_paren_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T![')'])
+    }
+    pub fn expr(&self) -> Option<Expr> {
         support::child(&self.syntax)
     }
 }
@@ -3775,6 +3803,17 @@ impl AstNode for PrefixLetExpr {
 impl AstNode for LetPart {
     fn can_cast(kind: SyntaxKind) -> bool {
         kind == LET_PART
+    }
+    fn cast(syntax: SyntaxNode) -> Option<Self> {
+        if Self::can_cast(syntax.kind()) { Some(Self { syntax }) } else { None }
+    }
+    fn syntax(&self) -> &SyntaxNode {
+        &self.syntax
+    }
+}
+impl AstNode for PrefixLetRecExpr {
+    fn can_cast(kind: SyntaxKind) -> bool {
+        kind == PREFIX_LET_REC_EXPR
     }
     fn cast(syntax: SyntaxNode) -> Option<Self> {
         if Self::can_cast(syntax.kind()) { Some(Self { syntax }) } else { None }
@@ -6360,6 +6399,11 @@ impl std::fmt::Display for PrefixLetExpr {
     }
 }
 impl std::fmt::Display for LetPart {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        std::fmt::Display::fmt(self.syntax(), f)
+    }
+}
+impl std::fmt::Display for PrefixLetRecExpr {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         std::fmt::Display::fmt(self.syntax(), f)
     }

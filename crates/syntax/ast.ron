@@ -132,6 +132,7 @@ KindsSrc(
         "PREFIX_LET_EXPR",
         "LET_EXPR",
         "LET_REC_EXPR",
+        "PREFIX_LET_REC_EXPR",
         "INFIX_MATCH_EXPR",
         "PREFIX_MATCH_EXPR",
         "MATCH_CLAUSE",
