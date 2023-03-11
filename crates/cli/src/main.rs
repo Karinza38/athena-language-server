@@ -1,19 +1,43 @@
-use std::path::PathBuf;
+use std::{
+    env,
+    path::{Path, PathBuf},
+};
 
 use clap::Parser;
+use syntax::SyntaxKind;
+use xshell::cmd;
 
 #[derive(clap::Parser)]
 enum Cli {
-    RegressionTest(RegressionTestArgs),
+    RegressionTest { path: PathBuf },
+    FindDeadSyntaxKinds,
 }
 #[derive(clap::Args)]
-struct RegressionTestArgs {
-    path: PathBuf,
+struct RegressionTestArgs {}
+
+#[derive(serde::Deserialize)]
+struct JsonPath {
+    text: String,
 }
 
-#[derive(clap::Subcommand)]
-enum Command {
-    RegressionTest,
+#[derive(serde::Deserialize)]
+#[serde(tag = "type", content = "data")]
+#[serde(rename_all = "camelCase")]
+enum RipgrepResult {
+    Match { path: JsonPath },
+    Begin {},
+    End {},
+    Summary {},
+}
+
+fn project_root() -> PathBuf {
+    Path::new(
+        &env::var("CARGO_MANIFEST_DIR").unwrap_or_else(|_| env!("CARGO_MANIFEST_DIR").to_owned()),
+    )
+    .ancestors()
+    .nth(2)
+    .unwrap()
+    .to_path_buf()
 }
 
 fn main() -> color_eyre::Result<()> {
@@ -22,8 +46,8 @@ fn main() -> color_eyre::Result<()> {
     let cli = Cli::parse();
 
     match cli {
-        Cli::RegressionTest(args) => {
-            let mut g = args.path.to_string_lossy().to_string();
+        Cli::RegressionTest { path } => {
+            let mut g = path.to_string_lossy().to_string();
             let mut pass = 0;
             let mut fail = 0;
             let mut panic = 0;
@@ -56,6 +80,42 @@ fn main() -> color_eyre::Result<()> {
                 println!("regression test: {:?}", path);
             }
             eprintln!("{pass} pass, {fail} fail, {panic} panic / {}", pass + fail)
+        }
+        Cli::FindDeadSyntaxKinds => {
+            let sh = xshell::Shell::new()?;
+            sh.change_dir(project_root());
+            let mut dead = Vec::new();
+            for i in 0..(SyntaxKind::__LAST as u16) {
+                let kind = SyntaxKind::from(i);
+                let kind_dbg = if !kind.is_node() && !kind.is_trivia() {
+                    continue;
+                } else {
+                    format!("{kind:?}")
+                };
+                let output = cmd!(sh, "rg --json {kind_dbg} crates")
+                    .ignore_status()
+                    .read()?;
+                let mut other_match = false;
+                for line in output.lines() {
+                    let line: RipgrepResult = serde_json::from_str(line)?;
+                    match line {
+                        RipgrepResult::Match { path } => {
+                            if !path.text.contains("generated")
+                                && path.text.ends_with(".rs")
+                                && !kind.is_keyword()
+                            {
+                                other_match = true;
+                                break;
+                            }
+                        }
+                        _ => {}
+                    }
+                }
+                if !other_match {
+                    dead.push(kind);
+                }
+            }
+            println!("{:?}", dead);
         }
     }
 
