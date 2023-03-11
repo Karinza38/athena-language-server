@@ -607,7 +607,7 @@ pub(crate) fn try_expr_or_ded(p: &mut Parser, want: Option<ExprOrDed>) -> ExprOr
         m,
         |eod| match eod {
             ExprOrDed::Expr => SyntaxKind::TRY_EXPR,
-            ExprOrDed::Ded => SyntaxKind::TRY_DED,
+            ExprOrDed::Ded => SyntaxKind::INFIX_TRY_DED,
             ExprOrDed::Ambig => SyntaxKind::TRY_EXPR,
         },
         want,

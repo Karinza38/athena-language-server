@@ -1,0 +1,15 @@
+---
+source: crates/parser/src/tests.rs
+description: "(dtry domain)\n"
+input_file: crates/parser/test_data/parser/inline/err/ded/0180_prefix_try_ded_no_ded.ath
+---
+PREFIX_TRY_DED
+  L_PAREN "("
+  DTRY_KW "dtry"
+  WHITESPACE " "
+  ERROR
+    DOMAIN_KW "domain"
+  R_PAREN ")"
+  WHITESPACE "\n"
+error 6: Expected to find an deduction to try
+

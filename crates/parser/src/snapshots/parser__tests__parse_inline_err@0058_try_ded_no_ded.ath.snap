@@ -3,7 +3,7 @@ source: crates/parser/src/tests.rs
 description: "try { (!claim A) |  }\n"
 input_file: crates/parser/test_data/parser/inline/err/ded/0058_try_ded_no_ded.ath
 ---
-TRY_DED
+INFIX_TRY_DED
   TRY_KW "try"
   WHITESPACE " "
   L_CURLY "{"

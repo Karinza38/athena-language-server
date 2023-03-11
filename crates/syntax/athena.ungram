@@ -604,7 +604,14 @@ LetRecPart =
     ';'? Identifier ':=' Expr
 
 TryDed =
+    InfixTryDed
+    | PrefixTryDed
+
+InfixTryDed =
     'try' '{' TryDedArm* '}'
+
+PrefixTryDed =
+    '(' 'dtry' Ded* ')'
 
 TryDedArm =
     '|'? Ded

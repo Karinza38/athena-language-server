@@ -990,6 +990,30 @@ fn prefix_match_ded(p: &mut Parser) {
     m.complete(p, SyntaxKind::PREFIX_MATCH_DED);
 }
 
+// test(ded) prefix_try_ded
+// (dtry (!claim a) (!claim b))
+fn prefix_try_ded(p: &mut Parser) {
+    assert!(p.at_prefix_kw(T![dtry]));
+
+    let m = p.start();
+    p.bump(T!['(']);
+    p.bump(T![dtry]);
+
+    while !p.at(T![')']) && !p.at_end() {
+        if !ded(p) {
+            // test_err(ded) prefix_try_ded_no_ded
+            // (dtry domain)
+            p.err_recover(
+                "Expected to find an deduction to try",
+                DED_START_SET.union(TokenSet::single(T![')'])),
+            );
+        }
+    }
+
+    p.expect(T![')']);
+    m.complete(p, SyntaxKind::PREFIX_TRY_DED);
+}
+
 pub(crate) const DED_START_SET: TokenSet = TokenSet::new(&[
     T!['('],
     T![assume],
@@ -1020,6 +1044,7 @@ pub(crate) const DED_AFTER_LPAREN_SET: TokenSet = TokenSet::new(&[
     T![dlet],
     T![dletrec],
     T![pick - any],
+    T![dtry],
 ])
 .union(EXPR_START_SET);
 
@@ -1054,6 +1079,9 @@ pub(crate) fn ded(p: &mut Parser) -> bool {
             }
             T![pick - any] => {
                 pick_any_ded(p, true);
+            }
+            T![dtry] => {
+                prefix_try_ded(p);
             }
             _ => {
                 return false;
