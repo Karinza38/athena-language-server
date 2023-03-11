@@ -4,7 +4,7 @@ description: "(dletrec (domain Foo) foo)\n"
 input_file: crates/parser/test_data/parser/inline/err/ded/0178_prefix_let_rec_ded_no_binding.ath
 ---
 ERROR
-  PREFIX_LET_DED
+  PREFIX_LET_REC_DED
     L_PAREN "("
     DLETREC_KW "dletrec"
     WHITESPACE " "

@@ -5,7 +5,7 @@ input_file: crates/parser/test_data/parser/inline/err/file/0095_source_error_wit
 ---
 SOURCE_FILE
   DIR_STMT
-    INFIX_MODULE_DIR
+    MODULE_DIR
       MODULE_KW "module"
       WHITESPACE " "
       IDENTIFIER

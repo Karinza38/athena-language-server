@@ -3,7 +3,7 @@ source: crates/parser/src/tests.rs
 description: "module foo { declare joe: Person }\n"
 input_file: crates/parser/test_data/parser/inline/ok/dir/0110_module_directive.ath
 ---
-INFIX_MODULE_DIR
+MODULE_DIR
   MODULE_KW "module"
   WHITESPACE " "
   IDENTIFIER

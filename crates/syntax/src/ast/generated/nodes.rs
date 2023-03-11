@@ -2148,8 +2148,8 @@ impl PrefixCheckDed {
     pub fn l_paren_token(&self) -> Option<SyntaxToken> {
         support::token(&self.syntax, T!['('])
     }
-    pub fn check_token(&self) -> Option<SyntaxToken> {
-        support::token(&self.syntax, T![check])
+    pub fn dcheck_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T![dcheck])
     }
     pub fn check_ded_clauses(&self) -> AstChildren<CheckDedClause> {
         support::children(&self.syntax)

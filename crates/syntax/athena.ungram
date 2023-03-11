@@ -562,7 +562,7 @@ CheckDed =
     | PrefixCheckDed
 
 PrefixCheckDed =
-    '(' 'check' CheckDedClause* ')'
+    '(' 'dcheck' CheckDedClause* ')'
 
 InfixCheckDed =
     'check' '{' arms:CheckDedArm* '}'
