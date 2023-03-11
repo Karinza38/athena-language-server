@@ -1,0 +1,18 @@
+---
+source: crates/parser/src/tests.rs
+description: "(assert foo := )\n"
+input_file: crates/parser/test_data/parser/inline/err/dir/0183_prefix_assert_empty.ath
+---
+PREFIX_ASSERT_DIR
+  L_PAREN "("
+  ASSERT_KW "assert"
+  WHITESPACE " "
+  IDENTIFIER
+    IDENT "foo"
+  WHITESPACE " "
+  COLON_EQ ":="
+  WHITESPACE " "
+  R_PAREN ")"
+  WHITESPACE "\n"
+error 14: expected at least one assertion
+

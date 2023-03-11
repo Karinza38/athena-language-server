@@ -241,7 +241,7 @@ KindsSrc(
         "INFIX_MODULE_DIR",
         "PREFIX_MODULE_DIR",
         "LOAD_DIR",
-        "ASSERT_DIR",
+        "INFIX_ASSERT_DIR",
         "ASSERT_CLOSED_DIR",
         "OPEN_DIR",
         "DECLARE_ATTR",
@@ -264,6 +264,7 @@ KindsSrc(
         "PREFIX_DECLARE_ATTRS",
         "EXPAND_INPUT_DIR",
         "DEFINE_SORT_DIR",
+        "PREFIX_ASSERT_DIR",
         // Statements
         "DIR_STMT",
         "PHRASE_STMT",

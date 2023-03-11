@@ -3,7 +3,7 @@ source: crates/parser/src/tests.rs
 description: "assert foo := (bar = bar)\n"
 input_file: crates/parser/test_data/parser/inline/ok/dir/0095_assert_named.ath
 ---
-ASSERT_DIR
+INFIX_ASSERT_DIR
   ASSERT_KW "assert"
   WHITESPACE " "
   IDENTIFIER

@@ -3,7 +3,7 @@ source: crates/parser/src/tests.rs
 description: "assert\n"
 input_file: crates/parser/test_data/parser/inline/err/dir/0101_assert_empty.ath
 ---
-ASSERT_DIR
+INFIX_ASSERT_DIR
   ASSERT_KW "assert"
   WHITESPACE "\n"
 error 6: expected assertion

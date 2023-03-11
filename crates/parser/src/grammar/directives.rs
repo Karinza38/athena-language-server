@@ -612,6 +612,46 @@ fn load_dir(p: &mut Parser, kind: LoadKind) {
     m.complete(p, SyntaxKind::LOAD_DIR);
 }
 
+// test(dir) prefix_assert
+// (assert (bar = bar) (foo = foo))
+fn prefix_assert_dir(p: &mut Parser) {
+    assert!(p.at_prefix_kw(T![assert]));
+
+    let m = p.start();
+    p.bump(T!['(']);
+    p.bump(T![assert]);
+
+    if p.at(IDENT) && p.peek_at(T![:=]) || p.at(T![:=]) {
+        // test(dir) prefix_assert_named
+        // (assert foo := (bar = bar))
+
+        if !p.at(IDENT) {
+            // test_err(dir) prefix_assert_no_name
+            // (assert := true)
+            p.error("expected identifier for the assertion");
+        } else {
+            identifier(p);
+        }
+        p.bump(T![:=]);
+    }
+
+    if !expr(p) {
+        // test_err(dir) prefix_assert_empty
+        // (assert foo := )
+        p.error("expected at least one assertion");
+    }
+
+    while !p.at(T![')']) && !p.at_end() {
+        if !expr(p) {
+            p.err_recover("expected assertion", TokenSet::single(T![')']));
+        }
+    }
+
+    p.expect(T![')']);
+
+    m.complete(p, SyntaxKind::PREFIX_ASSERT_DIR);
+}
+
 // test(dir) assert_dir
 // assert (foo = foo)
 fn assert_dir(p: &mut Parser) {
@@ -651,7 +691,7 @@ fn assert_dir(p: &mut Parser) {
         }
     }
 
-    m.complete(p, SyntaxKind::ASSERT_DIR);
+    m.complete(p, SyntaxKind::INFIX_ASSERT_DIR);
 }
 
 // test(dir) assert_closed_dir
@@ -972,6 +1012,9 @@ pub(crate) fn dir(p: &mut Parser) -> bool {
             }
             T![load] => {
                 load_dir(p, LoadKind::Prefix);
+            }
+            T![assert] => {
+                prefix_assert_dir(p);
             }
             _ => {
                 return false;

@@ -1,0 +1,18 @@
+---
+source: crates/parser/src/tests.rs
+description: "(assert := true)\n"
+input_file: crates/parser/test_data/parser/inline/err/dir/0184_prefix_assert_no_name.ath
+---
+PREFIX_ASSERT_DIR
+  L_PAREN "("
+  ASSERT_KW "assert"
+  WHITESPACE " "
+  COLON_EQ ":="
+  WHITESPACE " "
+  IDENT_EXPR
+    IDENTIFIER
+      IDENT "true"
+  R_PAREN ")"
+  WHITESPACE "\n"
+error 7: expected identifier for the assertion
+

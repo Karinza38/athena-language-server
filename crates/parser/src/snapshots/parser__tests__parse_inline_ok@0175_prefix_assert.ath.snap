@@ -1,0 +1,47 @@
+---
+source: crates/parser/src/tests.rs
+description: "(assert (bar = bar) (foo = foo))\n"
+input_file: crates/parser/test_data/parser/inline/ok/dir/0175_prefix_assert.ath
+---
+PREFIX_ASSERT_DIR
+  L_PAREN "("
+  ASSERT_KW "assert"
+  WHITESPACE " "
+  APPLICATION_EXPR
+    L_PAREN "("
+    EXPR_PHRASE
+      IDENT_EXPR
+        IDENTIFIER
+          IDENT "bar"
+    WHITESPACE " "
+    EXPR_PHRASE
+      IDENT_EXPR
+        IDENTIFIER
+          IDENT "="
+    WHITESPACE " "
+    EXPR_PHRASE
+      IDENT_EXPR
+        IDENTIFIER
+          IDENT "bar"
+    R_PAREN ")"
+  WHITESPACE " "
+  APPLICATION_EXPR
+    L_PAREN "("
+    EXPR_PHRASE
+      IDENT_EXPR
+        IDENTIFIER
+          IDENT "foo"
+    WHITESPACE " "
+    EXPR_PHRASE
+      IDENT_EXPR
+        IDENTIFIER
+          IDENT "="
+    WHITESPACE " "
+    EXPR_PHRASE
+      IDENT_EXPR
+        IDENTIFIER
+          IDENT "foo"
+    R_PAREN ")"
+  R_PAREN ")"
+  WHITESPACE "\n"
+

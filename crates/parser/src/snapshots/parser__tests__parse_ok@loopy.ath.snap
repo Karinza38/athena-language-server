@@ -83,7 +83,7 @@ SOURCE_FILE
             R_PAREN ")"
       WHITESPACE "\n    \n    "
       DIR_STMT
-        ASSERT_DIR
+        INFIX_ASSERT_DIR
           ASSERT_KW "assert"
           WHITESPACE " "
           IDENTIFIER
@@ -150,7 +150,7 @@ SOURCE_FILE
             R_PAREN ")"
       WHITESPACE "\n\n    "
       DIR_STMT
-        ASSERT_DIR
+        INFIX_ASSERT_DIR
           ASSERT_KW "assert"
           WHITESPACE " "
           IDENTIFIER
@@ -258,7 +258,7 @@ SOURCE_FILE
             R_PAREN ")"
       WHITESPACE "\n\n    "
       DIR_STMT
-        ASSERT_DIR
+        INFIX_ASSERT_DIR
           ASSERT_KW "assert"
           WHITESPACE " "
           IDENTIFIER

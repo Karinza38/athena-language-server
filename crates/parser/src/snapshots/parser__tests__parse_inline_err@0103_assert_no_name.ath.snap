@@ -3,7 +3,7 @@ source: crates/parser/src/tests.rs
 description: "assert := true\n"
 input_file: crates/parser/test_data/parser/inline/err/dir/0103_assert_no_name.ath
 ---
-ASSERT_DIR
+INFIX_ASSERT_DIR
   ASSERT_KW "assert"
   WHITESPACE " "
   COLON_EQ ":="

@@ -276,11 +276,20 @@ DefineProc =
 LoadDir =
     '('? 'load' 'string' ')'? // can be surrounded by parens
 
-AssertDir =
-    'assert' (Identifier ':=')? (Expr (',' Expr)*)
+AssertDir = 
+    InfixAssertDir
+    | PrefixAssertDir
+
+InfixAssertDir =
+    'assert' (Identifier ':=')? (Expr (',' Expr)*) // TODO: validate that it's either named or comma separated
+
+PrefixAssertDir =
+    '(' 'assert' (Identifier ':=')? Expr* ')' // TODO: validate that it's either named or multiple
 
 AssertClosedDir =
     'assert*' (Identifier ':=')? Expr
+
+
 
 OpenDir =
     'open' (Identifier (',' Identifier)*)
