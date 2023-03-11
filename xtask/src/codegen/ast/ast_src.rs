@@ -88,7 +88,7 @@ impl AstTokenDefinition {
                 _ => l,
             }
             .into(),
-            AstTokenDefinition { name, .. } => name.clone(),
+            AstTokenDefinition { name, .. } => name.trim_start_matches('#').to_string(), //FIXME: this whole # thing is gross
         }
     }
 }

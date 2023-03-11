@@ -1863,6 +1863,9 @@ pub struct PickWitnessDed {
     pub(crate) syntax: SyntaxNode,
 }
 impl PickWitnessDed {
+    pub fn l_paren_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T!['('])
+    }
     pub fn pick_witness_token(&self) -> Option<SyntaxToken> {
         support::token(&self.syntax, T![pick - witness])
     }
@@ -1877,6 +1880,9 @@ impl PickWitnessDed {
     }
     pub fn ded(&self) -> Option<Ded> {
         support::child(&self.syntax)
+    }
+    pub fn r_paren_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T![')'])
     }
 }
 

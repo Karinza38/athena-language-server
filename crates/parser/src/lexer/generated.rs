@@ -24,6 +24,8 @@ pub(crate) enum LexerToken {
     Whitespace(usize),
     #[regex(r###"#.*"###, |lex|lex.slice().len())]
     Comment(usize),
+    #[regex(r###"by|BY"###, |lex|lex.slice().len())]
+    By(usize),
     #[token("dtry", |lex|lex.slice().len())]
     Dtry(usize),
     #[token("dlet", |lex|lex.slice().len())]
@@ -182,8 +184,6 @@ pub(crate) enum LexerToken {
     End(usize),
     #[token("from", |lex|lex.slice().len())]
     From(usize),
-    #[token("by", |lex|lex.slice().len())]
-    By(usize),
     #[token("dseq", |lex|lex.slice().len())]
     Dseq(usize),
     #[token("bind", |lex|lex.slice().len())]
@@ -234,6 +234,7 @@ pub(crate) enum LexerToken {
 impl LexerToken {
     pub(crate) fn to_syntax_kind(self) -> SyntaxKind {
         match self {
+            Self::By(..) => T![by],
             Self::Dtry(..) => T![dtry],
             Self::Dlet(..) => T![dlet],
             Self::Dcheck(..) => T![dcheck],
@@ -313,7 +314,6 @@ impl LexerToken {
             Self::Begin(..) => T![begin],
             Self::End(..) => T![end],
             Self::From(..) => T![from],
-            Self::By(..) => T![by],
             Self::Dseq(..) => T![dseq],
             Self::Bind(..) => T![bind],
             Self::ValOf(..) => T![val - of],
@@ -346,6 +346,7 @@ impl LexerToken {
     }
     pub(crate) fn len(self) -> usize {
         match self {
+            Self::By(len) => len,
             Self::Dtry(len) => len,
             Self::Dlet(len) => len,
             Self::Dcheck(len) => len,
@@ -425,7 +426,6 @@ impl LexerToken {
             Self::Begin(len) => len,
             Self::End(len) => len,
             Self::From(len) => len,
-            Self::By(len) => len,
             Self::Dseq(len) => len,
             Self::Bind(len) => len,
             Self::ValOf(len) => len,

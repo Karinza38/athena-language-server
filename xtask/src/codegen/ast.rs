@@ -618,11 +618,17 @@ fn generate_lexer(grammar: &AstSrc) -> String {
     let mut variant_names = Vec::new();
     let mut complex_variant_names = Vec::new();
     for token_def in &grammar.token_defs {
-        let variant_name = format_ident!("{}", to_pascal_case(&token_def.name));
+        // FIXME: this whole # thing is gross
+        let simple = token_def.name.starts_with("#");
+        let variant_name = format_ident!("{}", to_pascal_case(&token_def.name.trim_start_matches('#')));
         let variant = quote! { #variant_name(usize) };
         let logos_annotation = match &token_def.def {
             AstTokenDef::Regex(reg) => {
-                complex_variant_names.push(variant_name.clone());
+                if simple {
+                    variant_names.push((variant_name.clone(), token_def.raw_token()));
+                } else {
+                    complex_variant_names.push(variant_name.clone());
+                }
                 let mut buf = String::from("r###\"");
                 buf.push_str(reg);
                 buf.push_str("\"###");
@@ -867,7 +873,8 @@ fn lower_token_defs(res: &mut AstSrc, grammar: &Grammar, kinds: &KindsSrc, token
         let token = &grammar[*tok];
 
         let Some((name, def)) = token.name.split_once('=') else { panic!("not a valid token def")};
-        ignore_tok_names.push(name.trim());
+        ignore_tok_names.push(name.trim().trim_start_matches('#')); // FIXME: this whole # thing is gross
+
         let name = token_name(name.trim());
         // println!("name = {}, def = {}", name, def);
         token_defs.push(AstTokenDefinition::regex(name, def.trim()));

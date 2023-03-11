@@ -31,6 +31,7 @@ Tokens =
     | 'char = `([ !~#-\\[\\]-~]|(?:\\\\\\d+)|(?:\\\\["\\\\abnrftv])|(?:\\\\\\^[A-Z@\\[\\]/^]))'
     | 'whitespace = [ \\t\\n\\r]+'
     | 'comment = #.*'
+    | '#by = by|BY' // # indicates that it should be otherwise treated as a keyword/non complex token
 
 Fake =
     'dtry'
@@ -551,7 +552,7 @@ WithWitnessDed =
     'with-witness' Expr Phrase Ded
 
 PickWitnessDed =
-    'pick-witness' Identifier 'for' Phrase Identifier? Ded
+    '('? 'pick-witness' Identifier 'for'? Phrase Identifier? Ded ')'? // for is mandatory if no parens
 
 PickWitnessesDed =
     'pick-witnesses' Identifier Identifier* 'for' Phrase Identifier? Ded
