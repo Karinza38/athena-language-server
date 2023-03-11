@@ -1059,6 +1059,30 @@ fn prefix_check_ded(p: &mut Parser) {
     m.complete(p, SyntaxKind::PREFIX_CHECK_DED);
 }
 
+// test(ded) prefix_seq_ded
+// (dseq (!claim a) (!claim b))
+fn prefix_seq_ded(p: &mut Parser) {
+    assert!(p.at_prefix_kw(T![dseq]));
+
+    let m = p.start();
+    p.bump(T!['(']);
+    p.bump(T![dseq]);
+
+    while !p.at(T![')']) && !p.at_end() {
+        if !ded(p) {
+            // test_err(ded) prefix_seq_ded_no_ded
+            // (dseq domain)
+            p.err_recover(
+                "Expected to find an deduction to sequence",
+                TokenSet::single(T![')']),
+            );
+        }
+    }
+
+    p.expect(T![')']);
+    m.complete(p, SyntaxKind::SEQ_DED);
+}
+
 pub(crate) const DED_START_SET: TokenSet = TokenSet::new(&[
     T!['('],
     T![assume],
@@ -1091,6 +1115,7 @@ pub(crate) const DED_AFTER_LPAREN_SET: TokenSet = TokenSet::new(&[
     T![pick - any],
     T![dtry],
     T![dcheck],
+    T![dseq],
 ])
 .union(EXPR_START_SET);
 
@@ -1131,6 +1156,9 @@ pub(crate) fn ded(p: &mut Parser) -> bool {
             }
             T![dcheck] => {
                 prefix_check_ded(p);
+            }
+            T![dseq] => {
+                prefix_seq_ded(p);
             }
             _ => {
                 return false;

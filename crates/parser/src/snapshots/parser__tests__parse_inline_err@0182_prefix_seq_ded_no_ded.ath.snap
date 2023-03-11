@@ -1,0 +1,15 @@
+---
+source: crates/parser/src/tests.rs
+description: "(dseq domain)\n"
+input_file: crates/parser/test_data/parser/inline/err/ded/0182_prefix_seq_ded_no_ded.ath
+---
+SEQ_DED
+  L_PAREN "("
+  DSEQ_KW "dseq"
+  WHITESPACE " "
+  ERROR
+    DOMAIN_KW "domain"
+  R_PAREN ")"
+  WHITESPACE "\n"
+error 6: Expected to find an deduction to sequence
+

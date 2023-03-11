@@ -103,6 +103,7 @@ KindsSrc(
         "dlet",
         "dcheck",
         "dletrec",
+        "dseq",
     ],
     contextual_keywords: ["|"],
     literals: ["INT_NUMBER", "STRING", "CHAR"],
@@ -197,6 +198,7 @@ KindsSrc(
         "PREFIX_NAMED_ASSUME_DED",
         "PREFIX_SINGLE_ASSUME_DED",
         "PREFIX_ASSUME_LET_DED",
+        "SEQ_DED",
         // Patterns
         "IDENT_PAT",
         "ANNOTATED_IDENT_PAT",

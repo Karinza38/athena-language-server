@@ -184,6 +184,8 @@ pub(crate) enum LexerToken {
     From(usize),
     #[token("by", |lex|lex.slice().len())]
     By(usize),
+    #[token("dseq", |lex|lex.slice().len())]
+    Dseq(usize),
     #[token("bind", |lex|lex.slice().len())]
     Bind(usize),
     #[token("val-of", |lex|lex.slice().len())]
@@ -312,6 +314,7 @@ impl LexerToken {
             Self::End(..) => T![end],
             Self::From(..) => T![from],
             Self::By(..) => T![by],
+            Self::Dseq(..) => T![dseq],
             Self::Bind(..) => T![bind],
             Self::ValOf(..) => T![val - of],
             Self::ListOf(..) => T![list - of],
@@ -423,6 +426,7 @@ impl LexerToken {
             Self::End(len) => len,
             Self::From(len) => len,
             Self::By(len) => len,
+            Self::Dseq(len) => len,
             Self::Bind(len) => len,
             Self::ValOf(len) => len,
             Self::ListOf(len) => len,

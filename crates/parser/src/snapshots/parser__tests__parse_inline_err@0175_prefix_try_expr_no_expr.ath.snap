@@ -3,19 +3,13 @@ source: crates/parser/src/tests.rs
 description: "(try domain)\n"
 input_file: crates/parser/test_data/parser/inline/err/expr/0175_prefix_try_expr_no_expr.ath
 ---
-APPLICATION_EXPR
+PREFIX_TRY_EXPR
   L_PAREN "("
-  TRY_EXPR
-    TRY_KW "try"
-    WHITESPACE " "
-    TRY_ARM
+  TRY_KW "try"
+  WHITESPACE " "
   ERROR
     DOMAIN_KW "domain"
   R_PAREN ")"
   WHITESPACE "\n"
-error 4: expected L_CURLY
-error 5: Expected to find an expression for the try arm
-error 5: expected R_CURLY
-error 5: Ambiguous phrase
-error 5: Expected to find a phrase for the application argument
+error 5: Expected to find an expression to try
 

@@ -495,6 +495,7 @@ Ded =
     | ConcludeDed
     | InferBlockDed
     | PrefixAssumeDed
+    | SeqDed
 
 ConcludeDed =
     'conclude' (Identifier ':=')? Expr Ded
@@ -654,6 +655,9 @@ InferBy =
 
 ByDed =
     '(' Phrase 'by' Ded ')' 
+
+SeqDed = 
+    '(' 'dseq' Ded* ')'
 
 //**********//
 // Patterns //

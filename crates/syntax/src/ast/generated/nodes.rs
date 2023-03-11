@@ -1975,6 +1975,25 @@ impl InferBlockDed {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
+pub struct SeqDed {
+    pub(crate) syntax: SyntaxNode,
+}
+impl SeqDed {
+    pub fn l_paren_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T!['('])
+    }
+    pub fn dseq_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T![dseq])
+    }
+    pub fn deds(&self) -> AstChildren<Ded> {
+        support::children(&self.syntax)
+    }
+    pub fn r_paren_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T![')'])
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct AssumePart {
     pub(crate) syntax: SyntaxNode,
 }
@@ -2924,6 +2943,7 @@ pub enum Ded {
     CasesDed(CasesDed),
     ConcludeDed(ConcludeDed),
     InferBlockDed(InferBlockDed),
+    SeqDed(SeqDed),
     CheckDed(CheckDed),
     LetDed(LetDed),
     LetRecDed(LetRecDed),
@@ -4233,6 +4253,17 @@ impl AstNode for ConcludeDed {
 impl AstNode for InferBlockDed {
     fn can_cast(kind: SyntaxKind) -> bool {
         kind == INFER_BLOCK_DED
+    }
+    fn cast(syntax: SyntaxNode) -> Option<Self> {
+        if Self::can_cast(syntax.kind()) { Some(Self { syntax }) } else { None }
+    }
+    fn syntax(&self) -> &SyntaxNode {
+        &self.syntax
+    }
+}
+impl AstNode for SeqDed {
+    fn can_cast(kind: SyntaxKind) -> bool {
+        kind == SEQ_DED
     }
     fn cast(syntax: SyntaxNode) -> Option<Self> {
         if Self::can_cast(syntax.kind()) { Some(Self { syntax }) } else { None }
@@ -5705,6 +5736,11 @@ impl From<InferBlockDed> for Ded {
         Ded::InferBlockDed(node)
     }
 }
+impl From<SeqDed> for Ded {
+    fn from(node: SeqDed) -> Ded {
+        Ded::SeqDed(node)
+    }
+}
 impl From<CheckDed> for Ded {
     fn from(node: CheckDed) -> Ded {
         Ded::CheckDed(node)
@@ -5741,8 +5777,8 @@ impl AstNode for Ded {
             kind, METHOD_CALL_DED | BANG_METHOD_CALL_DED | ASSUME_DED | NAMED_ASSUME_DED
             | PROOF_BY_CONTRA_DED | GENERALIZE_OVER_DED | PICK_ANY_DED | WITH_WITNESS_DED
             | PICK_WITNESS_DED | PICK_WITNESSES_DED | INDUCT_DED | CASES_DED |
-            CONCLUDE_DED | INFER_BLOCK_DED | INFIX_CHECK_DED | PREFIX_CHECK_DED |
-            INFIX_MATCH_DED | PREFIX_MATCH_DED | INFIX_LET_DED | PREFIX_LET_DED |
+            CONCLUDE_DED | INFER_BLOCK_DED | SEQ_DED | INFIX_CHECK_DED | PREFIX_CHECK_DED
+            | INFIX_MATCH_DED | PREFIX_MATCH_DED | INFIX_LET_DED | PREFIX_LET_DED |
             INFIX_LET_REC_DED | PREFIX_LET_REC_DED | INFIX_TRY_DED | PREFIX_TRY_DED |
             PREFIX_NAMED_ASSUME_DED | PREFIX_SINGLE_ASSUME_DED | PREFIX_ASSUME_LET_DED
         )
@@ -5763,6 +5799,7 @@ impl AstNode for Ded {
             CASES_DED => Ded::CasesDed(CasesDed { syntax }),
             CONCLUDE_DED => Ded::ConcludeDed(ConcludeDed { syntax }),
             INFER_BLOCK_DED => Ded::InferBlockDed(InferBlockDed { syntax }),
+            SEQ_DED => Ded::SeqDed(SeqDed { syntax }),
             INFIX_CHECK_DED => {
                 Ded::CheckDed(CheckDed::InfixCheckDed(InfixCheckDed { syntax }))
             }
@@ -5824,6 +5861,7 @@ impl AstNode for Ded {
             Ded::CasesDed(it) => &it.syntax,
             Ded::ConcludeDed(it) => &it.syntax,
             Ded::InferBlockDed(it) => &it.syntax,
+            Ded::SeqDed(it) => &it.syntax,
             Ded::CheckDed(it) => it.syntax(),
             Ded::LetDed(it) => it.syntax(),
             Ded::LetRecDed(it) => it.syntax(),
@@ -6149,7 +6187,7 @@ impl AstNode for Inference {
             kind, INFER_FROM | INFER_BY | METHOD_CALL_DED | BANG_METHOD_CALL_DED |
             ASSUME_DED | NAMED_ASSUME_DED | PROOF_BY_CONTRA_DED | GENERALIZE_OVER_DED |
             PICK_ANY_DED | WITH_WITNESS_DED | PICK_WITNESS_DED | PICK_WITNESSES_DED |
-            INDUCT_DED | CASES_DED | CONCLUDE_DED | INFER_BLOCK_DED
+            INDUCT_DED | CASES_DED | CONCLUDE_DED | INFER_BLOCK_DED | SEQ_DED
         )
     }
     fn cast(syntax: SyntaxNode) -> Option<Self> {
@@ -6188,6 +6226,7 @@ impl AstNode for Inference {
             INFER_BLOCK_DED => {
                 Inference::Ded(Ded::InferBlockDed(InferBlockDed { syntax }))
             }
+            SEQ_DED => Inference::Ded(Ded::SeqDed(SeqDed { syntax })),
             _ => return None,
         };
         Some(res)
@@ -6906,6 +6945,11 @@ impl std::fmt::Display for ConcludeDed {
     }
 }
 impl std::fmt::Display for InferBlockDed {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        std::fmt::Display::fmt(self.syntax(), f)
+    }
+}
+impl std::fmt::Display for SeqDed {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         std::fmt::Display::fmt(self.syntax(), f)
     }

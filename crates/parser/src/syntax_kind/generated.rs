@@ -110,6 +110,7 @@ pub enum SyntaxKind {
     DLET_KW,
     DCHECK_KW,
     DLETREC_KW,
+    DSEQ_KW,
     PIPE,
     INT_NUMBER,
     STRING,
@@ -203,6 +204,7 @@ pub enum SyntaxKind {
     PREFIX_NAMED_ASSUME_DED,
     PREFIX_SINGLE_ASSUME_DED,
     PREFIX_ASSUME_LET_DED,
+    SEQ_DED,
     IDENT_PAT,
     ANNOTATED_IDENT_PAT,
     VAR_PAT,
@@ -300,7 +302,7 @@ impl SyntaxKind {
             | DATATYPES_KW | STRUCTURES_KW | EXTEND_MODULE_KW | PRIVATE_KW | OPEN_KW |
             ON_KW | BEGIN_KW | END_KW | FROM_KW | BY_KW | O_P_KW | PRIMITIVE_METHOD_KW |
             DMATCH_KW | EXPAND_INPUT_KW | DEFINE_SORT_KW | ASSUME_LET_KW | DTRY_KW |
-            DLET_KW | DCHECK_KW | DLETREC_KW | PIPE
+            DLET_KW | DCHECK_KW | DLETREC_KW | DSEQ_KW | PIPE
         )
     }
     pub fn is_punct(self) -> bool {
@@ -396,6 +398,7 @@ impl SyntaxKind {
             "dlet" => DLET_KW,
             "dcheck" => DCHECK_KW,
             "dletrec" => DLETREC_KW,
+            "dseq" => DSEQ_KW,
             _ => return None,
         };
         Some(kw)
@@ -734,6 +737,9 @@ macro_rules! T {
     };
     [dletrec] => {
         $crate ::SyntaxKind::DLETREC_KW
+    };
+    [dseq] => {
+        $crate ::SyntaxKind::DSEQ_KW
     };
     [|] => {
         $crate ::SyntaxKind::PIPE
