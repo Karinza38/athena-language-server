@@ -1005,7 +1005,7 @@ fn prefix_try_ded(p: &mut Parser) {
             // (dtry domain)
             p.err_recover(
                 "Expected to find an deduction to try",
-                DED_START_SET.union(TokenSet::single(T![')'])),
+                TokenSet::single(T![')']),
             );
         }
     }
@@ -1014,10 +1014,10 @@ fn prefix_try_ded(p: &mut Parser) {
     m.complete(p, SyntaxKind::PREFIX_TRY_DED);
 }
 
-fn prefix_check_clause(p: &mut Parser) {
+fn prefix_check_clause(p: &mut Parser) -> bool {
     if !p.at(T!['(']) {
         p.error("Expected to find a prefix check clause in parens");
-        return;
+        return false;
     }
 
     let m = p.start();
@@ -1035,6 +1035,8 @@ fn prefix_check_clause(p: &mut Parser) {
 
     p.expect(T![')']);
     m.complete(p, SyntaxKind::CHECK_DED_CLAUSE);
+
+    true
 }
 
 // test(ded) prefix_check_ded
@@ -1047,7 +1049,9 @@ fn prefix_check_ded(p: &mut Parser) {
     p.bump(T![dcheck]);
 
     while !p.at(T![')']) && !p.at_end() {
-        prefix_check_clause(p);
+        if !prefix_check_clause(p) {
+            p.err_recover("Invalid prefix check clause", TokenSet::single(T![')']));
+        }
     }
 
     p.expect(T![')']);
