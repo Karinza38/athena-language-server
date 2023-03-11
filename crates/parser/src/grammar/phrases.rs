@@ -425,7 +425,7 @@ pub(crate) fn let_expr_or_ded(p: &mut Parser, want: Option<ExprOrDed>) -> ExprOr
         m,
         |eod| match eod {
             ExprOrDed::Expr => SyntaxKind::LET_EXPR,
-            ExprOrDed::Ded => SyntaxKind::LET_DED,
+            ExprOrDed::Ded => SyntaxKind::INFIX_LET_DED,
             ExprOrDed::Ambig => SyntaxKind::LET_EXPR,
         },
         want,
@@ -515,7 +515,7 @@ pub(crate) fn let_rec_expr_or_ded(p: &mut Parser, want: Option<ExprOrDed>) -> Ex
         m,
         |eod| match eod {
             ExprOrDed::Expr => SyntaxKind::LET_REC_EXPR,
-            ExprOrDed::Ded => SyntaxKind::LET_REC_DED,
+            ExprOrDed::Ded => SyntaxKind::INFIX_LET_REC_DED,
             ExprOrDed::Ambig => SyntaxKind::LET_REC_EXPR,
         },
         want,

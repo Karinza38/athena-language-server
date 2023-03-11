@@ -1,0 +1,28 @@
+---
+source: crates/parser/src/tests.rs
+description: "(dletrec (domain Foo) foo)\n"
+input_file: crates/parser/test_data/parser/inline/err/ded/0178_prefix_let_rec_ded_no_binding.ath
+---
+ERROR
+  PREFIX_LET_DED
+    L_PAREN "("
+    DLETREC_KW "dletrec"
+    WHITESPACE " "
+    L_PAREN "("
+    ERROR
+      DOMAIN_KW "domain"
+    WHITESPACE " "
+    ERROR
+      IDENT "Foo"
+    R_PAREN ")"
+  WHITESPACE " "
+  IDENT "foo"
+  R_PAREN ")"
+  WHITESPACE "\n"
+error 10: Expected to find a prefix binding in parens
+error 10: expected a binding in the prefix letrec deduction
+error 16: Expected to find a prefix binding in parens
+error 17: expected a binding in the prefix letrec deduction
+error 21: Expected to find a body (deduction) for the prefix letrec deduction
+error 21: expected R_PAREN
+

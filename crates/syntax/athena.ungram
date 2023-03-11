@@ -577,14 +577,28 @@ MatchDedClause =
 MatchDedArm =
     '|'? Pat '=>' Ded
 
-LetDed =
+InfixLetDed =
     'let' '{' LetPart* '}' Ded
 
 LetPart =
     ';'? Pat ':=' Phrase
 
-LetRecDed =
+InfixLetRecDed =
     'letrec' '{' LetRecPart* '}' Ded
+
+LetDed = 
+    InfixLetDed
+    | PrefixLetDed
+
+LetRecDed = 
+    InfixLetRecDed
+    | PrefixLetRecDed
+
+PrefixLetDed =
+    '(' 'dlet' '(' PrefixBinding* ')' Ded ')'
+
+PrefixLetRecDed =
+    '(' 'dletrec' '(' PrefixBinding* ')' Ded ')'
 
 LetRecPart = 
     ';'? Identifier ':=' Expr

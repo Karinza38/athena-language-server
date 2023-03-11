@@ -536,10 +536,10 @@ fn prefix_let_expr(p: &mut Parser, m: Marker) {
 
     p.expect(T![')']);
 
-    if !phrase(p) {
+    if !expr(p) {
         // test_err(expr) prefix_let_expr_no_body
         // (let ((foo 1) (bar 2)))
-        p.error("Expected to find a body (phrase) for the prefix let expression");
+        p.error("Expected to find a body (expression) for the prefix let expression");
     }
 
     p.expect(T![')']);

@@ -1,11 +1,11 @@
 ---
 source: crates/parser/src/tests.rs
-description: "(let ((foo 1) (bar 2)) foo)\n"
-input_file: crates/parser/test_data/parser/inline/ok/expr/0155_prefix_let_expr.ath
+description: "(dletrec ((foo 1) (bar 2)) (!claim A))\n"
+input_file: crates/parser/test_data/parser/inline/ok/ded/0169_prefix_let_rec_ded.ath
 ---
-PREFIX_LET_EXPR
+PREFIX_LET_DED
   L_PAREN "("
-  LET_KW "let"
+  DLETREC_KW "dletrec"
   WHITESPACE " "
   L_PAREN "("
   PREFIX_BINDING
@@ -33,9 +33,18 @@ PREFIX_LET_EXPR
     R_PAREN ")"
   R_PAREN ")"
   WHITESPACE " "
-  IDENT_EXPR
-    IDENTIFIER
-      IDENT "foo"
+  BANG_METHOD_CALL_DED
+    L_PAREN "("
+    BANG "!"
+    IDENT_EXPR
+      IDENTIFIER
+        IDENT "claim"
+    WHITESPACE " "
+    EXPR_PHRASE
+      IDENT_EXPR
+        IDENTIFIER
+          IDENT "A"
+    R_PAREN ")"
   R_PAREN ")"
   WHITESPACE "\n"
 

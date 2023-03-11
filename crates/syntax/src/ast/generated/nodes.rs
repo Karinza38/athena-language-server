@@ -1944,50 +1944,6 @@ impl CheckDed {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
-pub struct LetDed {
-    pub(crate) syntax: SyntaxNode,
-}
-impl LetDed {
-    pub fn let_token(&self) -> Option<SyntaxToken> {
-        support::token(&self.syntax, T![let])
-    }
-    pub fn l_curly_token(&self) -> Option<SyntaxToken> {
-        support::token(&self.syntax, T!['{'])
-    }
-    pub fn let_parts(&self) -> AstChildren<LetPart> {
-        support::children(&self.syntax)
-    }
-    pub fn r_curly_token(&self) -> Option<SyntaxToken> {
-        support::token(&self.syntax, T!['}'])
-    }
-    pub fn ded(&self) -> Option<Ded> {
-        support::child(&self.syntax)
-    }
-}
-
-#[derive(Debug, Clone, PartialEq, Eq, Hash)]
-pub struct LetRecDed {
-    pub(crate) syntax: SyntaxNode,
-}
-impl LetRecDed {
-    pub fn letrec_token(&self) -> Option<SyntaxToken> {
-        support::token(&self.syntax, T![letrec])
-    }
-    pub fn l_curly_token(&self) -> Option<SyntaxToken> {
-        support::token(&self.syntax, T!['{'])
-    }
-    pub fn let_rec_parts(&self) -> AstChildren<LetRecPart> {
-        support::children(&self.syntax)
-    }
-    pub fn r_curly_token(&self) -> Option<SyntaxToken> {
-        support::token(&self.syntax, T!['}'])
-    }
-    pub fn ded(&self) -> Option<Ded> {
-        support::child(&self.syntax)
-    }
-}
-
-#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct TryDed {
     pub(crate) syntax: SyntaxNode,
 }
@@ -2258,6 +2214,94 @@ impl MatchDedClause {
     }
     pub fn r_paren_token(&self) -> Option<SyntaxToken> {
         support::token(&self.syntax, T![')'])
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+pub struct InfixLetDed {
+    pub(crate) syntax: SyntaxNode,
+}
+impl InfixLetDed {
+    pub fn let_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T![let])
+    }
+    pub fn l_curly_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T!['{'])
+    }
+    pub fn let_parts(&self) -> AstChildren<LetPart> {
+        support::children(&self.syntax)
+    }
+    pub fn r_curly_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T!['}'])
+    }
+    pub fn ded(&self) -> Option<Ded> {
+        support::child(&self.syntax)
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+pub struct InfixLetRecDed {
+    pub(crate) syntax: SyntaxNode,
+}
+impl InfixLetRecDed {
+    pub fn letrec_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T![letrec])
+    }
+    pub fn l_curly_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T!['{'])
+    }
+    pub fn let_rec_parts(&self) -> AstChildren<LetRecPart> {
+        support::children(&self.syntax)
+    }
+    pub fn r_curly_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T!['}'])
+    }
+    pub fn ded(&self) -> Option<Ded> {
+        support::child(&self.syntax)
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+pub struct PrefixLetDed {
+    pub(crate) syntax: SyntaxNode,
+}
+impl PrefixLetDed {
+    pub fn l_paren_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T!['('])
+    }
+    pub fn dlet_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T![dlet])
+    }
+    pub fn prefix_bindings(&self) -> AstChildren<PrefixBinding> {
+        support::children(&self.syntax)
+    }
+    pub fn r_paren_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T![')'])
+    }
+    pub fn ded(&self) -> Option<Ded> {
+        support::child(&self.syntax)
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+pub struct PrefixLetRecDed {
+    pub(crate) syntax: SyntaxNode,
+}
+impl PrefixLetRecDed {
+    pub fn l_paren_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T!['('])
+    }
+    pub fn dletrec_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T![dletrec])
+    }
+    pub fn prefix_bindings(&self) -> AstChildren<PrefixBinding> {
+        support::children(&self.syntax)
+    }
+    pub fn r_paren_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T![')'])
+    }
+    pub fn ded(&self) -> Option<Ded> {
+        support::child(&self.syntax)
     }
 }
 
@@ -2816,11 +2860,11 @@ pub enum Ded {
     InductDed(InductDed),
     CasesDed(CasesDed),
     CheckDed(CheckDed),
-    LetDed(LetDed),
-    LetRecDed(LetRecDed),
     TryDed(TryDed),
     ConcludeDed(ConcludeDed),
     InferBlockDed(InferBlockDed),
+    LetDed(LetDed),
+    LetRecDed(LetRecDed),
     MatchDed(MatchDed),
     PrefixAssumeDed(PrefixAssumeDed),
 }
@@ -2835,6 +2879,18 @@ pub enum MatchExpr {
 pub enum MatchDed {
     InfixMatchDed(InfixMatchDed),
     PrefixMatchDed(PrefixMatchDed),
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+pub enum LetDed {
+    InfixLetDed(InfixLetDed),
+    PrefixLetDed(PrefixLetDed),
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+pub enum LetRecDed {
+    InfixLetRecDed(InfixLetRecDed),
+    PrefixLetRecDed(PrefixLetRecDed),
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
@@ -4099,28 +4155,6 @@ impl AstNode for CheckDed {
         &self.syntax
     }
 }
-impl AstNode for LetDed {
-    fn can_cast(kind: SyntaxKind) -> bool {
-        kind == LET_DED
-    }
-    fn cast(syntax: SyntaxNode) -> Option<Self> {
-        if Self::can_cast(syntax.kind()) { Some(Self { syntax }) } else { None }
-    }
-    fn syntax(&self) -> &SyntaxNode {
-        &self.syntax
-    }
-}
-impl AstNode for LetRecDed {
-    fn can_cast(kind: SyntaxKind) -> bool {
-        kind == LET_REC_DED
-    }
-    fn cast(syntax: SyntaxNode) -> Option<Self> {
-        if Self::can_cast(syntax.kind()) { Some(Self { syntax }) } else { None }
-    }
-    fn syntax(&self) -> &SyntaxNode {
-        &self.syntax
-    }
-}
 impl AstNode for TryDed {
     fn can_cast(kind: SyntaxKind) -> bool {
         kind == TRY_DED
@@ -4256,6 +4290,50 @@ impl AstNode for MatchDedArm {
 impl AstNode for MatchDedClause {
     fn can_cast(kind: SyntaxKind) -> bool {
         kind == MATCH_DED_CLAUSE
+    }
+    fn cast(syntax: SyntaxNode) -> Option<Self> {
+        if Self::can_cast(syntax.kind()) { Some(Self { syntax }) } else { None }
+    }
+    fn syntax(&self) -> &SyntaxNode {
+        &self.syntax
+    }
+}
+impl AstNode for InfixLetDed {
+    fn can_cast(kind: SyntaxKind) -> bool {
+        kind == INFIX_LET_DED
+    }
+    fn cast(syntax: SyntaxNode) -> Option<Self> {
+        if Self::can_cast(syntax.kind()) { Some(Self { syntax }) } else { None }
+    }
+    fn syntax(&self) -> &SyntaxNode {
+        &self.syntax
+    }
+}
+impl AstNode for InfixLetRecDed {
+    fn can_cast(kind: SyntaxKind) -> bool {
+        kind == INFIX_LET_REC_DED
+    }
+    fn cast(syntax: SyntaxNode) -> Option<Self> {
+        if Self::can_cast(syntax.kind()) { Some(Self { syntax }) } else { None }
+    }
+    fn syntax(&self) -> &SyntaxNode {
+        &self.syntax
+    }
+}
+impl AstNode for PrefixLetDed {
+    fn can_cast(kind: SyntaxKind) -> bool {
+        kind == PREFIX_LET_DED
+    }
+    fn cast(syntax: SyntaxNode) -> Option<Self> {
+        if Self::can_cast(syntax.kind()) { Some(Self { syntax }) } else { None }
+    }
+    fn syntax(&self) -> &SyntaxNode {
+        &self.syntax
+    }
+}
+impl AstNode for PrefixLetRecDed {
+    fn can_cast(kind: SyntaxKind) -> bool {
+        kind == PREFIX_LET_REC_DED
     }
     fn cast(syntax: SyntaxNode) -> Option<Self> {
         if Self::can_cast(syntax.kind()) { Some(Self { syntax }) } else { None }
@@ -5514,16 +5592,6 @@ impl From<CheckDed> for Ded {
         Ded::CheckDed(node)
     }
 }
-impl From<LetDed> for Ded {
-    fn from(node: LetDed) -> Ded {
-        Ded::LetDed(node)
-    }
-}
-impl From<LetRecDed> for Ded {
-    fn from(node: LetRecDed) -> Ded {
-        Ded::LetRecDed(node)
-    }
-}
 impl From<TryDed> for Ded {
     fn from(node: TryDed) -> Ded {
         Ded::TryDed(node)
@@ -5537,6 +5605,16 @@ impl From<ConcludeDed> for Ded {
 impl From<InferBlockDed> for Ded {
     fn from(node: InferBlockDed) -> Ded {
         Ded::InferBlockDed(node)
+    }
+}
+impl From<LetDed> for Ded {
+    fn from(node: LetDed) -> Ded {
+        Ded::LetDed(node)
+    }
+}
+impl From<LetRecDed> for Ded {
+    fn from(node: LetRecDed) -> Ded {
+        Ded::LetRecDed(node)
     }
 }
 impl From<MatchDed> for Ded {
@@ -5555,9 +5633,10 @@ impl AstNode for Ded {
             kind, METHOD_CALL_DED | BANG_METHOD_CALL_DED | ASSUME_DED | NAMED_ASSUME_DED
             | PROOF_BY_CONTRA_DED | GENERALIZE_OVER_DED | PICK_ANY_DED | WITH_WITNESS_DED
             | PICK_WITNESS_DED | PICK_WITNESSES_DED | INDUCT_DED | CASES_DED | CHECK_DED
-            | LET_DED | LET_REC_DED | TRY_DED | CONCLUDE_DED | INFER_BLOCK_DED |
-            INFIX_MATCH_DED | PREFIX_MATCH_DED | PREFIX_NAMED_ASSUME_DED |
-            PREFIX_SINGLE_ASSUME_DED | PREFIX_ASSUME_LET_DED
+            | TRY_DED | CONCLUDE_DED | INFER_BLOCK_DED | INFIX_MATCH_DED |
+            PREFIX_MATCH_DED | INFIX_LET_DED | PREFIX_LET_DED | INFIX_LET_REC_DED |
+            PREFIX_LET_REC_DED | PREFIX_NAMED_ASSUME_DED | PREFIX_SINGLE_ASSUME_DED |
+            PREFIX_ASSUME_LET_DED
         )
     }
     fn cast(syntax: SyntaxNode) -> Option<Self> {
@@ -5575,8 +5654,6 @@ impl AstNode for Ded {
             INDUCT_DED => Ded::InductDed(InductDed { syntax }),
             CASES_DED => Ded::CasesDed(CasesDed { syntax }),
             CHECK_DED => Ded::CheckDed(CheckDed { syntax }),
-            LET_DED => Ded::LetDed(LetDed { syntax }),
-            LET_REC_DED => Ded::LetRecDed(LetRecDed { syntax }),
             TRY_DED => Ded::TryDed(TryDed { syntax }),
             CONCLUDE_DED => Ded::ConcludeDed(ConcludeDed { syntax }),
             INFER_BLOCK_DED => Ded::InferBlockDed(InferBlockDed { syntax }),
@@ -5585,6 +5662,14 @@ impl AstNode for Ded {
             }
             PREFIX_MATCH_DED => {
                 Ded::MatchDed(MatchDed::PrefixMatchDed(PrefixMatchDed { syntax }))
+            }
+            INFIX_LET_DED => Ded::LetDed(LetDed::InfixLetDed(InfixLetDed { syntax })),
+            PREFIX_LET_DED => Ded::LetDed(LetDed::PrefixLetDed(PrefixLetDed { syntax })),
+            INFIX_LET_REC_DED => {
+                Ded::LetRecDed(LetRecDed::InfixLetRecDed(InfixLetRecDed { syntax }))
+            }
+            PREFIX_LET_REC_DED => {
+                Ded::LetRecDed(LetRecDed::PrefixLetRecDed(PrefixLetRecDed { syntax }))
             }
             PREFIX_NAMED_ASSUME_DED => {
                 Ded::PrefixAssumeDed(
@@ -5624,11 +5709,11 @@ impl AstNode for Ded {
             Ded::InductDed(it) => &it.syntax,
             Ded::CasesDed(it) => &it.syntax,
             Ded::CheckDed(it) => &it.syntax,
-            Ded::LetDed(it) => &it.syntax,
-            Ded::LetRecDed(it) => &it.syntax,
             Ded::TryDed(it) => &it.syntax,
             Ded::ConcludeDed(it) => &it.syntax,
             Ded::InferBlockDed(it) => &it.syntax,
+            Ded::LetDed(it) => it.syntax(),
+            Ded::LetRecDed(it) => it.syntax(),
             Ded::MatchDed(it) => it.syntax(),
             Ded::PrefixAssumeDed(it) => it.syntax(),
         }
@@ -5689,6 +5774,64 @@ impl AstNode for MatchDed {
         match self {
             MatchDed::InfixMatchDed(it) => &it.syntax,
             MatchDed::PrefixMatchDed(it) => &it.syntax,
+        }
+    }
+}
+impl From<InfixLetDed> for LetDed {
+    fn from(node: InfixLetDed) -> LetDed {
+        LetDed::InfixLetDed(node)
+    }
+}
+impl From<PrefixLetDed> for LetDed {
+    fn from(node: PrefixLetDed) -> LetDed {
+        LetDed::PrefixLetDed(node)
+    }
+}
+impl AstNode for LetDed {
+    fn can_cast(kind: SyntaxKind) -> bool {
+        matches!(kind, INFIX_LET_DED | PREFIX_LET_DED)
+    }
+    fn cast(syntax: SyntaxNode) -> Option<Self> {
+        let res = match syntax.kind() {
+            INFIX_LET_DED => LetDed::InfixLetDed(InfixLetDed { syntax }),
+            PREFIX_LET_DED => LetDed::PrefixLetDed(PrefixLetDed { syntax }),
+            _ => return None,
+        };
+        Some(res)
+    }
+    fn syntax(&self) -> &SyntaxNode {
+        match self {
+            LetDed::InfixLetDed(it) => &it.syntax,
+            LetDed::PrefixLetDed(it) => &it.syntax,
+        }
+    }
+}
+impl From<InfixLetRecDed> for LetRecDed {
+    fn from(node: InfixLetRecDed) -> LetRecDed {
+        LetRecDed::InfixLetRecDed(node)
+    }
+}
+impl From<PrefixLetRecDed> for LetRecDed {
+    fn from(node: PrefixLetRecDed) -> LetRecDed {
+        LetRecDed::PrefixLetRecDed(node)
+    }
+}
+impl AstNode for LetRecDed {
+    fn can_cast(kind: SyntaxKind) -> bool {
+        matches!(kind, INFIX_LET_REC_DED | PREFIX_LET_REC_DED)
+    }
+    fn cast(syntax: SyntaxNode) -> Option<Self> {
+        let res = match syntax.kind() {
+            INFIX_LET_REC_DED => LetRecDed::InfixLetRecDed(InfixLetRecDed { syntax }),
+            PREFIX_LET_REC_DED => LetRecDed::PrefixLetRecDed(PrefixLetRecDed { syntax }),
+            _ => return None,
+        };
+        Some(res)
+    }
+    fn syntax(&self) -> &SyntaxNode {
+        match self {
+            LetRecDed::InfixLetRecDed(it) => &it.syntax,
+            LetRecDed::PrefixLetRecDed(it) => &it.syntax,
         }
     }
 }
@@ -5834,8 +5977,7 @@ impl AstNode for Inference {
             kind, INFER_FROM | INFER_BY | METHOD_CALL_DED | BANG_METHOD_CALL_DED |
             ASSUME_DED | NAMED_ASSUME_DED | PROOF_BY_CONTRA_DED | GENERALIZE_OVER_DED |
             PICK_ANY_DED | WITH_WITNESS_DED | PICK_WITNESS_DED | PICK_WITNESSES_DED |
-            INDUCT_DED | CASES_DED | CHECK_DED | LET_DED | LET_REC_DED | TRY_DED |
-            CONCLUDE_DED | INFER_BLOCK_DED
+            INDUCT_DED | CASES_DED | CHECK_DED | TRY_DED | CONCLUDE_DED | INFER_BLOCK_DED
         )
     }
     fn cast(syntax: SyntaxNode) -> Option<Self> {
@@ -5871,8 +6013,6 @@ impl AstNode for Inference {
             INDUCT_DED => Inference::Ded(Ded::InductDed(InductDed { syntax })),
             CASES_DED => Inference::Ded(Ded::CasesDed(CasesDed { syntax })),
             CHECK_DED => Inference::Ded(Ded::CheckDed(CheckDed { syntax })),
-            LET_DED => Inference::Ded(Ded::LetDed(LetDed { syntax })),
-            LET_REC_DED => Inference::Ded(Ded::LetRecDed(LetRecDed { syntax })),
             TRY_DED => Inference::Ded(Ded::TryDed(TryDed { syntax })),
             CONCLUDE_DED => Inference::Ded(Ded::ConcludeDed(ConcludeDed { syntax })),
             INFER_BLOCK_DED => {
@@ -5991,6 +6131,16 @@ impl std::fmt::Display for MatchExpr {
     }
 }
 impl std::fmt::Display for MatchDed {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        std::fmt::Display::fmt(self.syntax(), f)
+    }
+}
+impl std::fmt::Display for LetDed {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        std::fmt::Display::fmt(self.syntax(), f)
+    }
+}
+impl std::fmt::Display for LetRecDed {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         std::fmt::Display::fmt(self.syntax(), f)
     }
@@ -6575,16 +6725,6 @@ impl std::fmt::Display for CheckDed {
         std::fmt::Display::fmt(self.syntax(), f)
     }
 }
-impl std::fmt::Display for LetDed {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        std::fmt::Display::fmt(self.syntax(), f)
-    }
-}
-impl std::fmt::Display for LetRecDed {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        std::fmt::Display::fmt(self.syntax(), f)
-    }
-}
 impl std::fmt::Display for TryDed {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         std::fmt::Display::fmt(self.syntax(), f)
@@ -6646,6 +6786,26 @@ impl std::fmt::Display for MatchDedArm {
     }
 }
 impl std::fmt::Display for MatchDedClause {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        std::fmt::Display::fmt(self.syntax(), f)
+    }
+}
+impl std::fmt::Display for InfixLetDed {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        std::fmt::Display::fmt(self.syntax(), f)
+    }
+}
+impl std::fmt::Display for InfixLetRecDed {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        std::fmt::Display::fmt(self.syntax(), f)
+    }
+}
+impl std::fmt::Display for PrefixLetDed {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        std::fmt::Display::fmt(self.syntax(), f)
+    }
+}
+impl std::fmt::Display for PrefixLetRecDed {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         std::fmt::Display::fmt(self.syntax(), f)
     }

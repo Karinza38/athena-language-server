@@ -1,11 +1,11 @@
 ---
 source: crates/parser/src/tests.rs
-description: "(let ((foo 1) (bar 2)) foo)\n"
-input_file: crates/parser/test_data/parser/inline/ok/expr/0155_prefix_let_expr.ath
+description: "(dletrec ((foo 1) (bar 2)))\n"
+input_file: crates/parser/test_data/parser/inline/err/ded/0177_prefix_let_rec_ded_no_body.ath
 ---
-PREFIX_LET_EXPR
+PREFIX_LET_DED
   L_PAREN "("
-  LET_KW "let"
+  DLETREC_KW "dletrec"
   WHITESPACE " "
   L_PAREN "("
   PREFIX_BINDING
@@ -32,10 +32,7 @@ PREFIX_LET_EXPR
           IDENT "2"
     R_PAREN ")"
   R_PAREN ")"
-  WHITESPACE " "
-  IDENT_EXPR
-    IDENTIFIER
-      IDENT "foo"
   R_PAREN ")"
   WHITESPACE "\n"
+error 26: Expected to find a body (deduction) for the prefix letrec deduction
 

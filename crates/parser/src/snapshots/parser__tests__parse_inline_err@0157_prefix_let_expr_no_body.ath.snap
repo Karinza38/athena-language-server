@@ -34,5 +34,5 @@ PREFIX_LET_EXPR
   R_PAREN ")"
   R_PAREN ")"
   WHITESPACE "\n"
-error 22: Expected to find a body (phrase) for the prefix let expression
+error 22: Expected to find a body (expression) for the prefix let expression
 

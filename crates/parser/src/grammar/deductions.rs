@@ -196,6 +196,80 @@ fn prefix_assume_let_ded(p: &mut Parser) {
     m.complete(p, SyntaxKind::PREFIX_ASSUME_LET_DED);
 }
 
+/// Parses a prefix let deduction.
+fn prefix_let_ded(p: &mut Parser) {
+    assert!(p.at_prefix_kw(T![dlet]));
+
+    let m = p.start();
+
+    // test(ded) prefix_let_ded
+    // (dlet ((foo 1) (bar 2)) (!claim A))
+    p.bump(T!['(']);
+    p.bump(T![dlet]);
+
+    p.bump(T!['(']);
+
+    while !p.at(T![')']) && !p.at_end() {
+        if !super::prefix_binding(p) {
+            // test_err(ded) prefix_let_ded_no_binding
+            // (dlet (domain Foo) foo)
+            p.err_recover(
+                "expected a binding in the prefix let deduction",
+                TokenSet::new(&[T![')'], T!['(']]),
+            )
+        }
+    }
+
+    p.expect(T![')']);
+
+    if !ded(p) {
+        // test_err(ded) prefix_let_ded_no_body
+        // (dlet ((foo 1) (bar 2)))
+        p.error("Expected to find a body (deduction) for the prefix let deduction");
+    }
+
+    p.expect(T![')']);
+
+    m.complete(p, SyntaxKind::PREFIX_LET_DED);
+}
+
+/// Parses a prefix letrec deduction.
+fn prefix_let_rec_ded(p: &mut Parser) {
+    assert!(p.at_prefix_kw(T![dletrec]));
+
+    let m = p.start();
+
+    // test(ded) prefix_let_rec_ded
+    // (dletrec ((foo 1) (bar 2)) (!claim A))
+    p.bump(T!['(']);
+    p.bump(T![dletrec]);
+
+    p.bump(T!['(']);
+
+    while !p.at(T![')']) && !p.at_end() {
+        if !super::prefix_binding(p) {
+            // test_err(ded) prefix_let_rec_ded_no_binding
+            // (dletrec (domain Foo) foo)
+            p.err_recover(
+                "expected a binding in the prefix letrec deduction",
+                TokenSet::new(&[T![')'], T!['(']]),
+            )
+        }
+    }
+
+    p.expect(T![')']);
+
+    if !ded(p) {
+        // test_err(ded) prefix_let_rec_ded_no_body
+        // (dletrec ((foo 1) (bar 2)))
+        p.error("Expected to find a body (deduction) for the prefix letrec deduction");
+    }
+
+    p.expect(T![')']);
+
+    m.complete(p, SyntaxKind::PREFIX_LET_DED);
+}
+
 // test(ded) match_ded
 // match A { B => (!claim C) }
 fn match_ded(p: &mut Parser) {
@@ -934,6 +1008,8 @@ pub(crate) const DED_AFTER_LPAREN_SET: TokenSet = TokenSet::new(&[
     T![dmatch],
     T![assume],
     T![assume-let],
+    T![dlet],
+    T![dletrec],
 ])
 .union(EXPR_START_SET);
 
@@ -959,6 +1035,12 @@ pub(crate) fn ded(p: &mut Parser) -> bool {
             }
             T![assume-let] => {
                 prefix_assume_let_ded(p);
+            }
+            T![dlet] => {
+                prefix_let_ded(p);
+            }
+            T![dletrec] => {
+                prefix_let_rec_ded(p);
             }
             _ => {
                 return false;

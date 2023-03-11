@@ -3,7 +3,7 @@ source: crates/parser/src/tests.rs
 description: "letrec { a := b; c := d }\n"
 input_file: crates/parser/test_data/parser/inline/err/ded/0053_let_rec_ded_no_body.ath
 ---
-LET_REC_DED
+INFIX_LET_REC_DED
   LETREC_KW "letrec"
   WHITESPACE " "
   L_CURLY "{"

@@ -174,6 +174,8 @@ pub(crate) enum LexerToken {
     On(usize),
     #[token("dmatch", |lex|lex.slice().len())]
     Dmatch(usize),
+    #[token("dletrec", |lex|lex.slice().len())]
+    Dletrec(usize),
     #[token("begin", |lex|lex.slice().len())]
     Begin(usize),
     #[token("end", |lex|lex.slice().len())]
@@ -305,6 +307,7 @@ impl LexerToken {
             Self::DatatypeCases(..) => T![datatype - cases],
             Self::On(..) => T![on],
             Self::Dmatch(..) => T![dmatch],
+            Self::Dletrec(..) => T![dletrec],
             Self::Begin(..) => T![begin],
             Self::End(..) => T![end],
             Self::From(..) => T![from],
@@ -415,6 +418,7 @@ impl LexerToken {
             Self::DatatypeCases(len) => len,
             Self::On(len) => len,
             Self::Dmatch(len) => len,
+            Self::Dletrec(len) => len,
             Self::Begin(len) => len,
             Self::End(len) => len,
             Self::From(len) => len,

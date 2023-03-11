@@ -1,0 +1,1 @@
+(dletrec (domain Foo) foo)

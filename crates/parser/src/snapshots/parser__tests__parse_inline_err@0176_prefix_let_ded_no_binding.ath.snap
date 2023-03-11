@@ -1,0 +1,28 @@
+---
+source: crates/parser/src/tests.rs
+description: "(dlet (domain Foo) foo)\n"
+input_file: crates/parser/test_data/parser/inline/err/ded/0176_prefix_let_ded_no_binding.ath
+---
+ERROR
+  PREFIX_LET_DED
+    L_PAREN "("
+    DLET_KW "dlet"
+    WHITESPACE " "
+    L_PAREN "("
+    ERROR
+      DOMAIN_KW "domain"
+    WHITESPACE " "
+    ERROR
+      IDENT "Foo"
+    R_PAREN ")"
+  WHITESPACE " "
+  IDENT "foo"
+  R_PAREN ")"
+  WHITESPACE "\n"
+error 7: Expected to find a prefix binding in parens
+error 7: expected a binding in the prefix let deduction
+error 13: Expected to find a prefix binding in parens
+error 14: expected a binding in the prefix let deduction
+error 18: Expected to find a body (deduction) for the prefix let deduction
+error 18: expected R_PAREN
+
