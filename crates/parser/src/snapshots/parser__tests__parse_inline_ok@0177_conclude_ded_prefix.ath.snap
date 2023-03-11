@@ -1,0 +1,43 @@
+---
+source: crates/parser/src/tests.rs
+description: "(conclude (= a b) (!claim c))\n"
+input_file: crates/parser/test_data/parser/inline/ok/ded/0177_conclude_ded_prefix.ath
+---
+CONCLUDE_DED
+  L_PAREN "("
+  CONCLUDE_KW "conclude"
+  WHITESPACE " "
+  APPLICATION_EXPR
+    L_PAREN "("
+    EXPR_PHRASE
+      IDENT_EXPR
+        IDENTIFIER
+          IDENT "="
+    WHITESPACE " "
+    EXPR_PHRASE
+      IDENT_EXPR
+        IDENTIFIER
+          IDENT "a"
+    WHITESPACE " "
+    EXPR_PHRASE
+      IDENT_EXPR
+        IDENTIFIER
+          IDENT "b"
+    R_PAREN ")"
+  WHITESPACE " "
+  DED_PHRASE
+    BANG_METHOD_CALL_DED
+      L_PAREN "("
+      BANG "!"
+      IDENT_EXPR
+        IDENTIFIER
+          IDENT "claim"
+      WHITESPACE " "
+      EXPR_PHRASE
+        IDENT_EXPR
+          IDENTIFIER
+            IDENT "c"
+      R_PAREN ")"
+  R_PAREN ")"
+  WHITESPACE "\n"
+

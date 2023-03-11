@@ -1960,6 +1960,9 @@ pub struct ConcludeDed {
     pub(crate) syntax: SyntaxNode,
 }
 impl ConcludeDed {
+    pub fn l_paren_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T!['('])
+    }
     pub fn conclude_token(&self) -> Option<SyntaxToken> {
         support::token(&self.syntax, T![conclude])
     }
@@ -1974,6 +1977,9 @@ impl ConcludeDed {
     }
     pub fn ded(&self) -> Option<Ded> {
         support::child(&self.syntax)
+    }
+    pub fn r_paren_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T![')'])
     }
 }
 

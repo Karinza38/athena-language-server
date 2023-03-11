@@ -1,0 +1,1 @@
+(conclude (= a b) (!claim c))

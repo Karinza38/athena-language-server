@@ -619,10 +619,15 @@ fn cases_ded(p: &mut Parser) {
 // test(ded) conclude_ded
 // conclude A
 //  (!claim A)
-fn conclude_ded(p: &mut Parser) {
-    assert!(p.at(T![conclude]));
+fn conclude_ded(p: &mut Parser, is_prefix: bool) {
+    assert!((is_prefix && p.at_prefix_kw(T![conclude])) || (!is_prefix && p.at(T![conclude])));
 
     let m = p.start();
+    if is_prefix {
+        // test(ded) conclude_ded_prefix
+        // (conclude (= a b) (!claim c))
+        p.bump(T!['(']);
+    }
     p.bump(T![conclude]);
 
     if p.at(IDENT) && p.peek_at(T![:=]) || p.at(T![:=]) {
@@ -650,6 +655,10 @@ fn conclude_ded(p: &mut Parser) {
         // test_err(ded) conclude_no_phrase
         // conclude A
         p.error("expected phrase in conclude deduction");
+    }
+
+    if is_prefix {
+        p.expect(T![')']);
     }
 
     m.complete(p, SyntaxKind::CONCLUDE_DED);
@@ -1116,6 +1125,7 @@ pub(crate) const DED_AFTER_LPAREN_SET: TokenSet = TokenSet::new(&[
     T![dtry],
     T![dcheck],
     T![dseq],
+    T![conclude],
 ])
 .union(EXPR_START_SET);
 
@@ -1159,6 +1169,9 @@ pub(crate) fn ded(p: &mut Parser) -> bool {
             }
             T![dseq] => {
                 prefix_seq_ded(p);
+            }
+            T![conclude] => {
+                conclude_ded(p, true);
             }
             _ => {
                 return false;
@@ -1212,7 +1225,7 @@ pub(crate) fn ded(p: &mut Parser) -> bool {
             cases_ded(p);
         }
         T![conclude] => {
-            conclude_ded(p);
+            conclude_ded(p, false);
         }
         T!['{'] | T![begin] => {
             if !infer_block_ded(p) {

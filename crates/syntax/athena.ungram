@@ -507,7 +507,7 @@ Ded =
     | SeqDed
 
 ConcludeDed =
-    'conclude' (Identifier ':=')? Expr Ded
+    '('? 'conclude' (Identifier ':=')? Expr Ded ')'?
 
 MethodCallDed =
     '(' 'apply-method' Expr Phrase* ')'
