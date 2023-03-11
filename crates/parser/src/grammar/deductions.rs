@@ -418,10 +418,22 @@ fn with_witness_ded(p: &mut Parser) {
     m.complete(p, SyntaxKind::WITH_WITNESS_DED);
 }
 
-fn pick_witness_ded(p: &mut Parser) {
-    assert!(p.at(T![pick - witness]));
+// test(ded) pick_witness_ded
+// pick-witness a for b (!claim a)
+fn pick_witness_ded(p: &mut Parser, is_prefix: bool) {
+    assert!(
+        (is_prefix && p.at_prefix_kw(T![pick - witness]))
+            || (!is_prefix && p.at(T![pick - witness]))
+    );
 
     let m = p.start();
+
+    if is_prefix {
+        // test(ded) prefix_pick_witness_ded
+        // (pick-witness a b (!claim a))
+        p.bump(T!['(']);
+    }
+
     p.bump(T![pick - witness]);
 
     if !p.at(IDENT) {
@@ -432,7 +444,9 @@ fn pick_witness_ded(p: &mut Parser) {
         identifier(p);
     }
 
-    p.expect(T![for]);
+    if !is_prefix {
+        p.expect(T![for]);
+    }
 
     if !phrase(p) {
         // test_err(ded) pick_witness_no_phrase
@@ -450,6 +464,10 @@ fn pick_witness_ded(p: &mut Parser) {
         // test_err(ded) pick_witness_no_body
         // pick-witness a for b
         p.error("expected body for pick witness");
+    }
+
+    if is_prefix {
+        p.expect(T![')']);
     }
 
     m.complete(p, SyntaxKind::PICK_WITNESS_DED);
@@ -696,6 +714,8 @@ fn infer_from(p: &mut Parser, m: Marker) {
 fn infer_by(p: &mut Parser, m: Marker) {
     assert!(p.at(T![by]) || p.at(T![on]));
 
+    // test(ded) infer_by_uppercase
+    // { A BY B on C }
     if p.at(T![by]) {
         p.bump(T![by]);
         if !expr(p) {
@@ -1126,6 +1146,7 @@ pub(crate) const DED_AFTER_LPAREN_SET: TokenSet = TokenSet::new(&[
     T![dcheck],
     T![dseq],
     T![conclude],
+    T![pick - witness],
 ])
 .union(EXPR_START_SET);
 
@@ -1173,6 +1194,9 @@ pub(crate) fn ded(p: &mut Parser) -> bool {
             T![conclude] => {
                 conclude_ded(p, true);
             }
+            T![pick - witness] => {
+                pick_witness_ded(p, true);
+            }
             _ => {
                 return false;
             }
@@ -1213,7 +1237,7 @@ pub(crate) fn ded(p: &mut Parser) -> bool {
             with_witness_ded(p);
         }
         T![pick - witness] => {
-            pick_witness_ded(p);
+            pick_witness_ded(p, false);
         }
         T![pick - witnesses] => {
             pick_witnesses_ded(p);
