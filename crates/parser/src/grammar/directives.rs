@@ -570,12 +570,25 @@ fn declare_dir(p: &mut Parser) {
     m.complete(p, SyntaxKind::DECLARE_DIR);
 }
 
+enum LoadKind {
+    Prefix,
+    Infix,
+}
+
 // test(dir) load_dir
 // load "list.ath"
-fn load_dir(p: &mut Parser) {
-    assert!(p.at(T![load]));
+fn load_dir(p: &mut Parser, kind: LoadKind) {
+    let prefix = matches!(kind, LoadKind::Prefix);
+    assert!((prefix && p.at_prefix_kw(T![load])) || (!prefix && p.at(T![load])));
 
     let m = p.start();
+
+    if prefix {
+        // test(dir) load_prefix
+        // (load "list.ath")
+        p.bump(T!['(']);
+    }
+
     p.bump(T![load]);
 
     if !p.at(SyntaxKind::STRING) {
@@ -590,6 +603,10 @@ fn load_dir(p: &mut Parser) {
         }
     } else {
         p.bump(SyntaxKind::STRING);
+    }
+
+    if prefix {
+        p.expect(T![')']);
     }
 
     m.complete(p, SyntaxKind::LOAD_DIR);
@@ -888,6 +905,7 @@ pub(crate) const DIR_AFTER_LPAREN: TokenSet = TokenSet::new(&[
     T![assert],
     T![assert*],
     T![primitive - method],
+    T![load],
 ]);
 
 pub(crate) fn dir(p: &mut Parser) -> bool {
@@ -922,7 +940,7 @@ pub(crate) fn dir(p: &mut Parser) -> bool {
             declare_dir(p);
         }
         T![load] => {
-            load_dir(p);
+            load_dir(p, LoadKind::Infix);
         }
         T![assert] => {
             assert_dir(p);
@@ -951,6 +969,9 @@ pub(crate) fn dir(p: &mut Parser) -> bool {
             }
             T![define] => {
                 prefix_define(p);
+            }
+            T![load] => {
+                load_dir(p, LoadKind::Prefix);
             }
             _ => {
                 return false;

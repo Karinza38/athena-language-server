@@ -269,7 +269,7 @@ DefineProc =
     '(' Identifier args:MaybeWildcardTypedParam* ')'
 
 LoadDir =
-    'load' 'string'
+    '('? 'load' 'string' ')'? // can be surrounded by parens
 
 AssertDir =
     'assert' (Identifier ':=')? (Expr (',' Expr)*)
