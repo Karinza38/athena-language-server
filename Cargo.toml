@@ -3,3 +3,6 @@ members = ["crates/*", "xtask"]
 
 [profile.dev.package.insta]
 opt-level = 3
+
+[workspace.dependencies]
+syntax = { path = "crates/syntax" }

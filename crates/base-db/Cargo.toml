@@ -1,0 +1,11 @@
+[package]
+name = "base-db"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+salsa = "0.17.0-pre.2"
+vfs = { git = "https://github.com/rust-lang/rust-analyzer", rev = "d712e529405b0ef5719c81ae620c88a97db78d93" }
+syntax.workspace = true
