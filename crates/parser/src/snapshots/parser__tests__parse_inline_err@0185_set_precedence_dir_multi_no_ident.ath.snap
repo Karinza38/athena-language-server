@@ -1,0 +1,16 @@
+---
+source: crates/parser/src/tests.rs
+description: "set-precedence (domain)\n"
+input_file: crates/parser/test_data/parser/inline/err/dir/0185_set_precedence_dir_multi_no_ident.ath
+---
+SET_PRECEDENCE_DIR
+  SET_PRECEDENCE_KW "set-precedence"
+  WHITESPACE " "
+  L_PAREN "("
+  ERROR
+    DOMAIN_KW "domain"
+  R_PAREN ")"
+  WHITESPACE "\n"
+error 16: expected identifier for set precedence
+error 23: expected expression to set precedence to
+

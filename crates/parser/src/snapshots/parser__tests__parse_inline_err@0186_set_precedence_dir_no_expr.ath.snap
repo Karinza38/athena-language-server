@@ -1,0 +1,13 @@
+---
+source: crates/parser/src/tests.rs
+description: "set-precedence foo\n"
+input_file: crates/parser/test_data/parser/inline/err/dir/0186_set_precedence_dir_no_expr.ath
+---
+SET_PRECEDENCE_DIR
+  SET_PRECEDENCE_KW "set-precedence"
+  WHITESPACE " "
+  IDENTIFIER
+    IDENT "foo"
+  WHITESPACE "\n"
+error 18: expected expression to set precedence to
+

@@ -1,0 +1,11 @@
+---
+source: crates/parser/src/tests.rs
+description: "set-precedence\n"
+input_file: crates/parser/test_data/parser/inline/err/dir/0187_set_precedence_dir_no_ident.ath
+---
+SET_PRECEDENCE_DIR
+  SET_PRECEDENCE_KW "set-precedence"
+  WHITESPACE "\n"
+error 14: expected identifier to set precedence for
+error 14: expected expression to set precedence to
+

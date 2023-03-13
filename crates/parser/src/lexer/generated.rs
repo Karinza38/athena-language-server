@@ -96,6 +96,8 @@ pub(crate) enum LexerToken {
     ExpandInput(usize),
     #[token("define-sort", |lex|lex.slice().len())]
     DefineSort(usize),
+    #[token("set-precedence", |lex|lex.slice().len())]
+    SetPrecedence(usize),
     #[token("?", |lex|lex.slice().len())]
     QuestionMark(usize),
     #[token("check", |lex|lex.slice().len())]
@@ -270,6 +272,7 @@ impl LexerToken {
             Self::PrimitiveMethod(..) => T![primitive - method],
             Self::ExpandInput(..) => T![expand - input],
             Self::DefineSort(..) => T![define - sort],
+            Self::SetPrecedence(..) => T![set - precedence],
             Self::QuestionMark(..) => T![?],
             Self::Check(..) => T![check],
             Self::FatArrow(..) => T![=>],
@@ -382,6 +385,7 @@ impl LexerToken {
             Self::PrimitiveMethod(len) => len,
             Self::ExpandInput(len) => len,
             Self::DefineSort(len) => len,
+            Self::SetPrecedence(len) => len,
             Self::QuestionMark(len) => len,
             Self::Check(len) => len,
             Self::FatArrow(len) => len,

@@ -1,0 +1,16 @@
+---
+source: crates/parser/src/tests.rs
+description: "set-precedence a 100\n"
+input_file: crates/parser/test_data/parser/inline/ok/dir/0185_set_precedence_dir_single.ath
+---
+SET_PRECEDENCE_DIR
+  SET_PRECEDENCE_KW "set-precedence"
+  WHITESPACE " "
+  IDENTIFIER
+    IDENT "a"
+  WHITESPACE " "
+  IDENT_EXPR
+    IDENTIFIER
+      IDENT "100"
+  WHITESPACE "\n"
+

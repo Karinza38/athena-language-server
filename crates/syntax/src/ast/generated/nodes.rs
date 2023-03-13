@@ -977,6 +977,28 @@ impl DefineSortDir {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
+pub struct SetPrecedenceDir {
+    pub(crate) syntax: SyntaxNode,
+}
+impl SetPrecedenceDir {
+    pub fn l_paren_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T!['('])
+    }
+    pub fn set_precedence_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T![set - precedence])
+    }
+    pub fn identifiers(&self) -> AstChildren<Identifier> {
+        support::children(&self.syntax)
+    }
+    pub fn r_paren_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T![')'])
+    }
+    pub fn expr(&self) -> Option<Expr> {
+        support::child(&self.syntax)
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct ExprPhrase {
     pub(crate) syntax: SyntaxNode,
 }
@@ -3862,6 +3884,21 @@ impl AstNode for ExpandInputDir {
 impl AstNode for DefineSortDir {
     fn can_cast(kind: SyntaxKind) -> bool {
         kind == DEFINE_SORT_DIR
+    }
+    fn cast(syntax: SyntaxNode) -> Option<Self> {
+        if Self::can_cast(syntax.kind()) {
+            Some(Self { syntax })
+        } else {
+            None
+        }
+    }
+    fn syntax(&self) -> &SyntaxNode {
+        &self.syntax
+    }
+}
+impl AstNode for SetPrecedenceDir {
+    fn can_cast(kind: SyntaxKind) -> bool {
+        kind == SET_PRECEDENCE_DIR
     }
     fn cast(syntax: SyntaxNode) -> Option<Self> {
         if Self::can_cast(syntax.kind()) {
@@ -7310,6 +7347,11 @@ impl std::fmt::Display for ExpandInputDir {
     }
 }
 impl std::fmt::Display for DefineSortDir {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        std::fmt::Display::fmt(self.syntax(), f)
+    }
+}
+impl std::fmt::Display for SetPrecedenceDir {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         std::fmt::Display::fmt(self.syntax(), f)
     }

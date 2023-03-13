@@ -278,8 +278,6 @@ PrefixAssertDir =
 AssertClosedDir =
     'assert*' (Identifier ':=')? Expr
 
-
-
 OpenDir =
     'open' (Identifier (',' Identifier)*)
 
@@ -305,10 +303,8 @@ DefineSortDir =
 PrefixDefineBlock =
     DefineProc ':='? Phrase
 
-//     '(' Id MWPL* ')' Ded
-//     | '(' Id ':' '(' 'OP' Id Id ')' MWPL* ')' Expr
-//     | '(' Id ':' '(' 'OP' Id ')' MWPL* ')' ':='? Expr
-//     | '(' Id MWPL* ')' ':='? Expr
+SetPrecedenceDir = // if multiple idents, must be surrounded by parens
+    '('? 'set-precedence' '('? Identifier* ')'? Expr ')'? // can be surrounded by parens
 
 //****************************//
 // Expressions and Deductions //

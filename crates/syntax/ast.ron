@@ -104,6 +104,7 @@ KindsSrc(
         "dcheck",
         "dletrec",
         "dseq",
+        "set-precedence",
     ],
     contextual_keywords: ["|"],
     literals: ["INT_NUMBER", "STRING", "CHAR"],
@@ -262,6 +263,7 @@ KindsSrc(
         "EXPAND_INPUT_DIR",
         "DEFINE_SORT_DIR",
         "PREFIX_ASSERT_DIR",
+        "SET_PRECEDENCE_DIR",
         // Statements
         "DIR_STMT",
         "PHRASE_STMT",

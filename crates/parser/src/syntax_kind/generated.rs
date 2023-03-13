@@ -111,6 +111,7 @@ pub enum SyntaxKind {
     DCHECK_KW,
     DLETREC_KW,
     DSEQ_KW,
+    SET_PRECEDENCE_KW,
     PIPE,
     INT_NUMBER,
     STRING,
@@ -265,6 +266,7 @@ pub enum SyntaxKind {
     EXPAND_INPUT_DIR,
     DEFINE_SORT_DIR,
     PREFIX_ASSERT_DIR,
+    SET_PRECEDENCE_DIR,
     DIR_STMT,
     PHRASE_STMT,
     STRUCTURE_NAME_DEF,
@@ -367,6 +369,7 @@ impl SyntaxKind {
                 | DCHECK_KW
                 | DLETREC_KW
                 | DSEQ_KW
+                | SET_PRECEDENCE_KW
                 | PIPE
         )
     }
@@ -547,6 +550,7 @@ impl SyntaxKind {
                 | EXPAND_INPUT_DIR
                 | DEFINE_SORT_DIR
                 | PREFIX_ASSERT_DIR
+                | SET_PRECEDENCE_DIR
                 | DIR_STMT
                 | PHRASE_STMT
                 | STRUCTURE_NAME_DEF
@@ -644,6 +648,7 @@ impl SyntaxKind {
             "dcheck" => DCHECK_KW,
             "dletrec" => DLETREC_KW,
             "dseq" => DSEQ_KW,
+            "set-precedence" => SET_PRECEDENCE_KW,
             _ => return None,
         };
         Some(kw)
@@ -985,6 +990,9 @@ macro_rules! T {
     };
     [dseq] => {
         $crate ::SyntaxKind::DSEQ_KW
+    };
+    [set - precedence] => {
+        $crate ::SyntaxKind::SET_PRECEDENCE_KW
     };
     [|] => {
         $crate ::SyntaxKind::PIPE

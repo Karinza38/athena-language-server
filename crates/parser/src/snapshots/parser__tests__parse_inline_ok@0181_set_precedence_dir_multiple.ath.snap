@@ -1,0 +1,24 @@
+---
+source: crates/parser/src/tests.rs
+description: "set-precedence (a b c) 100\n"
+input_file: crates/parser/test_data/parser/inline/ok/dir/0181_set_precedence_dir_multiple.ath
+---
+SET_PRECEDENCE_DIR
+  SET_PRECEDENCE_KW "set-precedence"
+  WHITESPACE " "
+  L_PAREN "("
+  IDENTIFIER
+    IDENT "a"
+  WHITESPACE " "
+  IDENTIFIER
+    IDENT "b"
+  WHITESPACE " "
+  IDENTIFIER
+    IDENT "c"
+  R_PAREN ")"
+  WHITESPACE " "
+  IDENT_EXPR
+    IDENTIFIER
+      IDENT "100"
+  WHITESPACE "\n"
+

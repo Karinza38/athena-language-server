@@ -570,20 +570,32 @@ fn declare_dir(p: &mut Parser) {
     m.complete(p, SyntaxKind::DECLARE_DIR);
 }
 
-enum LoadKind {
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+enum ParseKind {
     Prefix,
     Infix,
 }
 
+impl ParseKind {
+    fn is_prefix(self) -> bool {
+        matches!(self, ParseKind::Prefix)
+    }
+
+    fn is_infix(self) -> bool {
+        matches!(self, ParseKind::Infix)
+    }
+}
+
 // test(dir) load_dir
 // load "list.ath"
-fn load_dir(p: &mut Parser, kind: LoadKind) {
-    let prefix = matches!(kind, LoadKind::Prefix);
-    assert!((prefix && p.at_prefix_kw(T![load])) || (!prefix && p.at(T![load])));
+fn load_dir(p: &mut Parser, kind: ParseKind) {
+    assert!(
+        (kind.is_prefix() && p.at_prefix_kw(T![load])) || (!kind.is_prefix() && p.at(T![load]))
+    );
 
     let m = p.start();
 
-    if prefix {
+    if kind.is_prefix() {
         // test(dir) load_prefix
         // (load "list.ath")
         p.bump(T!['(']);
@@ -605,7 +617,7 @@ fn load_dir(p: &mut Parser, kind: LoadKind) {
         p.bump(SyntaxKind::STRING);
     }
 
-    if prefix {
+    if kind.is_prefix() {
         p.expect(T![')']);
     }
 
@@ -913,6 +925,68 @@ fn define_sort_dir(p: &mut Parser) {
     m.complete(p, SyntaxKind::DEFINE_SORT_DIR);
 }
 
+// test(dir) set_precedence_dir
+// set-precedence (a b) 100
+fn set_precedence_dir(p: &mut Parser, kind: ParseKind) {
+    assert!(
+        (kind.is_prefix() && p.at_prefix_kw(T![set - precedence]))
+            || (kind.is_infix() && p.at(T![set - precedence]))
+    );
+
+    let m = p.start();
+    if kind.is_prefix() {
+        // test(dir) set_precedence_dir_prefix
+        // ( set-precedence (a b) 100 )
+        p.bump(T!['(']);
+        p.bump(T![set - precedence]);
+    } else {
+        // test(dir) set_precedence_dir_infix
+        // set-precedence (a b) 100
+        p.bump(T![set - precedence]);
+    }
+
+    if p.at(T!['(']) {
+        // test(dir) set_precedence_dir_multiple
+        // set-precedence (a b c) 100
+        p.bump(T!['(']);
+
+        while !p.at(T![')']) && !p.at_end() {
+            if !p.at(IDENT) {
+                // test_err(dir) set_precedence_dir_multi_no_ident
+                // set-precedence (domain)
+                p.err_recover(
+                    "expected identifier for set precedence",
+                    TokenSet::new(&[T![')'], IDENT]),
+                ); // TODO: ast validation of at least 1
+            } else {
+                identifier(p);
+            }
+        }
+
+        p.expect(T![')']);
+    } else if p.at(IDENT) {
+        // test(dir) set_precedence_dir_single
+        // set-precedence a 100
+        identifier(p);
+    } else {
+        // test_err(dir) set_precedence_dir_no_ident
+        // set-precedence
+        p.error("expected identifier to set precedence for");
+    }
+
+    if !expr(p) {
+        // test_err(dir) set_precedence_dir_no_expr
+        // set-precedence foo
+        p.error("expected expression to set precedence to");
+    }
+
+    if kind.is_prefix() {
+        p.expect(T![')']);
+    }
+
+    m.complete(p, SyntaxKind::SET_PRECEDENCE_DIR);
+}
+
 const ASSOCIATIVITY_SET: TokenSet = TokenSet::new(&[T![left - assoc], T![right - assoc]]);
 
 pub(crate) const DIR_START_SET: TokenSet = TokenSet::new(&[
@@ -980,7 +1054,7 @@ pub(crate) fn dir(p: &mut Parser) -> bool {
             declare_dir(p);
         }
         T![load] => {
-            load_dir(p, LoadKind::Infix);
+            load_dir(p, ParseKind::Infix);
         }
         T![assert] => {
             assert_dir(p);
@@ -1003,6 +1077,9 @@ pub(crate) fn dir(p: &mut Parser) -> bool {
         T![define - sort] => {
             define_sort_dir(p);
         }
+        T![set - precedence] => {
+            set_precedence_dir(p, ParseKind::Infix);
+        }
         T!['('] => match p.nth(1) {
             T![primitive - method] => {
                 prefix_rule_dir(p);
@@ -1011,7 +1088,10 @@ pub(crate) fn dir(p: &mut Parser) -> bool {
                 prefix_define(p);
             }
             T![load] => {
-                load_dir(p, LoadKind::Prefix);
+                load_dir(p, ParseKind::Prefix);
+            }
+            T![set - precedence] => {
+                set_precedence_dir(p, ParseKind::Prefix);
             }
             T![assert] => {
                 prefix_assert_dir(p);
