@@ -1,12 +1,19 @@
-mod line_index;
+mod from_proto;
 mod semantic_tokens;
+mod to_proto;
 
 use dashmap::DashMap;
-use ropey::Rope;
-use syntax::SourceFile;
+use ide::{Analysis, AnalysisHost, Cancellable};
+use ide_db::base_db::Change;
+use parking_lot::RwLock;
+use std::{future::Future, sync::Arc};
+use tokio::{
+    sync::{mpsc::Sender, oneshot},
+    task::JoinHandle,
+};
 use tower_lsp::{
     async_trait,
-    jsonrpc::Result,
+    jsonrpc::{Error as LspError, Result as LspResult},
     lsp_types::{
         Diagnostic, DidChangeConfigurationParams, DidChangeTextDocumentParams,
         DidChangeWatchedFilesParams, DidChangeWorkspaceFoldersParams, DidCloseTextDocumentParams,
@@ -20,12 +27,17 @@ use tower_lsp::{
     },
     Client, LanguageServer, LspService, Server,
 };
+use vfs::{FileId, Vfs};
+
+pub type Error = Box<dyn std::error::Error + Send + Sync>;
+
+pub type Result<T, E = Error> = std::result::Result<T, E>;
 
 #[derive(Debug)]
 struct Backend {
     client: Client,
-    document_map: DashMap<String, Rope>,
-    ast_map: DashMap<String, syntax::Parse<SourceFile>>,
+    analysis_client: AnalysisClient,
+    vfs: RwLock<Vfs>,
     semantic_token_map: DashMap<String, SemanticTokens>,
 }
 
@@ -37,19 +49,23 @@ struct TextDocumentItem {
 }
 
 impl Backend {
-    fn new(client: Client) -> Self {
+    fn new(client: Client, analysis_client: AnalysisClient) -> Self {
         Self {
             client,
-            document_map: DashMap::new(),
-            ast_map: DashMap::new(),
             semantic_token_map: DashMap::new(),
+            analysis_client,
+            vfs: RwLock::new(Vfs::default()),
         }
+    }
+
+    async fn analysis(&self) -> Analysis {
+        self.analysis_client.analysis().await.await.unwrap()
     }
 }
 
 #[async_trait]
 impl LanguageServer for Backend {
-    async fn initialize(&self, _: InitializeParams) -> Result<InitializeResult> {
+    async fn initialize(&self, _: InitializeParams) -> LspResult<InitializeResult> {
         Ok(InitializeResult {
             server_info: None,
             capabilities: ServerCapabilities {
@@ -152,7 +168,9 @@ impl LanguageServer for Backend {
     async fn semantic_tokens_full(
         &self,
         params: SemanticTokensParams,
-    ) -> Result<Option<SemanticTokensResult>> {
+    ) -> LspResult<Option<SemanticTokensResult>> {
+        let analysis = self.analysis().await;
+        let file_id = self.file_id(&params.text_document.uri)?;
         let uri = params.text_document.uri.to_string();
         self.client
             .log_message(MessageType::LOG, "semantic_token_full")
@@ -161,13 +179,9 @@ impl LanguageServer for Backend {
         if let Some(semantic_tokens) = semantic_tokens {
             return Ok(Some(SemanticTokensResult::Tokens(semantic_tokens)));
         } else {
-            let Some(ast) = self.ast_map.get(&uri).map(|v| v.clone()) else {
-                return Ok(None);
-            };
-            let Some(rop) = self.document_map.get(&uri).map(|v| v.clone()) else {
-                return Ok(None);
-            };
-            let index = line_index::LineIndex::new(&rop.to_string());
+            let index = analysis.file_line_index(file_id).cancellable()?;
+            let ast = analysis.parse(file_id).cancellable()?;
+
             let tokens = semantic_tokens::semantic_tokens_for_file(ast.tree(), &index);
             self.semantic_token_map.insert(uri, tokens.clone());
             return Ok(Some(SemanticTokensResult::Tokens(tokens)));
@@ -175,24 +189,60 @@ impl LanguageServer for Backend {
         // Ok(None)
     }
 
-    async fn shutdown(&self) -> Result<()> {
+    async fn shutdown(&self) -> LspResult<()> {
+        self.analysis_client.shutdown().await;
         Ok(())
     }
 }
 
+#[extend::ext]
+impl<T> Cancellable<T> {
+    fn cancellable(self) -> Result<T, LspError> {
+        self.map_err(|_| LspError::request_cancelled())
+    }
+}
+
 impl Backend {
+    fn file_id(&self, uri: &Url) -> LspResult<FileId> {
+        let vfs = self.vfs.read();
+        from_proto::url_to_file_id(&vfs, uri)
+            .map_err(|err| LspError::invalid_params(format!("invalid file path: {}", err)))
+    }
     async fn on_change(&self, params: TextDocumentItem) {
         self.client.log_message(MessageType::LOG, "on_change").await;
-        let rope = Rope::from_str(&params.text);
-        self.document_map
-            .insert(params.uri.to_string(), rope.clone());
-        let ast = syntax::SourceFile::parse(&params.text);
-        let index = line_index::LineIndex::new(&params.text);
+        let pth = from_proto::vfs_path(&params.uri).unwrap();
+        let change = {
+            let mut vfs = self.vfs.write();
+            vfs.set_file_contents(pth, Some(params.text.into_bytes()));
+
+            let changes = vfs.take_changes();
+
+            let mut change = Change::new();
+            for ch in changes {
+                if ch.exists() {
+                    let contents = String::from_utf8(vfs.file_contents(ch.file_id).to_vec())
+                        .ok()
+                        .map(|c| Arc::new(c));
+                    change.change_file(ch.file_id, contents);
+                } else {
+                    change.change_file(ch.file_id, None);
+                }
+            }
+            change
+        };
+        self.analysis_client.files_changed(change).await;
+
+        let analysis = self.analysis().await;
+        let file_id = self.file_id(&params.uri).unwrap();
+
+        let ast = analysis.parse(file_id).unwrap();
+        let index = analysis.file_line_index(file_id).unwrap();
+
         let diagnostics = ast
             .errors()
             .iter()
             .map(|err| {
-                let range = index.range(err.range());
+                let range = to_proto::range(&index, err.range());
                 Diagnostic::new_simple(range, err.message().to_owned())
             })
             .collect::<Vec<_>>();
@@ -202,10 +252,85 @@ impl Backend {
         self.client
             .publish_diagnostics(params.uri.clone(), diagnostics, Some(params.version))
             .await;
-        self.ast_map.insert(params.uri.to_string(), ast);
         self.semantic_token_map
             .insert(params.uri.to_string(), tokens);
     }
+}
+
+#[derive(Debug)]
+enum AnalysisClientMessage {
+    WantAnalysis(oneshot::Sender<Analysis>),
+
+    FilesChanged(Change),
+
+    Shutdown,
+}
+
+#[derive(Debug)]
+struct AnalysisClient {
+    sender: Sender<AnalysisClientMessage>,
+}
+
+impl AnalysisClient {
+    async fn analysis(&self) -> impl Future<Output = Result<Analysis, oneshot::error::RecvError>> {
+        let (sender, receiver) = oneshot::channel();
+        self.sender
+            .send(AnalysisClientMessage::WantAnalysis(sender))
+            .await
+            .unwrap();
+        receiver
+    }
+
+    async fn files_changed(&self, change: Change) {
+        self.sender
+            .send(AnalysisClientMessage::FilesChanged(change))
+            .await
+            .unwrap();
+    }
+
+    async fn shutdown(&self) {
+        self.sender
+            .send(AnalysisClientMessage::Shutdown)
+            .await
+            .unwrap();
+    }
+}
+
+struct AnalysisHostTask(JoinHandle<()>);
+
+fn start_analysis() -> (AnalysisClient, AnalysisHostTask) {
+    const BUFFER_SIZE: usize = 1024 * 100;
+    let (client_sender, client_receiver) = tokio::sync::mpsc::channel(BUFFER_SIZE);
+
+    let host = tokio::spawn(async move {
+        let mut client_receiver = client_receiver;
+        let mut host = AnalysisHost::default();
+
+        loop {
+            let Some(msg) = client_receiver.recv().await else {
+                break;
+            };
+
+            match msg {
+                AnalysisClientMessage::WantAnalysis(sender) => {
+                    let analysis = host.analysis();
+                    sender.send(analysis).unwrap();
+                }
+                AnalysisClientMessage::FilesChanged(change) => {
+                    host.apply_change(change);
+                }
+                AnalysisClientMessage::Shutdown => {
+                    break;
+                }
+            }
+        }
+    });
+
+    let client = AnalysisClient {
+        sender: client_sender,
+    };
+
+    (client, AnalysisHostTask(host))
 }
 
 #[tokio::main]
@@ -215,6 +340,8 @@ async fn main() {
     let stdin = tokio::io::stdin();
     let stdout = tokio::io::stdout();
 
-    let (service, socket) = LspService::new(Backend::new);
+    let (analysis_client, _host) = start_analysis();
+
+    let (service, socket) = LspService::new(move |c| Backend::new(c, analysis_client));
     Server::new(stdin, stdout, socket).serve(service).await;
 }

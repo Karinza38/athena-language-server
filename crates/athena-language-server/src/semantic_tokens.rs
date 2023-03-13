@@ -8,7 +8,7 @@ use tower_lsp::lsp_types::{
     SemanticToken, SemanticTokenModifier, SemanticTokenType, SemanticTokens, SemanticTokensEdit,
 };
 
-use crate::line_index::LineIndex;
+use ide_db::line_index::LineIndex;
 
 macro_rules! define_semantic_token_types {
     (
@@ -181,7 +181,7 @@ impl<'a> SemanticTokensBuilder<'a> {
         token_type: SemanticTokenType,
         modifier_bitset: u32,
     ) {
-        let range = self.line_index.range(text_range);
+        let range = crate::to_proto::range(&self.line_index, text_range);
         let token_index = type_index(token_type);
         let mut push_line = range.start.line;
         let mut push_char = range.start.character;

@@ -3,7 +3,6 @@
 use std::{collections::HashMap, iter, mem};
 
 use syntax::{TextRange, TextSize};
-use tower_lsp::lsp_types::{Position, Range};
 
 // FIXME: don't actually hash the keys
 
@@ -56,16 +55,6 @@ impl Utf16Char {
 }
 
 impl LineIndex {
-    pub fn position(&self, offset: TextSize) -> Position {
-        let line_col = self.to_utf16(self.line_col(offset));
-        Position::new(line_col.line, line_col.col)
-    }
-    pub fn range(&self, text_range: TextRange) -> Range {
-        Range::new(
-            self.position(text_range.start()),
-            self.position(text_range.end()),
-        )
-    }
     pub fn new(text: &str) -> LineIndex {
         let mut utf16_lines = HashMap::default();
         let mut utf16_chars = Vec::new();
