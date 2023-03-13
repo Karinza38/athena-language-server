@@ -105,6 +105,7 @@ KindsSrc(
         "dletrec",
         "dseq",
         "set-precedence",
+        "overload",
     ],
     contextual_keywords: ["|"],
     literals: ["INT_NUMBER", "STRING", "CHAR"],
@@ -115,6 +116,7 @@ KindsSrc(
         "LITERAL",
         "META_IDENT",
         "UNIT",
+        "PHRASE_PAIR",
         // Sorts
         "IDENT_SORT",
         "VAR_SORT",
@@ -264,6 +266,8 @@ KindsSrc(
         "DEFINE_SORT_DIR",
         "PREFIX_ASSERT_DIR",
         "SET_PRECEDENCE_DIR",
+        "OVERLOAD_SINGLE",
+        "OVERLOAD_MULTI",
         // Statements
         "DIR_STMT",
         "PHRASE_STMT",

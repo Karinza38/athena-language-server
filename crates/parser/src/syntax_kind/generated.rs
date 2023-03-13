@@ -112,6 +112,7 @@ pub enum SyntaxKind {
     DLETREC_KW,
     DSEQ_KW,
     SET_PRECEDENCE_KW,
+    OVERLOAD_KW,
     PIPE,
     INT_NUMBER,
     STRING,
@@ -125,6 +126,7 @@ pub enum SyntaxKind {
     LITERAL,
     META_IDENT,
     UNIT,
+    PHRASE_PAIR,
     IDENT_SORT,
     VAR_SORT,
     COMPOUND_SORT,
@@ -267,6 +269,8 @@ pub enum SyntaxKind {
     DEFINE_SORT_DIR,
     PREFIX_ASSERT_DIR,
     SET_PRECEDENCE_DIR,
+    OVERLOAD_SINGLE,
+    OVERLOAD_MULTI,
     DIR_STMT,
     PHRASE_STMT,
     STRUCTURE_NAME_DEF,
@@ -370,6 +374,7 @@ impl SyntaxKind {
                 | DLETREC_KW
                 | DSEQ_KW
                 | SET_PRECEDENCE_KW
+                | OVERLOAD_KW
                 | PIPE
         )
     }
@@ -409,6 +414,7 @@ impl SyntaxKind {
                 | LITERAL
                 | META_IDENT
                 | UNIT
+                | PHRASE_PAIR
                 | IDENT_SORT
                 | VAR_SORT
                 | COMPOUND_SORT
@@ -551,6 +557,8 @@ impl SyntaxKind {
                 | DEFINE_SORT_DIR
                 | PREFIX_ASSERT_DIR
                 | SET_PRECEDENCE_DIR
+                | OVERLOAD_SINGLE
+                | OVERLOAD_MULTI
                 | DIR_STMT
                 | PHRASE_STMT
                 | STRUCTURE_NAME_DEF
@@ -649,6 +657,7 @@ impl SyntaxKind {
             "dletrec" => DLETREC_KW,
             "dseq" => DSEQ_KW,
             "set-precedence" => SET_PRECEDENCE_KW,
+            "overload" => OVERLOAD_KW,
             _ => return None,
         };
         Some(kw)
@@ -993,6 +1002,9 @@ macro_rules! T {
     };
     [set - precedence] => {
         $crate ::SyntaxKind::SET_PRECEDENCE_KW
+    };
+    [overload] => {
+        $crate ::SyntaxKind::OVERLOAD_KW
     };
     [|] => {
         $crate ::SyntaxKind::PIPE

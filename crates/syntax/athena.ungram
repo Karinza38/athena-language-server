@@ -306,6 +306,19 @@ PrefixDefineBlock =
 SetPrecedenceDir = // if multiple idents, must be surrounded by parens
     '('? 'set-precedence' '('? Identifier* ')'? Expr ')'? // can be surrounded by parens
 
+PhrasePair =
+    '(' Phrase Phrase ')'
+
+OverloadDir =
+    OverloadSingle
+    | OverloadMulti
+
+OverloadSingle =
+    '('? 'overload' Phrase Phrase ')'?
+
+OverloadMulti =
+    '('? 'overload' PhrasePair* ')'?
+
 //****************************//
 // Expressions and Deductions //
 //****************************//

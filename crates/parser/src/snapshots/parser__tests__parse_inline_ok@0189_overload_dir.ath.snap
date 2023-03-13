@@ -1,0 +1,48 @@
+---
+source: crates/parser/src/tests.rs
+description: "overload (== eq) (+ N.+) (- N.-)\n"
+input_file: crates/parser/test_data/parser/inline/ok/dir/0189_overload_dir.ath
+---
+OVERLOAD_MULTI
+  OVERLOAD_KW "overload"
+  WHITESPACE " "
+  PHRASE_PAIR
+    L_PAREN "("
+    EXPR_PHRASE
+      IDENT_EXPR
+        IDENTIFIER
+          IDENT "=="
+    WHITESPACE " "
+    EXPR_PHRASE
+      IDENT_EXPR
+        IDENTIFIER
+          IDENT "eq"
+    R_PAREN ")"
+  WHITESPACE " "
+  PHRASE_PAIR
+    L_PAREN "("
+    EXPR_PHRASE
+      IDENT_EXPR
+        IDENTIFIER
+          IDENT "+"
+    WHITESPACE " "
+    EXPR_PHRASE
+      IDENT_EXPR
+        IDENTIFIER
+          IDENT "N.+"
+    R_PAREN ")"
+  WHITESPACE " "
+  PHRASE_PAIR
+    L_PAREN "("
+    EXPR_PHRASE
+      IDENT_EXPR
+        IDENTIFIER
+          IDENT "-"
+    WHITESPACE " "
+    EXPR_PHRASE
+      IDENT_EXPR
+        IDENTIFIER
+          IDENT "N.-"
+    R_PAREN ")"
+  WHITESPACE "\n"
+

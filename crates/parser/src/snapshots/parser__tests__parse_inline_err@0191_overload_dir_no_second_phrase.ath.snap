@@ -1,0 +1,15 @@
+---
+source: crates/parser/src/tests.rs
+description: "overload foo\n"
+input_file: crates/parser/test_data/parser/inline/err/dir/0191_overload_dir_no_second_phrase.ath
+---
+OVERLOAD_SINGLE
+  OVERLOAD_KW "overload"
+  WHITESPACE " "
+  EXPR_PHRASE
+    IDENT_EXPR
+      IDENTIFIER
+        IDENT "foo"
+  WHITESPACE "\n"
+error 12: expected phrase to overload to
+

@@ -250,3 +250,31 @@ fn prefix_binding(p: &mut Parser) -> bool {
     m.complete(p, SyntaxKind::PREFIX_BINDING);
     true
 }
+
+fn phrase_pair(p: &mut Parser) {
+    assert!(p.at(T!['(']));
+    let m = p.start();
+
+    p.bump(T!['(']);
+
+    if !phrases::phrase(p) {
+        // test_err(dir) phrase_pair_no_phrase
+        // (overload  (domain))
+        p.err_recover(
+            "Expected a phrase in the phrase pair",
+            phrases::PHRASE_START_SET.union(TokenSet::single(T![')'])),
+        );
+    }
+
+    if !phrases::phrase(p) {
+        // test_err(dir) phrase_pair_no_second_phrase
+        // (overload  (a domain))
+        p.err_recover(
+            "Expected a second phrase in the phrase pair",
+            TokenSet::single(T![')']),
+        );
+    }
+
+    p.expect(T![')']);
+    m.complete(p, SyntaxKind::PHRASE_PAIR);
+}

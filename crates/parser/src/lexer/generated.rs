@@ -98,6 +98,8 @@ pub(crate) enum LexerToken {
     DefineSort(usize),
     #[token("set-precedence", |lex|lex.slice().len())]
     SetPrecedence(usize),
+    #[token("overload", |lex|lex.slice().len())]
+    Overload(usize),
     #[token("?", |lex|lex.slice().len())]
     QuestionMark(usize),
     #[token("check", |lex|lex.slice().len())]
@@ -273,6 +275,7 @@ impl LexerToken {
             Self::ExpandInput(..) => T![expand - input],
             Self::DefineSort(..) => T![define - sort],
             Self::SetPrecedence(..) => T![set - precedence],
+            Self::Overload(..) => T![overload],
             Self::QuestionMark(..) => T![?],
             Self::Check(..) => T![check],
             Self::FatArrow(..) => T![=>],
@@ -386,6 +389,7 @@ impl LexerToken {
             Self::ExpandInput(len) => len,
             Self::DefineSort(len) => len,
             Self::SetPrecedence(len) => len,
+            Self::Overload(len) => len,
             Self::QuestionMark(len) => len,
             Self::Check(len) => len,
             Self::FatArrow(len) => len,

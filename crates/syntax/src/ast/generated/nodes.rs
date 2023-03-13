@@ -999,6 +999,60 @@ impl SetPrecedenceDir {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
+pub struct PhrasePair {
+    pub(crate) syntax: SyntaxNode,
+}
+impl PhrasePair {
+    pub fn l_paren_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T!['('])
+    }
+    pub fn phrase(&self) -> Option<Phrase> {
+        support::child(&self.syntax)
+    }
+    pub fn r_paren_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T![')'])
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+pub struct OverloadSingle {
+    pub(crate) syntax: SyntaxNode,
+}
+impl OverloadSingle {
+    pub fn l_paren_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T!['('])
+    }
+    pub fn overload_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T![overload])
+    }
+    pub fn phrase(&self) -> Option<Phrase> {
+        support::child(&self.syntax)
+    }
+    pub fn r_paren_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T![')'])
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+pub struct OverloadMulti {
+    pub(crate) syntax: SyntaxNode,
+}
+impl OverloadMulti {
+    pub fn l_paren_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T!['('])
+    }
+    pub fn overload_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T![overload])
+    }
+    pub fn phrase_pairs(&self) -> AstChildren<PhrasePair> {
+        support::children(&self.syntax)
+    }
+    pub fn r_paren_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T![')'])
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct ExprPhrase {
     pub(crate) syntax: SyntaxNode,
 }
@@ -2947,6 +3001,12 @@ pub enum RuleDir {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
+pub enum OverloadDir {
+    OverloadSingle(OverloadSingle),
+    OverloadMulti(OverloadMulti),
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub enum Ded {
     MethodCallDed(MethodCallDed),
     BangMethodCallDed(BangMethodCallDed),
@@ -3899,6 +3959,51 @@ impl AstNode for DefineSortDir {
 impl AstNode for SetPrecedenceDir {
     fn can_cast(kind: SyntaxKind) -> bool {
         kind == SET_PRECEDENCE_DIR
+    }
+    fn cast(syntax: SyntaxNode) -> Option<Self> {
+        if Self::can_cast(syntax.kind()) {
+            Some(Self { syntax })
+        } else {
+            None
+        }
+    }
+    fn syntax(&self) -> &SyntaxNode {
+        &self.syntax
+    }
+}
+impl AstNode for PhrasePair {
+    fn can_cast(kind: SyntaxKind) -> bool {
+        kind == PHRASE_PAIR
+    }
+    fn cast(syntax: SyntaxNode) -> Option<Self> {
+        if Self::can_cast(syntax.kind()) {
+            Some(Self { syntax })
+        } else {
+            None
+        }
+    }
+    fn syntax(&self) -> &SyntaxNode {
+        &self.syntax
+    }
+}
+impl AstNode for OverloadSingle {
+    fn can_cast(kind: SyntaxKind) -> bool {
+        kind == OVERLOAD_SINGLE
+    }
+    fn cast(syntax: SyntaxNode) -> Option<Self> {
+        if Self::can_cast(syntax.kind()) {
+            Some(Self { syntax })
+        } else {
+            None
+        }
+    }
+    fn syntax(&self) -> &SyntaxNode {
+        &self.syntax
+    }
+}
+impl AstNode for OverloadMulti {
+    fn can_cast(kind: SyntaxKind) -> bool {
+        kind == OVERLOAD_MULTI
     }
     fn cast(syntax: SyntaxNode) -> Option<Self> {
         if Self::can_cast(syntax.kind()) {
@@ -6329,6 +6434,35 @@ impl AstNode for RuleDir {
         }
     }
 }
+impl From<OverloadSingle> for OverloadDir {
+    fn from(node: OverloadSingle) -> OverloadDir {
+        OverloadDir::OverloadSingle(node)
+    }
+}
+impl From<OverloadMulti> for OverloadDir {
+    fn from(node: OverloadMulti) -> OverloadDir {
+        OverloadDir::OverloadMulti(node)
+    }
+}
+impl AstNode for OverloadDir {
+    fn can_cast(kind: SyntaxKind) -> bool {
+        matches!(kind, OVERLOAD_SINGLE | OVERLOAD_MULTI)
+    }
+    fn cast(syntax: SyntaxNode) -> Option<Self> {
+        let res = match syntax.kind() {
+            OVERLOAD_SINGLE => OverloadDir::OverloadSingle(OverloadSingle { syntax }),
+            OVERLOAD_MULTI => OverloadDir::OverloadMulti(OverloadMulti { syntax }),
+            _ => return None,
+        };
+        Some(res)
+    }
+    fn syntax(&self) -> &SyntaxNode {
+        match self {
+            OverloadDir::OverloadSingle(it) => &it.syntax,
+            OverloadDir::OverloadMulti(it) => &it.syntax,
+        }
+    }
+}
 impl From<MethodCallDed> for Ded {
     fn from(node: MethodCallDed) -> Ded {
         Ded::MethodCallDed(node)
@@ -7011,6 +7145,11 @@ impl std::fmt::Display for RuleDir {
         std::fmt::Display::fmt(self.syntax(), f)
     }
 }
+impl std::fmt::Display for OverloadDir {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        std::fmt::Display::fmt(self.syntax(), f)
+    }
+}
 impl std::fmt::Display for Ded {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         std::fmt::Display::fmt(self.syntax(), f)
@@ -7352,6 +7491,21 @@ impl std::fmt::Display for DefineSortDir {
     }
 }
 impl std::fmt::Display for SetPrecedenceDir {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        std::fmt::Display::fmt(self.syntax(), f)
+    }
+}
+impl std::fmt::Display for PhrasePair {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        std::fmt::Display::fmt(self.syntax(), f)
+    }
+}
+impl std::fmt::Display for OverloadSingle {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        std::fmt::Display::fmt(self.syntax(), f)
+    }
+}
+impl std::fmt::Display for OverloadMulti {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         std::fmt::Display::fmt(self.syntax(), f)
     }

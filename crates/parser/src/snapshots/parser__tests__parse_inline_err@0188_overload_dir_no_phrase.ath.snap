@@ -1,0 +1,11 @@
+---
+source: crates/parser/src/tests.rs
+description: "overload\n"
+input_file: crates/parser/test_data/parser/inline/err/dir/0188_overload_dir_no_phrase.ath
+---
+OVERLOAD_SINGLE
+  OVERLOAD_KW "overload"
+  WHITESPACE "\n"
+error 8: expected phrase to overload
+error 8: expected phrase to overload to
+

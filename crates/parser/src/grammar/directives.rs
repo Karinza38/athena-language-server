@@ -987,6 +987,57 @@ fn set_precedence_dir(p: &mut Parser, kind: ParseKind) {
     m.complete(p, SyntaxKind::SET_PRECEDENCE_DIR);
 }
 
+// test(dir) overload_dir
+// overload (== eq) (+ N.+) (- N.-)
+fn overload_dir(p: &mut Parser, kind: ParseKind) {
+    assert!(
+        (kind.is_prefix() && p.at_prefix_kw(T![overload]))
+            || (kind.is_infix() && p.at(T![overload]))
+    );
+
+    let m = p.start();
+    if kind.is_prefix() {
+        // test(dir) overload_dir_prefix
+        // ( overload foo bar )
+        p.bump(T!['(']);
+    } else {
+        // test(dir) overload_dir_infix
+        // overload foo bar
+    }
+    p.bump(T![overload]);
+
+    let multi = p.at(T!['(']);
+    if multi {
+        // test(dir) overload_dir_multi
+        // overload (foo bar) (baz quux)
+        while p.at(T!['(']) {
+            super::phrase_pair(p);
+        }
+    } else {
+        if !phrase(p) {
+            // test_err(dir) overload_dir_no_phrase
+            // overload
+            p.error("expected phrase to overload");
+        }
+
+        if !phrase(p) {
+            // test_err(dir) overload_dir_no_second_phrase
+            // overload foo
+            p.error("expected phrase to overload to");
+        }
+    }
+
+    if kind.is_prefix() {
+        p.expect(T![')']);
+    }
+
+    if multi {
+        m.complete(p, SyntaxKind::OVERLOAD_MULTI);
+    } else {
+        m.complete(p, SyntaxKind::OVERLOAD_SINGLE);
+    }
+}
+
 const ASSOCIATIVITY_SET: TokenSet = TokenSet::new(&[T![left - assoc], T![right - assoc]]);
 
 pub(crate) const DIR_START_SET: TokenSet = TokenSet::new(&[
@@ -1007,6 +1058,8 @@ pub(crate) const DIR_START_SET: TokenSet = TokenSet::new(&[
     T![primitive - method],
     T![expand - input],
     T![define - sort],
+    T![set - precedence],
+    T![overload],
 ]);
 
 pub(crate) const DIR_AFTER_LPAREN: TokenSet = TokenSet::new(&[
@@ -1020,6 +1073,8 @@ pub(crate) const DIR_AFTER_LPAREN: TokenSet = TokenSet::new(&[
     T![assert*],
     T![primitive - method],
     T![load],
+    T![set - precedence],
+    T![overload],
 ]);
 
 pub(crate) fn dir(p: &mut Parser) -> bool {
@@ -1080,6 +1135,9 @@ pub(crate) fn dir(p: &mut Parser) -> bool {
         T![set - precedence] => {
             set_precedence_dir(p, ParseKind::Infix);
         }
+        T![overload] => {
+            overload_dir(p, ParseKind::Infix);
+        }
         T!['('] => match p.nth(1) {
             T![primitive - method] => {
                 prefix_rule_dir(p);
@@ -1092,6 +1150,9 @@ pub(crate) fn dir(p: &mut Parser) -> bool {
             }
             T![set - precedence] => {
                 set_precedence_dir(p, ParseKind::Prefix);
+            }
+            T![overload] => {
+                overload_dir(p, ParseKind::Prefix);
             }
             T![assert] => {
                 prefix_assert_dir(p);
