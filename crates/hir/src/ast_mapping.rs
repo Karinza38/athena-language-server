@@ -3,7 +3,9 @@ use std::sync::Arc;
 use base_db::{salsa, FileId, SourceDatabase};
 use la_arena::{Arena, Idx};
 use rustc_hash::FxHashMap;
-use syntax::{AstNode, SyntaxNode, SyntaxNodePtr};
+use syntax::{ast, match_ast, AstNode, SyntaxNode, SyntaxNodePtr};
+
+use crate::InFile;
 
 #[salsa::query_group(AstDatabaseStorage)]
 pub trait AstDatabase: SourceDatabase {
@@ -17,6 +19,8 @@ pub struct FileAstId<N: AstNode> {
 
 type ErasedAstId = Idx<SyntaxNodePtr>;
 
+pub type AstId<N> = InFile<FileAstId<N>>;
+
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct AstIdMap {
     arena: Arena<SyntaxNodePtr>,
@@ -28,19 +32,39 @@ impl AstIdMap {
         let mut arena = Arena::default();
 
         bdfs(node, |node| {
-            arena.alloc(SyntaxNodePtr::new(&node));
-            true
+            let kind = node.kind();
+            if ast::DefineDir::can_cast(kind)
+                || ast::DeclareDir::can_cast(kind)
+                || ast::ConstantDeclareDir::can_cast(kind)
+                || ast::AssertClosedDir::can_cast(kind)
+                || ast::AssertDir::can_cast(kind)
+                || ast::DomainDir::can_cast(kind)
+                || ast::DomainsDir::can_cast(kind)
+                || ast::DatatypesStmt::can_cast(kind)
+                || ast::DatatypeStmt::can_cast(kind)
+                || ast::StructuresStmt::can_cast(kind)
+                || ast::StructureStmt::can_cast(kind)
+            {
+                arena.alloc(SyntaxNodePtr::new(&node));
+                false
+            } else if ast::ModuleDir::can_cast(kind) || ast::ExtendModuleDir::can_cast(kind) {
+                arena.alloc(SyntaxNodePtr::new(&node));
+                true
+            } else {
+                false
+            }
         });
 
         let ptr_to_id = arena
             .iter()
             .map(|(erased, ptr)| (ptr.clone(), erased))
             .collect();
+
         AstIdMap { arena, ptr_to_id }
     }
 }
 
-fn bdfs(node: &SyntaxNode, f: impl FnMut(SyntaxNode) -> bool) {
+fn bdfs(node: &SyntaxNode, mut f: impl FnMut(SyntaxNode) -> bool) {
     let mut current = vec![node.clone()];
     let mut next = Vec::new();
 
@@ -65,10 +89,6 @@ fn bdfs(node: &SyntaxNode, f: impl FnMut(SyntaxNode) -> bool) {
 
 fn ast_id_map(db: &dyn AstDatabase, file_id: FileId) -> Arc<AstIdMap> {
     // let _p = profile::span("ast_id_map");
-    // let source_file = db.parse(file_id);
-    // let mut arena = ArenaMap::default();
-    // let mut ast_id_map = AstIdMap { arena };
-    // ast_id_map.collect(&source_file.syntax());
-    // Arc::new(ast_id_map)
-    todo!()
+    let source_file = db.parse(file_id);
+    Arc::new(AstIdMap::from_source(&source_file.tree().syntax()))
 }

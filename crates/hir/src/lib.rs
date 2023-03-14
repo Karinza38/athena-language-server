@@ -5,6 +5,8 @@ pub mod name;
 pub mod ast_mapping;
 pub mod file_graph;
 
+pub mod db;
+
 use base_db::FileId;
 
 pub struct InFile<T> {
