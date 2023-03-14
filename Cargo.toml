@@ -13,3 +13,6 @@ ide-db = { path = "crates/ide-db" }
 util = { path = "crates/util" }
 
 vfs = { git = "https://github.com/rust-lang/rust-analyzer", rev = "d712e529405b0ef5719c81ae620c88a97db78d93" }
+
+la-arena = "0.3"
+rustc-hash = "1.1.0"
