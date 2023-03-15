@@ -186,6 +186,58 @@ impl PhraseStmt {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
+pub struct DatatypeStmt {
+    pub(crate) syntax: SyntaxNode,
+}
+impl DatatypeStmt {
+    pub fn datatype_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T![datatype])
+    }
+    pub fn structure_def(&self) -> Option<StructureDef> {
+        support::child(&self.syntax)
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+pub struct StructureStmt {
+    pub(crate) syntax: SyntaxNode,
+}
+impl StructureStmt {
+    pub fn structure_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T![structure])
+    }
+    pub fn structure_def(&self) -> Option<StructureDef> {
+        support::child(&self.syntax)
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+pub struct DatatypesStmt {
+    pub(crate) syntax: SyntaxNode,
+}
+impl DatatypesStmt {
+    pub fn datatypes_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T![datatypes])
+    }
+    pub fn structure_defs(&self) -> AstChildren<StructureDef> {
+        support::children(&self.syntax)
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+pub struct StructuresStmt {
+    pub(crate) syntax: SyntaxNode,
+}
+impl StructuresStmt {
+    pub fn structures_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T![structures])
+    }
+    pub fn structure_defs(&self) -> AstChildren<StructureDef> {
+        support::children(&self.syntax)
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct StructureNameDef {
     pub(crate) syntax: SyntaxNode,
 }
@@ -252,58 +304,6 @@ impl StructureDef {
         support::token(&self.syntax, T![:=])
     }
     pub fn structure_constructors(&self) -> AstChildren<StructureConstructor> {
-        support::children(&self.syntax)
-    }
-}
-
-#[derive(Debug, Clone, PartialEq, Eq, Hash)]
-pub struct DatatypeStmt {
-    pub(crate) syntax: SyntaxNode,
-}
-impl DatatypeStmt {
-    pub fn datatype_token(&self) -> Option<SyntaxToken> {
-        support::token(&self.syntax, T![datatype])
-    }
-    pub fn structure_def(&self) -> Option<StructureDef> {
-        support::child(&self.syntax)
-    }
-}
-
-#[derive(Debug, Clone, PartialEq, Eq, Hash)]
-pub struct StructureStmt {
-    pub(crate) syntax: SyntaxNode,
-}
-impl StructureStmt {
-    pub fn structure_token(&self) -> Option<SyntaxToken> {
-        support::token(&self.syntax, T![structure])
-    }
-    pub fn structure_def(&self) -> Option<StructureDef> {
-        support::child(&self.syntax)
-    }
-}
-
-#[derive(Debug, Clone, PartialEq, Eq, Hash)]
-pub struct DatatypesStmt {
-    pub(crate) syntax: SyntaxNode,
-}
-impl DatatypesStmt {
-    pub fn datatypes_token(&self) -> Option<SyntaxToken> {
-        support::token(&self.syntax, T![datatypes])
-    }
-    pub fn structure_defs(&self) -> AstChildren<StructureDef> {
-        support::children(&self.syntax)
-    }
-}
-
-#[derive(Debug, Clone, PartialEq, Eq, Hash)]
-pub struct StructuresStmt {
-    pub(crate) syntax: SyntaxNode,
-}
-impl StructuresStmt {
-    pub fn structures_token(&self) -> Option<SyntaxToken> {
-        support::token(&self.syntax, T![structures])
-    }
-    pub fn structure_defs(&self) -> AstChildren<StructureDef> {
         support::children(&self.syntax)
     }
 }
@@ -2889,6 +2889,10 @@ pub enum Phrase {
 pub enum Stmt {
     DirStmt(DirStmt),
     PhraseStmt(PhraseStmt),
+    DatatypeStmt(DatatypeStmt),
+    StructureStmt(StructureStmt),
+    DatatypesStmt(DatatypesStmt),
+    StructuresStmt(StructuresStmt),
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
@@ -3296,6 +3300,66 @@ impl AstNode for PhraseStmt {
         &self.syntax
     }
 }
+impl AstNode for DatatypeStmt {
+    fn can_cast(kind: SyntaxKind) -> bool {
+        kind == DATATYPE_STMT
+    }
+    fn cast(syntax: SyntaxNode) -> Option<Self> {
+        if Self::can_cast(syntax.kind()) {
+            Some(Self { syntax })
+        } else {
+            None
+        }
+    }
+    fn syntax(&self) -> &SyntaxNode {
+        &self.syntax
+    }
+}
+impl AstNode for StructureStmt {
+    fn can_cast(kind: SyntaxKind) -> bool {
+        kind == STRUCTURE_STMT
+    }
+    fn cast(syntax: SyntaxNode) -> Option<Self> {
+        if Self::can_cast(syntax.kind()) {
+            Some(Self { syntax })
+        } else {
+            None
+        }
+    }
+    fn syntax(&self) -> &SyntaxNode {
+        &self.syntax
+    }
+}
+impl AstNode for DatatypesStmt {
+    fn can_cast(kind: SyntaxKind) -> bool {
+        kind == DATATYPES_STMT
+    }
+    fn cast(syntax: SyntaxNode) -> Option<Self> {
+        if Self::can_cast(syntax.kind()) {
+            Some(Self { syntax })
+        } else {
+            None
+        }
+    }
+    fn syntax(&self) -> &SyntaxNode {
+        &self.syntax
+    }
+}
+impl AstNode for StructuresStmt {
+    fn can_cast(kind: SyntaxKind) -> bool {
+        kind == STRUCTURES_STMT
+    }
+    fn cast(syntax: SyntaxNode) -> Option<Self> {
+        if Self::can_cast(syntax.kind()) {
+            Some(Self { syntax })
+        } else {
+            None
+        }
+    }
+    fn syntax(&self) -> &SyntaxNode {
+        &self.syntax
+    }
+}
 impl AstNode for StructureNameDef {
     fn can_cast(kind: SyntaxKind) -> bool {
         kind == STRUCTURE_NAME_DEF
@@ -3359,66 +3423,6 @@ impl AstNode for MaybeTaggedSortDecl {
 impl AstNode for StructureDef {
     fn can_cast(kind: SyntaxKind) -> bool {
         kind == STRUCTURE_DEF
-    }
-    fn cast(syntax: SyntaxNode) -> Option<Self> {
-        if Self::can_cast(syntax.kind()) {
-            Some(Self { syntax })
-        } else {
-            None
-        }
-    }
-    fn syntax(&self) -> &SyntaxNode {
-        &self.syntax
-    }
-}
-impl AstNode for DatatypeStmt {
-    fn can_cast(kind: SyntaxKind) -> bool {
-        kind == DATATYPE_STMT
-    }
-    fn cast(syntax: SyntaxNode) -> Option<Self> {
-        if Self::can_cast(syntax.kind()) {
-            Some(Self { syntax })
-        } else {
-            None
-        }
-    }
-    fn syntax(&self) -> &SyntaxNode {
-        &self.syntax
-    }
-}
-impl AstNode for StructureStmt {
-    fn can_cast(kind: SyntaxKind) -> bool {
-        kind == STRUCTURE_STMT
-    }
-    fn cast(syntax: SyntaxNode) -> Option<Self> {
-        if Self::can_cast(syntax.kind()) {
-            Some(Self { syntax })
-        } else {
-            None
-        }
-    }
-    fn syntax(&self) -> &SyntaxNode {
-        &self.syntax
-    }
-}
-impl AstNode for DatatypesStmt {
-    fn can_cast(kind: SyntaxKind) -> bool {
-        kind == DATATYPES_STMT
-    }
-    fn cast(syntax: SyntaxNode) -> Option<Self> {
-        if Self::can_cast(syntax.kind()) {
-            Some(Self { syntax })
-        } else {
-            None
-        }
-    }
-    fn syntax(&self) -> &SyntaxNode {
-        &self.syntax
-    }
-}
-impl AstNode for StructuresStmt {
-    fn can_cast(kind: SyntaxKind) -> bool {
-        kind == STRUCTURES_STMT
     }
     fn cast(syntax: SyntaxNode) -> Option<Self> {
         if Self::can_cast(syntax.kind()) {
@@ -5714,14 +5718,46 @@ impl From<PhraseStmt> for Stmt {
         Stmt::PhraseStmt(node)
     }
 }
+impl From<DatatypeStmt> for Stmt {
+    fn from(node: DatatypeStmt) -> Stmt {
+        Stmt::DatatypeStmt(node)
+    }
+}
+impl From<StructureStmt> for Stmt {
+    fn from(node: StructureStmt) -> Stmt {
+        Stmt::StructureStmt(node)
+    }
+}
+impl From<DatatypesStmt> for Stmt {
+    fn from(node: DatatypesStmt) -> Stmt {
+        Stmt::DatatypesStmt(node)
+    }
+}
+impl From<StructuresStmt> for Stmt {
+    fn from(node: StructuresStmt) -> Stmt {
+        Stmt::StructuresStmt(node)
+    }
+}
 impl AstNode for Stmt {
     fn can_cast(kind: SyntaxKind) -> bool {
-        matches!(kind, DIR_STMT | PHRASE_STMT)
+        matches!(
+            kind,
+            DIR_STMT
+                | PHRASE_STMT
+                | DATATYPE_STMT
+                | STRUCTURE_STMT
+                | DATATYPES_STMT
+                | STRUCTURES_STMT
+        )
     }
     fn cast(syntax: SyntaxNode) -> Option<Self> {
         let res = match syntax.kind() {
             DIR_STMT => Stmt::DirStmt(DirStmt { syntax }),
             PHRASE_STMT => Stmt::PhraseStmt(PhraseStmt { syntax }),
+            DATATYPE_STMT => Stmt::DatatypeStmt(DatatypeStmt { syntax }),
+            STRUCTURE_STMT => Stmt::StructureStmt(StructureStmt { syntax }),
+            DATATYPES_STMT => Stmt::DatatypesStmt(DatatypesStmt { syntax }),
+            STRUCTURES_STMT => Stmt::StructuresStmt(StructuresStmt { syntax }),
             _ => return None,
         };
         Some(res)
@@ -5730,6 +5766,10 @@ impl AstNode for Stmt {
         match self {
             Stmt::DirStmt(it) => &it.syntax,
             Stmt::PhraseStmt(it) => &it.syntax,
+            Stmt::DatatypeStmt(it) => &it.syntax,
+            Stmt::StructureStmt(it) => &it.syntax,
+            Stmt::DatatypesStmt(it) => &it.syntax,
+            Stmt::StructuresStmt(it) => &it.syntax,
         }
     }
 }
@@ -7270,6 +7310,26 @@ impl std::fmt::Display for PhraseStmt {
         std::fmt::Display::fmt(self.syntax(), f)
     }
 }
+impl std::fmt::Display for DatatypeStmt {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        std::fmt::Display::fmt(self.syntax(), f)
+    }
+}
+impl std::fmt::Display for StructureStmt {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        std::fmt::Display::fmt(self.syntax(), f)
+    }
+}
+impl std::fmt::Display for DatatypesStmt {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        std::fmt::Display::fmt(self.syntax(), f)
+    }
+}
+impl std::fmt::Display for StructuresStmt {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        std::fmt::Display::fmt(self.syntax(), f)
+    }
+}
 impl std::fmt::Display for StructureNameDef {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         std::fmt::Display::fmt(self.syntax(), f)
@@ -7291,26 +7351,6 @@ impl std::fmt::Display for MaybeTaggedSortDecl {
     }
 }
 impl std::fmt::Display for StructureDef {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        std::fmt::Display::fmt(self.syntax(), f)
-    }
-}
-impl std::fmt::Display for DatatypeStmt {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        std::fmt::Display::fmt(self.syntax(), f)
-    }
-}
-impl std::fmt::Display for StructureStmt {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        std::fmt::Display::fmt(self.syntax(), f)
-    }
-}
-impl std::fmt::Display for DatatypesStmt {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        std::fmt::Display::fmt(self.syntax(), f)
-    }
-}
-impl std::fmt::Display for StructuresStmt {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         std::fmt::Display::fmt(self.syntax(), f)
     }

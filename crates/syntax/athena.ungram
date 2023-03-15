@@ -105,6 +105,10 @@ SourceFile =
 Stmt =
     DirStmt // ✅
     | PhraseStmt // ✅
+    | DatatypeStmt
+    | StructureStmt
+    | DatatypesStmt
+    | StructuresStmt
 
 PhraseStmt =
     Phrase
