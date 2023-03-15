@@ -147,6 +147,43 @@ DatatypesStmt =
 StructuresStmt =
     'structures' (StructureDef ('&&' StructureDef)*)
 
+Item =
+    Module
+    | Assertion
+    | Domain
+    | FunctionSymbol
+    | Datatype
+    | Structure
+    | DefineDir
+
+Definition =
+    InfixDefineDir
+    | PrefixDefineDir
+
+Structure =
+    StructureStmt
+    | StructuresStmt
+
+Datatype =
+    DatatypeStmt
+    | DatatypesStmt
+
+Module =
+    ModuleDir
+    | ExtendModuleDir
+
+Assertion =
+    AssertDir
+    | AssertClosedDir
+
+Domain =
+    DomainDir
+    | DomainsDir
+
+FunctionSymbol =
+    DeclareDir
+    | ConstantDeclareDir
+
 //************//
 // Directives //
 //************//

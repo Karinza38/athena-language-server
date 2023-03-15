@@ -8,3 +8,4 @@ edition = "2021"
 [dependencies]
 ide-db.workspace = true
 syntax.workspace = true
+hir.workspace = true

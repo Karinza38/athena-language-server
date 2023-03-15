@@ -11,7 +11,7 @@ parser = { path = "crates/parser" }
 ide = { path = "crates/ide" }
 ide-db = { path = "crates/ide-db" }
 util = { path = "crates/util" }
-
+hir = { path = "crates/hir" }
 vfs = { git = "https://github.com/rust-lang/rust-analyzer", rev = "d712e529405b0ef5719c81ae620c88a97db78d93" }
 
 la-arena = "0.3"
