@@ -20,10 +20,10 @@ macro_rules! define_semantic_token_types {
         }
 
     ) => {
-        $(#[allow(dead_code)] pub(crate) const $standard: SemanticTokenType = SemanticTokenType::$standard;)*
-        $(pub(crate) const $custom: SemanticTokenType = SemanticTokenType::new($string);)*
+        $(#[allow(dead_code)] pub const $standard: SemanticTokenType = SemanticTokenType::$standard;)*
+        $(pub const $custom: SemanticTokenType = SemanticTokenType::new($string);)*
 
-        pub(crate) const SUPPORTED_TYPES: &[SemanticTokenType] = &[
+        pub const SUPPORTED_TYPES: &[SemanticTokenType] = &[
             $(SemanticTokenType::$standard,)*
             $($custom),*
         ];
@@ -301,7 +301,7 @@ fn token(builder: &mut SemanticTokensBuilder, tok: SyntaxToken) {
         //FIXME: we shouldn't really hit this case
         return;
     } else {
-        log::warn!("unhandled token: {:?}", kind);
+        tracing::warn!("unhandled token: {:?}", kind);
     }
 }
 
@@ -351,10 +351,7 @@ fn identifier(builder: &mut SemanticTokensBuilder, ident: ast::Identifier) {
     builder.push(ident.syntax().text_range(), VARIABLE);
 }
 
-pub(crate) fn semantic_tokens_for_file(
-    file: syntax::SourceFile,
-    index: &LineIndex,
-) -> SemanticTokens {
+pub fn semantic_tokens_for_file(file: syntax::SourceFile, index: &LineIndex) -> SemanticTokens {
     static COUNTER: AtomicU32 = AtomicU32::new(0);
     let mut builder = SemanticTokensBuilder::new(
         COUNTER

@@ -6,7 +6,8 @@ pub(crate) fn position(line_index: &LineIndex, offset: TextSize) -> lsp_types::P
     let line_col = line_index.to_utf16(line_index.line_col(offset));
     lsp_types::Position::new(line_col.line, line_col.col)
 }
-pub(crate) fn range(line_index: &LineIndex, text_range: TextRange) -> lsp_types::Range {
+
+pub fn range(line_index: &LineIndex, text_range: TextRange) -> lsp_types::Range {
     lsp_types::Range::new(
         position(line_index, text_range.start()),
         position(line_index, text_range.end()),
