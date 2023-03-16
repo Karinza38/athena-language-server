@@ -1,7 +1,8 @@
-use crate::{from_proto, Result};
-// use crate::{global_state::GlobalStateSnapshot, semantic_tokens};
-use crate::{main_loop::GlobalStateSnapshot, semantic_tokens};
+use crate::{from_proto, to_proto, Result};
+use crate::{global_state::GlobalStateSnapshot, semantic_tokens};
 use anyhow::Context;
+use ide::Cancellable;
+use ide_db::base_db::FileRange;
 use tower_lsp::lsp_types::{
     GotoDefinitionParams, GotoDefinitionResponse, SemanticTokensParams, SemanticTokensResult,
 };
@@ -37,6 +38,23 @@ pub(crate) fn go_to_definition(
     let file_position = from_proto::file_position(&snapshot, params.text_document_position_params)?;
 
     let analysis = &snapshot.analysis;
-    // let Some(navs) = analysis.go_to_definition(file_position)?;
-    todo!()
+    let Some(navs) = analysis.go_to_definition(file_position)? else {
+        return Ok(None);
+    };
+
+    let locations = navs
+        .info
+        .into_iter()
+        .map(|nav| {
+            to_proto::location(
+                &snapshot,
+                FileRange {
+                    file_id: nav.file_id,
+                    range: nav.focus_range.unwrap_or_else(|| nav.full_range),
+                },
+            )
+        })
+        .collect::<Cancellable<Vec<_>>>()?;
+
+    Ok(Some(locations.into()))
 }

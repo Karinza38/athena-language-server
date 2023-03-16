@@ -6,6 +6,7 @@ mod line_index;
 
 mod handlers;
 mod main_loop;
+mod global_state;
 
 pub use main_loop::run_server;
 

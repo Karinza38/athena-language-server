@@ -9,3 +9,4 @@ edition = "2021"
 ide-db.workspace = true
 syntax.workspace = true
 hir.workspace = true
+tracing.workspace = true

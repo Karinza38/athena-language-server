@@ -1,31 +1,37 @@
 use dashmap::DashMap;
-use ide::{Analysis, AnalysisHost, Cancellable};
+use ide::{AnalysisHost, Cancellable};
 use ide_db::base_db::Change;
 use parking_lot::RwLock;
-use std::{path::PathBuf, sync::Arc};
-use tokio::sync::{
-    mpsc::{self, UnboundedReceiver, UnboundedSender},
-    oneshot,
-};
+use std::{fmt::Debug, path::PathBuf, sync::Arc};
+use tokio::sync::{mpsc, oneshot};
 use tower_lsp::{
     async_trait,
     jsonrpc::{Error as LspError, Result as LspResult},
     lsp_types::{
+        request::{
+            GotoDeclarationParams, GotoDeclarationResponse, GotoImplementationParams,
+            GotoImplementationResponse,
+        },
         Diagnostic, DidChangeConfigurationParams, DidChangeTextDocumentParams,
         DidChangeWatchedFilesParams, DidChangeWorkspaceFoldersParams, DidCloseTextDocumentParams,
-        DidOpenTextDocumentParams, DidSaveTextDocumentParams, DocumentFilter, InitializeParams,
-        InitializeResult, MessageType, OneOf, SemanticTokens, SemanticTokensFullOptions,
-        SemanticTokensLegend, SemanticTokensOptions, SemanticTokensParams,
-        SemanticTokensRegistrationOptions, SemanticTokensResult, SemanticTokensServerCapabilities,
-        ServerCapabilities, StaticRegistrationOptions, TextDocumentRegistrationOptions,
-        TextDocumentSyncCapability, TextDocumentSyncKind, Url, WorkDoneProgressOptions,
-        WorkspaceFoldersServerCapabilities, WorkspaceServerCapabilities,
+        DidOpenTextDocumentParams, DidSaveTextDocumentParams, DocumentFilter, GotoDefinitionParams,
+        GotoDefinitionResponse, InitializeParams, InitializeResult, MessageType, OneOf,
+        SemanticTokens, SemanticTokensFullOptions, SemanticTokensLegend, SemanticTokensOptions,
+        SemanticTokensParams, SemanticTokensRegistrationOptions, SemanticTokensResult,
+        SemanticTokensServerCapabilities, ServerCapabilities, StaticRegistrationOptions,
+        TextDocumentRegistrationOptions, TextDocumentSyncCapability, TextDocumentSyncKind, Url,
+        WorkDoneProgressOptions, WorkspaceFoldersServerCapabilities, WorkspaceServerCapabilities,
     },
     Client, LanguageServer, LspService, Server,
 };
-use vfs::{FileId, Vfs};
+use tracing_subscriber::EnvFilter;
+use vfs::Vfs;
 
-use crate::{from_proto, semantic_tokens, to_proto};
+use crate::{
+    from_proto,
+    global_state::{GlobalState, GlobalStateSnapshot, StateClient, StateClientMessage},
+    handlers, semantic_tokens, to_proto,
+};
 
 #[derive(Debug)]
 struct Backend {
@@ -52,49 +58,56 @@ impl Backend {
     }
 }
 
+fn capabilities() -> ServerCapabilities {
+    ServerCapabilities {
+        text_document_sync: Some(TextDocumentSyncCapability::Kind(TextDocumentSyncKind::FULL)),
+        semantic_tokens_provider: Some(
+            SemanticTokensServerCapabilities::SemanticTokensRegistrationOptions(
+                SemanticTokensRegistrationOptions {
+                    text_document_registration_options: {
+                        TextDocumentRegistrationOptions {
+                            document_selector: Some(vec![DocumentFilter {
+                                language: Some("athena".to_string()),
+                                scheme: Some("file".to_string()),
+                                pattern: None,
+                            }]),
+                        }
+                    },
+                    semantic_tokens_options: SemanticTokensOptions {
+                        work_done_progress_options: WorkDoneProgressOptions::default(),
+                        legend: SemanticTokensLegend {
+                            token_types: semantic_tokens::SUPPORTED_TYPES.into(),
+                            token_modifiers: vec![],
+                        },
+                        range: Some(false),
+                        full: Some(SemanticTokensFullOptions::Bool(true)),
+                    },
+                    static_registration_options: StaticRegistrationOptions::default(),
+                },
+            ),
+        ),
+        definition_provider: Some(OneOf::Left(true)),
+        declaration_provider: Some(tower_lsp::lsp_types::DeclarationCapability::Simple(true)),
+        implementation_provider: Some(
+            tower_lsp::lsp_types::ImplementationProviderCapability::Simple(true),
+        ),
+        workspace: Some(WorkspaceServerCapabilities {
+            workspace_folders: Some(WorkspaceFoldersServerCapabilities {
+                supported: Some(true),
+                change_notifications: Some(OneOf::Left(true)),
+            }),
+            file_operations: None,
+        }),
+        ..ServerCapabilities::default()
+    }
+}
+
 #[async_trait]
 impl LanguageServer for Backend {
     async fn initialize(&self, _: InitializeParams) -> LspResult<InitializeResult> {
         Ok(InitializeResult {
             server_info: None,
-            capabilities: ServerCapabilities {
-                text_document_sync: Some(TextDocumentSyncCapability::Kind(
-                    TextDocumentSyncKind::FULL,
-                )),
-                semantic_tokens_provider: Some(
-                    SemanticTokensServerCapabilities::SemanticTokensRegistrationOptions(
-                        SemanticTokensRegistrationOptions {
-                            text_document_registration_options: {
-                                TextDocumentRegistrationOptions {
-                                    document_selector: Some(vec![DocumentFilter {
-                                        language: Some("athena".to_string()),
-                                        scheme: Some("file".to_string()),
-                                        pattern: None,
-                                    }]),
-                                }
-                            },
-                            semantic_tokens_options: SemanticTokensOptions {
-                                work_done_progress_options: WorkDoneProgressOptions::default(),
-                                legend: SemanticTokensLegend {
-                                    token_types: semantic_tokens::SUPPORTED_TYPES.into(),
-                                    token_modifiers: vec![],
-                                },
-                                range: Some(false),
-                                full: Some(SemanticTokensFullOptions::Bool(true)),
-                            },
-                            static_registration_options: StaticRegistrationOptions::default(),
-                        },
-                    ),
-                ),
-                workspace: Some(WorkspaceServerCapabilities {
-                    workspace_folders: Some(WorkspaceFoldersServerCapabilities {
-                        supported: Some(true),
-                        change_notifications: Some(OneOf::Left(true)),
-                    }),
-                    file_operations: None,
-                }),
-                ..ServerCapabilities::default()
-            },
+            capabilities: capabilities(),
         })
     }
 
@@ -158,23 +171,32 @@ impl LanguageServer for Backend {
         &self,
         params: SemanticTokensParams,
     ) -> LspResult<Option<SemanticTokensResult>> {
-        let (send, recv) = oneshot::channel();
-        let handler = move |snapshot: GlobalStateSnapshot| {
-            let out = crate::handlers::semantic_tokens_full(snapshot, params);
-            send.send(out).unwrap();
-        };
-        self.state_client.handle_request(Box::new(handler));
+        self.dispatch_request(params, handlers::semantic_tokens_full)
+            .await
+    }
 
-        match recv.await.unwrap() {
-            Ok(t) => Ok(t),
-            Err(e) => {
-                self.client
-                    .log_message(MessageType::ERROR, format!("{e:#?}"))
-                    .await;
-                return Err(LspError::internal_error());
-            }
-        }
-        // Ok(None)
+    async fn goto_definition(
+        &self,
+        params: GotoDefinitionParams,
+    ) -> LspResult<Option<GotoDefinitionResponse>> {
+        self.dispatch_request(params, handlers::go_to_definition)
+            .await
+    }
+
+    async fn goto_declaration(
+        &self,
+        params: GotoDeclarationParams,
+    ) -> LspResult<Option<GotoDeclarationResponse>> {
+        self.dispatch_request(params, handlers::go_to_definition)
+            .await
+    }
+
+    async fn goto_implementation(
+        &self,
+        params: GotoImplementationParams,
+    ) -> LspResult<Option<GotoImplementationResponse>> {
+        self.dispatch_request(params, handlers::go_to_definition)
+            .await
     }
 
     async fn shutdown(&self) -> LspResult<()> {
@@ -202,47 +224,29 @@ impl Backend {
 
         self.state_client.files_changed();
     }
-}
 
-#[derive(Debug)]
-struct StateClient {
-    sender: UnboundedSender<StateClientMessage>,
-}
+    async fn dispatch_request<P: Send + 'static, R: Send + Debug + 'static>(
+        &self,
+        params: P,
+        handler: impl FnOnce(GlobalStateSnapshot, P) -> crate::Result<R> + Send + 'static,
+    ) -> LspResult<R> {
+        let (send, recv) = oneshot::channel();
+        let handler = move |snapshot: GlobalStateSnapshot| {
+            let out = handler(snapshot, params);
+            send.send(out).unwrap();
+        };
+        self.state_client.handle_request(Box::new(handler));
 
-impl StateClient {
-    fn new(sender: UnboundedSender<StateClientMessage>) -> Self {
-        Self { sender }
+        match recv.await.unwrap() {
+            Ok(t) => Ok(t),
+            Err(e) => {
+                self.client
+                    .log_message(MessageType::ERROR, format!("{e:#?}"))
+                    .await;
+                return Err(LspError::internal_error());
+            }
+        }
     }
-
-    fn handle_request(&self, handler: Handler) {
-        self.sender
-            .send(StateClientMessage::HandleRequest(handler))
-            .unwrap();
-    }
-
-    fn shutdown(&self) {
-        self.sender.send(StateClientMessage::Shutdown).unwrap();
-    }
-
-    fn files_changed(&self) {
-        self.sender.send(StateClientMessage::FilesChanged).unwrap();
-    }
-}
-
-pub(crate) struct GlobalState {
-    analysis_host: AnalysisHost,
-    vfs: Arc<RwLock<Vfs>>,
-    semantic_token_map: Arc<DashMap<String, SemanticTokens>>,
-    client: Option<Client>,
-    receiver: UnboundedReceiver<StateClientMessage>,
-}
-
-pub(crate) struct GlobalStateSnapshot {
-    pub(crate) analysis: Analysis,
-    vfs: Arc<RwLock<Vfs>>,
-    pub(crate) semantic_token_map: Arc<DashMap<String, SemanticTokens>>,
-    #[allow(dead_code)]
-    pub(crate) client: Client,
 }
 
 impl GlobalState {
@@ -368,32 +372,6 @@ fn on_changed(
     file_diagnostics
 }
 
-type Handler = Box<dyn FnOnce(GlobalStateSnapshot) + Send>;
-
-enum StateClientMessage {
-    HandleRequest(Handler),
-
-    FilesChanged,
-
-    Shutdown,
-}
-
-impl std::fmt::Debug for StateClientMessage {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        match self {
-            Self::HandleRequest(_) => write!(f, "HandleRequest"),
-            Self::FilesChanged => write!(f, "FilesChanged"),
-            Self::Shutdown => write!(f, "Shutdown"),
-        }
-    }
-}
-
-impl GlobalStateSnapshot {
-    pub(crate) fn file_id(&self, url: &Url) -> crate::Result<FileId> {
-        from_proto::url_to_file_id(&*self.vfs.read(), url)
-    }
-}
-
 pub async fn run_server() {
     let pth = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
         .parent()
@@ -409,10 +387,15 @@ pub async fn run_server() {
         .open(pth.clone())
         .unwrap();
 
-    tracing_subscriber::fmt()
-        .with_max_level(tracing::Level::DEBUG)
-        .with_ansi(false)
-        .with_writer(logfile)
+    use tracing_subscriber::prelude::*;
+
+    tracing_subscriber::registry()
+        .with(
+            tracing_subscriber::fmt::layer()
+                .with_ansi(false)
+                .with_writer(logfile),
+        )
+        .with(EnvFilter::from_default_env())
         .init();
 
     let stdin = tokio::io::stdin();
@@ -420,7 +403,7 @@ pub async fn run_server() {
 
     let (state_client, mut state) = GlobalState::new();
 
-    let vfs = state.vfs.clone();
+    let vfs = state.vfs();
     let (service, socket) = LspService::new(move |c| Backend::new(c, vfs, state_client));
 
     state.client = Some(service.inner().client.clone());

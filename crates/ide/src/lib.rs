@@ -1,15 +1,21 @@
+mod navigation_target;
+mod helpers;
+mod go_to_definition;
+
+pub use ide_db::line_index::LineIndex;
+
 use core::fmt;
 use std::{panic::UnwindSafe, sync::Arc};
 
-use ide_db::{
+pub use ide_db::{
     base_db::{
         salsa::{self, ParallelDatabase},
-        Cancelled, Change, FileId, SourceDatabase,
+        Cancelled, Change, FileId, FilePosition, SourceDatabase,
     },
-    line_index::LineIndex,
     LineIndexDatabase, RootDatabase,
 };
-use syntax::{Parse, SourceFile};
+use navigation_target::NavigationTarget;
+use syntax::{Parse, SourceFile, TextRange};
 
 pub type Cancellable<T> = Result<T, Cancelled>;
 
@@ -65,6 +71,13 @@ impl Analysis {
         self.with_db(|db| db.line_index(file_id))
     }
 
+    pub fn go_to_definition(
+        &self,
+        position: FilePosition,
+    ) -> Cancellable<Option<RangeInfo<Vec<NavigationTarget>>>> {
+        self.with_db(|db| go_to_definition::go_to_definition(db, position))
+    }
+
     // wrapper to catch cancellation signals in case a change is applied
     fn with_db<F, T>(&self, f: F) -> Cancellable<T>
     where
@@ -77,5 +90,17 @@ impl Analysis {
 impl fmt::Debug for Analysis {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         f.debug_struct("Analysis").finish()
+    }
+}
+
+#[derive(Debug)]
+pub struct RangeInfo<T> {
+    pub range: TextRange,
+    pub info: T,
+}
+
+impl<T> RangeInfo<T> {
+    pub fn new(range: TextRange, info: T) -> Self {
+        Self { range, info }
     }
 }

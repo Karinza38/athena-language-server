@@ -1,5 +1,4 @@
-// use crate::{global_state::GlobalStateSnapshot, Result};
-use crate::{main_loop::GlobalStateSnapshot, Result};
+use crate::{global_state::GlobalStateSnapshot, Result};
 use anyhow::anyhow;
 use ide_db::{
     base_db::FilePosition,
@@ -19,13 +18,6 @@ pub(crate) fn abs_path(url: &lsp_types::Url) -> Result<AbsPathBuf> {
 
 pub fn vfs_path(url: &lsp_types::Url) -> Result<vfs::VfsPath> {
     abs_path(url).map(vfs::VfsPath::from)
-}
-
-pub fn url_to_file_id(vfs: &vfs::Vfs, url: &lsp_types::Url) -> Result<FileId> {
-    let path = vfs_path(url)?;
-    tracing::info!(?path, "url_to_file_id");
-    vfs.file_id(&path)
-        .ok_or_else(|| anyhow!("file not found: {}", url).into())
 }
 
 pub(crate) fn offset(line_index: &LineIndex, position: lsp_types::Position) -> Result<TextSize> {
