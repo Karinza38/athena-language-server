@@ -219,7 +219,7 @@ SortDecl =
     | CompoundSortDecl
 
 CompoundSortDecl =
-    '(' SortDecl* ')'
+    '(' IdentSort* ')'
 
 ConstantDeclareDir =
     InfixConstantDeclare

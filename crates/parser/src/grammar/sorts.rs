@@ -50,15 +50,16 @@ fn compound_sort_decl(p: &mut Parser) {
     let m = p.start();
     p.bump(T!['(']);
 
-    if !sort_decl(p) {
+    if !p.at(SyntaxKind::IDENT) {
         p.error("Expected at least one sort in a compound sort");
     }
 
     while !p.at(T![')']) {
-        if !sort_decl(p) {
+        if !p.at(SyntaxKind::IDENT) {
             p.error("Expected a sort in a compound sort");
             break;
         }
+        ident_sort(p);
     }
 
     p.expect(T![')']);
