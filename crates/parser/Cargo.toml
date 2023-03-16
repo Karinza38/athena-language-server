@@ -15,5 +15,5 @@ util.workspace = true
 nightly = ["static_assertions/nightly"]
 
 [dev-dependencies]
-insta = { version = "1.28.0", features = ["glob"] }
+insta.workspace = true
 sourcegen = { path = "../sourcegen" }

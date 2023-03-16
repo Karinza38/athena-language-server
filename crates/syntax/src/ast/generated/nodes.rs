@@ -472,7 +472,7 @@ impl CompoundSortDecl {
     pub fn l_paren_token(&self) -> Option<SyntaxToken> {
         support::token(&self.syntax, T!['('])
     }
-    pub fn sort_decls(&self) -> AstChildren<SortDecl> {
+    pub fn ident_sorts(&self) -> AstChildren<IdentSort> {
         support::children(&self.syntax)
     }
     pub fn r_paren_token(&self) -> Option<SyntaxToken> {
@@ -2973,6 +2973,12 @@ pub enum Structure {
 pub enum DefineDir {
     InfixDefineDir(InfixDefineDir),
     PrefixDefineDir(PrefixDefineDir),
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+pub enum MetaDefinition {
+    Definition(Definition),
+    Domain(Domain),
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
@@ -6328,6 +6334,38 @@ impl AstNode for DefineDir {
         }
     }
 }
+impl From<Definition> for MetaDefinition {
+    fn from(node: Definition) -> MetaDefinition {
+        MetaDefinition::Definition(node)
+    }
+}
+impl From<Domain> for MetaDefinition {
+    fn from(node: Domain) -> MetaDefinition {
+        MetaDefinition::Domain(node)
+    }
+}
+impl AstNode for MetaDefinition {
+    fn can_cast(kind: SyntaxKind) -> bool {
+        matches!(kind, |INFIX_DEFINE_DIR| DOMAIN_DIR | DOMAINS_DIR)
+    }
+    fn cast(syntax: SyntaxNode) -> Option<Self> {
+        let res = match syntax.kind() {
+            INFIX_DEFINE_DIR => {
+                MetaDefinition::Definition(Definition::InfixDefineDir(InfixDefineDir { syntax }))
+            }
+            DOMAIN_DIR => MetaDefinition::Domain(Domain::DomainDir(DomainDir { syntax })),
+            DOMAINS_DIR => MetaDefinition::Domain(Domain::DomainsDir(DomainsDir { syntax })),
+            _ => return None,
+        };
+        Some(res)
+    }
+    fn syntax(&self) -> &SyntaxNode {
+        match self {
+            MetaDefinition::Definition(it) => it.syntax(),
+            MetaDefinition::Domain(it) => it.syntax(),
+        }
+    }
+}
 impl From<InfixDefineDir> for Definition {
     fn from(node: InfixDefineDir) -> Definition {
         Definition::InfixDefineDir(node)
@@ -7536,6 +7574,11 @@ impl std::fmt::Display for Structure {
     }
 }
 impl std::fmt::Display for DefineDir {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        std::fmt::Display::fmt(self.syntax(), f)
+    }
+}
+impl std::fmt::Display for MetaDefinition {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         std::fmt::Display::fmt(self.syntax(), f)
     }

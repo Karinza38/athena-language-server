@@ -108,8 +108,10 @@ dependencies = [
 name = "base-db"
 version = "0.1.0"
 dependencies = [
+ "rustc-hash",
  "salsa",
  "syntax",
+ "test-utils",
  "vfs",
 ]
 
@@ -275,6 +277,12 @@ dependencies = [
  "once_cell",
  "parking_lot_core 0.9.7",
 ]
+
+[[package]]
+name = "dissimilar"
+version = "1.0.6"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "210ec60ae7d710bed8683e333e9d2855a8a56a3e9892b38bad3bb0d4d29b0d5e"
 
 [[package]]
 name = "drop_bomb"
@@ -507,10 +515,13 @@ name = "hir"
 version = "0.1.0"
 dependencies = [
  "base-db",
+ "insta",
  "la-arena",
+ "paste",
  "rustc-hash",
  "smol_str",
  "syntax",
+ "util",
 ]
 
 [[package]]
@@ -869,6 +880,12 @@ dependencies = [
  "static_assertions",
  "util",
 ]
+
+[[package]]
+name = "paste"
+version = "1.0.12"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "9f746c4065a8fa3fe23974dd82f15431cc8d40779821001404d10d2e79ca7d79"
 
 [[package]]
 name = "paths"
@@ -1249,6 +1266,16 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "be55cf8942feac5c765c2c993422806843c9a9a45d4d5c407ad6dd2ea95eb9b6"
 dependencies = [
  "winapi-util",
+]
+
+[[package]]
+name = "test-utils"
+version = "0.1.0"
+dependencies = [
+ "dissimilar",
+ "rustc-hash",
+ "text-size",
+ "util",
 ]
 
 [[package]]

@@ -1,6 +1,7 @@
 use smol_str::SmolStr;
 use syntax::{ast, AstToken};
 
+#[derive(Clone, Debug, PartialEq, Eq, Hash)]
 pub struct Name(SmolStr);
 
 pub trait AsName {

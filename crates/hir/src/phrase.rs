@@ -1,17 +1,7 @@
-use crate::expr::{Expr, ExprId};
+use crate::{ded::DedId, expr::ExprId};
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum PhraseId {
     Expr(ExprId),
-}
-
-pub enum Phrase {
-    Expr(Expr),
-}
-
-pub struct PhraseBody {
-    
-}
-
-pub struct PhraseSourceMap {
-
+    Ded(DedId),
 }

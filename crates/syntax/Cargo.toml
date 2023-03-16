@@ -14,4 +14,4 @@ util = { version = "0.1.0", path = "../util" }
 
 [dev-dependencies]
 itertools = "0.10.5"
-insta = { version = "1.28.0", features = ["glob"] }
+insta.workspace = true

@@ -1,4 +1,5 @@
 mod change;
+pub mod fixture;
 mod input;
 
 use std::sync::Arc;
