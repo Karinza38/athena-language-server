@@ -567,7 +567,7 @@ fn declare_dir(p: &mut Parser) {
         declare_attrs(p);
     }
 
-    m.complete(p, SyntaxKind::DECLARE_DIR);
+    m.complete(p, SyntaxKind::INFIX_DECLARE_DIR);
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]

@@ -3,7 +3,7 @@ source: crates/parser/src/tests.rs
 description: "declare foo : [Int] -> Int\n"
 input_file: crates/parser/test_data/parser/inline/ok/dir/0086_declare_directive.ath
 ---
-DECLARE_DIR
+INFIX_DECLARE_DIR
   DECLARE_KW "declare"
   WHITESPACE " "
   IDENTIFIER

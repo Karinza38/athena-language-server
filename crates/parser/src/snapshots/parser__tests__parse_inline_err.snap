@@ -32,7 +32,7 @@ SOURCE_FILE
             R_BRACK "]"
       WHITESPACE "\n   "
       DIR_STMT
-        DECLARE_DIR
+        INFIX_DECLARE_DIR
           DECLARE_KW "declare"
           WHITESPACE " "
           IDENTIFIER

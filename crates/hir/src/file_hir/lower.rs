@@ -249,6 +249,9 @@ impl Ctx {
                     ast::PrefixDefineDir::PrefixDefineBlocks(_) => todo!(),
                 },
             },
+            ast::Dir::SetPrecedenceDir(_) => todo!(),
+            ast::Dir::OverloadDir(_) => todo!(),
+            ast::Dir::RuleDir(_) => todo!(),
         }
     }
 

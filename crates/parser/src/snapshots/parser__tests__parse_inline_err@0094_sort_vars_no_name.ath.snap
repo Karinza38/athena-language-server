@@ -3,7 +3,7 @@ source: crates/parser/src/tests.rs
 description: "declare foo : ( ) [] -> Int\n"
 input_file: crates/parser/test_data/parser/inline/err/dir/0094_sort_vars_no_name.ath
 ---
-DECLARE_DIR
+INFIX_DECLARE_DIR
   DECLARE_KW "declare"
   WHITESPACE " "
   IDENTIFIER

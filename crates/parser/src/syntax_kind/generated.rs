@@ -241,7 +241,6 @@ pub enum SyntaxKind {
     INFIX_DEFINE_DIR,
     DOMAIN_DIR,
     DOMAINS_DIR,
-    DECLARE_DIR,
     MODULE_DIR,
     LOAD_DIR,
     INFIX_ASSERT_DIR,
@@ -529,7 +528,6 @@ impl SyntaxKind {
                 | INFIX_DEFINE_DIR
                 | DOMAIN_DIR
                 | DOMAINS_DIR
-                | DECLARE_DIR
                 | MODULE_DIR
                 | LOAD_DIR
                 | INFIX_ASSERT_DIR

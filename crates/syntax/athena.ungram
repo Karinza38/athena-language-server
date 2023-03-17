@@ -206,6 +206,9 @@ Dir =
     | ExtendModuleDir
     | OpenDir
     | AssociativityDir
+    | SetPrecedenceDir
+    | OverloadDir
+    | RuleDir
 
 ModuleDir =
     'module' Identifier '{' Stmt* '}'

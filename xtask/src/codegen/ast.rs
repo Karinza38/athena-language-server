@@ -1,6 +1,7 @@
 mod ast_src;
 
 use fs_err as fs;
+use ungrammar::{Grammar, Rule};
 use itertools::Itertools;
 use proc_macro2::{Ident, Punct, Spacing};
 use quote::{format_ident, quote};
@@ -8,7 +9,6 @@ use std::{
     collections::{BTreeSet, HashSet},
     fmt::Write,
 };
-use ungrammar::{Grammar, Rule};
 
 use ast_src::{
     AstEnumSrc, AstNodeSrc, AstSrc, AstTokenDef, AstTokenDefinition, Cardinality, Field, KindsSrc,
@@ -121,17 +121,24 @@ impl AstNodeSrc {
 }
 
 impl AstEnumSrc {
-    fn variants(&self, grammar: &AstSrc) -> Vec<Ident> {
+    fn variants(&self) -> Vec<Ident> {
         self.variants
             .iter()
-            .filter_map(|variant| {
-                if grammar.get_enum_node(variant).is_none() {
-                    Some(format_ident!("{}", variant))
-                } else {
-                    None
-                }
-            })
+            .map(|variant| format_ident!("{}", variant))
             .collect()
+    }
+
+    fn partitioned_variants(&self, grammar: &AstSrc) -> (Vec<Ident>, Vec<Ident>) {
+        let mut enums = Vec::new();
+        let mut non_enums = Vec::new();
+        for variant in self.variants() {
+            if grammar.get_enum_node(&variant.to_string()).is_some() {
+                enums.push(variant);
+            } else {
+                non_enums.push(variant);
+            }
+        }
+        (enums, non_enums)
     }
 
     fn name(&self) -> Ident {
@@ -140,37 +147,6 @@ impl AstEnumSrc {
 
     fn traits(&self) -> BTreeSet<String> {
         self.traits.iter().cloned().collect()
-    }
-
-    fn variants_inlined(&self, grammar: &AstSrc) -> Vec<(Ident, Ident)> {
-        self.variants
-            .iter()
-            .filter_map(|v| {
-                let enm = grammar.get_enum_node(v)?;
-                let parent = enm.name();
-                Some(
-                    enm.variants(grammar)
-                        .into_iter()
-                        .map(move |variant| (parent.clone(), variant)),
-                )
-            })
-            .flatten()
-            .collect()
-    }
-
-    fn kinds(&self, grammar: &AstSrc) -> Vec<Ident> {
-        self.variants(grammar)
-            .iter()
-            .map(|variant| format_ident!("{}", to_upper_snake_case(&variant.to_string())))
-            .collect()
-    }
-
-    fn kinds_inlined(&self, grammar: &AstSrc) -> Vec<Ident> {
-        self.variants
-            .iter()
-            .filter_map(|v| Some(grammar.get_enum_node(v)?.kinds(grammar)))
-            .flatten()
-            .collect()
     }
 }
 
@@ -251,52 +227,90 @@ fn generate_nodes(kinds: &KindsSrc, grammar: &AstSrc) -> String {
         .enums
         .iter()
         .map(|en| {
-            let variants = en.variants(grammar);
+            let variants = en.variants();
             let name = en.name();
-            let kinds = en.kinds(grammar);
 
-            let (inlined_variant_parents, inlined_variants): (Vec<_>, Vec<_>) =
-                en.variants_inlined(grammar).into_iter().unzip();
-            let inlined_kinds = en.kinds_inlined(grammar);
             let traits = en.traits.iter().map(|trait_name| {
                 let trait_name = format_ident!("{}", trait_name);
                 quote!(impl ast::#trait_name for #name {})
             });
 
+            let (enum_variants, non_enum_variants) = en.partitioned_variants(grammar);
 
-            let unique_parent_variants = inlined_variant_parents
+            let non_enum_kinds = non_enum_variants
                 .iter()
-                .cloned()
-                .collect::<BTreeSet<_>>()
-                .into_iter()
+                .map(|variant| {
+                    let kind = format_ident!("{}", to_upper_snake_case(&variant.to_string()));
+                    quote!(#kind)
+                })
                 .collect::<Vec<_>>();
+
+            assert!(enum_variants.len() + non_enum_variants.len() > 0);
+
+            let can_cast = if non_enum_variants.is_empty() {
+                quote! {
+                    fn can_cast(kind: SyntaxKind) -> bool {
+                        #(#enum_variants::can_cast(kind))||*
+                    }
+                }
+            } else {
+                quote! {
+                    fn can_cast(kind: SyntaxKind) -> bool {
+                        matches!(kind, #(#non_enum_kinds)|*) #(|| #enum_variants::can_cast(kind))*
+                    }
+                }
+            };
+
+            let cast = {
+                let other = if enum_variants.is_empty() {
+                    quote! { _ => return None, }
+                } else {
+                    quote! {
+                        other => {
+                            if false  {
+                                return None;
+                            } #(else if #enum_variants::can_cast(other) {
+                                return #enum_variants::cast(syntax).map(Self::#enum_variants);
+                            })* else {
+                                return None;
+                            }
+                        }
+                    }
+                };
+
+                let body = if non_enum_variants.is_empty() {
+                    quote! { 
+                        match syntax.kind() {
+                            #other
+                        }
+                    }
+                } else {
+                    quote! {
+                        let res = match syntax.kind() {
+                            #(#non_enum_kinds => Self::#non_enum_variants(#non_enum_variants { syntax }),)*
+                            #other
+                        };
+                        Some(res)
+                    }
+                };
+                quote! {
+                    fn cast(syntax: SyntaxNode) -> Option<Self> {
+                        #body
+                    }
+                }
+            };
 
             let ast_node = {
                 quote! {
                     impl AstNode for #name {
-                        fn can_cast(kind: SyntaxKind) -> bool {
-                            matches!(kind, #(#kinds)|* #(| #inlined_kinds)*)
-                        }
-                        fn cast(syntax: SyntaxNode) -> Option<Self> {
-                            let res = match syntax.kind() {
-                                #(
-                                #kinds => #name::#variants(#variants { syntax }),
-                                )*
-                                #(
-                                #inlined_kinds =>
-                                    #name::#inlined_variant_parents(#inlined_variant_parents::#inlined_variants(#inlined_variants { syntax })),
-                                )*
-                                _ => return None,
-                            };
-                            Some(res)
-                        }
+                        #can_cast
+                        #cast
+
+                        #[inline]
                         fn syntax(&self) -> &SyntaxNode {
                             match self {
                                 #(
-                                #name::#variants(it) => &it.syntax,
-                                )*
-                                #(
-                                #name::#unique_parent_variants(it) => it.syntax(),
+                                #name::#variants(it) => it.syntax(),
                                 )*
                             }
                         }
@@ -311,7 +325,6 @@ fn generate_nodes(kinds: &KindsSrc, grammar: &AstSrc) -> String {
                     #[derive(Debug, Clone, PartialEq, Eq, Hash)]
                     pub enum #name {
                         #(#variants(#variants),)*
-                        #(#unique_parent_variants(#unique_parent_variants),)*
                     }
                     #(#traits)*
                 },
@@ -320,13 +333,6 @@ fn generate_nodes(kinds: &KindsSrc, grammar: &AstSrc) -> String {
                         impl From<#variants> for #name {
                             fn from(node: #variants) -> #name {
                                 #name::#variants(node)
-                            }
-                        }
-                    )*
-                    #(
-                        impl From<#unique_parent_variants> for #name {
-                            fn from(node: #unique_parent_variants) -> #name {
-                                #name::#unique_parent_variants(node)
                             }
                         }
                     )*
@@ -912,8 +918,9 @@ fn lower(grammar: &Grammar, kinds: &KindsSrc) -> AstSrc {
     let nodes = grammar.iter().collect_vec();
 
     for &node in &nodes {
-        let name = grammar[node].name.clone();
-        let rule = &grammar[node].rule;
+        let node_data = &grammar[node];
+        let name = node_data.name.clone();
+        let rule = &node_data.rule;
 
         if name == "Tokens" {
             lower_token_defs(&mut res, grammar, kinds, rule);
