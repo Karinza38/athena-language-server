@@ -1,0 +1,2 @@
+declare paired-with: (S, T) [S (Set T)] -> (Set (Pair S T)) 
+                            [130 [id alist->set]]

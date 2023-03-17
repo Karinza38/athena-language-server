@@ -1,0 +1,85 @@
+---
+source: crates/parser/src/tests.rs
+description: "declare paired-with: (S, T) [S (Set T)] -> (Set (Pair S T)) \n                            [130 [id alist->set]]"
+input_file: crates/parser/test_data/parser/ok/file/declare-complex-return-sort.ath
+---
+SOURCE_FILE
+  DIR_STMT
+    INFIX_DECLARE_DIR
+      DECLARE_KW "declare"
+      WHITESPACE " "
+      IDENTIFIER
+        IDENT "paired-with"
+      COLON ":"
+      WHITESPACE " "
+      SORT_VARS_DECL
+        L_PAREN "("
+        IDENTIFIER
+          IDENT "S"
+        COMMA ","
+        WHITESPACE " "
+        IDENT_SORT
+          IDENTIFIER
+            IDENT "T"
+        R_PAREN ")"
+      WHITESPACE " "
+      FUNC_SORTS
+        L_BRACK "["
+        IDENT_SORT
+          IDENTIFIER
+            IDENT "S"
+        WHITESPACE " "
+        COMPOUND_SORT
+          L_PAREN "("
+          IDENT_SORT
+            IDENTIFIER
+              IDENT "Set"
+          WHITESPACE " "
+          IDENT_SORT
+            IDENTIFIER
+              IDENT "T"
+          R_PAREN ")"
+        R_BRACK "]"
+      WHITESPACE " "
+      THIN_ARROW "->"
+      WHITESPACE " "
+      COMPOUND_SORT
+        L_PAREN "("
+        IDENT_SORT
+          IDENTIFIER
+            IDENT "Set"
+        WHITESPACE " "
+        COMPOUND_SORT
+          L_PAREN "("
+          IDENT_SORT
+            IDENTIFIER
+              IDENT "Pair"
+          WHITESPACE " "
+          IDENT_SORT
+            IDENTIFIER
+              IDENT "S"
+          WHITESPACE " "
+          IDENT_SORT
+            IDENTIFIER
+              IDENT "T"
+          R_PAREN ")"
+        R_PAREN ")"
+      WHITESPACE " \n                            "
+      DECLARE_ATTRS
+        L_BRACK "["
+        DECLARE_ATTR
+          IDENTIFIER
+            IDENT "130"
+        WHITESPACE " "
+        INPUT_TRANSFORM_DECL
+          L_BRACK "["
+          IDENT_EXPR
+            IDENTIFIER
+              IDENT "id"
+          WHITESPACE " "
+          IDENT_EXPR
+            IDENTIFIER
+              IDENT "alist->set"
+          R_BRACK "]"
+        R_BRACK "]"
+

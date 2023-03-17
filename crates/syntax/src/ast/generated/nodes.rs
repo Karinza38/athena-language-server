@@ -535,13 +535,13 @@ impl PrefixDeclareDir {
     pub fn thin_arrow_token(&self) -> Option<SyntaxToken> {
         support::token(&self.syntax, T![->])
     }
-    pub fn sort_decls(&self) -> AstChildren<SortDecl> {
+    pub fn sorts(&self) -> AstChildren<Sort> {
         support::children(&self.syntax)
     }
     pub fn r_paren_token(&self) -> Option<SyntaxToken> {
         support::token(&self.syntax, T![')'])
     }
-    pub fn sort_decl(&self) -> Option<SortDecl> {
+    pub fn sort(&self) -> Option<Sort> {
         support::child(&self.syntax)
     }
     pub fn prefix_declare_attrs(&self) -> Option<PrefixDeclareAttrs> {
@@ -660,7 +660,7 @@ impl InfixDeclareDir {
     pub fn thin_arrow_token(&self) -> Option<SyntaxToken> {
         support::token(&self.syntax, T![->])
     }
-    pub fn return_sort(&self) -> Option<SortDecl> {
+    pub fn return_sort(&self) -> Option<Sort> {
         support::child(&self.syntax)
     }
     pub fn declare_attrs(&self) -> Option<DeclareAttrs> {
@@ -692,7 +692,7 @@ impl FuncSorts {
     pub fn l_brack_token(&self) -> Option<SyntaxToken> {
         support::token(&self.syntax, T!['['])
     }
-    pub fn sort_decls(&self) -> AstChildren<SortDecl> {
+    pub fn sorts(&self) -> AstChildren<Sort> {
         support::children(&self.syntax)
     }
     pub fn r_brack_token(&self) -> Option<SyntaxToken> {

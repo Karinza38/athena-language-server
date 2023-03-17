@@ -1,6 +1,6 @@
 use crate::grammar::expressions::expr;
 use crate::grammar::phrases::phrase;
-use crate::grammar::sorts::{sort_decl, SORT_DECL_START};
+use crate::grammar::sorts::{sort, sort_decl, SORT_DECL_START};
 use crate::grammar::statements::{stmt, STMT_START_SET};
 use crate::grammar::{identifier, maybe_wildcard_typed_param};
 use crate::parser::{Marker, Parser};
@@ -355,7 +355,7 @@ fn func_sorts(p: &mut Parser) {
     p.bump(T!['[']);
 
     while !p.at(T![']']) && !p.at_end() {
-        if !sort_decl(p) {
+        if !super::sorts::sort(p) {
             p.error("expected a sort declaration");
         }
     }
@@ -555,7 +555,7 @@ fn declare_dir(p: &mut Parser) {
         p.expect(T![->]);
     }
 
-    if !sort_decl(p) {
+    if !sort(p) {
         // test_err(dir) declare_no_ret_sort
         // declare foo : [Int] ->
         p.error("expected function return sort");

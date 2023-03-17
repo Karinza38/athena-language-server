@@ -240,7 +240,7 @@ PrefixConstantDeclare =
     '(' 'declare' PrefixDeclareSymbols SortDecl ')'
 
 PrefixDeclareDir =
-    '(' 'declare' PrefixDeclareSymbols '(' PrefixSortVarsDecl?  '->' '(' SortDecl* ')' SortDecl ')' PrefixDeclareAttrs? ')'
+    '(' 'declare' PrefixDeclareSymbols '(' PrefixSortVarsDecl?  '->' '(' Sort* ')' Sort ')' PrefixDeclareAttrs? ')'
 
 PrefixDeclareSymbols =
     PrefixSingleSymbol
@@ -260,7 +260,7 @@ DeclareDir =
     | InfixDeclareDir
 
 InfixDeclareDir =
-    'declare' (Identifier (',' Identifier)*) ':' SortVarsDecl? FuncSorts '->' return_sort:SortDecl DeclareAttrs?
+    'declare' (Identifier (',' Identifier)*) ':' SortVarsDecl? FuncSorts '->' return_sort:Sort DeclareAttrs?
 
 InputTransformDecl =
     '[' Expr Expr* ']'
@@ -274,7 +274,7 @@ DeclareAttrs =
     '[' DeclareAttr* InputTransformDecl? ']'
 
 FuncSorts =
-    '[' SortDecl* ']'
+    '[' Sort* ']'
 
 SortVarsDecl =
     '(' (IdentSort (',' IdentSort)*) ')'

@@ -1,0 +1,1 @@
+declare set->map: (S, T) [(Set (Pair S T))] -> (Map S T)
