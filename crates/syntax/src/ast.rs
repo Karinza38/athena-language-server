@@ -7,8 +7,10 @@ use crate::syntax_node::{SyntaxNode, SyntaxNodeChildren, SyntaxToken};
 use crate::SyntaxKind;
 
 mod generated;
+mod traits;
 
 pub use self::generated::{nodes::*, tokens::*};
+pub use traits::{HasDefineBody, HasDefineName, HasIdentifier};
 /// The main trait to go from untyped `SyntaxNode`  to a typed ast. The
 /// conversion itself has zero runtime cost: ast and syntax nodes have exactly
 /// the same representation: a pointer to the tree root and a pointer to the
@@ -121,5 +123,15 @@ mod support {
             .children_with_tokens()
             .filter_map(|it| it.into_token())
             .find(|it| it.kind() == kind)
+    }
+}
+
+mod ext {
+    use super::PrefixDefine;
+
+    impl From<PrefixDefine> for super::Definition {
+        fn from(value: PrefixDefine) -> Self {
+            super::Definition::PrefixDefineDir(value.into())
+        }
     }
 }

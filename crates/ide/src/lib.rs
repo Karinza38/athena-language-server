@@ -1,6 +1,6 @@
-mod navigation_target;
-mod helpers;
 mod go_to_definition;
+mod helpers;
+mod navigation_target;
 
 pub use ide_db::line_index::LineIndex;
 

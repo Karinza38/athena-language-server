@@ -12,7 +12,7 @@ pub struct Scope {
 
 pub type ScopeId = Idx<Scope>;
 
-#[derive(PartialEq, Eq, Debug)]
+#[derive(PartialEq, Eq, Debug, Clone, Copy)]
 pub enum ScopeKind {
     Expr(ExprId),
     ModuleItem(ModuleItem),

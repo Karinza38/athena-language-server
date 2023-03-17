@@ -10,7 +10,11 @@ pub use base_db;
 use base_db::{salsa, FileId};
 use line_index::LineIndex;
 
-#[salsa::database(base_db::SourceDatabaseStorage, LineIndexDatabaseStorage)]
+#[salsa::database(
+    base_db::SourceDatabaseStorage,
+    LineIndexDatabaseStorage,
+    hir::HirDatabaseStorage
+)]
 pub struct RootDatabase {
     storage: salsa::Storage<RootDatabase>,
 }

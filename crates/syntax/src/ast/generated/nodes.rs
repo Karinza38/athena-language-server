@@ -27,12 +27,10 @@ impl Literal {}
 pub struct MetaIdent {
     pub(crate) syntax: SyntaxNode,
 }
+impl ast::HasIdentifier for MetaIdent {}
 impl MetaIdent {
     pub fn single_quote_token(&self) -> Option<SyntaxToken> {
         support::token(&self.syntax, T!['\''])
-    }
-    pub fn identifier(&self) -> Option<Identifier> {
-        support::child(&self.syntax)
     }
 }
 
@@ -53,10 +51,8 @@ impl Unit {
 pub struct TypedParam {
     pub(crate) syntax: SyntaxNode,
 }
+impl ast::HasIdentifier for TypedParam {}
 impl TypedParam {
-    pub fn identifier(&self) -> Option<Identifier> {
-        support::child(&self.syntax)
-    }
     pub fn colon_token(&self) -> Option<SyntaxToken> {
         support::token(&self.syntax, T![:])
     }
@@ -69,10 +65,8 @@ impl TypedParam {
 pub struct OpAnnotatedParam {
     pub(crate) syntax: SyntaxNode,
 }
+impl ast::HasIdentifier for OpAnnotatedParam {}
 impl OpAnnotatedParam {
-    pub fn identifier(&self) -> Option<Identifier> {
-        support::child(&self.syntax)
-    }
     pub fn colon_token(&self) -> Option<SyntaxToken> {
         support::token(&self.syntax, T![:])
     }
@@ -120,12 +114,10 @@ impl PrefixBinding {
 pub struct VarSort {
     pub(crate) syntax: SyntaxNode,
 }
+impl ast::HasIdentifier for VarSort {}
 impl VarSort {
     pub fn single_quote_token(&self) -> Option<SyntaxToken> {
         support::token(&self.syntax, T!['\''])
-    }
-    pub fn identifier(&self) -> Option<Identifier> {
-        support::child(&self.syntax)
     }
 }
 
@@ -133,11 +125,8 @@ impl VarSort {
 pub struct IdentSort {
     pub(crate) syntax: SyntaxNode,
 }
-impl IdentSort {
-    pub fn identifier(&self) -> Option<Identifier> {
-        support::child(&self.syntax)
-    }
-}
+impl ast::HasIdentifier for IdentSort {}
+impl IdentSort {}
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct CompoundSort {
@@ -251,22 +240,17 @@ impl StructureNameDef {
 pub struct ConstantConstructor {
     pub(crate) syntax: SyntaxNode,
 }
-impl ConstantConstructor {
-    pub fn identifier(&self) -> Option<Identifier> {
-        support::child(&self.syntax)
-    }
-}
+impl ast::HasIdentifier for ConstantConstructor {}
+impl ConstantConstructor {}
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct CompoundConstructor {
     pub(crate) syntax: SyntaxNode,
 }
+impl ast::HasIdentifier for CompoundConstructor {}
 impl CompoundConstructor {
     pub fn l_paren_token(&self) -> Option<SyntaxToken> {
         support::token(&self.syntax, T!['('])
-    }
-    pub fn identifier(&self) -> Option<Identifier> {
-        support::child(&self.syntax)
     }
     pub fn maybe_tagged_sort_decl(&self) -> Option<MaybeTaggedSortDecl> {
         support::child(&self.syntax)
@@ -312,6 +296,8 @@ impl StructureDef {
 pub struct InfixDefineDir {
     pub(crate) syntax: SyntaxNode,
 }
+impl ast::HasDefineName for InfixDefineDir {}
+impl ast::HasDefineBody for InfixDefineDir {}
 impl InfixDefineDir {
     pub fn private_token(&self) -> Option<SyntaxToken> {
         support::token(&self.syntax, T![private])
@@ -319,14 +305,8 @@ impl InfixDefineDir {
     pub fn define_token(&self) -> Option<SyntaxToken> {
         support::token(&self.syntax, T![define])
     }
-    pub fn define_name(&self) -> Option<DefineName> {
-        support::child(&self.syntax)
-    }
     pub fn colon_eq_token(&self) -> Option<SyntaxToken> {
         support::token(&self.syntax, T![:=])
-    }
-    pub fn phrase(&self) -> Option<Phrase> {
-        support::child(&self.syntax)
     }
 }
 
@@ -334,12 +314,10 @@ impl InfixDefineDir {
 pub struct ModuleDir {
     pub(crate) syntax: SyntaxNode,
 }
+impl ast::HasIdentifier for ModuleDir {}
 impl ModuleDir {
     pub fn module_token(&self) -> Option<SyntaxToken> {
         support::token(&self.syntax, T![module])
-    }
-    pub fn identifier(&self) -> Option<Identifier> {
-        support::child(&self.syntax)
     }
     pub fn l_curly_token(&self) -> Option<SyntaxToken> {
         support::token(&self.syntax, T!['{'])
@@ -356,12 +334,10 @@ impl ModuleDir {
 pub struct ExtendModuleDir {
     pub(crate) syntax: SyntaxNode,
 }
+impl ast::HasIdentifier for ExtendModuleDir {}
 impl ExtendModuleDir {
     pub fn extend_module_token(&self) -> Option<SyntaxToken> {
         support::token(&self.syntax, T![extend - module])
-    }
-    pub fn identifier(&self) -> Option<Identifier> {
-        support::child(&self.syntax)
     }
     pub fn l_curly_token(&self) -> Option<SyntaxToken> {
         support::token(&self.syntax, T!['{'])
@@ -378,12 +354,10 @@ impl ExtendModuleDir {
 pub struct AssertClosedDir {
     pub(crate) syntax: SyntaxNode,
 }
+impl ast::HasIdentifier for AssertClosedDir {}
 impl AssertClosedDir {
     pub fn assert_star_token(&self) -> Option<SyntaxToken> {
         support::token(&self.syntax, T![assert *])
-    }
-    pub fn identifier(&self) -> Option<Identifier> {
-        support::child(&self.syntax)
     }
     pub fn colon_eq_token(&self) -> Option<SyntaxToken> {
         support::token(&self.syntax, T![:=])
@@ -452,15 +426,13 @@ impl OpenDir {
 pub struct AssociativityDir {
     pub(crate) syntax: SyntaxNode,
 }
+impl ast::HasIdentifier for AssociativityDir {}
 impl AssociativityDir {
     pub fn left_assoc_token(&self) -> Option<SyntaxToken> {
         support::token(&self.syntax, T![left - assoc])
     }
     pub fn right_assoc_token(&self) -> Option<SyntaxToken> {
         support::token(&self.syntax, T![right - assoc])
-    }
-    pub fn identifier(&self) -> Option<Identifier> {
-        support::child(&self.syntax)
     }
 }
 
@@ -594,11 +566,8 @@ impl PrefixDeclareAttrs {
 pub struct PrefixSingleSymbol {
     pub(crate) syntax: SyntaxNode,
 }
-impl PrefixSingleSymbol {
-    pub fn identifier(&self) -> Option<Identifier> {
-        support::child(&self.syntax)
-    }
-}
+impl ast::HasIdentifier for PrefixSingleSymbol {}
+impl PrefixSingleSymbol {}
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct PrefixMultiSymbols {
@@ -620,15 +589,13 @@ impl PrefixMultiSymbols {
 pub struct DeclareAttr {
     pub(crate) syntax: SyntaxNode,
 }
+impl ast::HasIdentifier for DeclareAttr {}
 impl DeclareAttr {
     pub fn left_assoc_token(&self) -> Option<SyntaxToken> {
         support::token(&self.syntax, T![left - assoc])
     }
     pub fn right_assoc_token(&self) -> Option<SyntaxToken> {
         support::token(&self.syntax, T![right - assoc])
-    }
-    pub fn identifier(&self) -> Option<Identifier> {
-        support::child(&self.syntax)
     }
 }
 
@@ -734,18 +701,14 @@ impl DeclareAttrs {
 pub struct PrefixDefine {
     pub(crate) syntax: SyntaxNode,
 }
+impl ast::HasDefineName for PrefixDefine {}
+impl ast::HasDefineBody for PrefixDefine {}
 impl PrefixDefine {
     pub fn l_paren_token(&self) -> Option<SyntaxToken> {
         support::token(&self.syntax, T!['('])
     }
     pub fn define_token(&self) -> Option<SyntaxToken> {
         support::token(&self.syntax, T![define])
-    }
-    pub fn define_name(&self) -> Option<DefineName> {
-        support::child(&self.syntax)
-    }
-    pub fn phrase(&self) -> Option<Phrase> {
-        support::child(&self.syntax)
     }
     pub fn r_paren_token(&self) -> Option<SyntaxToken> {
         support::token(&self.syntax, T![')'])
@@ -775,6 +738,7 @@ impl PrefixDefineBlocks {
 pub struct PrefixDefineBlock {
     pub(crate) syntax: SyntaxNode,
 }
+impl ast::HasDefineBody for PrefixDefineBlock {}
 impl PrefixDefineBlock {
     pub fn define_proc(&self) -> Option<DefineProc> {
         support::child(&self.syntax)
@@ -782,21 +746,16 @@ impl PrefixDefineBlock {
     pub fn colon_eq_token(&self) -> Option<SyntaxToken> {
         support::token(&self.syntax, T![:=])
     }
-    pub fn phrase(&self) -> Option<Phrase> {
-        support::child(&self.syntax)
-    }
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct DefineNamedPattern {
     pub(crate) syntax: SyntaxNode,
 }
+impl ast::HasIdentifier for DefineNamedPattern {}
 impl DefineNamedPattern {
     pub fn l_paren_token(&self) -> Option<SyntaxToken> {
         support::token(&self.syntax, T!['('])
-    }
-    pub fn identifier(&self) -> Option<Identifier> {
-        support::child(&self.syntax)
     }
     pub fn as_token(&self) -> Option<SyntaxToken> {
         support::token(&self.syntax, T![as])
@@ -813,12 +772,10 @@ impl DefineNamedPattern {
 pub struct DefineProc {
     pub(crate) syntax: SyntaxNode,
 }
+impl ast::HasIdentifier for DefineProc {}
 impl DefineProc {
     pub fn l_paren_token(&self) -> Option<SyntaxToken> {
         support::token(&self.syntax, T!['('])
-    }
-    pub fn identifier(&self) -> Option<Identifier> {
-        support::child(&self.syntax)
     }
     pub fn args(&self) -> AstChildren<MaybeWildcardTypedParam> {
         support::children(&self.syntax)
@@ -848,12 +805,10 @@ impl ListPat {
 pub struct InfixAssertDir {
     pub(crate) syntax: SyntaxNode,
 }
+impl ast::HasIdentifier for InfixAssertDir {}
 impl InfixAssertDir {
     pub fn assert_token(&self) -> Option<SyntaxToken> {
         support::token(&self.syntax, T![assert])
-    }
-    pub fn identifier(&self) -> Option<Identifier> {
-        support::child(&self.syntax)
     }
     pub fn colon_eq_token(&self) -> Option<SyntaxToken> {
         support::token(&self.syntax, T![:=])
@@ -867,15 +822,13 @@ impl InfixAssertDir {
 pub struct PrefixAssertDir {
     pub(crate) syntax: SyntaxNode,
 }
+impl ast::HasIdentifier for PrefixAssertDir {}
 impl PrefixAssertDir {
     pub fn l_paren_token(&self) -> Option<SyntaxToken> {
         support::token(&self.syntax, T!['('])
     }
     pub fn assert_token(&self) -> Option<SyntaxToken> {
         support::token(&self.syntax, T![assert])
-    }
-    pub fn identifier(&self) -> Option<Identifier> {
-        support::child(&self.syntax)
     }
     pub fn colon_eq_token(&self) -> Option<SyntaxToken> {
         support::token(&self.syntax, T![:=])
@@ -892,15 +845,13 @@ impl PrefixAssertDir {
 pub struct InfixRuleDir {
     pub(crate) syntax: SyntaxNode,
 }
+impl ast::HasIdentifier for InfixRuleDir {}
 impl InfixRuleDir {
     pub fn primitive_method_token(&self) -> Option<SyntaxToken> {
         support::token(&self.syntax, T![primitive - method])
     }
     pub fn l_paren_token(&self) -> Option<SyntaxToken> {
         support::token(&self.syntax, T!['('])
-    }
-    pub fn identifier(&self) -> Option<Identifier> {
-        support::child(&self.syntax)
     }
     pub fn maybe_wildcard_typed_params(&self) -> AstChildren<MaybeWildcardTypedParam> {
         support::children(&self.syntax)
@@ -920,15 +871,13 @@ impl InfixRuleDir {
 pub struct PrefixRuleDir {
     pub(crate) syntax: SyntaxNode,
 }
+impl ast::HasIdentifier for PrefixRuleDir {}
 impl PrefixRuleDir {
     pub fn l_paren_token(&self) -> Option<SyntaxToken> {
         support::token(&self.syntax, T!['('])
     }
     pub fn primitive_method_token(&self) -> Option<SyntaxToken> {
         support::token(&self.syntax, T![primitive - method])
-    }
-    pub fn identifier(&self) -> Option<Identifier> {
-        support::child(&self.syntax)
     }
     pub fn maybe_wildcard_typed_params(&self) -> AstChildren<MaybeWildcardTypedParam> {
         support::children(&self.syntax)
@@ -961,12 +910,10 @@ impl ExpandInputDir {
 pub struct DefineSortDir {
     pub(crate) syntax: SyntaxNode,
 }
+impl ast::HasIdentifier for DefineSortDir {}
 impl DefineSortDir {
     pub fn define_sort_token(&self) -> Option<SyntaxToken> {
         support::token(&self.syntax, T![define - sort])
-    }
-    pub fn identifier(&self) -> Option<Identifier> {
-        support::child(&self.syntax)
     }
     pub fn colon_eq_token(&self) -> Option<SyntaxToken> {
         support::token(&self.syntax, T![:=])
@@ -1109,12 +1056,10 @@ impl UnitExpr {
 pub struct TermVarExpr {
     pub(crate) syntax: SyntaxNode,
 }
+impl ast::HasIdentifier for TermVarExpr {}
 impl TermVarExpr {
     pub fn question_mark_token(&self) -> Option<SyntaxToken> {
         support::token(&self.syntax, T![?])
-    }
-    pub fn identifier(&self) -> Option<Identifier> {
-        support::child(&self.syntax)
     }
     pub fn colon_token(&self) -> Option<SyntaxToken> {
         support::token(&self.syntax, T![:])
@@ -1605,12 +1550,10 @@ impl PrefixLetRecExpr {
 pub struct LetRecPart {
     pub(crate) syntax: SyntaxNode,
 }
+impl ast::HasIdentifier for LetRecPart {}
 impl LetRecPart {
     pub fn semicolon_token(&self) -> Option<SyntaxToken> {
         support::token(&self.syntax, T![;])
-    }
-    pub fn identifier(&self) -> Option<Identifier> {
-        support::child(&self.syntax)
     }
     pub fn colon_eq_token(&self) -> Option<SyntaxToken> {
         support::token(&self.syntax, T![:=])
@@ -1900,15 +1843,13 @@ impl WithWitnessDed {
 pub struct PickWitnessDed {
     pub(crate) syntax: SyntaxNode,
 }
+impl ast::HasIdentifier for PickWitnessDed {}
 impl PickWitnessDed {
     pub fn l_paren_token(&self) -> Option<SyntaxToken> {
         support::token(&self.syntax, T!['('])
     }
     pub fn pick_witness_token(&self) -> Option<SyntaxToken> {
         support::token(&self.syntax, T![pick - witness])
-    }
-    pub fn identifier(&self) -> Option<Identifier> {
-        support::child(&self.syntax)
     }
     pub fn for_token(&self) -> Option<SyntaxToken> {
         support::token(&self.syntax, T![for])
@@ -1928,12 +1869,10 @@ impl PickWitnessDed {
 pub struct PickWitnessesDed {
     pub(crate) syntax: SyntaxNode,
 }
+impl ast::HasIdentifier for PickWitnessesDed {}
 impl PickWitnessesDed {
     pub fn pick_witnesses_token(&self) -> Option<SyntaxToken> {
         support::token(&self.syntax, T![pick - witnesses])
-    }
-    pub fn identifier(&self) -> Option<Identifier> {
-        support::child(&self.syntax)
     }
     pub fn identifiers(&self) -> AstChildren<Identifier> {
         support::children(&self.syntax)
@@ -2003,15 +1942,13 @@ impl CasesDed {
 pub struct ConcludeDed {
     pub(crate) syntax: SyntaxNode,
 }
+impl ast::HasIdentifier for ConcludeDed {}
 impl ConcludeDed {
     pub fn l_paren_token(&self) -> Option<SyntaxToken> {
         support::token(&self.syntax, T!['('])
     }
     pub fn conclude_token(&self) -> Option<SyntaxToken> {
         support::token(&self.syntax, T![conclude])
-    }
-    pub fn identifier(&self) -> Option<Identifier> {
-        support::child(&self.syntax)
     }
     pub fn colon_eq_token(&self) -> Option<SyntaxToken> {
         support::token(&self.syntax, T![:=])
@@ -2072,12 +2009,10 @@ impl SeqDed {
 pub struct AssumePart {
     pub(crate) syntax: SyntaxNode,
 }
+impl ast::HasIdentifier for AssumePart {}
 impl AssumePart {
     pub fn semicolon_token(&self) -> Option<SyntaxToken> {
         support::token(&self.syntax, T![;])
-    }
-    pub fn identifier(&self) -> Option<Identifier> {
-        support::child(&self.syntax)
     }
     pub fn colon_eq_token(&self) -> Option<SyntaxToken> {
         support::token(&self.syntax, T![:=])
@@ -2091,15 +2026,13 @@ impl AssumePart {
 pub struct PrefixNamedAssumeDed {
     pub(crate) syntax: SyntaxNode,
 }
+impl ast::HasIdentifier for PrefixNamedAssumeDed {}
 impl PrefixNamedAssumeDed {
     pub fn l_paren_token(&self) -> Option<SyntaxToken> {
         support::token(&self.syntax, T!['('])
     }
     pub fn assume_token(&self) -> Option<SyntaxToken> {
         support::token(&self.syntax, T![assume])
-    }
-    pub fn identifier(&self) -> Option<Identifier> {
-        support::child(&self.syntax)
     }
     pub fn colon_eq_token(&self) -> Option<SyntaxToken> {
         support::token(&self.syntax, T![:=])
@@ -2495,14 +2428,12 @@ impl MaybeNamedInference {
 pub struct MaybeWildcardOpAnnotatedParam {
     pub(crate) syntax: SyntaxNode,
 }
+impl ast::HasIdentifier for MaybeWildcardOpAnnotatedParam {}
 impl MaybeWildcardOpAnnotatedParam {
     pub fn underscore_token(&self) -> Option<SyntaxToken> {
         support::token(&self.syntax, T![_])
     }
     pub fn op_annotated_param(&self) -> Option<OpAnnotatedParam> {
-        support::child(&self.syntax)
-    }
-    pub fn identifier(&self) -> Option<Identifier> {
         support::child(&self.syntax)
     }
 }
@@ -2578,12 +2509,10 @@ impl IdentPat {
 pub struct VarPat {
     pub(crate) syntax: SyntaxNode,
 }
+impl ast::HasIdentifier for VarPat {}
 impl VarPat {
     pub fn question_mark_token(&self) -> Option<SyntaxToken> {
         support::token(&self.syntax, T![?])
-    }
-    pub fn identifier(&self) -> Option<Identifier> {
-        support::child(&self.syntax)
     }
     pub fn colon_token(&self) -> Option<SyntaxToken> {
         support::token(&self.syntax, T![:])
@@ -2627,6 +2556,7 @@ impl UnitPat {
 pub struct NamedPat {
     pub(crate) syntax: SyntaxNode,
 }
+impl ast::HasIdentifier for NamedPat {}
 impl NamedPat {
     pub fn l_paren_token(&self) -> Option<SyntaxToken> {
         support::token(&self.syntax, T!['('])
@@ -2636,9 +2566,6 @@ impl NamedPat {
     }
     pub fn as_token(&self) -> Option<SyntaxToken> {
         support::token(&self.syntax, T![as])
-    }
-    pub fn identifier(&self) -> Option<Identifier> {
-        support::child(&self.syntax)
     }
     pub fn pat(&self) -> Option<Pat> {
         support::child(&self.syntax)
@@ -2652,15 +2579,13 @@ impl NamedPat {
 pub struct ValOfPat {
     pub(crate) syntax: SyntaxNode,
 }
+impl ast::HasIdentifier for ValOfPat {}
 impl ValOfPat {
     pub fn l_paren_token(&self) -> Option<SyntaxToken> {
         support::token(&self.syntax, T!['('])
     }
     pub fn val_of_token(&self) -> Option<SyntaxToken> {
         support::token(&self.syntax, T![val - of])
-    }
-    pub fn identifier(&self) -> Option<Identifier> {
-        support::child(&self.syntax)
     }
     pub fn r_paren_token(&self) -> Option<SyntaxToken> {
         support::token(&self.syntax, T![')'])
@@ -2922,6 +2847,7 @@ pub enum StructureConstructor {
     ConstantConstructor(ConstantConstructor),
     CompoundConstructor(CompoundConstructor),
 }
+impl ast::HasIdentifier for StructureConstructor {}
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub enum Item {
@@ -2938,12 +2864,14 @@ pub enum Module {
     ModuleDir(ModuleDir),
     ExtendModuleDir(ExtendModuleDir),
 }
+impl ast::HasIdentifier for Module {}
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub enum Assertion {
     AssertClosedDir(AssertClosedDir),
     AssertDir(AssertDir),
 }
+impl ast::HasIdentifier for Assertion {}
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub enum Domain {
@@ -2974,6 +2902,8 @@ pub enum DefineDir {
     InfixDefineDir(InfixDefineDir),
     PrefixDefineDir(PrefixDefineDir),
 }
+impl ast::HasDefineBody for DefineDir {}
+impl ast::HasDefineName for DefineDir {}
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub enum MetaDefinition {
@@ -2986,6 +2916,8 @@ pub enum Definition {
     InfixDefineDir(InfixDefineDir),
     PrefixDefineDir(PrefixDefineDir),
 }
+impl ast::HasDefineBody for Definition {}
+impl ast::HasDefineName for Definition {}
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub enum PrefixDefineDir {
@@ -2998,6 +2930,7 @@ pub enum AssertDir {
     InfixAssertDir(InfixAssertDir),
     PrefixAssertDir(PrefixAssertDir),
 }
+impl ast::HasIdentifier for AssertDir {}
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub enum DeclareDir {
@@ -3061,6 +2994,7 @@ pub enum RuleDir {
     InfixRuleDir(InfixRuleDir),
     PrefixRuleDir(PrefixRuleDir),
 }
+impl ast::HasIdentifier for RuleDir {}
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub enum OverloadDir {
@@ -3148,6 +3082,24 @@ pub enum Inference {
     InferBy(InferBy),
     Ded(Ded),
 }
+
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+pub struct AnyHasDefineBody {
+    pub(crate) syntax: SyntaxNode,
+}
+impl ast::HasDefineBody for AnyHasDefineBody {}
+
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+pub struct AnyHasDefineName {
+    pub(crate) syntax: SyntaxNode,
+}
+impl ast::HasDefineName for AnyHasDefineName {}
+
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+pub struct AnyHasIdentifier {
+    pub(crate) syntax: SyntaxNode,
+}
+impl ast::HasIdentifier for AnyHasIdentifier {}
 impl AstNode for Identifier {
     fn can_cast(kind: SyntaxKind) -> bool {
         kind == IDENTIFIER
@@ -7491,6 +7443,96 @@ impl AstNode for Inference {
             Inference::InferBy(it) => &it.syntax,
             Inference::Ded(it) => it.syntax(),
         }
+    }
+}
+impl AnyHasDefineBody {
+    #[inline]
+    pub fn new<T: ast::HasDefineBody>(node: T) -> AnyHasDefineBody {
+        AnyHasDefineBody {
+            syntax: node.syntax().clone(),
+        }
+    }
+}
+impl AstNode for AnyHasDefineBody {
+    fn can_cast(kind: SyntaxKind) -> bool {
+        matches!(kind, INFIX_DEFINE_DIR | PREFIX_DEFINE | PREFIX_DEFINE_BLOCK)
+    }
+    fn cast(syntax: SyntaxNode) -> Option<Self> {
+        Self::can_cast(syntax.kind()).then_some(AnyHasDefineBody { syntax })
+    }
+    fn syntax(&self) -> &SyntaxNode {
+        &self.syntax
+    }
+}
+impl AnyHasDefineName {
+    #[inline]
+    pub fn new<T: ast::HasDefineName>(node: T) -> AnyHasDefineName {
+        AnyHasDefineName {
+            syntax: node.syntax().clone(),
+        }
+    }
+}
+impl AstNode for AnyHasDefineName {
+    fn can_cast(kind: SyntaxKind) -> bool {
+        matches!(kind, INFIX_DEFINE_DIR | PREFIX_DEFINE)
+    }
+    fn cast(syntax: SyntaxNode) -> Option<Self> {
+        Self::can_cast(syntax.kind()).then_some(AnyHasDefineName { syntax })
+    }
+    fn syntax(&self) -> &SyntaxNode {
+        &self.syntax
+    }
+}
+impl AnyHasIdentifier {
+    #[inline]
+    pub fn new<T: ast::HasIdentifier>(node: T) -> AnyHasIdentifier {
+        AnyHasIdentifier {
+            syntax: node.syntax().clone(),
+        }
+    }
+}
+impl AstNode for AnyHasIdentifier {
+    fn can_cast(kind: SyntaxKind) -> bool {
+        matches!(
+            kind,
+            META_IDENT
+                | TYPED_PARAM
+                | OP_ANNOTATED_PARAM
+                | VAR_SORT
+                | IDENT_SORT
+                | CONSTANT_CONSTRUCTOR
+                | COMPOUND_CONSTRUCTOR
+                | MODULE_DIR
+                | EXTEND_MODULE_DIR
+                | ASSERT_CLOSED_DIR
+                | ASSOCIATIVITY_DIR
+                | PREFIX_SINGLE_SYMBOL
+                | DECLARE_ATTR
+                | DEFINE_NAMED_PATTERN
+                | DEFINE_PROC
+                | INFIX_ASSERT_DIR
+                | PREFIX_ASSERT_DIR
+                | INFIX_RULE_DIR
+                | PREFIX_RULE_DIR
+                | DEFINE_SORT_DIR
+                | TERM_VAR_EXPR
+                | LET_REC_PART
+                | PICK_WITNESS_DED
+                | PICK_WITNESSES_DED
+                | CONCLUDE_DED
+                | ASSUME_PART
+                | PREFIX_NAMED_ASSUME_DED
+                | MAYBE_WILDCARD_OP_ANNOTATED_PARAM
+                | VAR_PAT
+                | NAMED_PAT
+                | VAL_OF_PAT
+        )
+    }
+    fn cast(syntax: SyntaxNode) -> Option<Self> {
+        Self::can_cast(syntax.kind()).then_some(AnyHasIdentifier { syntax })
+    }
+    fn syntax(&self) -> &SyntaxNode {
+        &self.syntax
     }
 }
 impl std::fmt::Display for MaybeTypedParam {

@@ -14,6 +14,8 @@ pub mod file_graph;
 
 pub mod db;
 
+pub use db::{HirDatabase, HirDatabaseStorage};
+
 #[cfg(test)]
 mod test_db;
 

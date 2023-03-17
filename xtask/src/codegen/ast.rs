@@ -1148,7 +1148,11 @@ fn extract_enums(ast: &mut AstSrc) {
 }
 
 fn extract_struct_traits(ast: &mut AstSrc) {
-    let traits: &[(&str, &[&str])] = &[];
+    let traits: &[(&str, &[&str])] = &[
+        ("HasIdentifier", &["identifier"]),
+        ("HasDefineName", &["define_name"]),
+        ("HasDefineBody", &["define_body"]),
+    ];
 
     for node in &mut ast.nodes {
         for (name, methods) in traits {

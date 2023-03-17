@@ -4,8 +4,8 @@ use crate::scope::ScopeId;
 
 #[derive(PartialEq, Eq, Debug)]
 pub struct Ded {
-    pub kind: DedKind,
-    pub scope: ScopeId,
+    // pub kind: DedKind,
+    // pub scope: ScopeId,
 }
 
 #[derive(PartialEq, Eq, Debug)]

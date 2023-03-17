@@ -12,15 +12,20 @@ pub enum Literal {
 
 #[derive(Debug, PartialEq, Eq)]
 pub struct Expr {
-    pub kind: ExprKind,
-    pub scope: ScopeId,
+    // pub kind: ExprKind,
+    // pub scope: ScopeId,
 }
 
-#[derive(Debug, PartialEq, Eq)]
-pub enum ExprKind {
-    Missing,
-    Ident(Name),
-    Literal(Literal),
-    Unit,
-    TermVar(Name, Sort),
-}
+// #[derive(Debug, PartialEq, Eq)]
+// pub enum ExprKind {
+//     Missing,
+//     Ident(Name),
+//     Literal(Literal),
+//     Unit,
+//     TermVar(Name, Sort),
+//     Procedure {
+//         name: Name,
+//         args: Vec<Name>,
+//         body: ExprId,
+//     },
+// }

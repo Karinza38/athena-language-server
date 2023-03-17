@@ -2,12 +2,16 @@
 mod tests;
 
 use base_db::FileId;
-use syntax::{ast, AstNode, AstPtr};
+use syntax::{
+    ast::{self, HasDefineBody, HasDefineName, HasIdentifier},
+    AstNode, AstPtr,
+};
 
 use crate::{
-    expr::ExprId,
+    expr::{Expr, ExprId},
     file_hir::{FileHirSourceMap, ModuleSource},
     name::{AsName, Name},
+    phrase::PhraseId,
     scope::{Scope, ScopeId, ScopeKind, ScopeTree},
     sort::SortKind,
     InFile,
@@ -102,6 +106,7 @@ alloc_fns!(
         Structure -> StructureId in structures,
         Ded -> DedId in deds,
         Sort -> SortId in sorts,
+        Expr -> ExprId in exprs,
     }
 );
 
@@ -122,6 +127,7 @@ impl Ctx {
         res
     }
 
+    #[tracing::instrument(skip(self))]
     fn lower_stmt(&mut self, stmt: ast::Stmt, scope: &mut ScopeId) -> Vec<ModuleItem> {
         match stmt {
             ast::Stmt::DirStmt(dir) => self
@@ -151,6 +157,30 @@ impl Ctx {
         self.scopes.alloc_scope(scope)
     }
 
+    fn set_module_item_scope(&mut self, item: ModuleItem, scope: ScopeId) {
+        self.scopes.set_module_item_scope(item, scope)
+    }
+
+    fn set_expr_scope(&mut self, expr: ExprId, scope: ScopeId) {
+        self.scopes.set_expr_scope(expr, scope)
+    }
+
+    fn make_module_item_scope(
+        &mut self,
+        names: impl IntoIterator<Item = Name>,
+        item: impl Into<ModuleItem> + Copy,
+        parent: Option<ScopeId>,
+    ) -> ScopeId {
+        let scope = Scope {
+            parent,
+            introduced: names.into_iter().collect(),
+            kind: ScopeKind::ModuleItem(item.into()),
+        };
+        let id = self.scopes.alloc_scope(scope);
+        self.set_module_item_scope(item.into(), id);
+        id
+    }
+
     fn make_source<N: AstNode>(&self, node: &N) -> InFile<AstPtr<N>> {
         InFile::new(self.file_id, AstPtr::new(&node))
     }
@@ -162,28 +192,20 @@ impl Ctx {
 
                 let module_id = self.alloc_module(Module {
                     name: name.clone(),
-                    items: Vec::new(),
                     kind: crate::file_hir::ModuleKind::Definition,
                     parent: self.current_module,
                 });
 
-                let mut new_scope = self.make_scope(
-                    vec![name],
-                    ScopeKind::ModuleItem(module_id.into()),
-                    Some(*scope),
-                );
+                let mut new_scope =
+                    self.make_module_item_scope(vec![name], module_id, Some(*scope));
 
                 *scope = new_scope;
 
-                let items = self.with_parent_module(module_id, |ctx| {
-                    module
-                        .stmts()
-                        .map(|stmt| ctx.lower_stmt(stmt, &mut new_scope))
-                        .flatten()
-                        .collect()
+                self.with_parent_module(module_id, |ctx| {
+                    for stmt in module.stmts() {
+                        ctx.lower_stmt(stmt, &mut new_scope);
+                    }
                 });
-
-                self.hir.modules[module_id].items = items;
 
                 let module_ast = module.into();
                 let src = self.make_source(&module_ast);
@@ -216,11 +238,110 @@ impl Ctx {
             ast::Dir::AssertClosedDir(_) => todo!(),
             ast::Dir::ExtendModuleDir(_) => todo!(),
             ast::Dir::OpenDir(_) => todo!(),
-            ast::Dir::AssociativityDir(_) => todo!(),
+            ast::Dir::AssociativityDir(_) => None,
             ast::Dir::AssertDir(_) => todo!(),
             ast::Dir::ConstantDeclareDir(_) => todo!(),
             ast::Dir::DeclareDir(_) => todo!(),
-            ast::Dir::DefineDir(_) => todo!(),
+            ast::Dir::DefineDir(define) => match define {
+                ast::DefineDir::InfixDefineDir(define) => self.lower_define(define, scope),
+                ast::DefineDir::PrefixDefineDir(define) => match define {
+                    ast::PrefixDefineDir::PrefixDefine(define) => self.lower_define(define, scope),
+                    ast::PrefixDefineDir::PrefixDefineBlocks(_) => todo!(),
+                },
+            },
+        }
+    }
+
+    fn lower_define<Def>(&mut self, define: Def, scope: &mut ScopeId) -> Option<Vec<ModuleItem>>
+    where
+        Def: AstNode + HasDefineName + HasDefineBody + Clone,
+        ast::Definition: From<Def>,
+    {
+        let define_name = define.define_name()?;
+        let names = match define_name {
+            ast::DefineName::Identifier(id) => vec![id.as_name()],
+            ast::DefineName::DefineNamedPattern(named) => {
+                vec![named.identifier()?.as_name()]
+            }
+            ast::DefineName::DefineProc(_proc) => {
+                // let args =
+                // let mut names = vec![proc.identifier()?.as_name()];
+
+                // let outer_scope = self.make_scope(names.clone(), Some(*scope));
+                // let def = self.alloc_definition(Definition { name: names[0].clone() });
+                // let src = self.make_source(&ast::Definition::from(define).into());
+                // self.set_definition_source(src, def);
+                // self.set_module_item_scope(ModuleItem::DefinitionId(def), outer_scope);
+                // define.phrase()
+                // names
+                todo!()
+            }
+            ast::DefineName::ListPat(_) => todo!(),
+        };
+
+        let src = self.make_source(&ast::Definition::from(define.clone()).into());
+
+        let mut module_items: Vec<ModuleItem> = Vec::new();
+        for name in names.clone() {
+            let def = self.alloc_definition(Definition { name });
+            self.set_definition_source(src.clone(), def);
+            module_items.push(def.into());
+        }
+
+        let new_scope =
+            self.make_module_item_scope(names.clone(), module_items.last()?.clone(), Some(*scope));
+
+        *scope = new_scope;
+        self.lower_phrase(define.define_body()?, scope);
+
+        Some(module_items)
+    }
+
+    fn lower_expr(&mut self, expr: ast::Expr, scope: &mut ScopeId) -> Option<ExprId> {
+        match &expr {
+            ast::Expr::IdentExpr(_)
+            | ast::Expr::LiteralExpr(_)
+            | ast::Expr::UnitExpr(_)
+            | ast::Expr::TermVarExpr(_)
+            | ast::Expr::CheckExpr(_)
+            | ast::Expr::ApplicationExpr(_)
+            | ast::Expr::ListExpr(_)
+            | ast::Expr::TryExpr(_)
+            | ast::Expr::CellExpr(_)
+            | ast::Expr::SetExpr(_)
+            | ast::Expr::RefExpr(_)
+            | ast::Expr::WhileExpr(_)
+            | ast::Expr::WildcardExpr(_)
+            | ast::Expr::MakeVectorExpr(_)
+            | ast::Expr::VectorSubExpr(_)
+            | ast::Expr::VectorSetExpr(_)
+            | ast::Expr::SeqExpr(_)
+            | ast::Expr::AndExpr(_)
+            | ast::Expr::OrExpr(_)
+            | ast::Expr::MapExpr(_)
+            | ast::Expr::PrefixCheckExpr(_)
+            | ast::Expr::MatchExpr(_)
+            | ast::Expr::MetaIdent(_) => {
+                let id = self.alloc_expr(Expr {});
+                self.set_expr_scope(id, *scope);
+                let src = self.make_source(&expr);
+                self.set_expr_source(src, id);
+                Some(id)
+            }
+            ast::Expr::LambdaExpr(_) => todo!(),
+            ast::Expr::MethodExpr(_) => todo!(),
+            ast::Expr::LetExpr(_) => todo!(),
+            ast::Expr::LetRecExpr(_) => todo!(),
+        }
+    }
+
+    fn lower_phrase(&mut self, phrase: ast::Phrase, scope: &mut ScopeId) -> Option<PhraseId> {
+        match phrase {
+            ast::Phrase::ExprPhrase(exp) => {
+                let id = self.lower_expr(exp.expr()?, scope)?;
+                Some(id.into())
+            }
+            ast::Phrase::DedPhrase(_) => todo!(),
         }
     }
 
@@ -231,20 +352,17 @@ impl Ctx {
     ) -> Option<DefinitionId> {
         let name = sort_decl_name(&sort_decl)?;
 
-        let sort_id = self.alloc_sort(lower_sort_decl(&sort_decl)?);
+        let _sort_id = self.alloc_sort(lower_sort_decl(&sort_decl)?);
 
-        let domain_id = self.alloc_definition(Definition {
-            name: name.clone(),
-            kind: super::DefKind::Sort(sort_id),
-            parent: self.current_module,
-            visibility: super::Visibility::Public,
-        });
+        let domain_id = self.alloc_definition(Definition { name: name.clone() });
 
         let new_scope = self.make_scope(
             vec![name],
             ScopeKind::ModuleItem(domain_id.into()),
             Some(*scope),
         );
+        self.set_module_item_scope(domain_id.into(), new_scope);
+
         *scope = new_scope;
 
         Some(domain_id)

@@ -1,4 +1,1 @@
-
-pub struct FileGraph {
-	
-}
+pub struct FileGraph {}

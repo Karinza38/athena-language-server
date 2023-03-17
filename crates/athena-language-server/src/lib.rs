@@ -4,9 +4,9 @@ pub mod to_proto;
 
 mod line_index;
 
+mod global_state;
 mod handlers;
 mod main_loop;
-mod global_state;
 
 pub use main_loop::run_server;
 

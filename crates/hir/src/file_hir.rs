@@ -106,28 +106,28 @@ pub enum DefKind {
 #[derive(PartialEq, Eq, Debug)]
 pub struct Definition {
     name: Name,
-    parent: Option<ModuleId>,
-    visibility: Visibility,
-    kind: DefKind,
+    // parent: Option<ModuleId>,
+    // visibility: Visibility,
+    // kind: DefKind,
 }
 
 #[derive(PartialEq, Eq, Debug)]
 pub struct DataType {
     name: Name,
-    parent: Option<ModuleId>,
+    // parent: Option<ModuleId>,
     constructors: Vec<DataTypeConstructor>,
 }
 
 #[derive(PartialEq, Eq, Debug)]
 pub struct DataTypeConstructor {
     name: Name,
-    parent: DataTypeId,
+    // parent: DataTypeId,
 }
 
 #[derive(PartialEq, Eq, Debug)]
 pub struct Structure {
     name: Name,
-    parent: Option<ModuleId>,
+    // parent: Option<ModuleId>,
     constructors: Vec<DataTypeConstructor>,
 }
 
@@ -161,7 +161,7 @@ pub struct Module {
     pub kind: ModuleKind,
     pub name: Name,
     pub parent: Option<ModuleId>,
-    pub items: Vec<ModuleItem>,
+    // pub items: Vec<ModuleItem>,
 }
 
 #[derive(PartialEq, Eq, Debug, Clone)]

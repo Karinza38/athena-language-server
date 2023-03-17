@@ -382,7 +382,7 @@ pub async fn run_server() {
 
     let logfile = std::fs::OpenOptions::new()
         .write(true)
-        .append(true)
+        .truncate(true)
         .create(true)
         .open(pth.clone())
         .unwrap();
@@ -391,7 +391,7 @@ pub async fn run_server() {
 
     tracing_subscriber::registry()
         .with(
-            tracing_subscriber::fmt::layer()
+            tracing_tree::HierarchicalLayer::new(2)
                 .with_ansi(false)
                 .with_writer(logfile),
         )

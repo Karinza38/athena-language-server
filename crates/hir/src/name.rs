@@ -1,3 +1,5 @@
+use core::fmt;
+
 use smol_str::SmolStr;
 use syntax::{ast, AstToken};
 
@@ -17,5 +19,17 @@ impl AsName for ast::Ident {
 impl AsName for ast::Identifier {
     fn as_name(&self) -> Name {
         Name(self.ident_token().unwrap().text().into())
+    }
+}
+
+impl fmt::Display for Name {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "{}", self.0)
+    }
+}
+
+impl Name {
+    pub fn as_smol_str(&self) -> SmolStr {
+        self.0.clone()
     }
 }

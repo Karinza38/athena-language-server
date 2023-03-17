@@ -24,3 +24,4 @@ rustc-hash.workspace = true
 tracing-subscriber = { version = "0.3.16", features = ["env-filter"] }
 anyhow = "1.0.69"
 tracing.workspace = true
+tracing-tree = "0.2.2"

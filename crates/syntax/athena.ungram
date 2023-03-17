@@ -288,13 +288,13 @@ PrefixDefineDir =
     | PrefixDefineBlocks
 
 PrefixDefine =
-    '(' 'define' DefineName Phrase ')'
+    '(' 'define' DefineName define_body:Phrase ')'
 
 PrefixDefineBlocks =
     '(' 'define' PrefixDefineBlock* ')'
 
 InfixDefineDir =
-    'private'? 'define' DefineName ':=' Phrase
+    'private'? 'define' DefineName ':=' define_body:Phrase
 
 DefineName =
     Identifier
@@ -347,7 +347,7 @@ DefineSortDir =
     'define-sort' Identifier ':=' Sort
 
 PrefixDefineBlock =
-    DefineProc ':='? Phrase
+    DefineProc ':='? define_body:Phrase
 
 SetPrecedenceDir = // if multiple idents, must be surrounded by parens
     '('? 'set-precedence' '('? Identifier* ')'? Expr ')'? // can be surrounded by parens
