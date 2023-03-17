@@ -3,8 +3,10 @@ use crate::{global_state::GlobalStateSnapshot, semantic_tokens};
 use anyhow::Context;
 use ide::Cancellable;
 use ide_db::base_db::FileRange;
+use syntax::AstNode;
 use tower_lsp::lsp_types::{
     GotoDefinitionParams, GotoDefinitionResponse, SemanticTokensParams, SemanticTokensResult,
+    TextDocumentIdentifier,
 };
 
 pub(crate) fn semantic_tokens_full(
@@ -57,4 +59,18 @@ pub(crate) fn go_to_definition(
         .collect::<Cancellable<Vec<_>>>()?;
 
     Ok(Some(locations.into()))
+}
+
+pub(crate) fn dump_syntax_tree(
+    snapshot: GlobalStateSnapshot,
+    params: TextDocumentIdentifier,
+) -> Result<String> {
+    let file_id = snapshot
+        .file_id(&params.uri)
+        .with_context(|| format!("failed to get file id for uri {}", params.uri))?;
+
+    let analysis = &snapshot.analysis;
+    let ast = analysis.parse(file_id)?;
+
+    Ok(format!("{:#?}", ast.tree().syntax()))
 }

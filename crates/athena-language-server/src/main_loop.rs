@@ -19,8 +19,9 @@ use tower_lsp::{
         SemanticTokens, SemanticTokensFullOptions, SemanticTokensLegend, SemanticTokensOptions,
         SemanticTokensParams, SemanticTokensRegistrationOptions, SemanticTokensResult,
         SemanticTokensServerCapabilities, ServerCapabilities, StaticRegistrationOptions,
-        TextDocumentRegistrationOptions, TextDocumentSyncCapability, TextDocumentSyncKind, Url,
-        WorkDoneProgressOptions, WorkspaceFoldersServerCapabilities, WorkspaceServerCapabilities,
+        TextDocumentIdentifier, TextDocumentRegistrationOptions, TextDocumentSyncCapability,
+        TextDocumentSyncKind, Url, WorkDoneProgressOptions, WorkspaceFoldersServerCapabilities,
+        WorkspaceServerCapabilities,
     },
     Client, LanguageServer, LspService, Server,
 };
@@ -202,6 +203,13 @@ impl LanguageServer for Backend {
     async fn shutdown(&self) -> LspResult<()> {
         self.state_client.shutdown();
         Ok(())
+    }
+}
+
+impl Backend {
+    async fn show_syntax_tree(&self, params: TextDocumentIdentifier) -> LspResult<String> {
+        self.dispatch_request(params, handlers::dump_syntax_tree)
+            .await
     }
 }
 
@@ -404,7 +412,12 @@ pub async fn run_server() {
     let (state_client, mut state) = GlobalState::new();
 
     let vfs = state.vfs();
-    let (service, socket) = LspService::new(move |c| Backend::new(c, vfs, state_client));
+    let (service, socket) = LspService::build(move |c| Backend::new(c, vfs, state_client))
+        .custom_method(
+            "athena-language-server/dumpSyntaxTree",
+            Backend::show_syntax_tree,
+        )
+        .finish();
 
     state.client = Some(service.inner().client.clone());
 

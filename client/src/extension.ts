@@ -5,68 +5,70 @@
 
 import { workspace, ExtensionContext, window } from "vscode";
 
-import {
-  Executable,
-  LanguageClient,
-  LanguageClientOptions,
-  ServerOptions,
-} from "vscode-languageclient/node";
+import * as vscode from "vscode";
+import * as commands from "./commands";
 
-let client: LanguageClient;
+import {
+    Executable,
+    LanguageClient,
+    LanguageClientOptions,
+    ServerOptions,
+} from "vscode-languageclient/node";
+import { CommandFactory, Ctx } from "./ctx";
+import { setContextValue } from "./util";
+
+const ATHENA_PROJECT_CONTEXT = "inAthenaProject";
+
+export interface AthenaExtensionApi {
+    readonly client?: LanguageClient;
+}
+
+let ctx: Ctx;
+
+export async function createClient(
+    traceOutputChannel: vscode.OutputChannel,
+    serverOptions: ServerOptions
+): Promise<LanguageClient> {
+    // Options to control the language client
+    const clientOptions: LanguageClientOptions = {
+        // Register the server for plain text documents
+        documentSelector: [
+            { scheme: "file", language: "athena" },
+            { scheme: "file", language: "ath" },
+        ],
+        synchronize: {},
+        traceOutputChannel,
+    };
+
+    const client = new LanguageClient(
+        "athena-language-server",
+        "Athena Language Server",
+        serverOptions,
+        clientOptions
+    );
+
+    return client;
+}
 
 export function activate(context: ExtensionContext) {
-  // The server is implemented in node
-  const traceOutputChannel = window.createOutputChannel(
-    "Athena Language Server trace"
-  );
-  const command = process.env.SERVER_PATH || "athena-language-server";
-  const run: Executable = {
-    command,
-    options: {
-      env: {
-        ...process.env,
-        // eslint-disable-next-line @typescript-eslint/naming-convention
-        RUST_LOG: "debug,salsa=info",
-      },
-    },
-  };
+    // The server is implemented in node
 
-  // If the extension is launched in debug mode then the debug server options are used
-  // Otherwise the run options are used
-  const serverOptions: ServerOptions = {
-    run,
-    debug: run,
-  };
+    // Create the language client and start the client.
 
-  // Options to control the language client
-  const clientOptions: LanguageClientOptions = {
-    // Register the server for plain text documents
-    documentSelector: [
-      { scheme: "file", language: "athena" },
-      { scheme: "file", language: "ath" },
-    ],
-    synchronize: {
-      // Notify the server about file changes to '.clientrc files contained in the workspace
-      fileEvents: workspace.createFileSystemWatcher("**/.clientrc"),
-    },
-    traceOutputChannel,
-  };
+    const ctx = new Ctx(context, createCommands());
 
-  // Create the language client and start the client.
-  client = new LanguageClient(
-    "athena-language-server",
-    "Athena Language Server",
-    serverOptions,
-    clientOptions
-  );
-
-  // Start the client. This will also launch the server
-  client.start();
+    setContextValue(ATHENA_PROJECT_CONTEXT, true);
+    // Start the client. This will also launch the server
+    ctx.start();
 }
 
 export function deactivate(): Thenable<void> | undefined {
-  if (!client) {
-    return undefined;
-  }
-  return client.stop();
+    setContextValue(ATHENA_PROJECT_CONTEXT, undefined);
+    return ctx.stop();
+}
+
+function createCommands(): Record<string, CommandFactory> {
+    return {
+        syntaxTree: { enabled: commands.syntaxTree },
+    };
 }

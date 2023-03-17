@@ -1,92 +1,107 @@
 {
-  "name": "athena-language-support-vscode",
-  "description": "A language server client for the Athena proof language",
-  "author": "Nathan Whitaker (nathanwhit), Athena Foundation",
-  "license": "(MIT OR Apache-2.0)",
-  "licenses": [],
-  "version": "1.0.0",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/nathanwhit/athena-language-server"
-  },
-  "publisher": "athena-foundation",
-  "categories": [],
-  "keywords": [
-    "multi-root ready"
-  ],
-  "engines": {
-    "vscode": "^1.75.0"
-  },
-  "activationEvents": [
-    "onLanguage:athena",
-    "onLanguage:ath"
-  ],
-  "main": "./out/main",
-  "contributes": {
-    "languages": [
-      {
-        "id": "athena",
-        "extensions": [
-          ".ath"
-        ],
-        "aliases": [
-          "Athena",
-          "ath",
-          "athena"
-        ],
-        "configuration": "./language-configuration.json"
-      }
+    "name": "athena-language-support-vscode",
+    "description": "A language server client for the Athena proof language",
+    "author": "Nathan Whitaker (nathanwhit), Athena Foundation",
+    "license": "(MIT OR Apache-2.0)",
+    "licenses": [],
+    "version": "1.0.0",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/nathanwhit/athena-language-server"
+    },
+    "publisher": "athena-foundation",
+    "categories": [],
+    "keywords": [
+        "multi-root ready"
     ],
-    "grammars": [
-      {
-        "language": "athena",
-        "scopeName": "source.athena",
-        "path": "./syntaxes/athena.tmLanguage.json"
-      }
+    "engines": {
+        "vscode": "^1.75.0"
+    },
+    "activationEvents": [
+        "onLanguage:athena",
+        "onLanguage:ath"
     ],
-    "configuration": {
-      "type": "object",
-      "title": "Athena language server",
-      "properties": {
-        "athena-language-server.trace.server": {
-          "scope": "window",
-          "type": "string",
-          "enum": [
-            "off",
-            "messages",
-            "verbose"
-          ],
-          "default": "off",
-          "description": "Traces the communication between VS Code and the language server."
-        }
-      }
+    "main": "./out/main",
+    "contributes": {
+        "languages": [
+            {
+                "id": "athena",
+                "extensions": [
+                    ".ath"
+                ],
+                "aliases": [
+                    "Athena",
+                    "ath",
+                    "athena"
+                ],
+                "configuration": "./language-configuration.json"
+            }
+        ],
+        "grammars": [
+            {
+                "language": "athena",
+                "scopeName": "source.athena",
+                "path": "./syntaxes/athena.tmLanguage.json"
+            }
+        ],
+        "configuration": {
+            "type": "object",
+            "title": "Athena language server",
+            "properties": {
+                "athena-language-server.trace.server": {
+                    "scope": "window",
+                    "type": "string",
+                    "enum": [
+                        "off",
+                        "messages",
+                        "verbose"
+                    ],
+                    "default": "off",
+                    "description": "Traces the communication between VS Code and the language server."
+                }
+            }
+        },
+        "menus": {
+            "commandPalette": [
+                {
+                    "command": "athena-language-server.syntaxTree",
+                    "when": "inAthenaProject"
+                }
+            ]
+        },
+        "commands": [
+            {
+                "command": "athena-language-server.syntaxTree",
+                "title": "Show Syntax Tree",
+                "category": "Athena (debug)"
+            }
+        ]
+    },
+    "scripts": {
+        "vscode:prepublish": "npm run esbuild-base -- --minify",
+        "compile": "tsc -b",
+        "watch": "npm run esbuild-watch",
+        "esbuild-base": "esbuild ./src/extension.ts --bundle --outfile=out/main.js --external:vscode --format=cjs --platform=node",
+        "esbuild": "npm run esbuild-base -- --sourcemap",
+        "esbuild-watch": "npm run esbuild-base -- --sourcemap --watch",
+        "lint": "eslint src --ext .ts,.tsx",
+        "test": "sh ./scripts/e2e.sh",
+        "package": "vsce package -o athena-language-server.vsix"
+    },
+    "devDependencies": {
+        "@types/mocha": "^9.1.0",
+        "@types/node": "^16.11.7",
+        "@types/vscode": "^1.75.1",
+        "@typescript-eslint/eslint-plugin": "^5.54.0",
+        "@typescript-eslint/parser": "^5.54.0",
+        "@vscode/test-electron": "^2.2.3",
+        "esbuild": "^0.17.11",
+        "eslint": "^8.35.0",
+        "mocha": "^9.2.1",
+        "typescript": "^4.9.5",
+        "vsce": "^2.9.2"
+    },
+    "dependencies": {
+        "vscode-languageclient": "^8.1.0"
     }
-  },
-  "scripts": {
-    "vscode:prepublish": "npm run esbuild-base -- --minify",
-    "compile": "tsc -b",
-    "watch": "npm run esbuild-watch",
-    "esbuild-base": "esbuild ./src/extension.ts --bundle --outfile=out/main.js --external:vscode --format=cjs --platform=node",
-    "esbuild": "npm run esbuild-base -- --sourcemap",
-    "esbuild-watch": "npm run esbuild-base -- --sourcemap --watch",
-    "lint": "eslint src --ext .ts,.tsx",
-    "test": "sh ./scripts/e2e.sh",
-    "package": "vsce package -o athena-language-server.vsix"
-  },
-  "devDependencies": {
-    "@types/mocha": "^9.1.0",
-    "@types/node": "^16.11.7",
-    "@types/vscode": "^1.75.1",
-    "@typescript-eslint/eslint-plugin": "^5.54.0",
-    "@typescript-eslint/parser": "^5.54.0",
-    "@vscode/test-electron": "^2.2.3",
-    "esbuild": "^0.17.11",
-    "eslint": "^8.35.0",
-    "mocha": "^9.2.1",
-    "typescript": "^4.9.5",
-    "vsce": "^2.9.2"
-  },
-  "dependencies": {
-    "vscode-languageclient": "^8.1.0"
-  }
 }
