@@ -1,5 +1,3 @@
-use std::sync::Arc;
-
 use base_db::{salsa, FileId};
 
 #[salsa::query_group(HirDatabaseStorage)]

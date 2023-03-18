@@ -63,7 +63,7 @@ fn compound_sort_decl(p: &mut Parser) {
     }
 
     p.expect(T![')']);
-    m.complete(p, SyntaxKind::COMPOUND_SORT_DECL);
+    m.complete(p, SyntaxKind::COMPOUND_SORT);
 }
 
 pub(crate) const SORT_DECL_START: TokenSet = TokenSet::new(&[SyntaxKind::IDENT, T!['(']]);

@@ -459,22 +459,6 @@ impl SetPrecedenceDir {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
-pub struct CompoundSortDecl {
-    pub(crate) syntax: SyntaxNode,
-}
-impl CompoundSortDecl {
-    pub fn l_paren_token(&self) -> Option<SyntaxToken> {
-        support::token(&self.syntax, T!['('])
-    }
-    pub fn ident_sorts(&self) -> AstChildren<IdentSort> {
-        support::children(&self.syntax)
-    }
-    pub fn r_paren_token(&self) -> Option<SyntaxToken> {
-        support::token(&self.syntax, T![')'])
-    }
-}
-
-#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct InfixConstantDeclare {
     pub(crate) syntax: SyntaxNode,
 }
@@ -2842,7 +2826,7 @@ pub enum Dir {
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub enum SortDecl {
     IdentSort(IdentSort),
-    CompoundSortDecl(CompoundSortDecl),
+    CompoundSort(CompoundSort),
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
@@ -3588,21 +3572,6 @@ impl AstNode for AssociativityDir {
 impl AstNode for SetPrecedenceDir {
     fn can_cast(kind: SyntaxKind) -> bool {
         kind == SET_PRECEDENCE_DIR
-    }
-    fn cast(syntax: SyntaxNode) -> Option<Self> {
-        if Self::can_cast(syntax.kind()) {
-            Some(Self { syntax })
-        } else {
-            None
-        }
-    }
-    fn syntax(&self) -> &SyntaxNode {
-        &self.syntax
-    }
-}
-impl AstNode for CompoundSortDecl {
-    fn can_cast(kind: SyntaxKind) -> bool {
-        kind == COMPOUND_SORT_DECL
     }
     fn cast(syntax: SyntaxNode) -> Option<Self> {
         if Self::can_cast(syntax.kind()) {
@@ -5943,19 +5912,19 @@ impl From<IdentSort> for SortDecl {
         SortDecl::IdentSort(node)
     }
 }
-impl From<CompoundSortDecl> for SortDecl {
-    fn from(node: CompoundSortDecl) -> SortDecl {
-        SortDecl::CompoundSortDecl(node)
+impl From<CompoundSort> for SortDecl {
+    fn from(node: CompoundSort) -> SortDecl {
+        SortDecl::CompoundSort(node)
     }
 }
 impl AstNode for SortDecl {
     fn can_cast(kind: SyntaxKind) -> bool {
-        matches!(kind, IDENT_SORT | COMPOUND_SORT_DECL)
+        matches!(kind, IDENT_SORT | COMPOUND_SORT)
     }
     fn cast(syntax: SyntaxNode) -> Option<Self> {
         let res = match syntax.kind() {
             IDENT_SORT => Self::IdentSort(IdentSort { syntax }),
-            COMPOUND_SORT_DECL => Self::CompoundSortDecl(CompoundSortDecl { syntax }),
+            COMPOUND_SORT => Self::CompoundSort(CompoundSort { syntax }),
             _ => return None,
         };
         Some(res)
@@ -5964,7 +5933,7 @@ impl AstNode for SortDecl {
     fn syntax(&self) -> &SyntaxNode {
         match self {
             SortDecl::IdentSort(it) => it.syntax(),
-            SortDecl::CompoundSortDecl(it) => it.syntax(),
+            SortDecl::CompoundSort(it) => it.syntax(),
         }
     }
 }
@@ -7834,11 +7803,6 @@ impl std::fmt::Display for AssociativityDir {
     }
 }
 impl std::fmt::Display for SetPrecedenceDir {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        std::fmt::Display::fmt(self.syntax(), f)
-    }
-}
-impl std::fmt::Display for CompoundSortDecl {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         std::fmt::Display::fmt(self.syntax(), f)
     }

@@ -62,5 +62,33 @@ fn lower_it() {
 
     eprintln!("{:#?}", h);
     // let tree = eprintln!("{hir:#?}");
-    panic!();
+    // panic!();
 }
+
+// #[test]
+// fn lower_nested_lambda() {
+//     let (db, src, hir) = lower(
+//         r#"
+// 		define foo := lambda (a) (lambda (b) ($0 a b))
+// 		"#,
+//     );
+
+//     let tree = db.parse(src.file_id).tree();
+
+//     let tok = pick_token(&tree.syntax(), src.offset).unwrap();
+
+//     let parent = find_node::<ast::MetaDefinition>(tok).unwrap();
+
+//     let parent_source = InFile::new(src.file_id, AstPtr::new(&parent));
+//     let hid = hir
+//         .file_hir_source_map
+//         .definitions
+//         .get(&parent_source)
+//         .unwrap();
+
+//     let h = &hir.file_hir.definitions[*hid];
+
+//     eprintln!("{:#?}", hir);
+//     // let tree = eprintln!("{hir:#?}");
+//     panic!();
+// }

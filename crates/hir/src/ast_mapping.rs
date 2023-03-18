@@ -3,7 +3,7 @@ use std::sync::Arc;
 use base_db::{salsa, FileId, SourceDatabase};
 use la_arena::{Arena, Idx};
 use rustc_hash::FxHashMap;
-use syntax::{ast, match_ast, AstNode, SyntaxNode, SyntaxNodePtr};
+use syntax::{ast, AstNode, SyntaxNode, SyntaxNodePtr};
 
 use crate::InFile;
 
@@ -13,6 +13,7 @@ pub trait AstDatabase: SourceDatabase {
 }
 
 pub struct FileAstId<N: AstNode> {
+    #[allow(dead_code)]
     raw: ErasedAstId,
     _type: std::marker::PhantomData<fn() -> N>,
 }

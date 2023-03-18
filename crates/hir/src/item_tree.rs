@@ -1,3 +1,4 @@
+#![allow(unused)]
 use base_db::impl_intern_key;
 use base_db::salsa::InternId;
 use la_arena::{Arena, Idx};

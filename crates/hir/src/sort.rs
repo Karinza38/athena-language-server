@@ -1,6 +1,6 @@
 use la_arena::Idx;
 
-use crate::{name::Name, scope::ScopeId};
+use crate::name::Name;
 
 #[derive(PartialEq, Eq, Debug)]
 pub struct Sort {
@@ -11,7 +11,7 @@ pub struct Sort {
 pub enum SortKind {
     Var(Name),
     Ident(Name),
-    Compound(Vec<Sort>),
+    Compound(Vec<SortId>),
 }
 
 pub type SortId = Idx<Sort>;

@@ -1,6 +1,6 @@
 use la_arena::Idx;
 
-use crate::scope::ScopeId;
+// use crate::scope::ScopeId;
 
 #[derive(PartialEq, Eq, Debug)]
 pub struct Ded {

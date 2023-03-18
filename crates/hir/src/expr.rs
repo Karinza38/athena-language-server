@@ -1,6 +1,6 @@
 use la_arena::Idx;
 
-use crate::{name::Name, scope::ScopeId, sort::Sort};
+// use crate::{name::Name, scope::ScopeId, sort::Sort};
 
 pub type ExprId = Idx<Expr>;
 

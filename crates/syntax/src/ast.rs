@@ -134,4 +134,22 @@ mod ext {
             super::Definition::PrefixDefineDir(value.into())
         }
     }
+
+    impl From<super::SortDecl> for super::Sort {
+        fn from(value: super::SortDecl) -> Self {
+            match value {
+                super::SortDecl::IdentSort(ident) => ident.into(),
+                super::SortDecl::CompoundSort(comp) => comp.into(),
+            }
+        }
+    }
+
+    impl super::Sort {
+        pub fn as_ident_sort(&self) -> Option<&super::IdentSort> {
+            match self {
+                super::Sort::IdentSort(ident) => Some(ident),
+                _ => None,
+            }
+        }
+    }
 }

@@ -13,7 +13,7 @@ use crate::{
     expr::{Expr, ExprId},
     name::Name,
     phrase::PhraseId,
-    scope::{ScopeId, ScopeTree},
+    scope::{Scope, ScopeId, ScopeTree},
     sort::{Sort, SortId},
     InFile,
 };
@@ -166,6 +166,7 @@ pub struct Module {
 
 #[derive(PartialEq, Eq, Debug, Clone)]
 pub struct FileSema {
+    pub file_id: FileId,
     pub file_hir: Arc<FileHir>,
     pub file_hir_source_map: Arc<FileHirSourceMap>,
     pub scope_tree: Arc<ScopeTree>,
@@ -173,15 +174,51 @@ pub struct FileSema {
 
 impl FileSema {
     pub fn new(
+        file_id: FileId,
         file_hir: Arc<FileHir>,
         file_hir_source_map: Arc<FileHirSourceMap>,
         scope_tree: Arc<ScopeTree>,
     ) -> Self {
         Self {
+            file_id,
             file_hir,
             file_hir_source_map,
             scope_tree,
         }
+    }
+
+    pub fn get_source_for<N>(&self, hir: N::Id) -> Option<N::Source>
+    where
+        N: HirNode,
+    {
+        N::source(hir, &self.file_hir_source_map)
+    }
+
+    pub fn get_hir_for<S>(&self, source: S) -> Option<<S::Hir as HirNode>::Id>
+    where
+        S: HasHir,
+    {
+        source.hir(&self.file_hir_source_map)
+    }
+
+    pub fn get_scope_for<N>(&self, hir: N::Id) -> Option<ScopeId>
+    where
+        N: HirNode,
+    {
+        N::scope(hir, &self.scope_tree)
+    }
+
+    pub fn get_scope_for_source<S>(&self, source: S) -> Option<ScopeId>
+    where
+        S: HasHir,
+        S::Hir: HirNode,
+    {
+        self.get_hir_for(source)
+            .and_then(|hir| S::Hir::scope(hir, &self.scope_tree))
+    }
+
+    pub fn scope(&self, scope_id: ScopeId) -> &Scope {
+        self.scope_tree.scope(scope_id)
     }
 }
 
@@ -189,5 +226,69 @@ pub fn file_sema_query(db: &dyn HirDatabase, file_id: FileId) -> FileSema {
     let source_file = db.parse(file_id).tree();
     let (hir, map, scope_tree) = lower::lower(file_id, source_file);
 
-    FileSema::new(Arc::new(hir), Arc::new(map), Arc::new(scope_tree))
+    FileSema::new(file_id, Arc::new(hir), Arc::new(map), Arc::new(scope_tree))
+}
+
+pub trait HasHir {
+    type Hir: HirNode;
+
+    fn hir(&self, source_map: &FileHirSourceMap) -> Option<<Self::Hir as HirNode>::Id>;
+}
+
+pub trait HirNode {
+    type Source: HasHir + HasSyntaxNodePtr;
+    type Id: Copy;
+
+    fn source(id: Self::Id, source_map: &FileHirSourceMap) -> Option<Self::Source>;
+
+    fn scope(id: Self::Id, scope_tree: &ScopeTree) -> Option<ScopeId>;
+}
+
+pub trait HasSyntaxNodePtr {
+    fn syntax_node_ptr(&self) -> syntax::SyntaxNodePtr;
+}
+
+impl<N: syntax::AstNode> HasSyntaxNodePtr for InFile<AstPtr<N>> {
+    fn syntax_node_ptr(&self) -> syntax::SyntaxNodePtr {
+        self.value.syntax_node_ptr()
+    }
+}
+
+impl<N: syntax::AstNode> HasSyntaxNodePtr for N {
+    fn syntax_node_ptr(&self) -> syntax::SyntaxNodePtr {
+        syntax::SyntaxNodePtr::new(self.syntax())
+    }
+}
+
+duplicate::duplicate! {
+    [
+        id_type         hir_type        source_type         arena_name      scope_lookup            ;
+        [ModuleId]      [Module]        [ModuleSource]      [modules]       [scope_by_module_item]        ;
+        [DefinitionId]  [Definition]    [DefinitionSource]  [definitions]   [scope_by_module_item] ;
+        // [DataTypeId]    [DataType]      [DatatypeSource]    [datatypes];
+        [StructureId]   [Structure]     [StructureSource]   [structures]    [scope_by_module_item] ;
+        [ExprId]        [Expr]          [ExprSource]        [exprs]         [scope_by_expr]        ;
+        [SortId]        [Sort]          [SortSource]        [sorts]         [scope_by_sort]        ;
+    ]
+    impl HirNode for hir_type {
+        type Source = source_type;
+        type Id = id_type;
+
+        fn source(id: id_type, source_map: &FileHirSourceMap) -> Option<Self::Source> {
+            paste::paste! {
+                source_map.[<arena_name _back>].get(id).cloned()
+            }
+        }
+
+        fn scope(id: id_type, scope_tree: &ScopeTree) -> Option<ScopeId> {
+            scope_tree.scope_lookup(id.into())
+        }
+    }
+    impl HasHir for source_type {
+        type Hir = hir_type;
+
+        fn hir(&self, source_map: &FileHirSourceMap) -> Option<id_type> {
+            source_map.arena_name.get(self).cloned()
+        }
+    }
 }

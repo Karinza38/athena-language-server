@@ -43,8 +43,6 @@
 //! "
 //! ```
 
-use std::iter;
-
 use rustc_hash::FxHashMap;
 use util::trim_indent;
 
@@ -76,7 +74,7 @@ impl Fixture {
     /// `minicore.rs` for what's available.
     pub fn parse(ath_fixture: &str) -> Vec<Fixture> {
         let fixture = trim_indent(ath_fixture);
-        let mut fixture = fixture.as_str();
+        let fixture = fixture.as_str();
         let mut res: Vec<Fixture> = Vec::new();
 
         let default = if fixture.contains("//-") {

@@ -19,7 +19,7 @@ pub use db::{HirDatabase, HirDatabaseStorage};
 #[cfg(test)]
 mod test_db;
 
-pub use file_hir::{FileHir, FileHirSourceMap, FileSema};
+pub use file_hir::{FileHir, FileHirSourceMap, FileSema, HasHir, HasSyntaxNodePtr, HirNode};
 pub use scope::ScopeTree;
 
 use base_db::FileId;

@@ -1,11 +1,18 @@
-use hir::{name::AsName, scope::ScopeKind, HirDatabase, InFile};
+use std::fmt::Debug;
+
+use hir::{
+    file_hir::ExprSource,
+    name::{AsName, Name},
+    scope::{Scope, ScopeKind},
+    FileSema, HasHir, HasSyntaxNodePtr, HirDatabase, HirNode, InFile,
+};
 use ide_db::{
     base_db::{FilePosition, SourceDatabase},
     RootDatabase,
 };
 use syntax::{
-    ast::{self, HasDefineName},
-    match_ast, AstNode, AstPtr, AstToken, NodeOrToken, SyntaxKind, SyntaxNode, SyntaxToken,
+    ast, match_ast, AstNode, AstPtr, AstToken, NodeOrToken, SyntaxKind, SyntaxNode, SyntaxToken,
+    TextRange,
 };
 
 use crate::{helpers::pick_best_token, navigation_target::NavigationTarget, RangeInfo};
@@ -24,13 +31,16 @@ pub(crate) fn go_to_definition(
 
     tracing::info!(?token, "at offset");
 
-    let def = find_def_new(
+    let Some(def) = find_def_new(
         db,
         InFile {
             file_id: position.file_id,
             value: token.clone(),
         },
-    )?;
+    ) else {
+        tracing::info!("no definition found");
+        return None;
+    };
 
     Some(RangeInfo {
         range: token.text_range(),
@@ -38,10 +48,10 @@ pub(crate) fn go_to_definition(
     })
 }
 
+#[derive(Debug, Clone)]
 enum Interesting {
-    MetaDefinition(ast::MetaDefinition),
     Expr(ast::Expr),
-    Module(ast::Module),
+    Sort(ast::Sort),
 }
 
 #[tracing::instrument]
@@ -53,10 +63,29 @@ fn find_interesting_node(tok: &SyntaxToken) -> Option<Interesting> {
                 ast::Expr(it) => {
                     return Some(Interesting::Expr(it));
                 },
+                ast::Sort(it) => {
+                    return Some(Interesting::Sort(it));
+                },
                 _ => {}
             }
         }
         node = parent.parent();
+    }
+    None
+}
+
+fn find_focus_range(name: &Name, full_node: &SyntaxNode) -> Option<TextRange> {
+    for desc in full_node.descendants_with_tokens() {
+        match desc {
+            NodeOrToken::Token(tok) => {
+                if let Some(ident) = ast::Ident::cast(tok.clone()) {
+                    if ident.as_name() == *name {
+                        return Some(ident.syntax().text_range());
+                    }
+                }
+            }
+            NodeOrToken::Node(_) => {}
+        }
     }
     None
 }
@@ -79,145 +108,81 @@ fn find_def_new(
 
     let sema = db.file_sema(file_id);
 
-    match node {
-        Interesting::MetaDefinition(_) => todo!(),
-        Interesting::Expr(expr) => {
-            tracing::info!("it's an expr: {:?}", expr);
-            let source = InFile::new(file_id, AstPtr::new(&expr));
+    let root = db.parse(file_id).syntax_node();
 
-            tracing::info!("looking up expr id");
-            let expr_id = *sema.file_hir_source_map.exprs.get(&source)?;
-            tracing::info!("looking up scope id");
-            let scope_id = sema.scope_tree.scope_by_expr(expr_id)?;
-            tracing::info!("looking up scope");
-            let mut scope = sema.scope_tree.scope(scope_id);
+    let scope = match node.clone() {
+        Interesting::Expr(expr) => to_scope(expr, &sema),
+        Interesting::Sort(sort) => to_scope(sort, &sema),
+    }?;
 
-            tracing::info!(?scope, "finding defining scope");
-            while scope.kind != ScopeKind::Root {
-                tracing::info!(?scope, "considering scope");
-                if scope.introduced.contains(&name) {
-                    tracing::info!(?scope, "found defining scope");
-                    let range = match scope.kind {
-                        ScopeKind::Expr(_) => todo!(),
-                        ScopeKind::ModuleItem(item) => match item {
-                            hir::file_hir::ModuleItem::ModuleId(_) => todo!(),
-                            hir::file_hir::ModuleItem::DefinitionId(id) => {
-                                let node =
-                                    sema.file_hir_source_map.definitions_back.get(id).unwrap();
-                                node.value.text_range()
-                            }
-                            hir::file_hir::ModuleItem::DataTypeId(_) => todo!(),
-                            hir::file_hir::ModuleItem::StructureId(_) => todo!(),
-                            hir::file_hir::ModuleItem::PhraseId(_) => todo!(),
-                        },
-                        ScopeKind::Root => todo!(),
-                    };
-                    return Some(NavigationTarget {
-                        full_range: range,
-                        focus_range: None,
-                        file_id,
-                        name: name.as_smol_str(),
-                    });
-                }
-                scope = sema.scope_tree.scope(scope.parent?);
-            }
-        }
-        Interesting::Module(_) => todo!(),
-    }
-    tracing::info!("no definition found");
-    None
-}
+    let scope = find_defining_scope(&name, &scope, &sema)?;
 
-#[tracing::instrument]
-fn find_def(
-    db: &RootDatabase,
-    InFile {
+    tracing::info!("found defining scope: {:?}", scope.kind);
+    let node = scope_kind_to_node(scope.kind, &root, &sema)?;
+    Some(NavigationTarget {
+        full_range: node.text_range(),
+        focus_range: find_focus_range(&name, &node),
         file_id,
-        value: token,
-    }: InFile<SyntaxToken>,
-) -> Option<NavigationTarget> {
-    let ident = ast::Ident::cast(token)?;
-    let name = ident.text();
-
-    tracing::debug!(?name, "ident has name");
-
-    let stmt = find_stmt(ident.syntax())?;
-    for sibling in stmt.siblings_with_tokens(syntax::Direction::Prev) {
-        let NodeOrToken::Node(sibling) = sibling else {
-            continue;
-        };
-        tracing::debug!(?sibling, "sibling");
-        match_ast! {
-            match sibling {
-                ast::DirStmt(it) => {
-                    if let Some(def) = ast::Definition::cast(it.syntax().clone()) {
-                        match def {
-                            ast::Definition::InfixDefineDir(it) => {
-                                if let Some(def) = find_def_in_define_name(db, &name, InFile { file_id, value: it.define_name()? }) {
-                                    return Some(def);
-                                }
-                            }
-                            ast::Definition::PrefixDefineDir(it) => {
-                                let ast::PrefixDefineDir::PrefixDefine(define) = it else {
-                                    continue
-                                };
-                                if let Some(def) = find_def_in_define_name(db, &name, InFile { file_id, value: define.define_name()? }) {
-                                    return Some(def);
-                                }
-                            }
-                        }
-                    }
-                },
-                _ => {
-
-                }
-            }
-        }
-    }
-
-    None
+        name: name.as_smol_str(),
+    })
 }
 
-fn find_stmt(tok: &SyntaxToken) -> Option<SyntaxNode> {
-    for ancestor in tok.parent_ancestors() {
-        match_ast! {
-            match ancestor {
-                ast::Stmt(it) => {
-                    return Some(it.syntax().clone());
-                },
-                _ => {
-
-                }
-            }
+fn find_defining_scope<'s>(
+    name: &Name,
+    start_scope: &'s Scope,
+    sema: &'s FileSema,
+) -> Option<&'s Scope> {
+    let mut scope = start_scope;
+    tracing::info!(?scope, "finding defining scope");
+    while scope.kind != ScopeKind::Root {
+        tracing::info!(?scope, "considering scope");
+        if scope.introduced.contains(name) {
+            return Some(scope);
         }
+        scope = sema.scope_tree.scope(scope.parent?);
     }
     None
 }
 
-fn find_def_in_define_name(
-    db: &RootDatabase,
-    want: &str,
-    InFile {
-        file_id,
-        value: name,
-    }: InFile<ast::DefineName>,
-) -> Option<NavigationTarget> {
-    match name.clone() {
-        ast::DefineName::Identifier(id) => {
-            let ident_tok = id.ident_token()?;
-            let candidate = ident_tok.text();
-            tracing::debug!(?id, ?candidate, "inspecting identifier");
-            if candidate == want {
-                return Some(NavigationTarget {
-                    file_id,
-                    full_range: name.syntax().parent()?.text_range(),
-                    focus_range: Some(id.syntax().text_range()),
-                    name: want.into(),
-                });
-            }
-        }
-        _ => {}
-    }
+#[tracing::instrument(skip(sema))]
+fn to_scope<N: AstNode + Debug>(node: N, sema: &FileSema) -> Option<&Scope>
+where
+    InFile<AstPtr<N>>: HasHir,
+{
+    let source = InFile::new(sema.file_id, AstPtr::new(&node));
+    Some(sema.scope(sema.get_scope_for_source(source)?))
+}
 
-    None
+#[tracing::instrument(skip(root, sema))]
+fn scope_kind_to_node(scope: ScopeKind, root: &SyntaxNode, sema: &FileSema) -> Option<SyntaxNode> {
+    match scope {
+        ScopeKind::Expr(e) => {
+            let source: ExprSource = sema.get_source_for::<hir::expr::Expr>(e)?;
+            Some(source.value.syntax_node_ptr().to_node(root))
+        }
+        ScopeKind::ModuleItem(mi) => match mi {
+            hir::file_hir::ModuleItem::ModuleId(m) => {
+                id_to_node::<hir::file_hir::Module>(m, root, sema)
+            }
+            hir::file_hir::ModuleItem::DefinitionId(id) => {
+                id_to_node::<hir::file_hir::Definition>(id, root, sema)
+            }
+            hir::file_hir::ModuleItem::PhraseId(_) => {
+                // id_to_node::<hir::phrase::Phrase>(id, root, sema)
+                todo!()
+            }
+            hir::file_hir::ModuleItem::StructureId(_) => todo!(),
+            hir::file_hir::ModuleItem::DataTypeId(_) => todo!(),
+        },
+        ScopeKind::Root => None,
+    }
+}
+
+#[tracing::instrument(skip(root))]
+fn id_to_node<N: HirNode>(id: N::Id, root: &SyntaxNode, sema: &FileSema) -> Option<SyntaxNode>
+where
+    N::Id: Debug,
+{
+    let source: N::Source = sema.get_source_for::<N>(id)?;
+    Some(source.syntax_node_ptr().to_node(root))
 }

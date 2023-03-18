@@ -224,10 +224,7 @@ DomainsDir =
 
 SortDecl =
     IdentSort
-    | CompoundSortDecl
-
-CompoundSortDecl =
-    '(' IdentSort* ')'
+    | CompoundSort
 
 ConstantDeclareDir =
     InfixConstantDeclare

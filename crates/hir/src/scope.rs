@@ -1,7 +1,7 @@
 use la_arena::{Arena, ArenaMap, Idx};
 use rustc_hash::FxHashMap;
 
-use crate::{ded::DedId, expr::ExprId, file_hir::ModuleItem, name::Name};
+use crate::{ded::DedId, expr::ExprId, file_hir::ModuleItem, name::Name, sort::SortId};
 
 #[derive(PartialEq, Eq, Debug)]
 pub struct Scope {
@@ -28,6 +28,7 @@ pub struct ScopeTree {
     scopes_by_expr: ArenaMap<ExprId, ScopeId>,
     scopes_by_ded: ArenaMap<DedId, ScopeId>,
     scopes_by_module_item: FxHashMap<ModuleItem, ScopeId>,
+    scopes_by_sort: ArenaMap<SortId, ScopeId>,
 }
 
 impl ScopeTree {
@@ -44,6 +45,7 @@ impl ScopeTree {
             scopes_by_expr: ArenaMap::default(),
             scopes_by_ded: ArenaMap::default(),
             scopes_by_module_item: FxHashMap::default(),
+            scopes_by_sort: ArenaMap::default(),
         }
     }
 
@@ -63,6 +65,10 @@ impl ScopeTree {
         self.scopes_by_ded.insert(ded, scope);
     }
 
+    pub fn set_sort_scope(&mut self, sort: SortId, scope: ScopeId) {
+        self.scopes_by_sort.insert(sort, scope);
+    }
+
     pub fn set_module_item_scope(&mut self, item: ModuleItem, scope: ScopeId) {
         self.scopes_by_module_item.insert(item, scope);
     }
@@ -77,6 +83,10 @@ impl ScopeTree {
 
     pub fn scope_by_module_item(&self, id: ModuleItem) -> Option<ScopeId> {
         self.scopes_by_module_item.get(&id).copied()
+    }
+
+    pub fn scope_by_sort(&self, id: SortId) -> Option<ScopeId> {
+        self.scopes_by_sort.get(id).copied()
     }
 
     pub fn alloc_scope(&mut self, scope: Scope) -> ScopeId {

@@ -9,6 +9,7 @@
 //! be cheaply stored, and which can be resolved to a real [`SyntaxNode`] when
 //! necessary.
 
+use core::fmt;
 use std::{
     hash::{Hash, Hasher},
     marker::PhantomData,
@@ -22,10 +23,15 @@ use crate::{syntax_node::AthenaLanguage, AstNode, SyntaxNode};
 pub type SyntaxNodePtr = rowan::ast::SyntaxNodePtr<AthenaLanguage>;
 
 /// Like `SyntaxNodePtr`, but remembers the type of node.
-#[derive(Debug)]
 pub struct AstPtr<N: AstNode> {
     raw: SyntaxNodePtr,
     _ty: PhantomData<fn() -> N>,
+}
+
+impl<N: fmt::Debug + AstNode> fmt::Debug for AstPtr<N> {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        f.debug_struct("AstPtr").field("raw", &self.raw).finish()
+    }
 }
 
 impl<N: AstNode> Clone for AstPtr<N> {
