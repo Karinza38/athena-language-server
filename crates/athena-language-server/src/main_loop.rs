@@ -400,7 +400,7 @@ pub async fn run_server() {
     tracing_subscriber::registry()
         .with(
             tracing_tree::HierarchicalLayer::new(2)
-                .with_ansi(false)
+                .with_ansi(true)
                 .with_writer(logfile),
         )
         .with(EnvFilter::from_default_env())

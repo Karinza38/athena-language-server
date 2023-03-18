@@ -5,6 +5,8 @@
 //! This module does line ending conversion and detection (so that we can
 //! convert back to `\r\n` on the way out).
 
+#![allow(dead_code)]
+
 use std::sync::Arc;
 
 pub enum PositionEncoding {

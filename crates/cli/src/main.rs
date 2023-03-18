@@ -11,6 +11,7 @@ use xshell::cmd;
 enum Cli {
     RegressionTest { path: PathBuf },
     FindDeadSyntaxKinds,
+    DumpSyntaxTree { path: PathBuf },
 }
 #[derive(clap::Args)]
 struct RegressionTestArgs {}
@@ -40,6 +41,35 @@ fn project_root() -> PathBuf {
     .to_path_buf()
 }
 
+fn bisect(input: &str) -> Option<&str> {
+    let mut start = 0;
+    let mut end = input.len();
+
+    let failed = |inp: &str| std::panic::catch_unwind(|| syntax::SourceFile::parse(inp)).is_err();
+
+    while start < end && (end - start > 100) {
+        let mut mid = (start + end) / 2;
+        while input.as_bytes()[mid] != b'\n' && &input.as_bytes()[mid..mid + 2] != b"\r\n" {
+            mid += 1;
+        }
+        let (left, right) = input.split_at(mid);
+        let left_fail = failed(left);
+        let right_fail = failed(right);
+
+        if left_fail && right_fail {
+            end = mid;
+        } else if left_fail {
+            end = mid;
+        } else if right_fail {
+            start = mid;
+        } else {
+            return None;
+        }
+    }
+
+    Some(&input[start..end])
+}
+
 fn main() -> color_eyre::Result<()> {
     color_eyre::install()?;
 
@@ -64,6 +94,9 @@ fn main() -> color_eyre::Result<()> {
                     Err(e) => {
                         panic += 1;
                         println!("test PANIC: {:?} -- {e:?}", path);
+                        if let Some(bi) = bisect(&contents) {
+                            println!("Bisected to: {}", bi);
+                        }
                         continue;
                     }
                 };
@@ -113,6 +146,20 @@ fn main() -> color_eyre::Result<()> {
                 }
             }
             println!("{:?}", dead);
+        }
+        Cli::DumpSyntaxTree { path } => {
+            let contents = std::fs::read_to_string(&path)?;
+            let parsed = syntax::SourceFile::parse(&contents);
+            for p in parsed.tree().stmts() {
+                match p {
+                    syntax::ast::Stmt::DirStmt(dir) => {
+                        println!("{:#?}", dir);
+                        dir.dir().unwrap();
+                    }
+                    _ => {}
+                }
+            }
+            println!("{}", parsed.debug_dump());
         }
     }
 

@@ -2,7 +2,7 @@ use crate::{global_state::GlobalStateSnapshot, Result};
 use anyhow::anyhow;
 use ide_db::{
     base_db::FilePosition,
-    line_index::{LineCol, LineColUtf16, LineIndex},
+    line_index::{LineColUtf16, LineIndex},
 };
 use syntax::TextSize;
 use tower_lsp::lsp_types;
