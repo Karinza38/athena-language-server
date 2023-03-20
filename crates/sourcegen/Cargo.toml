@@ -6,5 +6,5 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-prettyplease = "0.1.23"
+prettyplease = "0.1.25"
 syn = "1.0.109"

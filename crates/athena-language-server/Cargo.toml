@@ -19,10 +19,10 @@ ide.workspace = true
 ide-db.workspace = true
 vfs.workspace = true
 parking_lot = "0.12.1"
-extend = "1.1.2"
+extend = "1.2.0"
 rustc-hash.workspace = true
 tracing-subscriber = { version = "0.3.16", features = ["env-filter"] }
-anyhow = "1.0.69"
+anyhow = "1.0.70"
 tracing.workspace = true
 tracing-tree = "0.2.2"
 serde = { version = "1.0.157", features = ["derive"] }
