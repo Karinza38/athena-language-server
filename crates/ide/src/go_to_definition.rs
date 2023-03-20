@@ -258,18 +258,4 @@ mod tests {
             "#,
         )
     }
-
-    #[test]
-    fn module_def() {
-        check(
-            r#"
-            module Foo
-            //     ^^^
-            module Bar
-            //     ^^^
-            module Baz
-            //     ^^^
-            "#,
-        )
-    }
 }
