@@ -11,6 +11,7 @@ use crate::{
     db::HirDatabase,
     ded::{Ded, DedId},
     expr::{Expr, ExprId},
+    identifier::{Identifier, IdentifierId},
     name::Name,
     phrase::PhraseId,
     scope::{Scope, ScopeId, ScopeTree},
@@ -27,6 +28,7 @@ pub struct FileHir {
     pub data_types: Arena<DataType>,
     pub structures: Arena<Structure>,
     pub sorts: Arena<Sort>,
+    pub identifiers: Arena<Identifier>,
 }
 
 pub enum DefId {
@@ -58,7 +60,13 @@ pub struct FileHirSourceMap {
 
     pub sorts: FxHashMap<SortSource, SortId>,
     pub sorts_back: ArenaMap<SortId, SortSource>,
+
+    pub identifiers: FxHashMap<IdentifierSource, IdentifierId>,
+    pub identifiers_back: ArenaMap<IdentifierId, IdentifierSource>,
 }
+
+pub type IdentifierPtr = AstPtr<ast::Identifier>;
+pub type IdentifierSource = InFile<IdentifierPtr>;
 
 pub type ExprPtr = AstPtr<ast::Expr>;
 pub type ExprSource = InFile<ExprPtr>;
@@ -269,6 +277,8 @@ duplicate::duplicate! {
         [StructureId]   [Structure]     [StructureSource]   [structures]    [scope_by_module_item] ;
         [ExprId]        [Expr]          [ExprSource]        [exprs]         [scope_by_expr]        ;
         [SortId]        [Sort]          [SortSource]        [sorts]         [scope_by_sort]        ;
+        [IdentifierId]  [Identifier]    [IdentifierSource]  [identifiers]   [scope_by_identifier]  ;
+        [DedId]         [Ded]           [DedSource]         [deds]          [scope_by_ded]         ;
     ]
     impl HirNode for hir_type {
         type Source = source_type;

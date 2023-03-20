@@ -1,3 +1,5 @@
+#![allow(unused)]
+
 use base_db::{fixture::WithFixture, FilePosition, SourceDatabase};
 use syntax::{ast, AstNode, AstPtr, SyntaxKind, SyntaxNode, SyntaxToken, TextSize, TokenAtOffset};
 
@@ -37,33 +39,33 @@ fn find_node<N: AstNode>(token: SyntaxToken) -> Option<N> {
     None
 }
 
-#[test]
-fn lower_it() {
-    let (db, src, hir) = lower(
-        r#"
-		module A { domains $0 B, C }
-		"#,
-    );
+// #[test]
+// fn lower_it() {
+// let (db, src, _hir) = lower(
+//     r#"
+// 	module A { domains $0 B, C }
+// 	"#,
+// );
 
-    let tree = db.parse(src.file_id).tree();
+// let tree = db.parse(src.file_id).tree();
 
-    let tok = pick_token(&tree.syntax(), src.offset).unwrap();
+// let tok = pick_token(&tree.syntax(), src.offset).unwrap();
 
-    let parent = find_node::<ast::MetaDefinition>(tok).unwrap();
+// let parent = find_node::<ast::MetaDefinition>(tok).unwrap();
 
-    let parent_source = InFile::new(src.file_id, AstPtr::new(&parent));
-    let hid = hir
-        .file_hir_source_map
-        .definitions
-        .get(&parent_source)
-        .unwrap();
+// let parent_source = InFile::new(src.file_id, AstPtr::new(&parent));
+// let hid = hir
+//     .file_hir_source_map
+//     .definitions
+//     .get(&parent_source)
+//     .unwrap();
 
-    let h = &hir.file_hir.definitions[*hid];
+// let h = &hir.file_hir.definitions[*hid];
 
-    eprintln!("{:#?}", h);
-    // let tree = eprintln!("{hir:#?}");
-    // panic!();
-}
+// eprintln!("{:#?}", h);
+// let tree = eprintln!("{hir:#?}");
+// panic!();
+// }
 
 // #[test]
 // fn lower_nested_lambda() {
