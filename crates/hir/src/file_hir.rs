@@ -291,6 +291,7 @@ duplicate::duplicate! {
         }
 
         fn scope(id: id_type, scope_tree: &ScopeTree) -> Option<ScopeId> {
+            #[allow(clippy::useless_conversion)]
             scope_tree.scope_lookup(id.into())
         }
     }

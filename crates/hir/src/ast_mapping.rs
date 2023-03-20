@@ -113,5 +113,5 @@ fn bdfs(node: &SyntaxNode, mut f: impl FnMut(SyntaxNode) -> bool) {
 fn ast_id_map(db: &dyn AstDatabase, file_id: FileId) -> Arc<AstIdMap> {
     // let _p = profile::span("ast_id_map");
     let source_file = db.parse(file_id);
-    Arc::new(AstIdMap::from_source(&source_file.tree().syntax()))
+    Arc::new(AstIdMap::from_source(source_file.tree().syntax()))
 }

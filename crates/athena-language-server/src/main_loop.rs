@@ -299,7 +299,7 @@ impl Backend {
                 self.client
                     .log_message(MessageType::ERROR, format!("{e:#?}"))
                     .await;
-                return Err(LspError::internal_error());
+                Err(LspError::internal_error())
             }
         }
     }
@@ -425,7 +425,7 @@ fn on_changed(
             if ch.exists() {
                 let contents = String::from_utf8(vfs.file_contents(ch.file_id).to_vec())
                     .ok()
-                    .map(|c| Arc::new(c));
+                    .map(Arc::new);
                 change.change_file(ch.file_id, contents);
             } else {
                 change.change_file(ch.file_id, None);

@@ -81,11 +81,11 @@ impl GlobalState {
 
 impl GlobalStateSnapshot {
     pub(crate) fn file_id(&self, url: &Url) -> crate::Result<FileId> {
-        url_to_file_id(&*self.vfs.read(), url)
+        url_to_file_id(&self.vfs.read(), url)
     }
 
     pub(crate) fn file_id_to_url(&self, id: FileId) -> Url {
-        file_id_to_url(&*self.vfs.read(), id)
+        file_id_to_url(&self.vfs.read(), id)
     }
 
     pub(crate) fn file_line_index(&self, file_id: FileId) -> Cancellable<Arc<LineIndex>> {
@@ -97,7 +97,7 @@ pub(crate) fn url_to_file_id(vfs: &vfs::Vfs, url: &lsp_types::Url) -> crate::Res
     let path = from_proto::vfs_path(url)?;
     tracing::info!(?path, "url_to_file_id");
     vfs.file_id(&path)
-        .ok_or_else(|| anyhow!("file not found: {}", url).into())
+        .ok_or_else(|| anyhow!("file not found: {}", url))
 }
 
 pub(crate) fn file_id_to_url(vfs: &vfs::Vfs, id: FileId) -> Url {

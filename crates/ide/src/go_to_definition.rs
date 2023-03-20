@@ -110,12 +110,12 @@ fn find_def_new(
 
     let root = db.parse(file_id).syntax_node();
 
-    let scope = match node.clone() {
+    let scope = match node {
         Interesting::Expr(expr) => to_scope(expr, &sema),
         Interesting::Sort(sort) => to_scope(sort, &sema),
     }?;
 
-    let scope = find_defining_scope(&name, &scope, &sema)?;
+    let scope = find_defining_scope(&name, scope, &sema)?;
 
     tracing::info!("found defining scope: {:?}", scope.kind);
     let node = scope_kind_to_node(scope.kind, &root, &sema)?;

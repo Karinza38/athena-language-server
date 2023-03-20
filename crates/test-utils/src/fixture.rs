@@ -9,7 +9,7 @@
 //! ```ignore
 //! r#"
 //! module Foo {
-//! 	domain Bar
+//!     domain Bar
 //! }
 //! "#
 //! ```
@@ -24,7 +24,7 @@
 //! //- /main.ath
 //! load "foo.ath"
 //! module Bar {
-//! 	domain Baz
+//!     domain Baz
 //! }
 //!
 //! //- /foo.ath

@@ -1,6 +1,7 @@
 use std::{
     env,
     path::{Path, PathBuf},
+    time::Instant,
 };
 
 use clap::Parser;
@@ -56,9 +57,7 @@ fn bisect(input: &str) -> Option<&str> {
         let left_fail = failed(left);
         let right_fail = failed(right);
 
-        if left_fail && right_fail {
-            end = mid;
-        } else if left_fail {
+        if left_fail {
             end = mid;
         } else if right_fail {
             start = mid;
@@ -148,18 +147,21 @@ fn main() -> color_eyre::Result<()> {
             println!("{:?}", dead);
         }
         Cli::DumpSyntaxTree { path } => {
-            let contents = std::fs::read_to_string(&path)?;
-            let parsed = syntax::SourceFile::parse(&contents);
-            for p in parsed.tree().stmts() {
-                match p {
-                    syntax::ast::Stmt::DirStmt(dir) => {
-                        println!("{:#?}", dir);
-                        dir.dir().unwrap();
-                    }
-                    _ => {}
-                }
-            }
-            println!("{}", parsed.debug_dump());
+            let contents = std::fs::read_to_string(path)?;
+            let start = Instant::now();
+            let _parsed = syntax::SourceFile::parse(&contents);
+            let elapsed = start.elapsed();
+            println!("Parsed in {:?}", elapsed);
+            // for p in parsed.tree().stmts() {
+            //     match p {
+            //         syntax::ast::Stmt::DirStmt(dir) => {
+            //             println!("{:#?}", dir);
+            //             dir.dir().unwrap();
+            //         }
+            //         _ => {}
+            //     }
+            // }
+            // println!("{}", parsed.debug_dump());
         }
     }
 

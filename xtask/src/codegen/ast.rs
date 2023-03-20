@@ -1,7 +1,6 @@
 mod ast_src;
 
 use fs_err as fs;
-use ungrammar::{Grammar, Rule};
 use itertools::Itertools;
 use proc_macro2::{Ident, Punct, Spacing};
 use quote::{format_ident, quote};
@@ -9,6 +8,7 @@ use std::{
     collections::{BTreeSet, HashSet},
     fmt::Write,
 };
+use ungrammar::{Grammar, Rule};
 
 use ast_src::{
     AstEnumSrc, AstNodeSrc, AstSrc, AstTokenDef, AstTokenDefinition, Cardinality, Field, KindsSrc,
@@ -279,7 +279,7 @@ fn generate_nodes(kinds: &KindsSrc, grammar: &AstSrc) -> String {
                 };
 
                 let body = if non_enum_variants.is_empty() {
-                    quote! { 
+                    quote! {
                         match syntax.kind() {
                             #other
                         }
@@ -421,7 +421,7 @@ fn generate_nodes(kinds: &KindsSrc, grammar: &AstSrc) -> String {
     }
 
     let ast = quote! {
-        #![allow(non_snake_case, dead_code, unused_imports)]
+        #![allow(non_snake_case, dead_code, unused_imports, clippy::match_single_binding, clippy::needless_return)]
         use crate::{
             SyntaxNode, SyntaxToken, SyntaxKind::{self, *},
             ast::{self, AstNode, AstChildren, support},

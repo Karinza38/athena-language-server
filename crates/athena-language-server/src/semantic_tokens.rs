@@ -181,7 +181,7 @@ impl<'a> SemanticTokensBuilder<'a> {
         token_type: SemanticTokenType,
         modifier_bitset: u32,
     ) {
-        let range = crate::to_proto::range(&self.line_index, text_range);
+        let range = crate::to_proto::range(self.line_index, text_range);
         let token_index = type_index(token_type);
         let mut push_line = range.start.line;
         let mut push_char = range.start.character;

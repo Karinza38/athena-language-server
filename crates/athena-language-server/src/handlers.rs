@@ -22,14 +22,14 @@ pub(crate) fn semantic_tokens_full(
 
     let semantic_tokens = snapshot.semantic_token_map.get(&uri).map(|v| v.clone());
     if let Some(semantic_tokens) = semantic_tokens {
-        return Ok(Some(SemanticTokensResult::Tokens(semantic_tokens)));
+        Ok(Some(SemanticTokensResult::Tokens(semantic_tokens)))
     } else {
         let index = analysis.file_line_index(file_id)?;
         let ast = analysis.parse(file_id)?;
 
         let tokens = semantic_tokens::semantic_tokens_for_file(ast.tree(), &index);
         snapshot.semantic_token_map.insert(uri, tokens.clone());
-        return Ok(Some(SemanticTokensResult::Tokens(tokens)));
+        Ok(Some(SemanticTokensResult::Tokens(tokens)))
     }
 }
 
@@ -52,7 +52,7 @@ pub(crate) fn go_to_definition(
                 &snapshot,
                 FileRange {
                     file_id: nav.file_id,
-                    range: nav.focus_range.unwrap_or_else(|| nav.full_range),
+                    range: nav.focus_or_full_range(),
                 },
             )
         })

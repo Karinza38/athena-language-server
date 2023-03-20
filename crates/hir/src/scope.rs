@@ -132,3 +132,9 @@ impl ScopeTree {
         id
     }
 }
+
+impl Default for ScopeTree {
+    fn default() -> Self {
+        Self::new()
+    }
+}

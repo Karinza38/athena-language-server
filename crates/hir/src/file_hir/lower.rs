@@ -214,7 +214,7 @@ where
 
         let hir_id = hir.make_node(&mut ctx.hir);
 
-        hir_id.set_source(source.clone(), &mut ctx.source_map);
+        hir_id.set_source(source, &mut ctx.source_map);
 
         let scope = scope.unwrap_or_else(|| ctx.current_scope());
 
@@ -302,7 +302,7 @@ impl Ctx {
     }
 
     fn make_source<N: AstNode>(&self, node: &N) -> SourceOf<N> {
-        InFile::new(self.file_id, AstPtr::new(&node))
+        InFile::new(self.file_id, AstPtr::new(node))
     }
 
     fn current_scope(&self) -> ScopeId {
@@ -459,7 +459,7 @@ impl Ctx {
     }
 
     fn lower_sort_opt(&mut self, sort: Option<ast::Sort>) -> Option<SortId> {
-        sort.map(|sort| self.lower_sort(sort)).flatten()
+        sort.and_then(|sort| self.lower_sort(sort))
     }
 
     #[tracing::instrument(skip(self, define))]
@@ -486,7 +486,7 @@ impl Ctx {
 
                 let args = self.lower_args(proc.args());
 
-                let inner_scope = self.make_scope(args.clone(), ScopeKind::ModuleItem(def.into()));
+                let inner_scope = self.make_scope(args, ScopeKind::ModuleItem(def.into()));
 
                 self.with_scope(inner_scope, |ctx| {
                     let _body = ctx.lower_phrase(define.define_body()?);
@@ -513,7 +513,7 @@ impl Ctx {
             module_items.push(def.into());
         }
 
-        let new_scope = self.make_module_item_scope(names.clone(), module_items.last()?.clone());
+        let new_scope = self.make_module_item_scope(names, *module_items.last()?);
 
         self.push_scope(new_scope);
 
@@ -560,10 +560,9 @@ impl Ctx {
 
                 let lambda_expr = self.builder(expr.clone()).build(self, Expr {});
 
-                let body_scope = self.make_scope(arg_names.clone(), ScopeKind::Expr(lambda_expr));
+                let body_scope = self.make_scope(arg_names, ScopeKind::Expr(lambda_expr));
 
-                let body =
-                    self.with_scope(body_scope, |ctx| Some(ctx.lower_expr(lambda.expr()?)?))?;
+                let body = self.with_scope(body_scope, |ctx| ctx.lower_expr(lambda.expr()?))?;
 
                 let _ = body; //TODO: model lambda and set the body here
 
@@ -574,10 +573,9 @@ impl Ctx {
 
                 let method_expr = self.builder(expr.clone()).build(self, Expr {});
 
-                let body_scope = self.make_scope(arg_names.clone(), ScopeKind::Expr(method_expr));
+                let body_scope = self.make_scope(arg_names, ScopeKind::Expr(method_expr));
 
-                let body =
-                    self.with_scope(body_scope, |ctx| Some(ctx.lower_ded(method.ded()?)?))?;
+                let body = self.with_scope(body_scope, |ctx| ctx.lower_ded(method.ded()?))?;
 
                 let _ = body; //TODO: model method and set the body here
                 Some(method_expr)
@@ -611,7 +609,7 @@ impl Ctx {
             self.lower_expr(expr);
         });
 
-        let id = self.builder(ded.clone()).build(self, Ded {});
+        let id = self.builder(ded).build(self, Ded {});
 
         Some(id)
     }
@@ -621,7 +619,7 @@ impl Ctx {
         sort_decl: &ast::SortDecl,
         src: DefinitionSource,
     ) -> Option<DefinitionId> {
-        let name = sort_decl_name(&sort_decl)?;
+        let name = sort_decl_name(sort_decl)?;
 
         let domain_id = self.alloc_definition(Definition { name: name.clone() });
 
@@ -761,6 +759,7 @@ trait WithScope: Sized {
 impl WithScope for id_ty {
     type ScopeMapKey = scope_map_key;
     fn set_scope(&self, scope: ScopeId, scopes: &mut ScopeTree) {
+        #[allow(clippy::useless_conversion)]
         scopes.set_scope_fn(scope_map_key::from(*self), scope);
     }
 }
