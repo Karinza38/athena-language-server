@@ -2,7 +2,7 @@ use dashmap::DashMap;
 use ide::{AnalysisHost, Cancellable};
 use ide_db::base_db::Change;
 use parking_lot::RwLock;
-use std::{fmt::Debug, path::PathBuf, sync::Arc};
+use std::{fmt::Debug, future::Future, path::PathBuf, sync::Arc};
 use tokio::sync::{mpsc, oneshot};
 use tower_lsp::{
     async_trait,
@@ -12,16 +12,16 @@ use tower_lsp::{
             GotoDeclarationParams, GotoDeclarationResponse, GotoImplementationParams,
             GotoImplementationResponse,
         },
-        Diagnostic, DidChangeConfigurationParams, DidChangeTextDocumentParams,
+        ConfigurationItem, Diagnostic, DidChangeConfigurationParams, DidChangeTextDocumentParams,
         DidChangeWatchedFilesParams, DidChangeWorkspaceFoldersParams, DidCloseTextDocumentParams,
         DidOpenTextDocumentParams, DidSaveTextDocumentParams, DocumentFilter, GotoDefinitionParams,
         GotoDefinitionResponse, InitializeParams, InitializeResult, MessageType, OneOf,
-        SemanticTokens, SemanticTokensFullOptions, SemanticTokensLegend, SemanticTokensOptions,
-        SemanticTokensParams, SemanticTokensRegistrationOptions, SemanticTokensResult,
-        SemanticTokensServerCapabilities, ServerCapabilities, StaticRegistrationOptions,
-        TextDocumentIdentifier, TextDocumentRegistrationOptions, TextDocumentSyncCapability,
-        TextDocumentSyncKind, Url, WorkDoneProgressOptions, WorkspaceFoldersServerCapabilities,
-        WorkspaceServerCapabilities,
+        Registration, SemanticTokens, SemanticTokensFullOptions, SemanticTokensLegend,
+        SemanticTokensOptions, SemanticTokensParams, SemanticTokensRegistrationOptions,
+        SemanticTokensResult, SemanticTokensServerCapabilities, ServerCapabilities,
+        StaticRegistrationOptions, TextDocumentIdentifier, TextDocumentRegistrationOptions,
+        TextDocumentSyncCapability, TextDocumentSyncKind, Url, WorkDoneProgressOptions,
+        WorkspaceFoldersServerCapabilities, WorkspaceServerCapabilities,
     },
     Client, LanguageServer, LspService, Server,
 };
@@ -29,7 +29,7 @@ use tracing_subscriber::EnvFilter;
 use vfs::Vfs;
 
 use crate::{
-    from_proto,
+    config, from_proto,
     global_state::{GlobalState, GlobalStateSnapshot, StateClient, StateClientMessage},
     handlers, semantic_tokens, to_proto,
 };
@@ -39,6 +39,7 @@ struct Backend {
     client: Client,
     vfs: Arc<RwLock<Vfs>>,
     state_client: StateClient,
+    config: RwLock<config::Config>,
 }
 
 #[derive(Debug)]
@@ -55,6 +56,7 @@ impl Backend {
             client,
             vfs,
             state_client,
+            config: RwLock::new(config::Config::default()),
         }
     }
 }
@@ -103,9 +105,26 @@ fn capabilities() -> ServerCapabilities {
     }
 }
 
+#[extend::ext]
+impl<T, E> Result<T, E>
+where
+    E: std::error::Error,
+{
+    fn unwrap_or_log(self) -> T {
+        match self {
+            Ok(t) => t,
+            Err(e) => {
+                tracing::error!("error: {}", e);
+                panic!("error: {}", e);
+            }
+        }
+    }
+}
+
 #[async_trait]
 impl LanguageServer for Backend {
-    async fn initialize(&self, _: InitializeParams) -> LspResult<InitializeResult> {
+    async fn initialize(&self, params: InitializeParams) -> LspResult<InitializeResult> {
+        tracing::info!("initialize: {:?}", params);
         Ok(InitializeResult {
             server_info: None,
             capabilities: capabilities(),
@@ -116,12 +135,23 @@ impl LanguageServer for Backend {
         self.client
             .log_message(MessageType::INFO, "server initialized!")
             .await;
+        self.client
+            .register_capability(vec![Registration {
+                id: "config-change-watch".to_string(),
+                method: "workspace/didChangeConfiguration".to_string(),
+                register_options: None,
+            }])
+            .await
+            .unwrap_or_log();
+        self.refresh_config().await;
     }
 
     async fn did_change_configuration(&self, _: DidChangeConfigurationParams) {
         self.client
             .log_message(MessageType::INFO, "configuration changed!")
             .await;
+        tracing::info!("config changed");
+        self.refresh_config().await;
     }
 
     async fn did_change_workspace_folders(&self, _: DidChangeWorkspaceFoldersParams) {
@@ -180,24 +210,42 @@ impl LanguageServer for Backend {
         &self,
         params: GotoDefinitionParams,
     ) -> LspResult<Option<GotoDefinitionResponse>> {
-        self.dispatch_request(params, handlers::go_to_definition)
-            .await
+        self.config_gated(
+            |c| c.wip_goto_definition_enable,
+            || async move {
+                self.dispatch_request(params, handlers::go_to_definition)
+                    .await
+            },
+        )
+        .await
     }
 
     async fn goto_declaration(
         &self,
         params: GotoDeclarationParams,
     ) -> LspResult<Option<GotoDeclarationResponse>> {
-        self.dispatch_request(params, handlers::go_to_definition)
-            .await
+        self.config_gated(
+            |c| c.wip_goto_definition_enable,
+            || async {
+                self.dispatch_request(params, handlers::go_to_definition)
+                    .await
+            },
+        )
+        .await
     }
 
     async fn goto_implementation(
         &self,
         params: GotoImplementationParams,
     ) -> LspResult<Option<GotoImplementationResponse>> {
-        self.dispatch_request(params, handlers::go_to_definition)
-            .await
+        self.config_gated(
+            |c| c.wip_goto_definition_enable,
+            || async {
+                self.dispatch_request(params, handlers::go_to_definition)
+                    .await
+            },
+        )
+        .await
     }
 
     async fn shutdown(&self) -> LspResult<()> {
@@ -253,6 +301,48 @@ impl Backend {
                     .await;
                 return Err(LspError::internal_error());
             }
+        }
+    }
+
+    async fn refresh_config(&self) {
+        if let Ok(config) = self
+            .client
+            .configuration(vec![ConfigurationItem {
+                section: Some("athena-language-server".to_string()),
+                ..Default::default()
+            }])
+            .await
+        {
+            if config.len() == 1 {
+                let config: config::Config =
+                    serde_json::from_value(config.into_iter().next().unwrap()).unwrap_or_log();
+                tracing::info!("config: {:?}", config);
+                *self.config.write() = config;
+            } else {
+                tracing::warn!("failed to deserialize config: {config:?}");
+            }
+        } else {
+            tracing::warn!("failed to get config");
+        }
+    }
+
+    async fn config_gated<F, Fut, R>(
+        &self,
+        enabled: impl FnOnce(&config::Config) -> bool,
+        func: F,
+    ) -> LspResult<Option<R>>
+    where
+        F: FnOnce() -> Fut,
+        Fut: Future<Output = LspResult<Option<R>>>,
+    {
+        let enabled = {
+            let config = self.config.read();
+            enabled(&config)
+        };
+        if enabled {
+            func().await
+        } else {
+            Ok(None)
         }
     }
 }
@@ -380,31 +470,45 @@ fn on_changed(
     file_diagnostics
 }
 
-pub async fn run_server() {
-    let pth = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
-        .parent()
-        .unwrap()
-        .parent()
-        .unwrap()
-        .join("logfile.txt");
-
-    let logfile = std::fs::OpenOptions::new()
-        .write(true)
-        .truncate(true)
-        .create(true)
-        .open(pth.clone())
-        .unwrap();
-
+fn init_logging() {
     use tracing_subscriber::prelude::*;
 
-    tracing_subscriber::registry()
-        .with(
-            tracing_tree::HierarchicalLayer::new(2)
-                .with_ansi(true)
-                .with_writer(logfile),
-        )
-        .with(EnvFilter::from_default_env())
-        .init();
+    if let Ok(log_file_pth) = std::env::var("RUST_LOG_FILE") {
+        let pth = if log_file_pth == "1" || log_file_pth == "true" {
+            PathBuf::from(env!("CARGO_MANIFEST_DIR"))
+                .parent()
+                .unwrap()
+                .parent()
+                .unwrap()
+                .join("logfile.txt")
+        } else {
+            PathBuf::from(log_file_pth)
+        };
+        let logfile = std::fs::OpenOptions::new()
+            .write(true)
+            .truncate(true)
+            .create(true)
+            .open(pth)
+            .unwrap();
+
+        tracing_subscriber::registry()
+            .with(
+                tracing_tree::HierarchicalLayer::new(2)
+                    .with_ansi(true)
+                    .with_writer(logfile),
+            )
+            .with(EnvFilter::from_default_env())
+            .init();
+    } else {
+        tracing_subscriber::registry()
+            .with(tracing_tree::HierarchicalLayer::new(2).with_ansi(true))
+            .with(EnvFilter::from_default_env())
+            .init();
+    }
+}
+
+pub async fn run_server() {
+    init_logging();
 
     let stdin = tokio::io::stdin();
     let stdout = tokio::io::stdout();

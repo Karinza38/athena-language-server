@@ -12,7 +12,8 @@
       "autoAttachChildProcesses": true,
       "preLaunchTask": "compile-client",
       "env": {
-        "SERVER_PATH": "${workspaceRoot}/target/release/athena-language-server"
+        "SERVER_PATH": "${workspaceRoot}/target/debug/athena-language-server",
+        "RUST_LOG_FILE": "true"
       }
     },
     {

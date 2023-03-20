@@ -58,6 +58,11 @@
                     ],
                     "default": "off",
                     "description": "Traces the communication between VS Code and the language server."
+                },
+                "athena-language-server.wip_goto_definition_enable": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Enable WIP goto definition support. May be incomplete and buggy. Not recommended for use."
                 }
             }
         },
