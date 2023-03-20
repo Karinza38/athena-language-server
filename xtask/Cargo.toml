@@ -7,7 +7,7 @@ edition = "2021"
 
 [dependencies]
 fs-err = "2.9.0"
-itertools = "0.10.5"
+itertools.workspace = true
 pico-args = "0.5.0"
 proc-macro2 = "1.0.51"
 quote = "1.0.23"

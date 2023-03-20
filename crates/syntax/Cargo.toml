@@ -13,5 +13,5 @@ parser = { path = "../parser" }
 util = { version = "0.1.0", path = "../util" }
 
 [dev-dependencies]
-itertools = "0.10.5"
+itertools.workspace = true
 insta.workspace = true
