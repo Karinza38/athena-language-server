@@ -6,7 +6,7 @@ input_file: crates/parser/test_data/parser/inline/ok/dir/0080_domains_complex_so
 DOMAINS_DIR
   DOMAINS_KW "domains"
   WHITESPACE " "
-  COMPOUND_SORT_DECL
+  COMPOUND_SORT
     L_PAREN "("
     IDENT_SORT
       IDENTIFIER
@@ -18,7 +18,7 @@ DOMAINS_DIR
     R_PAREN ")"
   COMMA ","
   WHITESPACE " "
-  COMPOUND_SORT_DECL
+  COMPOUND_SORT
     L_PAREN "("
     IDENT_SORT
       IDENTIFIER
