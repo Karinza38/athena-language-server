@@ -2,6 +2,9 @@ mod go_to_definition;
 mod helpers;
 mod navigation_target;
 
+#[cfg(test)]
+mod fixture;
+
 pub use ide_db::line_index::LineIndex;
 
 use core::fmt;
@@ -10,7 +13,7 @@ use std::{panic::UnwindSafe, sync::Arc};
 pub use ide_db::{
     base_db::{
         salsa::{self, ParallelDatabase},
-        Cancelled, Change, FileId, FilePosition, SourceDatabase,
+        Cancelled, Change, FileId, FilePosition, FileRange, SourceDatabase,
     },
     LineIndexDatabase, RootDatabase,
 };

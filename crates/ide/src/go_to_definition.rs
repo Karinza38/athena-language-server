@@ -178,11 +178,98 @@ fn scope_kind_to_node(scope: ScopeKind, root: &SyntaxNode, sema: &FileSema) -> O
     }
 }
 
-#[tracing::instrument(skip(root))]
+#[tracing::instrument(skip(root, sema))]
 fn id_to_node<N: HirNode>(id: N::Id, root: &SyntaxNode, sema: &FileSema) -> Option<SyntaxNode>
 where
     N::Id: Debug,
 {
     let source: N::Source = sema.get_source_for::<N>(id)?;
     Some(source.syntax_node_ptr().to_node(root))
+}
+
+#[cfg(test)]
+mod tests {
+    use crate::{fixture, FileRange};
+    use itertools::Itertools;
+
+    #[track_caller]
+    fn check(ra_fixture: &str) {
+        let (analysis, position, expected) = fixture::annotations(ra_fixture);
+        let navs = analysis
+            .go_to_definition(position)
+            .unwrap()
+            .expect("no definition found")
+            .info;
+
+        let cmp = |&FileRange { file_id, range }: &_| (file_id, range.start());
+        let navs = navs
+            .into_iter()
+            .map(|nav| FileRange {
+                file_id: nav.file_id,
+                range: nav.focus_or_full_range(),
+            })
+            .sorted_by_key(cmp)
+            .collect::<Vec<_>>();
+        let expected = expected
+            .into_iter()
+            .map(|(FileRange { file_id, range }, _)| FileRange { file_id, range })
+            .sorted_by_key(cmp)
+            .collect::<Vec<_>>();
+        assert_eq!(expected, navs);
+    }
+
+    #[allow(dead_code)]
+    fn check_unresolved(ra_fixture: &str) {
+        let (analysis, position) = fixture::position(ra_fixture);
+        let navs = analysis
+            .go_to_definition(position)
+            .unwrap()
+            .expect("no definition found")
+            .info;
+
+        assert!(
+            navs.is_empty(),
+            "didn't expect this to resolve anywhere: {navs:?}"
+        )
+    }
+
+    #[test]
+    fn domain_def() {
+        check(
+            r#"
+            module Foo {
+                domain Bar
+                //     ^^^
+                declare fun : [] -> $0Bar
+            }
+            "#,
+        )
+    }
+
+    #[test]
+    fn domains_def() {
+        check(
+            r#"
+            module Foo {
+                domains A, B, C
+                //         ^
+                declare fun : [] -> $0B
+            }
+            "#,
+        )
+    }
+
+    #[test]
+    fn module_def() {
+        check(
+            r#"
+            module Foo
+            //     ^^^
+            module Bar
+            //     ^^^
+            module Baz
+            //     ^^^
+            "#,
+        )
+    }
 }
