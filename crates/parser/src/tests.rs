@@ -19,13 +19,14 @@ fn lex_ok() {
     });
 }
 
-#[test]
-fn lex_err() {
-    for case in TestCase::list("lexer/err") {
-        let actual = lex(&case.text);
-        assert_snapshot!(actual)
-    }
-}
+// Uncomment if we add any of these tests
+// #[test]
+// fn lex_err() {
+//     for case in TestCase::list("lexer/err") {
+//         let actual = lex(&case.text);
+//         assert_snapshot!(actual)
+//     }
+// }
 
 fn lex(text: &str) -> String {
     let lexed = LexedInput::new(text);
@@ -78,18 +79,19 @@ fn parse_ok() {
     test_glob!(ok "ok/file");
 }
 
-#[test]
-fn parse_err() {
-    for case in TestCase::list("parser/err") {
-        let (actual, errors) = parse(EntryPoint::SourceFile, &case.text);
-        assert!(
-            errors,
-            "no errors in an ERR file {}:\n{actual}",
-            case.ath.display()
-        );
-        assert_snapshot!(actual)
-    }
-}
+// Uncomment if we add any of these tests
+// #[test]
+// fn parse_err() {
+//     for case in TestCase::list("parser/err") {
+//         let (actual, errors) = parse(EntryPoint::SourceFile, &case.text);
+//         assert!(
+//             errors,
+//             "no errors in an ERR file {}:\n{actual}",
+//             case.ath.display()
+//         );
+//         assert_snapshot!(actual)
+//     }
+// }
 
 #[test]
 fn parse_inline_ok() {
@@ -240,6 +242,7 @@ impl TestCase {
         }
     }
 
+    #[allow(unused)]
     fn list(path: &str) -> Vec<TestCase> {
         let crate_root_dir = Path::new(env!("CARGO_MANIFEST_DIR"));
         let test_data_dir = crate_root_dir.join("test_data");
