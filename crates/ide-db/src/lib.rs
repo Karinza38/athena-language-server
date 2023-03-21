@@ -7,13 +7,12 @@ use std::sync::Arc;
 
 pub use base_db;
 
-use base_db::{salsa, FileContentsQuery, FileId, FilePathId, FileWatcher};
+use base_db::{salsa, FileContentsQuery, FilePathId, FileWatcher};
 use line_index::LineIndex;
 use rustc_hash::FxHashMap;
 
 #[salsa::database(
     base_db::SourceDatabaseStorage,
-    LineIndexDatabaseStorage,
     LineIndexDatabase2Storage,
     hir::HirDatabaseStorage
 )]
@@ -77,15 +76,5 @@ pub trait LineIndexDatabase2: base_db::SourceDatabase {
 
 fn line_index2(db: &dyn LineIndexDatabase2, file_id: FilePathId) -> Arc<LineIndex> {
     let text = db.file_contents(file_id);
-    Arc::new(LineIndex::new(&text))
-}
-
-#[salsa::query_group(LineIndexDatabaseStorage)]
-pub trait LineIndexDatabase: base_db::SourceDatabase {
-    fn line_index(&self, file_id: FileId) -> Arc<LineIndex>;
-}
-
-fn line_index(db: &dyn LineIndexDatabase, file_id: FileId) -> Arc<LineIndex> {
-    let text = db.file_text(file_id);
     Arc::new(LineIndex::new(&text))
 }

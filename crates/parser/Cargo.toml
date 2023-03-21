@@ -9,7 +9,6 @@ edition = "2021"
 drop_bomb.workspace = true
 logos = "0.12.1"
 static_assertions = "1.1.0"
-util.workspace = true
 
 [features]
 nightly = ["static_assertions/nightly"]

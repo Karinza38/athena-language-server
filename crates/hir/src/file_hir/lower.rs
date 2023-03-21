@@ -1,7 +1,7 @@
 #[cfg(test)]
 mod tests;
 
-use base_db::{FileId, FilePathId};
+use base_db::FilePathId;
 use la_arena::Idx;
 use paste::paste;
 use syntax::{

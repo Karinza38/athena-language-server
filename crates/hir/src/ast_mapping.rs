@@ -1,6 +1,6 @@
 use std::sync::Arc;
 
-use base_db::{salsa, FileId, SourceDatabase};
+use base_db::{salsa, FilePathId, SourceDatabase};
 use la_arena::{Arena, Idx};
 use rustc_hash::FxHashMap;
 use syntax::{ast, AstNode, SyntaxNode, SyntaxNodePtr};
@@ -9,7 +9,7 @@ use crate::InFile;
 
 #[salsa::query_group(AstDatabaseStorage)]
 pub trait AstDatabase: SourceDatabase {
-    fn ast_id_map(&self, file_id: FileId) -> Arc<AstIdMap>;
+    fn ast_id_map(&self, file_id: FilePathId) -> Arc<AstIdMap>;
 }
 
 pub struct FileAstId<N: AstNode> {
@@ -110,8 +110,8 @@ fn bdfs(node: &SyntaxNode, mut f: impl FnMut(SyntaxNode) -> bool) {
     }
 }
 
-fn ast_id_map(db: &dyn AstDatabase, file_id: FileId) -> Arc<AstIdMap> {
+fn ast_id_map(db: &dyn AstDatabase, file_id: FilePathId) -> Arc<AstIdMap> {
     // let _p = profile::span("ast_id_map");
-    let source_file = db.parse(file_id);
+    let source_file = db.parse2(file_id);
     Arc::new(AstIdMap::from_source(source_file.tree().syntax()))
 }

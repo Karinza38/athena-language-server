@@ -7,7 +7,6 @@ edition = "2021"
 
 [dependencies]
 salsa = "0.17.0-pre.2"
-vfs.workspace = true
+paths.workspace = true
 syntax.workspace = true
-rustc-hash.workspace = true
 test-utils.workspace = true

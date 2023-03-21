@@ -27,15 +27,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "always-assert"
-version = "0.1.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "fbf688625d06217d5b1bb0ea9d9c44a1635fd0ee3534466388d18203174f4d11"
-dependencies = [
- "log",
-]
-
-[[package]]
 name = "anyhow"
 version = "1.0.70"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -62,7 +53,7 @@ dependencies = [
  "ide",
  "ide-db",
  "parking_lot 0.12.1",
- "rustc-hash",
+ "paths",
  "serde",
  "serde_json",
  "syntax",
@@ -71,7 +62,6 @@ dependencies = [
  "tracing",
  "tracing-subscriber",
  "tracing-tree",
- "vfs",
 ]
 
 [[package]]
@@ -122,11 +112,10 @@ dependencies = [
 name = "base-db"
 version = "0.1.0"
 dependencies = [
- "rustc-hash",
+ "paths",
  "salsa",
  "syntax",
  "test-utils",
- "vfs",
 ]
 
 [[package]]
@@ -394,12 +383,6 @@ name = "fs-err"
 version = "2.9.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "0845fa252299212f0389d64ba26f34fa32cfe41588355f21ed507c59a0f64541"
-
-[[package]]
-name = "fst"
-version = "0.4.7"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "7ab85b9b05e3978cc9a9cf8fea7f01b494e1a09ed3037e16ba39edc7a29eb61a"
 
 [[package]]
 name = "futures"
@@ -800,15 +783,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "miow"
-version = "0.5.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "52ffbca2f655e33c08be35d87278e5b18b89550a37dbd598c20db92f6a471123"
-dependencies = [
- "windows-sys 0.42.0",
-]
-
-[[package]]
 name = "nu-ansi-term"
 version = "0.46.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -924,7 +898,6 @@ dependencies = [
  "logos",
  "sourcegen",
  "static_assertions",
- "util",
 ]
 
 [[package]]
@@ -1265,17 +1238,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "a2eb9349b6444b326872e140eb1cf5e7c522154d69e7a0ffb0fb81c06b37543f"
 
 [[package]]
-name = "stdx"
-version = "0.0.0"
-source = "git+https://github.com/rust-lang/rust-analyzer?rev=d712e529405b0ef5719c81ae620c88a97db78d93#d712e529405b0ef5719c81ae620c88a97db78d93"
-dependencies = [
- "always-assert",
- "libc",
- "miow",
- "winapi",
-]
-
-[[package]]
 name = "strsim"
 version = "0.10.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1609,18 +1571,6 @@ name = "version_check"
 version = "0.9.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "49874b5167b65d7193b8aba1567f5c7d93d001cafc34600cee003eda787e483f"
-
-[[package]]
-name = "vfs"
-version = "0.0.0"
-source = "git+https://github.com/rust-lang/rust-analyzer?rev=d712e529405b0ef5719c81ae620c88a97db78d93#d712e529405b0ef5719c81ae620c88a97db78d93"
-dependencies = [
- "fst",
- "indexmap",
- "paths",
- "rustc-hash",
- "stdx",
-]
 
 [[package]]
 name = "walkdir"

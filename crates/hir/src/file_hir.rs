@@ -2,7 +2,7 @@ mod lower;
 
 use std::sync::Arc;
 
-use base_db::{FileId, FilePathId};
+use base_db::FilePathId;
 use la_arena::{Arena, ArenaMap, Idx};
 use rustc_hash::FxHashMap;
 use syntax::{ast, AstPtr};

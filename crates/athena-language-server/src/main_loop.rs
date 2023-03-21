@@ -1,7 +1,8 @@
 use dashmap::DashMap;
 use ide::{AnalysisHost, Cancellable, SourceDatabase};
-use ide_db::base_db::{Change, FilePathId, FileWatcher};
+use ide_db::base_db::FileWatcher;
 use parking_lot::RwLock;
+use paths::AbsPathBuf;
 use std::{fmt::Debug, future::Future, path::PathBuf, sync::Arc};
 use tokio::sync::{mpsc, oneshot};
 use tower_lsp::{
@@ -26,7 +27,6 @@ use tower_lsp::{
     Client, LanguageServer, LspService, Server,
 };
 use tracing_subscriber::EnvFilter;
-use vfs::{AbsPathBuf, Vfs};
 
 use crate::{
     config, from_proto,
@@ -37,7 +37,6 @@ use crate::{
 #[derive(Debug)]
 struct Backend {
     client: Client,
-    vfs: Arc<RwLock<Vfs>>,
     state_client: StateClient,
     config: RwLock<config::Config>,
 }
@@ -51,10 +50,9 @@ struct TextDocumentItem {
 }
 
 impl Backend {
-    fn new(client: Client, vfs: Arc<RwLock<Vfs>>, state_client: StateClient) -> Self {
+    fn new(client: Client, state_client: StateClient) -> Self {
         Self {
             client,
-            vfs,
             state_client,
             config: RwLock::new(config::Config::default()),
         }
@@ -273,17 +271,10 @@ impl Backend {
     async fn on_change(&self, params: TextDocumentItem) {
         self.client.log_message(MessageType::LOG, "on_change").await;
         let abs_pth = from_proto::abs_path(&params.uri).unwrap();
-        let pth = from_proto::vfs_path(&params.uri).unwrap();
         let _sp = tracing::info_span!("on_change");
-        // let mut vfs = self.vfs.write();
-        // vfs.set_file_contents(pth.clone(), Some(params.text.into_bytes()));
-
-        tracing::info!("file contents set: {:?}", pth);
 
         self.state_client
             .files_changed2(vec![(abs_pth, params.text)]);
-
-        // self.state_client.files_changed();
     }
 
     async fn dispatch_request<P: Send + 'static, R: Send + Debug + 'static>(
@@ -354,7 +345,6 @@ impl Backend {
 
 impl GlobalState {
     fn new() -> (StateClient, GlobalState) {
-        let vfs = Arc::new(RwLock::new(Vfs::default()));
         let analysis_host = AnalysisHost::new();
         let semantic_token_map = Arc::new(DashMap::new());
         let (sender, receiver) = mpsc::unbounded_channel();
@@ -362,7 +352,6 @@ impl GlobalState {
             StateClient::new(sender),
             GlobalState {
                 analysis_host,
-                vfs,
                 semantic_token_map,
                 client: None,
                 receiver,
@@ -372,7 +361,6 @@ impl GlobalState {
     async fn run(self) {
         let Self {
             mut analysis_host,
-            vfs,
             semantic_token_map,
             client,
             mut receiver,
@@ -383,27 +371,16 @@ impl GlobalState {
                 Some(StateClientMessage::HandleRequest(handler)) => {
                     let _sp = tracing::info_span!("handling request");
                     let analysis = analysis_host.analysis();
-                    let vfs = vfs.clone();
                     let semantic_token_map = semantic_token_map.clone();
                     let client = client.clone();
                     tokio::task::spawn_blocking(move || {
                         let snapshot = GlobalStateSnapshot {
                             analysis,
-                            vfs,
                             semantic_token_map,
                             client,
                         };
                         handler(snapshot);
                     });
-                }
-                Some(StateClientMessage::FilesChanged) => {
-                    let diagnostics = on_changed(&vfs, &mut analysis_host, &semantic_token_map);
-                    for (url, diagnostic) in diagnostics {
-                        let client = client.clone();
-                        tokio::spawn(async move {
-                            client.publish_diagnostics(url, diagnostic, None).await;
-                        });
-                    }
                 }
                 Some(StateClientMessage::FilesChanged2(files)) => {
                     let _sp = tracing::info_span!("files changed");
@@ -443,72 +420,10 @@ fn on_changed2(
         host.did_change_file(file_id);
         tracing::debug!("did change it");
         let analysis = host.analysis();
-        // vfs.read().file_path(file_id).as_path().unwrap().
         let url = Url::from_file_path(file_path).unwrap();
         let ast = analysis.parse2(file_id).unwrap();
         tracing::debug!("parsed it");
         let index = analysis.file_line_index2(file_id).unwrap();
-
-        let diagnostics = ast
-            .errors()
-            .iter()
-            .map(|err| {
-                let range = to_proto::range(&index, err.range());
-                Diagnostic::new_simple(range, err.message().to_owned())
-            })
-            .collect::<Vec<_>>();
-
-        let tokens = semantic_tokens::semantic_tokens_for_file(ast.tree(), &index);
-
-        token_map.insert(url.to_string(), tokens);
-
-        file_diagnostics.push((url, diagnostics));
-    }
-    file_diagnostics
-}
-
-fn on_changed(
-    vfs: &Arc<RwLock<Vfs>>,
-    host: &mut AnalysisHost,
-    token_map: &DashMap<String, SemanticTokens>,
-) -> Vec<(Url, Vec<Diagnostic>)> {
-    let change = {
-        let mut vfs = vfs.write();
-        let changes = vfs.take_changes();
-
-        tracing::info!("changes: {:?}", changes);
-
-        let mut change = Change::new();
-        for ch in changes {
-            if ch.exists() {
-                let contents = String::from_utf8(vfs.file_contents(ch.file_id).to_vec())
-                    .ok()
-                    .map(Arc::new);
-                change.change_file(ch.file_id, contents);
-            } else {
-                change.change_file(ch.file_id, None);
-            }
-        }
-        change
-    };
-
-    let changed_files = change
-        .files_changed
-        .iter()
-        .map(|(file_id, _)| *file_id)
-        .collect::<Vec<_>>();
-    host.apply_change(change);
-
-    tracing::info!("applied change: {:?}", changed_files);
-
-    let analysis = host.analysis();
-
-    let mut file_diagnostics = Vec::new();
-    for file_id in changed_files {
-        // vfs.read().file_path(file_id).as_path().unwrap().
-        let url = Url::from_file_path(vfs.read().file_path(file_id).as_path().unwrap()).unwrap();
-        let ast = analysis.parse(file_id).unwrap();
-        let index = analysis.file_line_index(file_id).unwrap();
 
         let diagnostics = ast
             .errors()
@@ -573,8 +488,7 @@ pub async fn run_server() {
 
     let (state_client, mut state) = GlobalState::new();
 
-    let vfs = state.vfs();
-    let (service, socket) = LspService::build(move |c| Backend::new(c, vfs, state_client))
+    let (service, socket) = LspService::build(move |c| Backend::new(c, state_client))
         .custom_method(
             "athena-language-server/dumpSyntaxTree",
             Backend::show_syntax_tree,

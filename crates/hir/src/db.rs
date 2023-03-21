@@ -1,4 +1,4 @@
-use base_db::{salsa, FileId, FilePathId};
+use base_db::{salsa, FilePathId};
 
 #[salsa::query_group(HirDatabaseStorage)]
 pub trait HirDatabase: base_db::SourceDatabase {

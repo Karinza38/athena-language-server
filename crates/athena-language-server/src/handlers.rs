@@ -70,11 +70,11 @@ pub(crate) fn dump_syntax_tree(
     params: TextDocumentIdentifier,
 ) -> Result<String> {
     let file_id = snapshot
-        .file_id(&params.uri)
+        .file_id2(&params.uri)
         .with_context(|| format!("failed to get file id for uri {}", params.uri))?;
 
     let analysis = &snapshot.analysis;
-    let ast = analysis.parse(file_id)?;
+    let ast = analysis.parse2(file_id)?;
 
     Ok(format!("{:#?}", ast.tree().syntax()))
 }

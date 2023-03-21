@@ -5,7 +5,7 @@
 use ide_db::base_db::{fixture::ChangeFixture, FilePathId};
 use test_utils::{extract_annotations, RangeOrOffset};
 
-use crate::{Analysis, AnalysisHost, FileId, FilePosition, FileRange};
+use crate::{Analysis, AnalysisHost, FilePosition, FileRange};
 
 /// Creates analysis for a single file.
 pub(crate) fn file(ra_fixture: &str) -> (Analysis, FilePathId) {

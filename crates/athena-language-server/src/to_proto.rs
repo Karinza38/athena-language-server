@@ -1,11 +1,11 @@
-use ide::{Cancellable, FileId};
+use ide::Cancellable;
 use ide_db::{
     base_db::{FilePathId, FileRange},
     line_index::LineIndex,
 };
+use paths::AbsPath;
 use syntax::{TextRange, TextSize};
 use tower_lsp::lsp_types;
-use vfs::AbsPath;
 
 use crate::global_state::GlobalStateSnapshot;
 

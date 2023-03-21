@@ -7,7 +7,7 @@ mod fixture;
 
 pub use ide_db::line_index::LineIndex;
 use ide_db::{
-    base_db::{AbsPath, AbsPathBuf, FilePathId, FileWatcher},
+    base_db::{AbsPathBuf, FilePathId, FileWatcher},
     LineIndexDatabase2,
 };
 
@@ -17,9 +17,9 @@ use std::{panic::UnwindSafe, sync::Arc};
 pub use ide_db::{
     base_db::{
         salsa::{self, ParallelDatabase},
-        Cancelled, Change, FileId, FilePosition, FileRange, SourceDatabase,
+        Cancelled, FilePosition, FileRange, SourceDatabase,
     },
-    LineIndexDatabase, RootDatabase,
+    RootDatabase,
 };
 use navigation_target::NavigationTarget;
 use syntax::{Parse, SourceFile, TextRange};
@@ -57,11 +57,8 @@ impl AnalysisHost {
     }
 
     pub fn did_change_file(&mut self, file: FilePathId) {
+        self.request_cancellation();
         self.db.did_change_file(file)
-    }
-
-    pub fn apply_change(&mut self, change: Change) {
-        self.db.apply_change(change)
     }
 }
 
@@ -70,16 +67,8 @@ pub struct Analysis {
 }
 
 impl Analysis {
-    pub fn file_text(&self, file_id: FileId) -> Cancellable<Arc<String>> {
-        self.with_db(|db| db.file_text(file_id))
-    }
-
     pub fn file_text2(&self, file_id: FilePathId) -> Cancellable<Arc<String>> {
         self.with_db(|db| db.file_contents(file_id))
-    }
-
-    pub fn parse(&self, file_id: FileId) -> Cancellable<Parse<SourceFile>> {
-        self.with_db(|db| db.parse(file_id))
     }
 
     pub fn parse2(&self, file_id: FilePathId) -> Cancellable<Parse<SourceFile>> {
@@ -96,10 +85,6 @@ impl Analysis {
 
     pub fn file_path(&self, file_id: FilePathId) -> Option<AbsPathBuf> {
         self.db.lookup_intern_path(file_id).to_real_path()
-    }
-
-    pub fn file_line_index(&self, file_id: FileId) -> Cancellable<Arc<LineIndex>> {
-        self.with_db(|db| db.line_index(file_id))
     }
 
     pub fn go_to_definition(

@@ -4,9 +4,9 @@ use ide_db::{
     base_db::{FilePathId, FilePosition},
     line_index::{LineColUtf16, LineIndex},
 };
+use paths::AbsPathBuf;
 use syntax::TextSize;
 use tower_lsp::lsp_types;
-use vfs::{AbsPathBuf, FileId};
 
 pub(crate) fn abs_path(url: &lsp_types::Url) -> Result<AbsPathBuf> {
     let path = url
@@ -14,10 +14,6 @@ pub(crate) fn abs_path(url: &lsp_types::Url) -> Result<AbsPathBuf> {
         .map_err(|()| anyhow!("invalid file path: {}", url))?;
 
     Ok(AbsPathBuf::try_from(path).unwrap())
-}
-
-pub fn vfs_path(url: &lsp_types::Url) -> Result<vfs::VfsPath> {
-    abs_path(url).map(vfs::VfsPath::from)
 }
 
 pub(crate) fn offset(line_index: &LineIndex, position: lsp_types::Position) -> Result<TextSize> {
@@ -30,10 +26,6 @@ pub(crate) fn offset(line_index: &LineIndex, position: lsp_types::Position) -> R
         .ok_or_else(|| anyhow!("Invalid offset"))?;
 
     Ok(offset)
-}
-
-pub(crate) fn file_id(snapshot: &GlobalStateSnapshot, url: &lsp_types::Url) -> Result<FileId> {
-    snapshot.file_id(url)
 }
 
 pub(crate) fn file_id2(snapshot: &GlobalStateSnapshot, url: &lsp_types::Url) -> Result<FilePathId> {

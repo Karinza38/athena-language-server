@@ -1,15 +1,9 @@
-mod change;
 pub mod fixture;
-mod input;
 
-use std::sync::Arc;
-
-pub use change::Change;
-pub use input::{SourceRoot, SourceRootId};
+pub use paths::{AbsPath, AbsPathBuf};
 pub use salsa::{self, Cancelled};
+use std::sync::Arc;
 use syntax::{ast, Parse, TextRange, TextSize};
-pub use vfs::{file_set::FileSet, AnchoredPath, AnchoredPathBuf, FileId, VfsPath};
-pub use vfs::{AbsPath, AbsPathBuf};
 
 #[macro_export]
 macro_rules! impl_intern_key {
@@ -101,9 +95,6 @@ pub trait FileWatcher {
 
 #[salsa::query_group(SourceDatabaseStorage)]
 pub trait SourceDatabase: std::fmt::Debug + FileWatcher {
-    #[salsa::invoke(parse_query)]
-    fn parse(&self, file_id: FileId) -> Parse<ast::SourceFile>;
-
     #[salsa::invoke(parse2_query)]
     fn parse2(&self, file_id: FilePathId) -> Parse<ast::SourceFile>;
 
@@ -114,15 +105,6 @@ pub trait SourceDatabase: std::fmt::Debug + FileWatcher {
     fn virtual_file_contents(&self, file: VirtualFilePath) -> Arc<String>;
 
     fn file_contents(&self, file: FilePathId) -> Arc<String>;
-
-    #[salsa::input]
-    fn file_text(&self, file_id: FileId) -> Arc<String>;
-
-    #[salsa::input]
-    fn file_source_root(&self, file_id: FileId) -> SourceRootId;
-
-    #[salsa::input]
-    fn source_root(&self, source_root_id: SourceRootId) -> Arc<SourceRoot>;
 }
 
 fn file_contents(db: &dyn SourceDatabase, file: FilePathId) -> Arc<String> {
@@ -142,19 +124,6 @@ fn file_contents(db: &dyn SourceDatabase, file: FilePathId) -> Arc<String> {
 
     let text = std::fs::read_to_string(path.as_path()).unwrap();
     Arc::new(text)
-}
-
-impl dyn SourceDatabase {
-    pub fn resolve_path(&self, path: AnchoredPath<'_>) -> Option<FileId> {
-        let source_root_id = self.file_source_root(path.anchor);
-        let source_root = self.source_root(source_root_id);
-        source_root.resolve_path(path)
-    }
-}
-
-fn parse_query(db: &dyn SourceDatabase, file_id: FileId) -> Parse<ast::SourceFile> {
-    let text = db.file_text(file_id);
-    ast::SourceFile::parse(&text)
 }
 
 fn parse2_query(db: &dyn SourceDatabase, file_id: FilePathId) -> Parse<ast::SourceFile> {
