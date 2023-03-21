@@ -2,13 +2,13 @@
 
 #![allow(dead_code)]
 
-use ide_db::base_db::{fixture::ChangeFixture, FilePathId};
+use ide_db::base_db::{fixture::ChangeFixture, FileId};
 use test_utils::{extract_annotations, RangeOrOffset};
 
 use crate::{Analysis, AnalysisHost, FilePosition, FileRange};
 
 /// Creates analysis for a single file.
-pub(crate) fn file(ra_fixture: &str) -> (Analysis, FilePathId) {
+pub(crate) fn file(ra_fixture: &str) -> (Analysis, FileId) {
     let mut host = AnalysisHost::default();
     let mut change_fixture = ChangeFixture::parse(ra_fixture);
     change_fixture.apply(&mut host.db);
@@ -40,7 +40,7 @@ pub(crate) fn range(ra_fixture: &str) -> (Analysis, FileRange) {
 }
 
 /// Creates analysis for a single file, returns range marked with a pair of $0 or a position marked with $0.
-pub(crate) fn range_or_position(ra_fixture: &str) -> (Analysis, FilePathId, RangeOrOffset) {
+pub(crate) fn range_or_position(ra_fixture: &str) -> (Analysis, FileId, RangeOrOffset) {
     let mut host = AnalysisHost::default();
     let mut change_fixture = ChangeFixture::parse(ra_fixture);
     change_fixture.apply(&mut host.db);
@@ -64,7 +64,7 @@ pub(crate) fn annotations(ra_fixture: &str) -> (Analysis, FilePosition, Vec<(Fil
         .files
         .iter()
         .flat_map(|&file_id| {
-            let file_text = host.analysis().file_text2(file_id).unwrap();
+            let file_text = host.analysis().file_text(file_id).unwrap();
             let annotations = extract_annotations(&file_text);
             annotations
                 .into_iter()
@@ -88,7 +88,7 @@ pub(crate) fn annotations_without_marker(ra_fixture: &str) -> (Analysis, Vec<(Fi
         .files
         .iter()
         .flat_map(|&file_id| {
-            let file_text = host.analysis().file_text2(file_id).unwrap();
+            let file_text = host.analysis().file_text(file_id).unwrap();
             let annotations = extract_annotations(&file_text);
             annotations
                 .into_iter()

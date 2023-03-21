@@ -274,7 +274,7 @@ impl Backend {
         let _sp = tracing::info_span!("on_change");
 
         self.state_client
-            .files_changed2(vec![(abs_pth, params.text)]);
+            .files_changed(vec![(abs_pth, params.text)]);
     }
 
     async fn dispatch_request<P: Send + 'static, R: Send + Debug + 'static>(
@@ -382,10 +382,10 @@ impl GlobalState {
                         handler(snapshot);
                     });
                 }
-                Some(StateClientMessage::FilesChanged2(files)) => {
+                Some(StateClientMessage::FilesChanged(files)) => {
                     let _sp = tracing::info_span!("files changed");
                     tracing::info!("files changed: {:?}", files);
-                    let diagnostics = on_changed2(&mut analysis_host, &semantic_token_map, files);
+                    let diagnostics = on_changed(&mut analysis_host, &semantic_token_map, files);
                     tracing::debug!("now here");
                     for (url, diagnostic) in diagnostics {
                         let client = client.clone();
@@ -405,7 +405,7 @@ impl GlobalState {
 }
 
 #[tracing::instrument(skip(host, token_map))]
-fn on_changed2(
+fn on_changed(
     host: &mut AnalysisHost,
     token_map: &DashMap<String, SemanticTokens>,
     files: Vec<(AbsPathBuf, String)>,
@@ -421,9 +421,9 @@ fn on_changed2(
         tracing::debug!("did change it");
         let analysis = host.analysis();
         let url = Url::from_file_path(file_path).unwrap();
-        let ast = analysis.parse2(file_id).unwrap();
+        let ast = analysis.parse(file_id).unwrap();
         tracing::debug!("parsed it");
-        let index = analysis.file_line_index2(file_id).unwrap();
+        let index = analysis.file_line_index(file_id).unwrap();
 
         let diagnostics = ast
             .errors()

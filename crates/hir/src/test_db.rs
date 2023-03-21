@@ -12,7 +12,7 @@ pub(crate) struct TestDB {
 impl salsa::Database for TestDB {}
 
 impl FileWatcher for TestDB {
-    fn did_change_file(&mut self, _file_id: base_db::FilePathId) {}
+    fn did_change_file(&mut self, _file_id: base_db::FileId) {}
 
     fn in_mem_contents(&self, _path: &base_db::AbsPath) -> Option<std::sync::Arc<String>> {
         None

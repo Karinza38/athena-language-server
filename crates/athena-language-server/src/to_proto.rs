@@ -1,6 +1,6 @@
 use ide::Cancellable;
 use ide_db::{
-    base_db::{FilePathId, FileRange},
+    base_db::{FileId, FileRange},
     line_index::LineIndex,
 };
 use paths::AbsPath;
@@ -21,8 +21,8 @@ pub(crate) fn range(line_index: &LineIndex, text_range: TextRange) -> lsp_types:
     )
 }
 
-pub(crate) fn url(snap: &GlobalStateSnapshot, file_id: FilePathId) -> lsp_types::Url {
-    snap.file_id_to_url2(file_id)
+pub(crate) fn url(snap: &GlobalStateSnapshot, file_id: FileId) -> lsp_types::Url {
+    snap.file_id_to_url(file_id)
 }
 
 pub(crate) fn location(

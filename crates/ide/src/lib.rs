@@ -7,8 +7,8 @@ mod fixture;
 
 pub use ide_db::line_index::LineIndex;
 use ide_db::{
-    base_db::{AbsPathBuf, FilePathId, FileWatcher},
-    LineIndexDatabase2,
+    base_db::{AbsPathBuf, FileId, FileWatcher},
+    LineIndexDatabase,
 };
 
 use core::fmt;
@@ -56,7 +56,7 @@ impl AnalysisHost {
         self.db.request_cancellation()
     }
 
-    pub fn did_change_file(&mut self, file: FilePathId) {
+    pub fn did_change_file(&mut self, file: FileId) {
         self.request_cancellation();
         self.db.did_change_file(file)
     }
@@ -67,23 +67,23 @@ pub struct Analysis {
 }
 
 impl Analysis {
-    pub fn file_text2(&self, file_id: FilePathId) -> Cancellable<Arc<String>> {
+    pub fn file_text(&self, file_id: FileId) -> Cancellable<Arc<String>> {
         self.with_db(|db| db.file_contents(file_id))
     }
 
-    pub fn parse2(&self, file_id: FilePathId) -> Cancellable<Parse<SourceFile>> {
-        self.with_db(|db| db.parse2(file_id))
+    pub fn parse(&self, file_id: FileId) -> Cancellable<Parse<SourceFile>> {
+        self.with_db(|db| db.parse(file_id))
     }
 
-    pub fn file_line_index2(&self, file_id: FilePathId) -> Cancellable<Arc<LineIndex>> {
-        self.with_db(|db| db.line_index2(file_id))
+    pub fn file_line_index(&self, file_id: FileId) -> Cancellable<Arc<LineIndex>> {
+        self.with_db(|db| db.line_index(file_id))
     }
 
-    pub fn intern_path(&self, path: AbsPathBuf) -> FilePathId {
+    pub fn intern_path(&self, path: AbsPathBuf) -> FileId {
         self.db.intern_path(path.into())
     }
 
-    pub fn file_path(&self, file_id: FilePathId) -> Option<AbsPathBuf> {
+    pub fn file_path(&self, file_id: FileId) -> Option<AbsPathBuf> {
         self.db.lookup_intern_path(file_id).to_real_path()
     }
 

@@ -5,10 +5,10 @@ use test_utils::{
     extract_range_or_offset, Fixture, RangeOrOffset, CURSOR_MARKER, ESCAPED_CURSOR_MARKER,
 };
 
-use crate::{FilePathId, FilePosition, FileRange, SourceDatabase, VirtualFilePath};
+use crate::{FileId, FilePosition, FileRange, SourceDatabase, VirtualFilePath};
 
 pub trait WithFixture: Default + SourceDatabase + 'static {
-    fn with_single_file(ath_fixture: &str) -> (Self, FilePathId) {
+    fn with_single_file(ath_fixture: &str) -> (Self, FileId) {
         let mut fixture = ChangeFixture::parse(ath_fixture);
         let mut db = Self::default();
         fixture.apply(&mut db);
@@ -16,7 +16,7 @@ pub trait WithFixture: Default + SourceDatabase + 'static {
         (db, fixture.files[0])
     }
 
-    fn with_many_files(ath_fixture: &str) -> (Self, Vec<FilePathId>) {
+    fn with_many_files(ath_fixture: &str) -> (Self, Vec<FileId>) {
         let mut fixture = ChangeFixture::parse(ath_fixture);
         let mut db = Self::default();
         fixture.apply(&mut db);
@@ -44,7 +44,7 @@ pub trait WithFixture: Default + SourceDatabase + 'static {
         (db, FileRange { file_id, range })
     }
 
-    fn with_range_or_offset(ath_fixture: &str) -> (Self, FilePathId, RangeOrOffset) {
+    fn with_range_or_offset(ath_fixture: &str) -> (Self, FileId, RangeOrOffset) {
         let mut fixture = ChangeFixture::parse(ath_fixture);
         let mut db = Self::default();
         fixture.apply(&mut db);
@@ -58,10 +58,10 @@ pub trait WithFixture: Default + SourceDatabase + 'static {
 impl<DB: SourceDatabase + Default + 'static> WithFixture for DB {}
 
 pub struct ChangeFixture {
-    pub file_position: Option<(FilePathId, RangeOrOffset)>,
+    pub file_position: Option<(FileId, RangeOrOffset)>,
     file_paths: Vec<VirtualFilePath>,
     file_contents: Vec<String>,
-    pub files: Vec<FilePathId>,
+    pub files: Vec<FileId>,
 }
 
 impl ChangeFixture {
@@ -86,7 +86,7 @@ impl ChangeFixture {
         let mut file_contents = Vec::new();
 
         let source_root_prefix = "/".to_string();
-        let mut file_id = FilePathId(salsa::InternId::from(0u32));
+        let mut file_id = FileId(salsa::InternId::from(0u32));
 
         let mut file_position = None;
 
@@ -109,7 +109,7 @@ impl ChangeFixture {
 
             file_paths.push(meta.path.into());
             file_contents.push(text);
-            file_id = FilePathId(salsa::InternId::from(file_id.0.as_u32() + 1));
+            file_id = FileId(salsa::InternId::from(file_id.0.as_u32() + 1));
         }
 
         ChangeFixture {

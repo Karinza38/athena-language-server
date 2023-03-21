@@ -18,7 +18,7 @@ pub(crate) fn semantic_tokens_full(
     let analysis = &snapshot.analysis;
 
     let file_id = snapshot
-        .file_id2(&params.text_document.uri)
+        .file_id(&params.text_document.uri)
         .with_context(|| format!("failed to get file id for uri {}", params.text_document.uri))?;
     let uri = params.text_document.uri.to_string();
 
@@ -28,8 +28,8 @@ pub(crate) fn semantic_tokens_full(
         Ok(Some(SemanticTokensResult::Tokens(semantic_tokens)))
     } else {
         tracing::debug!("it's not in the cache!");
-        let index = analysis.file_line_index2(file_id)?;
-        let ast = analysis.parse2(file_id)?;
+        let index = analysis.file_line_index(file_id)?;
+        let ast = analysis.parse(file_id)?;
 
         let tokens = semantic_tokens::semantic_tokens_for_file(ast.tree(), &index);
         snapshot.semantic_token_map.insert(uri, tokens.clone());
@@ -70,11 +70,11 @@ pub(crate) fn dump_syntax_tree(
     params: TextDocumentIdentifier,
 ) -> Result<String> {
     let file_id = snapshot
-        .file_id2(&params.uri)
+        .file_id(&params.uri)
         .with_context(|| format!("failed to get file id for uri {}", params.uri))?;
 
     let analysis = &snapshot.analysis;
-    let ast = analysis.parse2(file_id)?;
+    let ast = analysis.parse(file_id)?;
 
     Ok(format!("{:#?}", ast.tree().syntax()))
 }

@@ -2,7 +2,7 @@ use std::sync::Arc;
 
 use dashmap::DashMap;
 use ide::{Analysis, AnalysisHost, Cancellable, LineIndex};
-use ide_db::base_db::FilePathId;
+use ide_db::base_db::FileId;
 use paths::AbsPathBuf;
 use tokio::sync::mpsc::{UnboundedReceiver, UnboundedSender};
 use tower_lsp::{
@@ -32,9 +32,9 @@ impl StateClient {
         self.sender.send(StateClientMessage::Shutdown).unwrap();
     }
 
-    pub(crate) fn files_changed2(&self, files: impl IntoIterator<Item = (AbsPathBuf, String)>) {
+    pub(crate) fn files_changed(&self, files: impl IntoIterator<Item = (AbsPathBuf, String)>) {
         self.sender
-            .send(StateClientMessage::FilesChanged2(
+            .send(StateClientMessage::FilesChanged(
                 files.into_iter().collect(),
             ))
             .unwrap();
@@ -59,7 +59,7 @@ type Handler = Box<dyn FnOnce(GlobalStateSnapshot) + Send>;
 pub(crate) enum StateClientMessage {
     HandleRequest(Handler),
 
-    FilesChanged2(Vec<(AbsPathBuf, String)>),
+    FilesChanged(Vec<(AbsPathBuf, String)>),
 
     Shutdown,
 }
@@ -68,8 +68,8 @@ impl std::fmt::Debug for StateClientMessage {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
             Self::HandleRequest(_) => write!(f, "HandleRequest"),
-            Self::FilesChanged2(files) => f
-                .debug_tuple("FilesChanged2")
+            Self::FilesChanged(files) => f
+                .debug_tuple("FilesChanged")
                 .field(&files.iter().map(|(p, _)| p).collect::<Vec<_>>())
                 .finish(),
             Self::Shutdown => write!(f, "Shutdown"),
@@ -78,16 +78,16 @@ impl std::fmt::Debug for StateClientMessage {
 }
 
 impl GlobalStateSnapshot {
-    pub(crate) fn file_id2(&self, url: &Url) -> crate::Result<FilePathId> {
+    pub(crate) fn file_id(&self, url: &Url) -> crate::Result<FileId> {
         Ok(self.analysis.intern_path(from_proto::abs_path(url)?))
     }
 
-    pub(crate) fn file_id_to_url2(&self, id: FilePathId) -> Url {
+    pub(crate) fn file_id_to_url(&self, id: FileId) -> Url {
         let path = self.analysis.file_path(id).unwrap();
         to_proto::url_from_abs_path(&path)
     }
 
-    pub(crate) fn file_line_index(&self, file_id: FilePathId) -> Cancellable<Arc<LineIndex>> {
-        self.analysis.file_line_index2(file_id)
+    pub(crate) fn file_line_index(&self, file_id: FileId) -> Cancellable<Arc<LineIndex>> {
+        self.analysis.file_line_index(file_id)
     }
 }

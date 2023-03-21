@@ -1,5 +1,5 @@
 //! Defines `Fixture` -- a convenient way to describe the initial state of
-//! rust-analyzer database from a single string.
+//! the root database from a single string.
 //!
 //! Fixtures are strings containing athena source code with optional metadata.
 //! A fixture without metadata is parsed into a single source file.

@@ -7,13 +7,13 @@ use std::sync::Arc;
 
 pub use base_db;
 
-use base_db::{salsa, FileContentsQuery, FilePathId, FileWatcher};
+use base_db::{salsa, FileContentsQuery, FileId, FileWatcher};
 use line_index::LineIndex;
 use rustc_hash::FxHashMap;
 
 #[salsa::database(
     base_db::SourceDatabaseStorage,
-    LineIndexDatabase2Storage,
+    LineIndexDatabaseStorage,
     hir::HirDatabaseStorage
 )]
 pub struct RootDatabase {
@@ -55,7 +55,7 @@ impl Default for RootDatabase {
 
 impl FileWatcher for RootDatabase {
     #[tracing::instrument(skip(self))]
-    fn did_change_file(&mut self, file_id: FilePathId) {
+    fn did_change_file(&mut self, file_id: FileId) {
         tracing::debug!("acquiring lock maybe?");
         FileContentsQuery.in_db_mut(self).invalidate(&file_id)
     }
@@ -69,12 +69,12 @@ impl FileWatcher for RootDatabase {
     }
 }
 
-#[salsa::query_group(LineIndexDatabase2Storage)]
-pub trait LineIndexDatabase2: base_db::SourceDatabase {
-    fn line_index2(&self, file_id: FilePathId) -> Arc<LineIndex>;
+#[salsa::query_group(LineIndexDatabaseStorage)]
+pub trait LineIndexDatabase: base_db::SourceDatabase {
+    fn line_index(&self, file_id: FileId) -> Arc<LineIndex>;
 }
 
-fn line_index2(db: &dyn LineIndexDatabase2, file_id: FilePathId) -> Arc<LineIndex> {
+fn line_index(db: &dyn LineIndexDatabase, file_id: FileId) -> Arc<LineIndex> {
     let text = db.file_contents(file_id);
     Arc::new(LineIndex::new(&text))
 }

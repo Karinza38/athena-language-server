@@ -1,7 +1,7 @@
 use crate::{global_state::GlobalStateSnapshot, Result};
 use anyhow::anyhow;
 use ide_db::{
-    base_db::{FilePathId, FilePosition},
+    base_db::{FileId, FilePosition},
     line_index::{LineColUtf16, LineIndex},
 };
 use paths::AbsPathBuf;
@@ -28,17 +28,17 @@ pub(crate) fn offset(line_index: &LineIndex, position: lsp_types::Position) -> R
     Ok(offset)
 }
 
-pub(crate) fn file_id2(snapshot: &GlobalStateSnapshot, url: &lsp_types::Url) -> Result<FilePathId> {
-    snapshot.file_id2(url)
+pub(crate) fn file_id(snapshot: &GlobalStateSnapshot, url: &lsp_types::Url) -> Result<FileId> {
+    snapshot.file_id(url)
 }
 
 pub(crate) fn file_position(
     snapshot: &GlobalStateSnapshot,
     position_params: lsp_types::TextDocumentPositionParams,
 ) -> Result<FilePosition> {
-    let file_id = file_id2(snapshot, &position_params.text_document.uri)?;
+    let file_id = file_id(snapshot, &position_params.text_document.uri)?;
 
-    let index = snapshot.analysis.file_line_index2(file_id)?;
+    let index = snapshot.analysis.file_line_index(file_id)?;
 
     let offset = offset(&index, position_params.position)?;
     Ok(FilePosition { file_id, offset })

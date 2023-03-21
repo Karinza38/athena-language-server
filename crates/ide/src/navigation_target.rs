@@ -1,9 +1,9 @@
-use ide_db::base_db::FilePathId;
+use ide_db::base_db::FileId;
 use syntax::{SmolStr, TextRange};
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct NavigationTarget {
-    pub file_id: FilePathId,
+    pub file_id: FileId,
 
     pub full_range: TextRange,
 
