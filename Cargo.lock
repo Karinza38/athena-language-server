@@ -1294,6 +1294,8 @@ dependencies = [
  "dissimilar",
  "rustc-hash",
  "text-size",
+ "tracing-subscriber",
+ "tracing-tree",
  "util",
 ]
 

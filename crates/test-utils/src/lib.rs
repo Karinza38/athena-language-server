@@ -9,11 +9,24 @@ pub use dissimilar::diff as __diff;
 pub use rustc_hash::FxHashMap;
 
 use text_size::{TextRange, TextSize};
+use tracing_subscriber::EnvFilter;
 
 pub use crate::fixture::Fixture;
 
 pub const CURSOR_MARKER: &str = "$0";
 pub const ESCAPED_CURSOR_MARKER: &str = "\\$0";
+
+pub fn init_logging() {
+    static ONCE: std::sync::Once = std::sync::Once::new();
+    fn init() {
+        use tracing_subscriber::prelude::*;
+        tracing_subscriber::registry()
+            .with(tracing_tree::HierarchicalLayer::new(2).with_ansi(true))
+            .with(EnvFilter::from_default_env())
+            .init();
+    }
+    ONCE.call_once(init);
+}
 
 /// Asserts that two strings are equal, otherwise displays a rich diff between them.
 ///

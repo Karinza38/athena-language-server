@@ -193,8 +193,9 @@ mod tests {
     use itertools::Itertools;
 
     #[track_caller]
-    fn check(ra_fixture: &str) {
-        let (analysis, position, expected) = fixture::annotations(ra_fixture);
+    fn check(fixture: &str) {
+        test_utils::init_logging();
+        let (analysis, position, expected) = fixture::annotations(fixture);
         let navs = analysis
             .go_to_definition(position)
             .unwrap()
@@ -219,8 +220,8 @@ mod tests {
     }
 
     #[allow(dead_code)]
-    fn check_unresolved(ra_fixture: &str) {
-        let (analysis, position) = fixture::position(ra_fixture);
+    fn check_unresolved(fixture: &str) {
+        let (analysis, position) = fixture::position(fixture);
         let navs = analysis
             .go_to_definition(position)
             .unwrap()
