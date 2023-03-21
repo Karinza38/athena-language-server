@@ -23,16 +23,16 @@ mod test_db;
 pub use file_hir::{FileHir, FileHirSourceMap, FileSema, HasHir, HasSyntaxNodePtr, HirNode};
 pub use scope::ScopeTree;
 
-use base_db::FileId;
+use base_db::FilePathId;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct InFile<T> {
-    pub file_id: FileId,
+    pub file_id: FilePathId,
     pub value: T,
 }
 
 impl<T> InFile<T> {
-    pub fn new(file_id: FileId, value: T) -> Self {
+    pub fn new(file_id: FilePathId, value: T) -> Self {
         Self { file_id, value }
     }
 }

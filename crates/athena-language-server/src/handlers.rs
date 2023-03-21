@@ -9,23 +9,27 @@ use tower_lsp::lsp_types::{
     TextDocumentIdentifier,
 };
 
+#[tracing::instrument(skip(snapshot))]
 pub(crate) fn semantic_tokens_full(
     snapshot: GlobalStateSnapshot,
     params: SemanticTokensParams,
 ) -> Result<Option<SemanticTokensResult>> {
+    tracing::info!("here");
     let analysis = &snapshot.analysis;
 
     let file_id = snapshot
-        .file_id(&params.text_document.uri)
+        .file_id2(&params.text_document.uri)
         .with_context(|| format!("failed to get file id for uri {}", params.text_document.uri))?;
     let uri = params.text_document.uri.to_string();
 
     let semantic_tokens = snapshot.semantic_token_map.get(&uri).map(|v| v.clone());
     if let Some(semantic_tokens) = semantic_tokens {
+        tracing::debug!("it's in the cache! {:#?}", semantic_tokens);
         Ok(Some(SemanticTokensResult::Tokens(semantic_tokens)))
     } else {
-        let index = analysis.file_line_index(file_id)?;
-        let ast = analysis.parse(file_id)?;
+        tracing::debug!("it's not in the cache!");
+        let index = analysis.file_line_index2(file_id)?;
+        let ast = analysis.parse2(file_id)?;
 
         let tokens = semantic_tokens::semantic_tokens_for_file(ast.tree(), &index);
         snapshot.semantic_token_map.insert(uri, tokens.clone());

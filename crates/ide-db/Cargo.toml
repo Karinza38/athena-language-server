@@ -9,3 +9,5 @@ edition = "2021"
 base-db.workspace = true
 syntax.workspace = true
 hir.workspace = true
+tracing.workspace = true
+rustc-hash.workspace = true

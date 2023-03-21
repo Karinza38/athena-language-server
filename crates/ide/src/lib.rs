@@ -6,6 +6,10 @@ mod navigation_target;
 mod fixture;
 
 pub use ide_db::line_index::LineIndex;
+use ide_db::{
+    base_db::{AbsPath, AbsPathBuf, FilePathId, FileWatcher},
+    LineIndexDatabase2,
+};
 
 use core::fmt;
 use std::{panic::UnwindSafe, sync::Arc};
@@ -52,6 +56,10 @@ impl AnalysisHost {
         self.db.request_cancellation()
     }
 
+    pub fn did_change_file(&mut self, file: FilePathId) {
+        self.db.did_change_file(file)
+    }
+
     pub fn apply_change(&mut self, change: Change) {
         self.db.apply_change(change)
     }
@@ -66,8 +74,28 @@ impl Analysis {
         self.with_db(|db| db.file_text(file_id))
     }
 
+    pub fn file_text2(&self, file_id: FilePathId) -> Cancellable<Arc<String>> {
+        self.with_db(|db| db.file_contents(file_id))
+    }
+
     pub fn parse(&self, file_id: FileId) -> Cancellable<Parse<SourceFile>> {
         self.with_db(|db| db.parse(file_id))
+    }
+
+    pub fn parse2(&self, file_id: FilePathId) -> Cancellable<Parse<SourceFile>> {
+        self.with_db(|db| db.parse2(file_id))
+    }
+
+    pub fn file_line_index2(&self, file_id: FilePathId) -> Cancellable<Arc<LineIndex>> {
+        self.with_db(|db| db.line_index2(file_id))
+    }
+
+    pub fn intern_path(&self, path: AbsPathBuf) -> FilePathId {
+        self.db.intern_path(path.into())
+    }
+
+    pub fn file_path(&self, file_id: FilePathId) -> Option<AbsPathBuf> {
+        self.db.lookup_intern_path(file_id).to_real_path()
     }
 
     pub fn file_line_index(&self, file_id: FileId) -> Cancellable<Arc<LineIndex>> {

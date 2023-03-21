@@ -1,7 +1,7 @@
 #[cfg(test)]
 mod tests;
 
-use base_db::FileId;
+use base_db::{FileId, FilePathId};
 use la_arena::Idx;
 use paste::paste;
 use syntax::{
@@ -31,7 +31,7 @@ use super::{
 struct Ctx {
     hir: FileHir,
     source_map: FileHirSourceMap,
-    file_id: FileId,
+    file_id: FilePathId,
 
     scopes: ScopeTree,
 
@@ -41,7 +41,7 @@ struct Ctx {
 }
 
 pub(super) fn lower(
-    file_id: FileId,
+    file_id: FilePathId,
     file: ast::SourceFile,
 ) -> (FileHir, FileHirSourceMap, ScopeTree) {
     let hir = FileHir::default();
@@ -162,7 +162,7 @@ macro_rules! or_return {
 }
 
 struct HirBuilder<N> {
-    file_id: FileId,
+    file_id: FilePathId,
     ast: N,
     scope: Option<ScopeId>,
 }

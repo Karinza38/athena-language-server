@@ -1,36 +1,33 @@
 //! A set of high-level utility fixture methods to use in tests.
-use std::{mem, sync::Arc};
+use std::sync::Arc;
 
 use test_utils::{
     extract_range_or_offset, Fixture, RangeOrOffset, CURSOR_MARKER, ESCAPED_CURSOR_MARKER,
 };
-use vfs::{file_set::FileSet, VfsPath};
 
-use crate::{Change, FileId, FilePosition, FileRange, SourceDatabase, SourceRoot, SourceRootId};
-
-pub const WORKSPACE: SourceRootId = SourceRootId(0);
+use crate::{FilePathId, FilePosition, FileRange, SourceDatabase, VirtualFilePath};
 
 pub trait WithFixture: Default + SourceDatabase + 'static {
-    fn with_single_file(ath_fixture: &str) -> (Self, FileId) {
-        let fixture = ChangeFixture::parse(ath_fixture);
+    fn with_single_file(ath_fixture: &str) -> (Self, FilePathId) {
+        let mut fixture = ChangeFixture::parse(ath_fixture);
         let mut db = Self::default();
-        fixture.change.apply(&mut db);
+        fixture.apply(&mut db);
         assert_eq!(fixture.files.len(), 1);
         (db, fixture.files[0])
     }
 
-    fn with_many_files(ath_fixture: &str) -> (Self, Vec<FileId>) {
-        let fixture = ChangeFixture::parse(ath_fixture);
+    fn with_many_files(ath_fixture: &str) -> (Self, Vec<FilePathId>) {
+        let mut fixture = ChangeFixture::parse(ath_fixture);
         let mut db = Self::default();
-        fixture.change.apply(&mut db);
+        fixture.apply(&mut db);
         assert!(fixture.file_position.is_none());
         (db, fixture.files)
     }
 
     fn with_files(ath_fixture: &str) -> Self {
-        let fixture = ChangeFixture::parse(ath_fixture);
+        let mut fixture = ChangeFixture::parse(ath_fixture);
         let mut db = Self::default();
-        fixture.change.apply(&mut db);
+        fixture.apply(&mut db);
         assert!(fixture.file_position.is_none());
         db
     }
@@ -47,10 +44,10 @@ pub trait WithFixture: Default + SourceDatabase + 'static {
         (db, FileRange { file_id, range })
     }
 
-    fn with_range_or_offset(ath_fixture: &str) -> (Self, FileId, RangeOrOffset) {
-        let fixture = ChangeFixture::parse(ath_fixture);
+    fn with_range_or_offset(ath_fixture: &str) -> (Self, FilePathId, RangeOrOffset) {
+        let mut fixture = ChangeFixture::parse(ath_fixture);
         let mut db = Self::default();
-        fixture.change.apply(&mut db);
+        fixture.apply(&mut db);
         let (file_id, range_or_offset) = fixture
             .file_position
             .expect("Could not find file position in fixture. Did you forget to add an `$0`?");
@@ -61,22 +58,35 @@ pub trait WithFixture: Default + SourceDatabase + 'static {
 impl<DB: SourceDatabase + Default + 'static> WithFixture for DB {}
 
 pub struct ChangeFixture {
-    pub file_position: Option<(FileId, RangeOrOffset)>,
-    pub files: Vec<FileId>,
-    pub change: Change,
+    pub file_position: Option<(FilePathId, RangeOrOffset)>,
+    file_paths: Vec<VirtualFilePath>,
+    file_contents: Vec<String>,
+    pub files: Vec<FilePathId>,
 }
 
 impl ChangeFixture {
+    pub fn apply(&mut self, db: &mut dyn SourceDatabase) {
+        assert_eq!(self.file_paths.len(), self.file_contents.len());
+        for (idx, (path, text)) in self
+            .file_paths
+            .iter()
+            .zip(self.file_contents.iter())
+            .enumerate()
+        {
+            let id = db.intern_path(path.clone().into());
+            assert_eq!(id.0.as_usize(), idx);
+            db.set_virtual_file_contents(path.clone(), Arc::new(text.clone()));
+            self.files.push(id);
+        }
+    }
     pub fn parse(ath_fixture: &str) -> ChangeFixture {
         let fixture = Fixture::parse(ath_fixture);
-        let mut change = Change::new();
 
-        let mut files = Vec::new();
+        let mut file_paths = Vec::new();
+        let mut file_contents = Vec::new();
 
-        let mut file_set = FileSet::default();
         let source_root_prefix = "/".to_string();
-        let mut file_id = FileId(0);
-        let mut roots = Vec::new();
+        let mut file_id = FilePathId(salsa::InternId::from(0u32));
 
         let mut file_position = None;
 
@@ -97,21 +107,16 @@ impl ChangeFixture {
             let meta = FileMeta::from(entry);
             assert!(meta.path.starts_with(&source_root_prefix));
 
-            change.change_file(file_id, Some(Arc::new(text)));
-            let path = VfsPath::new_virtual_path(meta.path);
-            file_set.insert(file_id, path);
-            files.push(file_id);
-            file_id.0 += 1;
+            file_paths.push(meta.path.into());
+            file_contents.push(text);
+            file_id = FilePathId(salsa::InternId::from(file_id.0.as_u32() + 1));
         }
 
-        let root = SourceRoot::new(mem::take(&mut file_set));
-        roots.push(root);
-        change.set_roots(roots);
-
         ChangeFixture {
+            file_paths,
             file_position,
-            files,
-            change,
+            file_contents,
+            files: vec![],
         }
     }
 }

@@ -588,7 +588,9 @@ version = "0.1.0"
 dependencies = [
  "base-db",
  "hir",
+ "rustc-hash",
  "syntax",
+ "tracing",
 ]
 
 [[package]]

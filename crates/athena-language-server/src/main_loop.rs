@@ -1,6 +1,6 @@
 use dashmap::DashMap;
-use ide::{AnalysisHost, Cancellable};
-use ide_db::base_db::Change;
+use ide::{AnalysisHost, Cancellable, SourceDatabase};
+use ide_db::base_db::{Change, FilePathId, FileWatcher};
 use parking_lot::RwLock;
 use std::{fmt::Debug, future::Future, path::PathBuf, sync::Arc};
 use tokio::sync::{mpsc, oneshot};
@@ -26,7 +26,7 @@ use tower_lsp::{
     Client, LanguageServer, LspService, Server,
 };
 use tracing_subscriber::EnvFilter;
-use vfs::Vfs;
+use vfs::{AbsPathBuf, Vfs};
 
 use crate::{
     config, from_proto,
@@ -198,6 +198,7 @@ impl LanguageServer for Backend {
             .await;
     }
 
+    #[tracing::instrument(skip(self))]
     async fn semantic_tokens_full(
         &self,
         params: SemanticTokensParams,
@@ -271,14 +272,18 @@ impl<T> Cancellable<T> {
 impl Backend {
     async fn on_change(&self, params: TextDocumentItem) {
         self.client.log_message(MessageType::LOG, "on_change").await;
+        let abs_pth = from_proto::abs_path(&params.uri).unwrap();
         let pth = from_proto::vfs_path(&params.uri).unwrap();
         let _sp = tracing::info_span!("on_change");
-        let mut vfs = self.vfs.write();
-        vfs.set_file_contents(pth.clone(), Some(params.text.into_bytes()));
+        // let mut vfs = self.vfs.write();
+        // vfs.set_file_contents(pth.clone(), Some(params.text.into_bytes()));
 
         tracing::info!("file contents set: {:?}", pth);
 
-        self.state_client.files_changed();
+        self.state_client
+            .files_changed2(vec![(abs_pth, params.text)]);
+
+        // self.state_client.files_changed();
     }
 
     async fn dispatch_request<P: Send + 'static, R: Send + Debug + 'static>(
@@ -376,7 +381,7 @@ impl GlobalState {
         loop {
             match receiver.recv().await {
                 Some(StateClientMessage::HandleRequest(handler)) => {
-                    tracing::info!("handling request");
+                    let _sp = tracing::info_span!("handling request");
                     let analysis = analysis_host.analysis();
                     let vfs = vfs.clone();
                     let semantic_token_map = semantic_token_map.clone();
@@ -400,6 +405,19 @@ impl GlobalState {
                         });
                     }
                 }
+                Some(StateClientMessage::FilesChanged2(files)) => {
+                    let _sp = tracing::info_span!("files changed");
+                    tracing::info!("files changed: {:?}", files);
+                    let diagnostics = on_changed2(&mut analysis_host, &semantic_token_map, files);
+                    tracing::debug!("now here");
+                    for (url, diagnostic) in diagnostics {
+                        let client = client.clone();
+                        tokio::spawn(async move {
+                            client.publish_diagnostics(url, diagnostic, None).await;
+                        });
+                    }
+                    tracing::info!("files changed: done");
+                }
                 Some(StateClientMessage::Shutdown) => {
                     break;
                 }
@@ -407,6 +425,46 @@ impl GlobalState {
             }
         }
     }
+}
+
+#[tracing::instrument(skip(host, token_map))]
+fn on_changed2(
+    host: &mut AnalysisHost,
+    token_map: &DashMap<String, SemanticTokens>,
+    files: Vec<(AbsPathBuf, String)>,
+) -> Vec<(Url, Vec<Diagnostic>)> {
+    tracing::info!("applied change: {:?}", files);
+
+    let mut file_diagnostics = Vec::new();
+    for (file_path, file_contents) in files {
+        host.raw_db_mut()
+            .set_in_mem_contents(file_path.clone(), Arc::new(file_contents));
+        let file_id = host.raw_db().intern_path(file_path.clone().into());
+        host.did_change_file(file_id);
+        tracing::debug!("did change it");
+        let analysis = host.analysis();
+        // vfs.read().file_path(file_id).as_path().unwrap().
+        let url = Url::from_file_path(file_path).unwrap();
+        let ast = analysis.parse2(file_id).unwrap();
+        tracing::debug!("parsed it");
+        let index = analysis.file_line_index2(file_id).unwrap();
+
+        let diagnostics = ast
+            .errors()
+            .iter()
+            .map(|err| {
+                let range = to_proto::range(&index, err.range());
+                Diagnostic::new_simple(range, err.message().to_owned())
+            })
+            .collect::<Vec<_>>();
+
+        let tokens = semantic_tokens::semantic_tokens_for_file(ast.tree(), &index);
+
+        token_map.insert(url.to_string(), tokens);
+
+        file_diagnostics.push((url, diagnostics));
+    }
+    file_diagnostics
 }
 
 fn on_changed(
@@ -492,12 +550,12 @@ fn init_logging() {
             .unwrap();
 
         tracing_subscriber::registry()
+            .with(EnvFilter::from_default_env())
             .with(
                 tracing_tree::HierarchicalLayer::new(2)
                     .with_ansi(true)
                     .with_writer(logfile),
             )
-            .with(EnvFilter::from_default_env())
             .init();
     } else {
         tracing_subscriber::registry()

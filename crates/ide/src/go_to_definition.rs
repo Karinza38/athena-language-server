@@ -22,7 +22,7 @@ pub(crate) fn go_to_definition(
     db: &RootDatabase,
     position: FilePosition,
 ) -> Option<RangeInfo<Vec<NavigationTarget>>> {
-    let file = db.parse(position.file_id).syntax_node();
+    let file = db.parse2(position.file_id).syntax_node();
     let token = pick_best_token(file.token_at_offset(position.offset), |kind| match kind {
         SyntaxKind::IDENT => 4,
         k if k.is_trivia() => 0,
@@ -108,7 +108,7 @@ fn find_def_new(
 
     let sema = db.file_sema(file_id);
 
-    let root = db.parse(file_id).syntax_node();
+    let root = db.parse2(file_id).syntax_node();
 
     let scope = match node {
         Interesting::Expr(expr) => to_scope(expr, &sema),

@@ -2,7 +2,7 @@ mod lower;
 
 use std::sync::Arc;
 
-use base_db::FileId;
+use base_db::{FileId, FilePathId};
 use la_arena::{Arena, ArenaMap, Idx};
 use rustc_hash::FxHashMap;
 use syntax::{ast, AstPtr};
@@ -174,7 +174,7 @@ pub struct Module {
 
 #[derive(PartialEq, Eq, Debug, Clone)]
 pub struct FileSema {
-    pub file_id: FileId,
+    pub file_id: FilePathId,
     pub file_hir: Arc<FileHir>,
     pub file_hir_source_map: Arc<FileHirSourceMap>,
     pub scope_tree: Arc<ScopeTree>,
@@ -182,7 +182,7 @@ pub struct FileSema {
 
 impl FileSema {
     pub fn new(
-        file_id: FileId,
+        file_id: FilePathId,
         file_hir: Arc<FileHir>,
         file_hir_source_map: Arc<FileHirSourceMap>,
         scope_tree: Arc<ScopeTree>,
@@ -230,8 +230,8 @@ impl FileSema {
     }
 }
 
-pub fn file_sema_query(db: &dyn HirDatabase, file_id: FileId) -> FileSema {
-    let source_file = db.parse(file_id).tree();
+pub fn file_sema_query(db: &dyn HirDatabase, file_id: FilePathId) -> FileSema {
+    let source_file = db.parse2(file_id).tree();
     let (hir, map, scope_tree) = lower::lower(file_id, source_file);
 
     FileSema::new(file_id, Arc::new(hir), Arc::new(map), Arc::new(scope_tree))

@@ -1,5 +1,8 @@
 use ide::{Cancellable, FileId};
-use ide_db::{base_db::FileRange, line_index::LineIndex};
+use ide_db::{
+    base_db::{FilePathId, FileRange},
+    line_index::LineIndex,
+};
 use syntax::{TextRange, TextSize};
 use tower_lsp::lsp_types;
 use vfs::AbsPath;
@@ -18,8 +21,8 @@ pub(crate) fn range(line_index: &LineIndex, text_range: TextRange) -> lsp_types:
     )
 }
 
-pub(crate) fn url(snap: &GlobalStateSnapshot, file_id: FileId) -> lsp_types::Url {
-    snap.file_id_to_url(file_id)
+pub(crate) fn url(snap: &GlobalStateSnapshot, file_id: FilePathId) -> lsp_types::Url {
+    snap.file_id_to_url2(file_id)
 }
 
 pub(crate) fn location(
