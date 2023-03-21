@@ -413,7 +413,13 @@ impl Ctx {
                         declare.identifiers().map(|ident| ident.as_name()).collect();
                     let mut defs = Vec::new();
                     for name in &names {
-                        defs.push(self.alloc_definition(Definition { name: name.clone() }));
+                        let def = self
+                            .builder::<ast::MetaDefinition>(
+                                ast::FunctionSymbol::from(ast::DeclareDir::from(declare.clone()))
+                                    .into(),
+                            )
+                            .build(self, Definition { name: name.clone() });
+                        defs.push(def);
                     }
                     let new_scope = self.make_scope(
                         names,

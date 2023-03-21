@@ -259,4 +259,18 @@ mod tests {
             "#,
         )
     }
+
+    #[test]
+    fn function_symbol_def() {
+        check(
+            r#"
+            module Foo {
+                domain Bar
+                declare fun : [] -> Bar
+                //      ^^^
+                define a := $0fun
+            }
+            "#,
+        )
+    }
 }
