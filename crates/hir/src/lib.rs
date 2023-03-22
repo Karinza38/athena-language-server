@@ -1,10 +1,10 @@
 pub mod ded;
 pub mod expr;
 pub mod file_hir;
-pub mod name_ref;
 pub mod item_tree;
 pub mod module;
 pub mod name;
+pub mod name_ref;
 pub mod pat;
 pub mod phrase;
 pub mod scope;

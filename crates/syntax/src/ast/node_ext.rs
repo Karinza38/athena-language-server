@@ -73,7 +73,7 @@ impl ast::AstNode for SortLike {
         if let Some(decl) = ast::SortDecl::cast(syntax.clone()) {
             return Some(SortLike::SortDecl(decl));
         }
-        if let Some(limited) = ast::LimitedSort::cast(syntax.clone()) {
+        if let Some(limited) = ast::LimitedSort::cast(syntax) {
             return Some(SortLike::LimitedSort(limited));
         }
 
