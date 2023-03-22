@@ -3,7 +3,7 @@ source: crates/parser/src/tests.rs
 description: "declare foo : (List A)\n"
 input_file: crates/parser/test_data/parser/inline/ok/dir/0147_declare_constant_compound_sort.ath
 ---
-CONSTANT_DECLARE_DIR
+INFIX_CONSTANT_DECLARE
   DECLARE_KW "declare"
   WHITESPACE " "
   IDENTIFIER

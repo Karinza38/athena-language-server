@@ -478,7 +478,7 @@ impl InfixConstantDeclare {
     pub fn colon_token(&self) -> Option<SyntaxToken> {
         support::token(&self.syntax, T![:])
     }
-    pub fn sort_decl(&self) -> Option<SortDecl> {
+    pub fn sort(&self) -> Option<Sort> {
         support::child(&self.syntax)
     }
 }

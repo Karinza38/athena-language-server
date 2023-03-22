@@ -332,4 +332,17 @@ mod tests {
             "#,
         )
     }
+
+    #[test]
+    fn constant_declare() {
+        check(
+            r#"
+            module Foo {
+                declare x : A
+                //      ^
+                define y := $0x
+            }
+            "#,
+        )
+    }
 }

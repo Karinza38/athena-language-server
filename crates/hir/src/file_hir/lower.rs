@@ -484,9 +484,39 @@ impl Ctx {
                     None
                 }
             }
-            ast::Dir::ConstantDeclareDir(_) => {
+            ast::Dir::ConstantDeclareDir(declare) => {
                 // todo!(); TODO: implement
-                None
+                match declare {
+                    ast::ConstantDeclareDir::InfixConstantDeclare(declare) => {
+                        let names: Vec<Name> =
+                            declare.identifiers().map(|ident| ident.as_name()).collect();
+                        let mut defs = Vec::new();
+                        for name in &names {
+                            let def = self
+                                .builder::<ast::MetaDefinition>(
+                                    ast::FunctionSymbol::from(ast::ConstantDeclareDir::from(
+                                        declare.clone(),
+                                    ))
+                                    .into(),
+                                )
+                                .build(self, Definition { name: name.clone() });
+                            defs.push(def);
+                        }
+                        let new_scope = self.make_scope(
+                            names,
+                            ScopeKind::ModuleItem(ModuleItem::DefinitionId(*defs.last()?)),
+                        );
+                        self.lower_sort_opt(declare.sort());
+
+                        self.push_scope(new_scope);
+
+                        Some(defs.into_iter().map(Into::into).collect())
+                    }
+                    ast::ConstantDeclareDir::PrefixConstantDeclare(_) => {
+                        // todo!(); TODO: implement
+                        None
+                    }
+                }
             }
             ast::Dir::DeclareDir(declare) => match declare {
                 ast::DeclareDir::PrefixDeclareDir(_) => {

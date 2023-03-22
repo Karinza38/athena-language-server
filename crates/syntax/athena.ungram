@@ -232,7 +232,7 @@ ConstantDeclareDir =
     | PrefixConstantDeclare
 
 InfixConstantDeclare =
-    'declare' (Identifier (',' Identifier)*) ':' SortDecl
+    'declare' (Identifier (',' Identifier)*) ':' Sort
 
 PrefixConstantDeclare =
     '(' 'declare' PrefixDeclareSymbols SortDecl ')'

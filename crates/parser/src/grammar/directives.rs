@@ -482,7 +482,7 @@ fn sort_vars_or_constant_sort(p: &mut Parser) -> SortVarsOrConstantSort {
             SortVarsOrConstantSort::SortVars
         }
         (IDENT, IDENT) | (IDENT, T!['(']) => {
-            if !sort_decl(p) {
+            if !sort(p) {
                 p.error("expected a sort declaration");
             }
             SortVarsOrConstantSort::ConstantSort
@@ -539,7 +539,7 @@ fn declare_dir(p: &mut Parser) {
             SortVarsOrConstantSort::ConstantSort => {
                 // test(dir) declare_constant_compound_sort
                 // declare foo : (List A)
-                m.complete(p, SyntaxKind::CONSTANT_DECLARE_DIR);
+                m.complete(p, SyntaxKind::INFIX_CONSTANT_DECLARE);
                 return;
             }
             SortVarsOrConstantSort::Ambig => {
