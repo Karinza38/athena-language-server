@@ -6,7 +6,7 @@ input_file: crates/parser/test_data/parser/inline/ok/dir/0101_declare_with_attrs
 INFIX_DECLARE_DIR
   DECLARE_KW "declare"
   WHITESPACE " "
-  IDENTIFIER
+  NAME
     IDENT "foo"
   WHITESPACE " "
   COLON ":"
@@ -14,33 +14,33 @@ INFIX_DECLARE_DIR
   FUNC_SORTS
     L_BRACK "["
     IDENT_SORT
-      IDENTIFIER
+      NAME_REF
         IDENT "Int"
     R_BRACK "]"
   WHITESPACE " "
   THIN_ARROW "->"
   WHITESPACE " "
   IDENT_SORT
-    IDENTIFIER
+    NAME_REF
       IDENT "Int"
   WHITESPACE " "
   DECLARE_ATTRS
     L_BRACK "["
     DECLARE_ATTR
-      IDENTIFIER
+      NAME
         IDENT "100"
     WHITESPACE " "
     DECLARE_ATTR
       LEFT_ASSOC_KW "left-assoc"
     WHITESPACE " "
     DECLARE_ATTR
-      IDENTIFIER
+      NAME
         IDENT "bar"
     WHITESPACE " "
     INPUT_TRANSFORM_DECL
       L_BRACK "["
       IDENT_EXPR
-        IDENTIFIER
+        NAME_REF
           IDENT "int->nat"
       R_BRACK "]"
     R_BRACK "]"

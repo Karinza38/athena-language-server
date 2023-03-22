@@ -1,0 +1,12 @@
+---
+source: crates/parser/src/tests.rs
+description: "foo:\n"
+input_file: crates/parser/test_data/parser/inline/err/expr/0192_ident_expr_no_sort.ath
+---
+IDENT_EXPR
+  NAME_REF
+    IDENT "foo"
+  COLON ":"
+  WHITESPACE "\n"
+error 4: Expected to find a sort annotation
+

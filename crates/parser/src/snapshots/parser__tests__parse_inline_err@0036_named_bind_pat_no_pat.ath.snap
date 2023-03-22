@@ -7,7 +7,7 @@ NAMED_PAT
   L_PAREN "("
   BIND_KW "bind"
   WHITESPACE " "
-  IDENTIFIER
+  NAME
     IDENT "foo"
   WHITESPACE " "
   R_PAREN ")"

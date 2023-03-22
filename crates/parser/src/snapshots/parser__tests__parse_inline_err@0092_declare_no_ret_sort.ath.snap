@@ -6,7 +6,7 @@ input_file: crates/parser/test_data/parser/inline/err/dir/0092_declare_no_ret_so
 INFIX_DECLARE_DIR
   DECLARE_KW "declare"
   WHITESPACE " "
-  IDENTIFIER
+  NAME
     IDENT "foo"
   WHITESPACE " "
   COLON ":"
@@ -14,7 +14,7 @@ INFIX_DECLARE_DIR
   FUNC_SORTS
     L_BRACK "["
     IDENT_SORT
-      IDENTIFIER
+      NAME_REF
         IDENT "Int"
     R_BRACK "]"
   WHITESPACE " "

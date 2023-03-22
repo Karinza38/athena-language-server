@@ -10,14 +10,14 @@ TRY_EXPR
   WHITESPACE " "
   TRY_ARM
     IDENT_EXPR
-      IDENTIFIER
+      NAME_REF
         IDENT "foo"
   WHITESPACE " "
   TRY_ARM
     PIPE "|"
     WHITESPACE " "
     IDENT_EXPR
-      IDENTIFIER
+      NAME_REF
         IDENT "bar"
   WHITESPACE " "
   TRY_ARM
@@ -27,12 +27,12 @@ TRY_EXPR
       L_PAREN "("
       EXPR_PHRASE
         IDENT_EXPR
-          IDENTIFIER
+          NAME_REF
             IDENT "func"
       WHITESPACE " "
       EXPR_PHRASE
         IDENT_EXPR
-          IDENTIFIER
+          NAME_REF
             IDENT "baz"
       R_PAREN ")"
   WHITESPACE " "

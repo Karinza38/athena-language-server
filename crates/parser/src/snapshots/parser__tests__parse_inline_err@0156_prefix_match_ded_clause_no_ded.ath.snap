@@ -9,13 +9,13 @@ PREFIX_MATCH_DED
   WHITESPACE " "
   EXPR_PHRASE
     IDENT_EXPR
-      IDENTIFIER
+      NAME_REF
         IDENT "foo"
   WHITESPACE " "
   MATCH_DED_CLAUSE
     L_PAREN "("
     IDENT_PAT
-      IDENTIFIER
+      NAME
         IDENT "B"
     WHITESPACE " "
     R_PAREN ")"

@@ -12,19 +12,19 @@ PREFIX_NAMED_ASSUME_DED
   WHITESPACE " "
   EXPR_PHRASE
     IDENT_EXPR
-      IDENTIFIER
+      NAME_REF
         IDENT "b"
   WHITESPACE " "
   BANG_METHOD_CALL_DED
     L_PAREN "("
     BANG "!"
     IDENT_EXPR
-      IDENTIFIER
+      NAME_REF
         IDENT "claim"
     WHITESPACE " "
     EXPR_PHRASE
       IDENT_EXPR
-        IDENTIFIER
+        NAME_REF
           IDENT "C"
     R_PAREN ")"
   R_PAREN ")"

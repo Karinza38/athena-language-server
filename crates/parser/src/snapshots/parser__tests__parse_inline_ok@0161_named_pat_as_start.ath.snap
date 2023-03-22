@@ -7,11 +7,11 @@ NAMED_PAT
   L_PAREN "("
   AS_KW "as"
   WHITESPACE " "
-  IDENTIFIER
+  NAME
     IDENT "foo"
   WHITESPACE " "
   IDENT_PAT
-    IDENTIFIER
+    NAME
       IDENT "bar"
   R_PAREN ")"
   WHITESPACE "\n"

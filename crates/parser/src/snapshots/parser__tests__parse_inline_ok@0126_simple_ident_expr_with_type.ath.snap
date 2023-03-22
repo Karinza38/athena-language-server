@@ -4,13 +4,12 @@ description: "foo: Int\n"
 input_file: crates/parser/test_data/parser/inline/ok/expr/0126_simple_ident_expr_with_type.ath
 ---
 IDENT_EXPR
-  TYPED_PARAM
-    IDENTIFIER
-      IDENT "foo"
-    COLON ":"
-    WHITESPACE " "
-    IDENT_SORT
-      IDENTIFIER
-        IDENT "Int"
+  NAME_REF
+    IDENT "foo"
+  COLON ":"
+  WHITESPACE " "
+  IDENT_SORT
+    NAME_REF
+      IDENT "Int"
   WHITESPACE "\n"
 

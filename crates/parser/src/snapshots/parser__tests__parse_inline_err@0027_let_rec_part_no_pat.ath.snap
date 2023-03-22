@@ -9,13 +9,13 @@ LET_REC_EXPR
   L_CURLY "{"
   WHITESPACE " "
   LET_REC_PART
-    IDENTIFIER
+    NAME
       IDENT "a"
     WHITESPACE " "
     COLON_EQ ":="
     WHITESPACE " "
     IDENT_EXPR
-      IDENTIFIER
+      NAME_REF
         IDENT "b"
   LET_REC_PART
     SEMI ";"
@@ -23,13 +23,13 @@ LET_REC_EXPR
     COLON_EQ ":="
     WHITESPACE " "
     IDENT_EXPR
-      IDENTIFIER
+      NAME_REF
         IDENT "c"
   WHITESPACE " "
   R_CURLY "}"
   WHITESPACE " "
   IDENT_EXPR
-    IDENTIFIER
+    NAME_REF
       IDENT "foo"
   WHITESPACE "\n"
 error 16: Expected to find an identifier for the letrec binding

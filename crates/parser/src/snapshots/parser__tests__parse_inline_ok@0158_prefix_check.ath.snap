@@ -11,11 +11,11 @@ PREFIX_CHECK_EXPR
     L_PAREN "("
     EXPR_PHRASE
       IDENT_EXPR
-        IDENTIFIER
+        NAME_REF
           IDENT "A"
     WHITESPACE " "
     IDENT_EXPR
-      IDENTIFIER
+      NAME_REF
         IDENT "B"
     R_PAREN ")"
   WHITESPACE " "
@@ -23,11 +23,11 @@ PREFIX_CHECK_EXPR
     L_PAREN "("
     EXPR_PHRASE
       IDENT_EXPR
-        IDENTIFIER
+        NAME_REF
           IDENT "else"
     WHITESPACE " "
     IDENT_EXPR
-      IDENTIFIER
+      NAME_REF
         IDENT "D"
     R_PAREN ")"
   R_PAREN ")"

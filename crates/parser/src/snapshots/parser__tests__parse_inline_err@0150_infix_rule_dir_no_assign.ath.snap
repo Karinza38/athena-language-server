@@ -7,12 +7,12 @@ INFIX_RULE_DIR
   PRIMITIVE_METHOD_KW "primitive-method"
   WHITESPACE " "
   L_PAREN "("
-  IDENTIFIER
+  NAME
     IDENT "foo"
   R_PAREN ")"
   WHITESPACE " "
   IDENT_EXPR
-    IDENTIFIER
+    NAME_REF
       IDENT "foo"
   WHITESPACE "\n"
 error 22: expected `:=` after primitive method parameters

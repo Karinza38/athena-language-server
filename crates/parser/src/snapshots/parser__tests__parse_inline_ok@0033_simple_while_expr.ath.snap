@@ -8,14 +8,14 @@ WHILE_EXPR
   WHITESPACE " "
   EXPR_PHRASE
     IDENT_EXPR
-      IDENTIFIER
+      NAME_REF
         IDENT "true"
   WHITESPACE " "
   APPLICATION_EXPR
     L_PAREN "("
     EXPR_PHRASE
       IDENT_EXPR
-        IDENTIFIER
+        NAME_REF
           IDENT "print"
     WHITESPACE " "
     EXPR_PHRASE

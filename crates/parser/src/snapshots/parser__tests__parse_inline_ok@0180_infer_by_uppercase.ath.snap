@@ -10,20 +10,20 @@ INFER_BLOCK_DED
     INFERENCE
       INFER_BY
         IDENT_EXPR
-          IDENTIFIER
+          NAME_REF
             IDENT "A"
         WHITESPACE " "
         BY_KW "BY"
         WHITESPACE " "
         IDENT_EXPR
-          IDENTIFIER
+          NAME_REF
             IDENT "B"
         WHITESPACE " "
         ON_KW "on"
         WHITESPACE " "
         EXPR_PHRASE
           IDENT_EXPR
-            IDENTIFIER
+            NAME_REF
               IDENT "C"
   WHITESPACE " "
   R_CURLY "}"

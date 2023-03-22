@@ -11,13 +11,13 @@ CHECK_EXPR
   CHECK_ARM
     EXPR_PHRASE
       IDENT_EXPR
-        IDENTIFIER
+        NAME_REF
           IDENT "foo"
     WHITESPACE " "
     FAT_ARROW "=>"
     WHITESPACE " "
     IDENT_EXPR
-      IDENTIFIER
+      NAME_REF
         IDENT "bar"
   WHITESPACE "\n"
   CHECK_ARM
@@ -25,7 +25,7 @@ CHECK_EXPR
     WHITESPACE " "
     EXPR_PHRASE
       IDENT_EXPR
-        IDENTIFIER
+        NAME_REF
           IDENT "baz"
     WHITESPACE " "
     FAT_ARROW "=>"

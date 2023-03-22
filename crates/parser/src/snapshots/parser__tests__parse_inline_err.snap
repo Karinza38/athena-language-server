@@ -8,7 +8,7 @@ SOURCE_FILE
     MODULE_DIR
       MODULE_KW "module"
       WHITESPACE " "
-      IDENTIFIER
+      NAME
         IDENT "Foo"
       WHITESPACE " "
       L_CURLY "{"
@@ -17,8 +17,8 @@ SOURCE_FILE
         DOMAIN_DIR
           DOMAIN_KW "domain"
           WHITESPACE " "
-          IDENT_SORT
-            IDENTIFIER
+          IDENT_SORT_DECL
+            NAME
               IDENT "Bar"
       WHITESPACE " "
       ERROR
@@ -35,21 +35,21 @@ SOURCE_FILE
         INFIX_DECLARE_DIR
           DECLARE_KW "declare"
           WHITESPACE " "
-          IDENTIFIER
+          NAME
             IDENT "Func"
           COLON ":"
           WHITESPACE " "
           FUNC_SORTS
             L_BRACK "["
             IDENT_SORT
-              IDENTIFIER
+              NAME_REF
                 IDENT "Bar"
             R_BRACK "]"
           WHITESPACE " "
           THIN_ARROW "->"
           WHITESPACE " "
           IDENT_SORT
-            IDENTIFIER
+            NAME_REF
               IDENT "Bar"
       WHITESPACE "\n"
       R_CURLY "}"

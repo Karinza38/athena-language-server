@@ -6,17 +6,17 @@ input_file: crates/parser/test_data/parser/inline/ok/pat/0051_list_pat_multi_ite
 LIST_PAT
   L_BRACK "["
   IDENT_PAT
-    IDENTIFIER
+    NAME
       IDENT "a"
   WHITESPACE " "
   IDENT_PAT
-    IDENTIFIER
+    NAME
       IDENT "b"
   WHITESPACE " "
   LIST_PAT
     L_BRACK "["
     IDENT_PAT
-      IDENTIFIER
+      NAME
         IDENT "c"
     R_BRACK "]"
   WHITESPACE " "
@@ -27,15 +27,15 @@ LIST_PAT
   LIST_PAT
     L_BRACK "["
     IDENT_PAT
-      IDENTIFIER
+      NAME
         IDENT "1"
     WHITESPACE " "
     IDENT_PAT
-      IDENTIFIER
+      NAME
         IDENT "2"
     WHITESPACE " "
     IDENT_PAT
-      IDENTIFIER
+      NAME
         IDENT "3"
     R_BRACK "]"
   R_BRACK "]"

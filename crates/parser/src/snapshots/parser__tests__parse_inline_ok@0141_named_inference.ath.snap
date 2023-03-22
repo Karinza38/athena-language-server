@@ -8,7 +8,7 @@ INFER_BLOCK_DED
   WHITESPACE " "
   MAYBE_NAMED_INFERENCE
     MAYBE_WILDCARD_OP_ANNOTATED_PARAM
-      IDENTIFIER
+      NAME
         IDENT "A"
     WHITESPACE " "
     COLON_EQ ":="
@@ -18,12 +18,12 @@ INFER_BLOCK_DED
         L_PAREN "("
         BANG "!"
         IDENT_EXPR
-          IDENTIFIER
+          NAME_REF
             IDENT "claim"
         WHITESPACE " "
         EXPR_PHRASE
           IDENT_EXPR
-            IDENTIFIER
+            NAME_REF
               IDENT "B"
         R_PAREN ")"
   WHITESPACE " "

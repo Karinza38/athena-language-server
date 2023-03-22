@@ -6,7 +6,7 @@ input_file: crates/parser/test_data/parser/inline/err/dir/0115_extend_module_emp
 EXTEND_MODULE_DIR
   EXTEND_MODULE_KW "extend-module"
   WHITESPACE " "
-  IDENTIFIER
+  NAME_REF
     IDENT "foo"
   WHITESPACE " "
   L_CURLY "{"

@@ -7,7 +7,7 @@ METHOD_EXPR
   METHOD_KW "method"
   WHITESPACE " "
   L_PAREN "("
-  IDENTIFIER
+  NAME
     IDENT "foo"
   R_PAREN ")"
   WHITESPACE "\n"

@@ -9,7 +9,7 @@ ASSERT_CLOSED_DIR
   COLON_EQ ":="
   WHITESPACE " "
   IDENT_EXPR
-    IDENTIFIER
+    NAME_REF
       IDENT "true"
   WHITESPACE "\n"
 error 7: expected identifier for the closed assertion

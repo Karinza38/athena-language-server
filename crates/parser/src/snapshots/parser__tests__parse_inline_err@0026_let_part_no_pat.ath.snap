@@ -10,14 +10,14 @@ LET_EXPR
   WHITESPACE " "
   LET_PART
     IDENT_PAT
-      IDENTIFIER
+      NAME
         IDENT "a"
     WHITESPACE " "
     COLON_EQ ":="
     WHITESPACE " "
     EXPR_PHRASE
       IDENT_EXPR
-        IDENTIFIER
+        NAME_REF
           IDENT "b"
   LET_PART
     SEMI ";"
@@ -26,13 +26,13 @@ LET_EXPR
     WHITESPACE " "
     EXPR_PHRASE
       IDENT_EXPR
-        IDENTIFIER
+        NAME_REF
           IDENT "c"
   WHITESPACE " "
   R_CURLY "}"
   WHITESPACE " "
   IDENT_EXPR
-    IDENTIFIER
+    NAME_REF
       IDENT "a"
   WHITESPACE "\n"
 error 13: Expected to find a pattern for the let binding

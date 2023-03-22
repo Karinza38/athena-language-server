@@ -8,8 +8,8 @@ SOURCE_FILE
     DOMAIN_DIR
       DOMAIN_KW "domain"
       WHITESPACE " "
-      IDENT_SORT
-        IDENTIFIER
+      IDENT_SORT_DECL
+        NAME
           IDENT "Bar"
   SEMI ";"
   WHITESPACE "\n"
@@ -17,8 +17,8 @@ SOURCE_FILE
     DOMAIN_DIR
       DOMAIN_KW "domain"
       WHITESPACE " "
-      IDENT_SORT
-        IDENTIFIER
+      IDENT_SORT_DECL
+        NAME
           IDENT "Foo"
   WHITESPACE "\n"
 

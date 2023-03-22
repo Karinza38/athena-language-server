@@ -103,7 +103,9 @@ fn find_def_new(
     };
     let name = ident.as_name();
 
-    if !ast::Identifier::can_cast(token.parent()?.kind()) {
+    if !ast::Name::can_cast(token.parent()?.kind())
+        && !ast::NameRef::can_cast(token.parent()?.kind())
+    {
         return None;
     }
 

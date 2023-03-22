@@ -7,14 +7,14 @@ NAMED_ASSUME_DED
   ASSUME_KW "assume"
   WHITESPACE " "
   ASSUME_PART
-    IDENTIFIER
+    NAME
       IDENT "a"
     WHITESPACE " "
     COLON_EQ ":="
     WHITESPACE " "
     EXPR_PHRASE
       IDENT_EXPR
-        IDENTIFIER
+        NAME_REF
           IDENT "b"
   WHITESPACE "\n"
 error 13: expected body for assumption

@@ -12,10 +12,10 @@ SOURCE_FILE
       PREFIX_DEFINE_BLOCK
         DEFINE_PROC
           L_PAREN "("
-          IDENTIFIER
+          NAME
             IDENT "complement"
           WHITESPACE " "
-          IDENTIFIER
+          NAME
             IDENT "p"
           R_PAREN ")"
         WHITESPACE "\n  "
@@ -26,7 +26,7 @@ SOURCE_FILE
             WHITESPACE " "
             EXPR_PHRASE
               IDENT_EXPR
-                IDENTIFIER
+                NAME_REF
                   IDENT "p"
             WHITESPACE "\n    "
             MATCH_CLAUSE
@@ -34,16 +34,16 @@ SOURCE_FILE
               COMPOUND_PAT
                 L_PAREN "("
                 IDENT_PAT
-                  IDENTIFIER
+                  NAME
                     IDENT "not"
                 WHITESPACE " "
                 IDENT_PAT
-                  IDENTIFIER
+                  NAME
                     IDENT "q"
                 R_PAREN ")"
               WHITESPACE " "
               IDENT_EXPR
-                IDENTIFIER
+                NAME_REF
                   IDENT "q"
               R_PAREN ")"
             WHITESPACE "\n    "
@@ -56,12 +56,12 @@ SOURCE_FILE
                 L_PAREN "("
                 EXPR_PHRASE
                   IDENT_EXPR
-                    IDENTIFIER
+                    NAME_REF
                       IDENT "not"
                 WHITESPACE " "
                 EXPR_PHRASE
                   IDENT_EXPR
-                    IDENTIFIER
+                    NAME_REF
                       IDENT "p"
                 R_PAREN ")"
               R_PAREN ")"

@@ -11,17 +11,17 @@ CONCLUDE_DED
     L_PAREN "("
     EXPR_PHRASE
       IDENT_EXPR
-        IDENTIFIER
+        NAME_REF
           IDENT "="
     WHITESPACE " "
     EXPR_PHRASE
       IDENT_EXPR
-        IDENTIFIER
+        NAME_REF
           IDENT "a"
     WHITESPACE " "
     EXPR_PHRASE
       IDENT_EXPR
-        IDENTIFIER
+        NAME_REF
           IDENT "b"
     R_PAREN ")"
   WHITESPACE " "
@@ -30,12 +30,12 @@ CONCLUDE_DED
       L_PAREN "("
       BANG "!"
       IDENT_EXPR
-        IDENTIFIER
+        NAME_REF
           IDENT "claim"
       WHITESPACE " "
       EXPR_PHRASE
         IDENT_EXPR
-          IDENTIFIER
+          NAME_REF
             IDENT "c"
       R_PAREN ")"
   R_PAREN ")"

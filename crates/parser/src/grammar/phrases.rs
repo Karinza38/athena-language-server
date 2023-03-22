@@ -12,7 +12,7 @@ use crate::{
 use super::{
     deductions::{ded, DED_START_SET},
     expressions::{expr, EXPR_START_SET},
-    identifier,
+    name,
     patterns::pat,
 };
 
@@ -453,7 +453,7 @@ fn let_rec_part(p: &mut Parser, leading_semi: bool) {
         // letrec { a := b; := c } foo
         p.error("Expected to find an identifier for the letrec binding");
     } else {
-        identifier(p);
+        name(p);
     }
 
     p.expect(T![:=]);

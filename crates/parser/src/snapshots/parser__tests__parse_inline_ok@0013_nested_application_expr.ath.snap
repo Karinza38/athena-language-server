@@ -7,7 +7,7 @@ APPLICATION_EXPR
   L_PAREN "("
   EXPR_PHRASE
     IDENT_EXPR
-      IDENTIFIER
+      NAME_REF
         IDENT "foo"
   WHITESPACE " "
   EXPR_PHRASE
@@ -15,12 +15,12 @@ APPLICATION_EXPR
       L_PAREN "("
       EXPR_PHRASE
         IDENT_EXPR
-          IDENTIFIER
+          NAME_REF
             IDENT "bar"
       WHITESPACE " "
       EXPR_PHRASE
         IDENT_EXPR
-          IDENTIFIER
+          NAME_REF
             IDENT "baz"
       R_PAREN ")"
   R_PAREN ")"

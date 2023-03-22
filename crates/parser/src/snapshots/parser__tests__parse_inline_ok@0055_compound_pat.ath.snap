@@ -6,15 +6,15 @@ input_file: crates/parser/test_data/parser/inline/ok/pat/0055_compound_pat.ath
 COMPOUND_PAT
   L_PAREN "("
   IDENT_PAT
-    IDENTIFIER
+    NAME
       IDENT "a"
   WHITESPACE " "
   IDENT_PAT
-    IDENTIFIER
+    NAME
       IDENT "b"
   WHITESPACE " "
   IDENT_PAT
-    IDENTIFIER
+    NAME
       IDENT "c"
   R_PAREN ")"
   WHITESPACE "\n"

@@ -8,7 +8,7 @@ PROOF_BY_CONTRA_DED
   WHITESPACE " "
   EXPR_PHRASE
     IDENT_EXPR
-      IDENTIFIER
+      NAME_REF
         IDENT "A"
   WHITESPACE "\n"
 error 16: expected body for proof by contradiction

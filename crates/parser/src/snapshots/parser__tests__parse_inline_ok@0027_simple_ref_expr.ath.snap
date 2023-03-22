@@ -7,7 +7,7 @@ REF_EXPR
   REF_KW "ref"
   WHITESPACE " "
   IDENT_EXPR
-    IDENTIFIER
+    NAME_REF
       IDENT "foo"
   WHITESPACE "\n"
 

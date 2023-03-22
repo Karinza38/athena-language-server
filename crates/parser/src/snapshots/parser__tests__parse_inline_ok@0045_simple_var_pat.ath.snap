@@ -8,7 +8,7 @@ VAR_PAT
   IDENT "foo"
   COLON ":"
   IDENT_SORT
-    IDENTIFIER
+    NAME_REF
       IDENT "Int"
   WHITESPACE "\n"
 

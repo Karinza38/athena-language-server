@@ -8,8 +8,8 @@ DATATYPE_STMT
   WHITESPACE " "
   STRUCTURE_DEF
     STRUCTURE_NAME_DEF
-      IDENT_SORT
-        IDENTIFIER
+      IDENT_SORT_DECL
+        NAME
           IDENT "Foo"
     WHITESPACE " "
     COLON_EQ ":="

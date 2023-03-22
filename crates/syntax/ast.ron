@@ -112,7 +112,8 @@ KindsSrc(
     tokens: ["ERROR", "IDENT", "WHITESPACE", "COMMENT"],
     nodes: [
         "SOURCE_FILE",
-        "IDENTIFIER",
+        "NAME",
+        "NAME_REF",
         "LITERAL",
         "META_IDENT",
         "UNIT",
@@ -121,6 +122,9 @@ KindsSrc(
         "IDENT_SORT",
         "VAR_SORT",
         "COMPOUND_SORT",
+        "LIMITED_COMPOUND_SORT",
+        "IDENT_SORT_DECL",
+        "COMPOUND_SORT_DECL",
         // Phrases
         "EXPR_PHRASE",
         "DED_PHRASE",
@@ -231,7 +235,6 @@ KindsSrc(
         // Directives
         "FUNC_SORTS",
         "SORT_VARS_DECL",
-        "COMPOUND_SORT_DECL",
         "PREFIX_DEFINE",
         "PREFIX_DEFINE_BLOCKS",
         "PREFIX_DEFINE_BLOCK",
@@ -273,7 +276,7 @@ KindsSrc(
         "STRUCTURE_NAME_DEF",
         "CONSTANT_CONSTRUCTOR",
         "COMPOUND_CONSTRUCTOR",
-        "MAYBE_TAGGED_SORT_DECL",
+        "MAYBE_TAGGED_FIELD_SORT",
         "STRUCTURE_DEF",
         "DATATYPE_STMT",
         "DATATYPES_STMT",

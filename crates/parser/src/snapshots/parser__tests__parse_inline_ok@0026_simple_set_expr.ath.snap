@@ -7,12 +7,12 @@ SET_EXPR
   SETBANG_KW "set!"
   WHITESPACE " "
   IDENT_EXPR
-    IDENTIFIER
+    NAME_REF
       IDENT "foo"
   WHITESPACE " "
   EXPR_PHRASE
     IDENT_EXPR
-      IDENTIFIER
+      NAME_REF
         IDENT "bar"
   WHITESPACE "\n"
 

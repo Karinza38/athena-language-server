@@ -317,7 +317,7 @@ fn traverse(builder: &mut SemanticTokensBuilder, node: &SyntaxNode) {
 
         match element {
             NodeOrToken::Node(n) => {
-                if let Some(id) = ast::Identifier::cast(n.clone()) {
+                if let Some(id) = ast::NameOrNameRef::cast(n.clone()) {
                     identifier(builder, id);
                 } else {
                     if let Some(meta) = ast::MetaIdent::cast(n) {
@@ -331,7 +331,7 @@ fn traverse(builder: &mut SemanticTokensBuilder, node: &SyntaxNode) {
     }
 }
 
-fn identifier(builder: &mut SemanticTokensBuilder, ident: ast::Identifier) {
+fn identifier(builder: &mut SemanticTokensBuilder, ident: ast::NameOrNameRef) {
     let Some(parent) = ident.syntax().parent() else {
         return;
     };
@@ -342,6 +342,10 @@ fn identifier(builder: &mut SemanticTokensBuilder, ident: ast::Identifier) {
                 return;
             },
             ast::Sort(_f) => {
+                builder.push(ident.syntax().text_range(), TYPE);
+                return;
+            },
+            ast::SortDecl(_f) => {
                 builder.push(ident.syntax().text_range(), TYPE);
                 return;
             },

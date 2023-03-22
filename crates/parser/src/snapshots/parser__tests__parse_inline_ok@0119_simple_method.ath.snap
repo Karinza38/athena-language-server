@@ -7,7 +7,7 @@ METHOD_EXPR
   METHOD_KW "method"
   WHITESPACE " "
   L_PAREN "("
-  IDENTIFIER
+  NAME
     IDENT "x"
   R_PAREN ")"
   WHITESPACE " "
@@ -15,12 +15,12 @@ METHOD_EXPR
     L_PAREN "("
     BANG "!"
     IDENT_EXPR
-      IDENTIFIER
+      NAME_REF
         IDENT "claim"
     WHITESPACE " "
     EXPR_PHRASE
       IDENT_EXPR
-        IDENTIFIER
+        NAME_REF
           IDENT "x"
     R_PAREN ")"
   WHITESPACE "\n"

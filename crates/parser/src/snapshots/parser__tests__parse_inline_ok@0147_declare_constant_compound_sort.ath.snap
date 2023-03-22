@@ -6,7 +6,7 @@ input_file: crates/parser/test_data/parser/inline/ok/dir/0147_declare_constant_c
 INFIX_CONSTANT_DECLARE
   DECLARE_KW "declare"
   WHITESPACE " "
-  IDENTIFIER
+  NAME
     IDENT "foo"
   WHITESPACE " "
   COLON ":"
@@ -14,11 +14,11 @@ INFIX_CONSTANT_DECLARE
   COMPOUND_SORT
     L_PAREN "("
     IDENT_SORT
-      IDENTIFIER
+      NAME_REF
         IDENT "List"
     WHITESPACE " "
     IDENT_SORT
-      IDENTIFIER
+      NAME_REF
         IDENT "A"
     R_PAREN ")"
   WHITESPACE "\n"

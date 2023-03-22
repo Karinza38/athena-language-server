@@ -7,11 +7,11 @@ VECTOR_SET_EXPR
   VECTOR_SETBANG_KW "vector-set!"
   WHITESPACE " "
   IDENT_EXPR
-    IDENTIFIER
+    NAME_REF
       IDENT "foo"
   WHITESPACE " "
   IDENT_EXPR
-    IDENTIFIER
+    NAME_REF
       IDENT "bar"
   WHITESPACE "\n"
 error 19: Expected to find a value (phrase) for the vector-set! expression

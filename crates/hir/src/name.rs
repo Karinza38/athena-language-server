@@ -16,9 +16,15 @@ impl AsName for ast::Ident {
     }
 }
 
-impl AsName for ast::Identifier {
+impl AsName for ast::Name {
     fn as_name(&self) -> Name {
-        Name(self.ident_token().unwrap().text().into())
+        Name(self.text())
+    }
+}
+
+impl AsName for ast::NameRef {
+    fn as_name(&self) -> Name {
+        Name(self.text())
     }
 }
 

@@ -4,7 +4,7 @@ description: "foo\n"
 input_file: crates/parser/test_data/parser/inline/ok/expr/0001_simple_ident_expr.ath
 ---
 IDENT_EXPR
-  IDENTIFIER
+  NAME_REF
     IDENT "foo"
   WHITESPACE "\n"
 

@@ -10,7 +10,7 @@ CASES_DED
     L_CURLY "{"
     WHITESPACE " "
     IDENT_EXPR
-      IDENTIFIER
+      NAME_REF
         IDENT "a"
   WHITESPACE " "
   RESTRICTED_MATCH_DED
@@ -20,12 +20,12 @@ CASES_DED
       L_PAREN "("
       BANG "!"
       IDENT_EXPR
-        IDENTIFIER
+        NAME_REF
           IDENT "claim"
       WHITESPACE " "
       EXPR_PHRASE
         IDENT_EXPR
-          IDENTIFIER
+          NAME_REF
             IDENT "a"
       R_PAREN ")"
   WHITESPACE " "

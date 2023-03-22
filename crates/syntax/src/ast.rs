@@ -7,10 +7,14 @@ use crate::syntax_node::{SyntaxNode, SyntaxNodeChildren, SyntaxToken};
 use crate::SyntaxKind;
 
 mod generated;
+mod node_ext;
 mod traits;
 
-pub use self::generated::{nodes::*, tokens::*};
-pub use traits::{HasDefineBody, HasDefineName, HasIdentifier};
+pub use self::{
+    generated::{nodes::*, tokens::*},
+    node_ext::NameOrNameRef,
+};
+pub use traits::{HasDefineBody, HasDefineName, HasName, HasNameRef};
 /// The main trait to go from untyped `SyntaxNode`  to a typed ast. The
 /// conversion itself has zero runtime cost: ast and syntax nodes have exactly
 /// the same representation: a pointer to the tree root and a pointer to the
@@ -132,15 +136,6 @@ mod ext {
     impl From<PrefixDefine> for super::Definition {
         fn from(value: PrefixDefine) -> Self {
             super::Definition::PrefixDefineDir(value.into())
-        }
-    }
-
-    impl From<super::SortDecl> for super::Sort {
-        fn from(value: super::SortDecl) -> Self {
-            match value {
-                super::SortDecl::IdentSort(ident) => ident.into(),
-                super::SortDecl::CompoundSort(comp) => comp.into(),
-            }
         }
     }
 

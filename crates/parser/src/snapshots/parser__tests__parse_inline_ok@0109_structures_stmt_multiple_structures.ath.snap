@@ -8,28 +8,28 @@ STRUCTURES_STMT
   WHITESPACE " "
   STRUCTURE_DEF
     STRUCTURE_NAME_DEF
-      IDENT_SORT
-        IDENTIFIER
+      IDENT_SORT_DECL
+        NAME
           IDENT "Foo"
     WHITESPACE " "
     COLON_EQ ":="
     WHITESPACE " "
     CONSTANT_CONSTRUCTOR
-      IDENTIFIER
+      NAME
         IDENT "bar"
   WHITESPACE " "
   AMP2 "&&"
   WHITESPACE " "
   STRUCTURE_DEF
     STRUCTURE_NAME_DEF
-      IDENT_SORT
-        IDENTIFIER
+      IDENT_SORT_DECL
+        NAME
           IDENT "Baz"
     WHITESPACE " "
     COLON_EQ ":="
     WHITESPACE " "
     CONSTANT_CONSTRUCTOR
-      IDENTIFIER
+      NAME
         IDENT "quz"
   WHITESPACE "\n"
 

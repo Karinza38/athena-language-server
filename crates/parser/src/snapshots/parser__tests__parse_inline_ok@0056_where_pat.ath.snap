@@ -7,13 +7,13 @@ WHERE_PAT
   L_PAREN "("
   WHITESPACE " "
   IDENT_PAT
-    IDENTIFIER
+    NAME
       IDENT "a"
   WHITESPACE " "
   WHERE_KW "where"
   WHITESPACE " "
   IDENT_EXPR
-    IDENTIFIER
+    NAME_REF
       IDENT "b"
   WHITESPACE " "
   R_PAREN ")"

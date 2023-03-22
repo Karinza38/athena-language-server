@@ -7,7 +7,7 @@ VECTOR_SUB_EXPR
   VECTOR_SUB_KW "vector-sub"
   WHITESPACE " "
   IDENT_EXPR
-    IDENTIFIER
+    NAME_REF
       IDENT "foo"
   WHITESPACE "\n"
 error 14: Expected to find a value (expr) for the vector-sub expression

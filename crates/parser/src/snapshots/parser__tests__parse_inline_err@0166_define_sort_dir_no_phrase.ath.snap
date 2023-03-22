@@ -6,7 +6,7 @@ input_file: crates/parser/test_data/parser/inline/err/dir/0166_define_sort_dir_n
 DEFINE_SORT_DIR
   DEFINE_SORT_KW "define-sort"
   WHITESPACE " "
-  IDENTIFIER
+  NAME
     IDENT "Foo"
   WHITESPACE " "
   COLON_EQ ":="

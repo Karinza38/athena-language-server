@@ -8,7 +8,7 @@ PREFIX_RULE_DIR
   PRIMITIVE_METHOD_KW "primitive-method"
   WHITESPACE " "
   L_PAREN "("
-  IDENTIFIER
+  NAME
     IDENT "foo"
   R_PAREN ")"
   WHITESPACE " "

@@ -11,7 +11,7 @@ use crate::{
     T,
 };
 
-use super::{identifier, patterns::pat};
+use super::{name, patterns::pat};
 
 fn method_call_ded(p: &mut Parser, kind: SyntaxKind) -> Marker {
     assert!(p.at(T!['(']) && p.peek_at(kind));
@@ -91,7 +91,7 @@ fn assume_part(p: &mut Parser, leading_semi: bool) {
         // assume := b
         p.error("expected identifier in assume binding");
     } else {
-        identifier(p);
+        name(p);
     }
 
     p.expect(T![:=]);
@@ -154,7 +154,7 @@ fn prefix_assume_ded(p: &mut Parser) {
             // (assume := b (!claim C))
             p.err_and_bump("expected identifier in assume binding");
         } else {
-            identifier(p);
+            name(p);
             p.bump(T![:=]);
         }
         phrase_ded_r_paren(p);
@@ -441,7 +441,7 @@ fn pick_witness_ded(p: &mut Parser, is_prefix: bool) {
         // pick-witness
         p.error("expected witness name in pick witness binding");
     } else {
-        identifier(p);
+        name(p);
     }
 
     if !is_prefix {
@@ -457,7 +457,7 @@ fn pick_witness_ded(p: &mut Parser, is_prefix: bool) {
     if p.at(IDENT) {
         // test(ded) pick_witness_with_ident
         // pick-witness a for b c (!claim a)
-        identifier(p);
+        name(p);
     }
 
     if !ded(p) {
@@ -484,13 +484,13 @@ fn pick_witnesses_ded(p: &mut Parser) {
         // pick-witnesses
         p.error("expected at least one witness name in pick witnesses binding");
     } else {
-        identifier(p);
+        name(p);
     }
 
     while p.at(IDENT) {
         // test(ded) pick_witnesses_multiple
         // pick-witnesses a b c for d (!claim a)
-        identifier(p);
+        name(p);
     }
 
     p.expect(T![for]);
@@ -504,7 +504,7 @@ fn pick_witnesses_ded(p: &mut Parser) {
     if p.at(IDENT) {
         // test(ded) pick_witnesses_with_ident
         // pick-witnesses a for b c (!claim a)
-        identifier(p);
+        name(p);
     }
 
     if !ded(p) {
@@ -658,7 +658,7 @@ fn conclude_ded(p: &mut Parser, is_prefix: bool) {
             //  (!force base_case)
             p.error("expected identifier in conclude deduction");
         } else {
-            identifier(p);
+            name(p);
         }
         p.expect(T![:=]);
     }
@@ -808,7 +808,7 @@ fn maybe_wildcard_op_annotated_param(p: &mut Parser) {
         } else {
             // test(ded) maybe_wildcard_op_annotated_param_no_op
             // { A := (!claim B) }
-            identifier(p);
+            name(p);
         }
     }
     m.complete(p, SyntaxKind::MAYBE_WILDCARD_OP_ANNOTATED_PARAM);

@@ -7,7 +7,7 @@ CONCLUDE_DED
   CONCLUDE_KW "conclude"
   WHITESPACE " "
   IDENT_EXPR
-    IDENTIFIER
+    NAME_REF
       IDENT "A"
   WHITESPACE "\n"
 error 10: expected phrase in conclude deduction

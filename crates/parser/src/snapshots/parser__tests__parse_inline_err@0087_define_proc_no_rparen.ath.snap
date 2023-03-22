@@ -8,7 +8,7 @@ INFIX_DEFINE_DIR
   WHITESPACE " "
   DEFINE_PROC
     L_PAREN "("
-    IDENTIFIER
+    NAME
       IDENT "foo"
   WHITESPACE " "
   COLON_EQ ":="
@@ -21,7 +21,7 @@ INFIX_DEFINE_DIR
       R_PAREN ")"
       WHITESPACE " "
       IDENT_EXPR
-        IDENTIFIER
+        NAME_REF
           IDENT "true"
   WHITESPACE "\n"
 error 11: expected R_PAREN

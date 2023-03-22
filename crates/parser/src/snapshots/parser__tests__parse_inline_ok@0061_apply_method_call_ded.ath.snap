@@ -8,12 +8,12 @@ METHOD_CALL_DED
   APPLY_METHOD_KW "apply-method"
   WHITESPACE " "
   IDENT_EXPR
-    IDENTIFIER
+    NAME_REF
       IDENT "claim"
   WHITESPACE " "
   EXPR_PHRASE
     IDENT_EXPR
-      IDENTIFIER
+      NAME_REF
         IDENT "A"
   R_PAREN ")"
   WHITESPACE "\n"

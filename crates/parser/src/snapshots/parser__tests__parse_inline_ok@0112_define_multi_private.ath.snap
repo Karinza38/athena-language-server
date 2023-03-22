@@ -11,11 +11,11 @@ INFIX_DEFINE_DIR
   LIST_PAT
     L_BRACK "["
     IDENT_PAT
-      IDENTIFIER
+      NAME
         IDENT "a"
     WHITESPACE " "
     IDENT_PAT
-      IDENTIFIER
+      NAME
         IDENT "b"
     R_BRACK "]"
   WHITESPACE " "
@@ -26,12 +26,12 @@ INFIX_DEFINE_DIR
       L_BRACK "["
       EXPR_PHRASE
         IDENT_EXPR
-          IDENTIFIER
+          NAME_REF
             IDENT "1"
       WHITESPACE " "
       EXPR_PHRASE
         IDENT_EXPR
-          IDENTIFIER
+          NAME_REF
             IDENT "2"
       R_BRACK "]"
   WHITESPACE "\n"

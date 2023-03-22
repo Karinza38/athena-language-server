@@ -1,5 +1,5 @@
 use crate::{
-    grammar::{directives::DIR_AFTER_LPAREN, identifier, sorts::SORT_DECL_START},
+    grammar::{directives::DIR_AFTER_LPAREN, name, sorts::SORT_DECL_START},
     parser::Parser,
     token_set::TokenSet,
     SyntaxKind::{self, IDENT},
@@ -28,8 +28,47 @@ fn dir_stmt(p: &mut Parser) {
     m.complete(p, SyntaxKind::DIR_STMT);
 }
 
+const LIMITED_SORT_START: TokenSet = TokenSet::new(&[IDENT, T!['(']]);
+
+fn limited_compound_sort(p: &mut Parser) {
+    assert!(p.at(T!['(']));
+
+    const RECOVER: TokenSet = LIMITED_SORT_START.union(TokenSet::single(T![')']));
+
+    let m = p.start();
+    p.bump(T!['(']);
+
+    if !p.at(IDENT) {
+        p.err_recover("expected an ident sort to start a compound sort", RECOVER);
+    } else {
+        limited_sort(p);
+    }
+    while !p.at(T![')']) && !p.at_end() {
+        if !p.at_one_of(LIMITED_SORT_START) {
+            p.err_recover("expected a sort in a compound sort", RECOVER);
+            break;
+        }
+        limited_sort(p);
+    }
+    p.expect(T![')']);
+    m.complete(p, SyntaxKind::COMPOUND_SORT);
+}
+
+fn limited_sort(p: &mut Parser) -> bool {
+    match p.current() {
+        IDENT => {
+            super::sorts::ident_sort(p);
+        }
+        T!['('] => {
+            limited_compound_sort(p);
+        }
+        _ => return false,
+    }
+    true
+}
+
 fn structure_name_def(p: &mut Parser) {
-    assert!(p.at(IDENT) || p.at(T!['(']));
+    assert!(p.at_one_of(SORT_DECL_START));
 
     let m = p.start();
     if !sort_decl(p) {
@@ -45,7 +84,7 @@ fn constant_constructor(p: &mut Parser) {
     assert!(p.at(IDENT));
 
     let m = p.start();
-    identifier(p);
+    name(p);
     m.complete(p, SyntaxKind::CONSTANT_CONSTRUCTOR);
 }
 
@@ -57,10 +96,10 @@ fn compound_constructor(p: &mut Parser) {
     if !p.at(IDENT) {
         p.error("expected an identifier for the constructor");
     } else {
-        identifier(p);
+        name(p);
     }
     while !p.at(T![')']) && !p.at_end() {
-        maybe_tagged_sort_decl(p);
+        maybe_tagged_field_sort(p);
     }
 
     p.expect(T![')']);
@@ -77,7 +116,7 @@ fn structure_constructor(p: &mut Parser) {
     }
 }
 
-fn maybe_tagged_sort_decl(p: &mut Parser) {
+fn maybe_tagged_field_sort(p: &mut Parser) {
     assert!(p.at_one_of(SORT_DECL_START));
 
     let m = p.start();
@@ -86,14 +125,14 @@ fn maybe_tagged_sort_decl(p: &mut Parser) {
             p.error("expected an identifier for the tag");
         } else {
             // tag
-            identifier(p);
+            name(p);
         }
         p.bump(T![:]);
     }
-    if !sort_decl(p) {
+    if !limited_sort(p) {
         p.err_recover("expected a sort declaration", TokenSet::new(&[T![')']]));
     }
-    m.complete(p, SyntaxKind::MAYBE_TAGGED_SORT_DECL);
+    m.complete(p, SyntaxKind::MAYBE_TAGGED_FIELD_SORT);
 }
 
 fn structure_def(p: &mut Parser) {

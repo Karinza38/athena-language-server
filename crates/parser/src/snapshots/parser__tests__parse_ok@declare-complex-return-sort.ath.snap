@@ -8,35 +8,36 @@ SOURCE_FILE
     INFIX_DECLARE_DIR
       DECLARE_KW "declare"
       WHITESPACE " "
-      IDENTIFIER
+      NAME
         IDENT "paired-with"
       COLON ":"
       WHITESPACE " "
       SORT_VARS_DECL
         L_PAREN "("
-        IDENTIFIER
-          IDENT "S"
+        IDENT_SORT_DECL
+          NAME
+            IDENT "S"
         COMMA ","
         WHITESPACE " "
-        IDENT_SORT
-          IDENTIFIER
+        IDENT_SORT_DECL
+          NAME
             IDENT "T"
         R_PAREN ")"
       WHITESPACE " "
       FUNC_SORTS
         L_BRACK "["
         IDENT_SORT
-          IDENTIFIER
+          NAME_REF
             IDENT "S"
         WHITESPACE " "
         COMPOUND_SORT
           L_PAREN "("
           IDENT_SORT
-            IDENTIFIER
+            NAME_REF
               IDENT "Set"
           WHITESPACE " "
           IDENT_SORT
-            IDENTIFIER
+            NAME_REF
               IDENT "T"
           R_PAREN ")"
         R_BRACK "]"
@@ -46,21 +47,21 @@ SOURCE_FILE
       COMPOUND_SORT
         L_PAREN "("
         IDENT_SORT
-          IDENTIFIER
+          NAME_REF
             IDENT "Set"
         WHITESPACE " "
         COMPOUND_SORT
           L_PAREN "("
           IDENT_SORT
-            IDENTIFIER
+            NAME_REF
               IDENT "Pair"
           WHITESPACE " "
           IDENT_SORT
-            IDENTIFIER
+            NAME_REF
               IDENT "S"
           WHITESPACE " "
           IDENT_SORT
-            IDENTIFIER
+            NAME_REF
               IDENT "T"
           R_PAREN ")"
         R_PAREN ")"
@@ -68,17 +69,17 @@ SOURCE_FILE
       DECLARE_ATTRS
         L_BRACK "["
         DECLARE_ATTR
-          IDENTIFIER
+          NAME
             IDENT "130"
         WHITESPACE " "
         INPUT_TRANSFORM_DECL
           L_BRACK "["
           IDENT_EXPR
-            IDENTIFIER
+            NAME_REF
               IDENT "id"
           WHITESPACE " "
           IDENT_EXPR
-            IDENTIFIER
+            NAME_REF
               IDENT "alist->set"
           R_BRACK "]"
         R_BRACK "]"

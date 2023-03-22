@@ -8,7 +8,7 @@ SOME_THING_PAT
   SOME_VAR_KW "some-var"
   WHITESPACE " "
   IDENT_PAT
-    IDENTIFIER
+    NAME
       IDENT "a"
   R_PAREN ")"
   WHITESPACE "\n"

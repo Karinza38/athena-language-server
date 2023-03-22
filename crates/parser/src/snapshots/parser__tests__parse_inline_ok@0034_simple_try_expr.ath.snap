@@ -10,7 +10,7 @@ TRY_EXPR
   WHITESPACE " "
   TRY_ARM
     IDENT_EXPR
-      IDENTIFIER
+      NAME_REF
         IDENT "foo"
   WHITESPACE " "
   R_CURLY "}"

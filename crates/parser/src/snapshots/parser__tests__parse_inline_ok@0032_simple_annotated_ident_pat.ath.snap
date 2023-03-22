@@ -5,11 +5,11 @@ input_file: crates/parser/test_data/parser/inline/ok/pat/0032_simple_annotated_i
 ---
 ANNOTATED_IDENT_PAT
   TYPED_PARAM
-    IDENTIFIER
+    NAME
       IDENT "foo"
     COLON ":"
     IDENT_SORT
-      IDENTIFIER
+      NAME_REF
         IDENT "Int"
   WHITESPACE "\n"
 

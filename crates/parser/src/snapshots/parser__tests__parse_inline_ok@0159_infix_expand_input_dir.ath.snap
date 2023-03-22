@@ -8,19 +8,19 @@ EXPAND_INPUT_DIR
   WHITESPACE " "
   EXPR_PHRASE
     IDENT_EXPR
-      IDENTIFIER
+      NAME_REF
         IDENT "foo"
   COMMA ","
   WHITESPACE " "
   EXPR_PHRASE
     IDENT_EXPR
-      IDENTIFIER
+      NAME_REF
         IDENT "bar"
   COMMA ","
   WHITESPACE " "
   EXPR_PHRASE
     IDENT_EXPR
-      IDENTIFIER
+      NAME_REF
         IDENT "baz"
   WHITESPACE " "
   EXPR_PHRASE
@@ -28,7 +28,7 @@ EXPAND_INPUT_DIR
       L_BRACK "["
       EXPR_PHRASE
         IDENT_EXPR
-          IDENTIFIER
+          NAME_REF
             IDENT "nat->int"
       R_BRACK "]"
   WHITESPACE "\n"

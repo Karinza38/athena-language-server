@@ -7,57 +7,53 @@ PICK_ANY_DED
   PICK_ANY_KW "pick-any"
   WHITESPACE " "
   TYPED_PARAM
-    IDENTIFIER
+    NAME
       IDENT "f"
     COLON ":"
     COMPOUND_SORT
       L_PAREN "("
       IDENT_SORT
-        IDENTIFIER
+        NAME_REF
           IDENT "Fun"
       WHITESPACE " "
       VAR_SORT
         SINGLE_QUOTE "'"
-        IDENTIFIER
-          IDENT "S"
+        IDENT "S"
       WHITESPACE " "
       VAR_SORT
         SINGLE_QUOTE "'"
-        IDENTIFIER
-          IDENT "T"
+        IDENT "T"
       R_PAREN ")"
   WHITESPACE " "
   TYPED_PARAM
-    IDENTIFIER
+    NAME
       IDENT "g"
     COLON ":"
     COMPOUND_SORT
       L_PAREN "("
       IDENT_SORT
-        IDENTIFIER
+        NAME_REF
           IDENT "Fun"
       WHITESPACE " "
       VAR_SORT
         SINGLE_QUOTE "'"
-        IDENTIFIER
-          IDENT "U"
+        IDENT "U"
       WHITESPACE " "
       VAR_SORT
         SINGLE_QUOTE "'"
-        IDENTIFIER
-          IDENT "S"
+        IDENT "S"
       R_PAREN ")"
   WHITESPACE " "
   BANG_METHOD_CALL_DED
     L_PAREN "("
     BANG "!"
     IDENT_EXPR
-      IDENTIFIER
+      NAME_REF
         IDENT "claim"
     WHITESPACE " "
     EXPR_PHRASE
       IDENT_EXPR
-        IDENTIFIER
+        NAME_REF
           IDENT "A"
     R_PAREN ")"
   WHITESPACE "\n"

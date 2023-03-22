@@ -8,18 +8,19 @@ SOURCE_FILE
     INFIX_DECLARE_DIR
       DECLARE_KW "declare"
       WHITESPACE " "
-      IDENTIFIER
+      NAME
         IDENT "set->map"
       COLON ":"
       WHITESPACE " "
       SORT_VARS_DECL
         L_PAREN "("
-        IDENTIFIER
-          IDENT "S"
+        IDENT_SORT_DECL
+          NAME
+            IDENT "S"
         COMMA ","
         WHITESPACE " "
-        IDENT_SORT
-          IDENTIFIER
+        IDENT_SORT_DECL
+          NAME
             IDENT "T"
         R_PAREN ")"
       WHITESPACE " "
@@ -28,21 +29,21 @@ SOURCE_FILE
         COMPOUND_SORT
           L_PAREN "("
           IDENT_SORT
-            IDENTIFIER
+            NAME_REF
               IDENT "Set"
           WHITESPACE " "
           COMPOUND_SORT
             L_PAREN "("
             IDENT_SORT
-              IDENTIFIER
+              NAME_REF
                 IDENT "Pair"
             WHITESPACE " "
             IDENT_SORT
-              IDENTIFIER
+              NAME_REF
                 IDENT "S"
             WHITESPACE " "
             IDENT_SORT
-              IDENTIFIER
+              NAME_REF
                 IDENT "T"
             R_PAREN ")"
           R_PAREN ")"
@@ -53,15 +54,15 @@ SOURCE_FILE
       COMPOUND_SORT
         L_PAREN "("
         IDENT_SORT
-          IDENTIFIER
+          NAME_REF
             IDENT "Map"
         WHITESPACE " "
         IDENT_SORT
-          IDENTIFIER
+          NAME_REF
             IDENT "S"
         WHITESPACE " "
         IDENT_SORT
-          IDENTIFIER
+          NAME_REF
             IDENT "T"
         R_PAREN ")"
 

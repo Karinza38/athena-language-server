@@ -8,7 +8,7 @@ VAR_PAT
   WHITESPACE " "
   COLON ":"
   IDENT_SORT
-    IDENTIFIER
+    NAME_REF
       IDENT "Int"
   WHITESPACE "\n"
 error 1: expected an identifier

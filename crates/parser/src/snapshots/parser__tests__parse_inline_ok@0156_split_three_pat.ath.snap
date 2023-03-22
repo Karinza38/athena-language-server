@@ -8,15 +8,15 @@ SPLIT_PAT
   SPLIT_KW "split"
   WHITESPACE " "
   IDENT_PAT
-    IDENTIFIER
+    NAME
       IDENT "pat"
   WHITESPACE " "
   IDENT_PAT
-    IDENTIFIER
+    NAME
       IDENT "pat"
   WHITESPACE " "
   IDENT_PAT
-    IDENTIFIER
+    NAME
       IDENT "pat"
   R_PAREN ")"
   WHITESPACE "\n"

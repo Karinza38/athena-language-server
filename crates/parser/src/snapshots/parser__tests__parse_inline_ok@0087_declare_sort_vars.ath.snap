@@ -6,21 +6,22 @@ input_file: crates/parser/test_data/parser/inline/ok/dir/0087_declare_sort_vars.
 INFIX_DECLARE_DIR
   DECLARE_KW "declare"
   WHITESPACE " "
-  IDENTIFIER
+  NAME
     IDENT "foo"
   WHITESPACE " "
   COLON ":"
   WHITESPACE " "
   SORT_VARS_DECL
     L_PAREN "("
-    IDENTIFIER
-      IDENT "A"
+    IDENT_SORT_DECL
+      NAME
+        IDENT "A"
     R_PAREN ")"
   WHITESPACE " "
   FUNC_SORTS
     L_BRACK "["
     IDENT_SORT
-      IDENTIFIER
+      NAME_REF
         IDENT "A"
     R_BRACK "]"
   WHITESPACE " "
@@ -29,11 +30,11 @@ INFIX_DECLARE_DIR
   COMPOUND_SORT
     L_PAREN "("
     IDENT_SORT
-      IDENTIFIER
+      NAME_REF
         IDENT "List"
     WHITESPACE " "
     IDENT_SORT
-      IDENTIFIER
+      NAME_REF
         IDENT "A"
     R_PAREN ")"
   WHITESPACE "\n"

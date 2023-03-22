@@ -6,7 +6,7 @@ input_file: crates/parser/test_data/parser/inline/ok/dir/0130_associativity_dir_
 ASSOCIATIVITY_DIR
   RIGHT_ASSOC_KW "right-assoc"
   WHITESPACE " "
-  IDENTIFIER
+  NAME_REF
     IDENT "Foo"
   WHITESPACE "\n"
 

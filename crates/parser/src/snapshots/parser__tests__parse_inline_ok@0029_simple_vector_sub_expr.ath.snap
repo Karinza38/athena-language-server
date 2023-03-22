@@ -7,11 +7,11 @@ VECTOR_SUB_EXPR
   VECTOR_SUB_KW "vector-sub"
   WHITESPACE " "
   IDENT_EXPR
-    IDENTIFIER
+    NAME_REF
       IDENT "foo"
   WHITESPACE " "
   IDENT_EXPR
-    IDENTIFIER
+    NAME_REF
       IDENT "bar"
   WHITESPACE "\n"
 

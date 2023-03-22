@@ -7,7 +7,7 @@ GENERALIZE_OVER_DED
   GENERALIZE_OVER_KW "generalize-over"
   WHITESPACE " "
   IDENT_EXPR
-    IDENTIFIER
+    NAME_REF
       IDENT "a"
   WHITESPACE "\n"
 error 17: expected body for generalize over

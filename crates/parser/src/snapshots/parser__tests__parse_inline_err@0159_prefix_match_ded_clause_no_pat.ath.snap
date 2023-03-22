@@ -10,7 +10,7 @@ ERROR
     WHITESPACE " "
     EXPR_PHRASE
       IDENT_EXPR
-        IDENTIFIER
+        NAME_REF
           IDENT "foo"
     WHITESPACE " "
     MATCH_DED_CLAUSE
@@ -19,7 +19,7 @@ ERROR
       COMPOUND_PAT
         L_PAREN "("
         IDENT_PAT
-          IDENTIFIER
+          NAME
             IDENT "B"
     WHITESPACE " "
     ERROR

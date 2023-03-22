@@ -10,7 +10,7 @@ INFIX_DEFINE_DIR
   WHITESPACE " "
   EXPR_PHRASE
     IDENT_EXPR
-      IDENTIFIER
+      NAME_REF
         IDENT "true"
   WHITESPACE "\n"
 error 6: expected definition name

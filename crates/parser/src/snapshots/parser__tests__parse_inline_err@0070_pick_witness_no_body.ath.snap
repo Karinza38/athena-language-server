@@ -6,14 +6,14 @@ input_file: crates/parser/test_data/parser/inline/err/ded/0070_pick_witness_no_b
 PICK_WITNESS_DED
   PICK_WITNESS_KW "pick-witness"
   WHITESPACE " "
-  IDENTIFIER
+  NAME
     IDENT "a"
   WHITESPACE " "
   FOR_KW "for"
   WHITESPACE " "
   EXPR_PHRASE
     IDENT_EXPR
-      IDENTIFIER
+      NAME_REF
         IDENT "b"
   WHITESPACE "\n"
 error 20: expected body for pick witness

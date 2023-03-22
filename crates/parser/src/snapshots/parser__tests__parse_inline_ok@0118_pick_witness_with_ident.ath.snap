@@ -6,29 +6,29 @@ input_file: crates/parser/test_data/parser/inline/ok/ded/0118_pick_witness_with_
 PICK_WITNESS_DED
   PICK_WITNESS_KW "pick-witness"
   WHITESPACE " "
-  IDENTIFIER
+  NAME
     IDENT "a"
   WHITESPACE " "
   FOR_KW "for"
   WHITESPACE " "
   EXPR_PHRASE
     IDENT_EXPR
-      IDENTIFIER
+      NAME_REF
         IDENT "b"
   WHITESPACE " "
-  IDENTIFIER
+  NAME
     IDENT "c"
   WHITESPACE " "
   BANG_METHOD_CALL_DED
     L_PAREN "("
     BANG "!"
     IDENT_EXPR
-      IDENTIFIER
+      NAME_REF
         IDENT "claim"
     WHITESPACE " "
     EXPR_PHRASE
       IDENT_EXPR
-        IDENTIFIER
+        NAME_REF
           IDENT "a"
     R_PAREN ")"
   WHITESPACE "\n"

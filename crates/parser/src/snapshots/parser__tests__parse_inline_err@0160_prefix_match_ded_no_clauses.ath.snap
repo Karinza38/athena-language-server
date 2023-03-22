@@ -9,7 +9,7 @@ PREFIX_MATCH_DED
   WHITESPACE " "
   EXPR_PHRASE
     IDENT_EXPR
-      IDENTIFIER
+      NAME_REF
         IDENT "foo"
   WHITESPACE " "
   R_PAREN ")"

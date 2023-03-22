@@ -2,7 +2,7 @@ use crate::grammar::expressions::expr;
 use crate::grammar::phrases::phrase;
 use crate::grammar::sorts::{sort, sort_decl, SORT_DECL_START};
 use crate::grammar::statements::{stmt, STMT_START_SET};
-use crate::grammar::{identifier, maybe_wildcard_typed_param};
+use crate::grammar::{maybe_wildcard_typed_param, name, name_ref};
 use crate::parser::{Marker, Parser};
 use crate::token_set::TokenSet;
 use crate::{
@@ -21,7 +21,7 @@ fn module_dir(p: &mut Parser) {
     if !p.at(IDENT) {
         p.error("expected module name");
     } else {
-        identifier(p);
+        name(p);
     }
 
     p.expect(T!['{']);
@@ -59,7 +59,7 @@ fn extend_module_dir(p: &mut Parser) {
     if !p.at(IDENT) {
         p.error("expected module name");
     } else {
-        identifier(p);
+        name_ref(p);
     }
 
     p.expect(T!['{']);
@@ -148,7 +148,7 @@ fn define_named_pattern(p: &mut Parser) {
         // define ( as [a]) := true)
         p.error("expected name for define");
     } else {
-        identifier(p);
+        name(p);
     }
 
     p.bump_one_of(NAME_SET);
@@ -179,7 +179,7 @@ fn define_proc(p: &mut Parser) {
         // define ( ) := lambda () true
         p.error("expected procedure name");
     } else {
-        identifier(p);
+        name(p);
     }
 
     // test_err(dir) define_proc_no_rparen
@@ -227,7 +227,7 @@ fn define_name(p: &mut Parser) -> DefineName {
             DefineName::Other
         }
         IDENT => {
-            identifier(p);
+            name(p);
             DefineName::Other
         }
         _ => {
@@ -377,12 +377,18 @@ fn sort_vars_decl(p: &mut Parser) {
         // declare foo : ( ) [] -> Int
         p.error("expected sort variable name");
     } else {
-        identifier(p);
+        super::sorts::ident_sort_decl(p);
     }
 
     while p.at(T![,]) {
         p.bump(T![,]);
-        super::sorts::ident_sort(p);
+        if !p.at(IDENT) {
+            // test_err(dir) sort_vars_no_name_second
+            // declare foo : (A, ) [] -> Int
+            p.error("expected sort variable name");
+        } else {
+            super::sorts::ident_sort_decl(p);
+        }
     }
 
     p.expect(T![')']);
@@ -413,7 +419,7 @@ fn declare_attr(p: &mut Parser) {
     } else if p.at(T![right - assoc]) {
         p.bump(T![right - assoc]);
     } else if p.at(IDENT) {
-        identifier(p);
+        name(p);
     } else {
         p.err_and_bump("expected a declaration attribute (left-assoc, right-assoc, or identifier)");
     }
@@ -514,7 +520,7 @@ fn declare_dir(p: &mut Parser) {
         // declare : [Int] -> Int
         p.error("expected function symbol name");
     } else {
-        identifier(p);
+        name(p);
     }
 
     while p.at(T![,]) {
@@ -524,7 +530,7 @@ fn declare_dir(p: &mut Parser) {
             // declare foo, : [Int] -> Int
             p.error("expected function symbol name, or trailing commas are not permitted");
         } else {
-            identifier(p);
+            name(p);
         }
     }
 
@@ -642,7 +648,7 @@ fn prefix_assert_dir(p: &mut Parser) {
             // (assert := true)
             p.error("expected identifier for the assertion");
         } else {
-            identifier(p);
+            name(p);
         }
         p.bump(T![:=]);
     }
@@ -681,7 +687,7 @@ fn assert_dir(p: &mut Parser) {
             // assert := true
             p.error("expected identifier for the assertion");
         } else {
-            identifier(p);
+            name(p);
         }
         p.expect(T![:=]);
     }
@@ -723,7 +729,7 @@ fn assert_closed_dir(p: &mut Parser) {
             // assert* := true
             p.error("expected identifier for the closed assertion");
         } else {
-            identifier(p);
+            name(p);
         }
         p.expect(T![:=]);
     }
@@ -750,7 +756,7 @@ fn open_dir(p: &mut Parser) {
         // open
         p.error("expected module name");
     } else {
-        identifier(p);
+        name_ref(p);
     }
 
     while p.at(T![,]) {
@@ -760,7 +766,7 @@ fn open_dir(p: &mut Parser) {
             // open List,
             p.error("expected module name, or trailing commas are not permitted");
         } else {
-            identifier(p);
+            name_ref(p);
         }
     }
 
@@ -783,7 +789,7 @@ fn associativity_dir(p: &mut Parser) {
         // left-assoc
         p.error("expected identifier to set associativity for");
     } else {
-        identifier(p);
+        name_ref(p);
     }
 
     m.complete(p, SyntaxKind::ASSOCIATIVITY_DIR);
@@ -799,7 +805,7 @@ fn parameter_list_ident_start(p: &mut Parser) {
         // primitive-method ( ) := foo
         p.error("expected identifier for primitive method");
     } else {
-        identifier(p);
+        name(p);
     }
 
     while !p.at(T![')']) && !p.at_end() {
@@ -911,7 +917,7 @@ fn define_sort_dir(p: &mut Parser) {
         // define-sort
         p.error("expected identifier for sort definition");
     } else {
-        identifier(p);
+        name(p);
     }
 
     p.expect(T![:=]);
@@ -959,7 +965,7 @@ fn set_precedence_dir(p: &mut Parser, kind: ParseKind) {
                     TokenSet::new(&[T![')'], IDENT]),
                 ); // TODO: ast validation of at least 1
             } else {
-                identifier(p);
+                name_ref(p);
             }
         }
 
@@ -967,7 +973,7 @@ fn set_precedence_dir(p: &mut Parser, kind: ParseKind) {
     } else if p.at(IDENT) {
         // test(dir) set_precedence_dir_single
         // set-precedence a 100
-        identifier(p);
+        name_ref(p);
     } else {
         // test_err(dir) set_precedence_dir_no_ident
         // set-precedence

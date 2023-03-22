@@ -11,7 +11,7 @@ OVERLOAD_MULTI
     L_PAREN "("
     EXPR_PHRASE
       IDENT_EXPR
-        IDENTIFIER
+        NAME_REF
           IDENT "a"
     WHITESPACE " "
     ERROR

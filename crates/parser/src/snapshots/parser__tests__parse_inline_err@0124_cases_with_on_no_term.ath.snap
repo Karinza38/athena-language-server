@@ -8,7 +8,7 @@ CASES_DED
   WHITESPACE " "
   EXPR_PHRASE
     IDENT_EXPR
-      IDENTIFIER
+      NAME_REF
         IDENT "a"
   WHITESPACE " "
   ON_KW "on"
@@ -17,7 +17,7 @@ CASES_DED
   WHITESPACE " "
   RESTRICTED_MATCH_DED
     IDENT_PAT
-      IDENTIFIER
+      NAME
         IDENT "a"
     WHITESPACE " "
     FAT_ARROW "=>"
@@ -26,12 +26,12 @@ CASES_DED
       L_PAREN "("
       BANG "!"
       IDENT_EXPR
-        IDENTIFIER
+        NAME_REF
           IDENT "claim"
       WHITESPACE " "
       EXPR_PHRASE
         IDENT_EXPR
-          IDENTIFIER
+          NAME_REF
             IDENT "a"
       R_PAREN ")"
   WHITESPACE " "

@@ -7,7 +7,7 @@ NAMED_ASSUME_DED
   ASSUME_KW "assume"
   WHITESPACE " "
   ASSUME_PART
-    IDENTIFIER
+    NAME
       IDENT "a"
     WHITESPACE " "
     COLON_EQ ":="

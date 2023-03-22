@@ -10,7 +10,6 @@ TERM_VAR_EXPR
   WHITESPACE " "
   VAR_SORT
     SINGLE_QUOTE "'"
-    IDENTIFIER
-      IDENT "foo"
+    IDENT "foo"
   WHITESPACE "\n"
 

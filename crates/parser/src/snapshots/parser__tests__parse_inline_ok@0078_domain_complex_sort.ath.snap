@@ -8,12 +8,12 @@ DOMAIN_DIR
   WHITESPACE " "
   COMPOUND_SORT
     L_PAREN "("
-    IDENT_SORT
-      IDENTIFIER
+    IDENT_SORT_DECL
+      NAME
         IDENT "List"
     WHITESPACE " "
-    IDENT_SORT
-      IDENTIFIER
+    IDENT_SORT_DECL
+      NAME
         IDENT "T"
     R_PAREN ")"
   WHITESPACE "\n"

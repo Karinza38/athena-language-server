@@ -6,14 +6,14 @@ input_file: crates/parser/test_data/parser/inline/err/ded/0073_pick_witnesses_no
 PICK_WITNESSES_DED
   PICK_WITNESSES_KW "pick-witnesses"
   WHITESPACE " "
-  IDENTIFIER
+  NAME
     IDENT "a"
   WHITESPACE " "
   FOR_KW "for"
   WHITESPACE " "
   EXPR_PHRASE
     IDENT_EXPR
-      IDENTIFIER
+      NAME_REF
         IDENT "a"
   WHITESPACE "\n"
 error 22: expected body for pick witnesses

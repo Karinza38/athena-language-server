@@ -6,7 +6,7 @@ input_file: crates/parser/test_data/parser/inline/err/pat/0044_where_pat_no_expr
 WHERE_PAT
   L_PAREN "("
   IDENT_PAT
-    IDENTIFIER
+    NAME
       IDENT "a"
   WHITESPACE " "
   WHERE_KW "where"

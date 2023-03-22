@@ -13,11 +13,11 @@ ERROR
     ERROR
       BANG "!"
     IDENT_PAT
-      IDENTIFIER
+      NAME
         IDENT "claim"
     WHITESPACE " "
     IDENT_PAT
-      IDENTIFIER
+      NAME
         IDENT "A"
     R_PAREN ")"
   R_PAREN ")"

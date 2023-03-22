@@ -21,7 +21,7 @@ INFIX_DEFINE_DIR
       R_PAREN ")"
       WHITESPACE " "
       IDENT_EXPR
-        IDENTIFIER
+        NAME_REF
           IDENT "true"
   WHITESPACE "\n"
 error 8: expected procedure name

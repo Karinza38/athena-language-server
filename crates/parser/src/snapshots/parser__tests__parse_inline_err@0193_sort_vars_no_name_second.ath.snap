@@ -1,0 +1,34 @@
+---
+source: crates/parser/src/tests.rs
+description: "declare foo : (A, ) [] -> Int\n"
+input_file: crates/parser/test_data/parser/inline/err/dir/0193_sort_vars_no_name_second.ath
+---
+INFIX_DECLARE_DIR
+  DECLARE_KW "declare"
+  WHITESPACE " "
+  NAME
+    IDENT "foo"
+  WHITESPACE " "
+  COLON ":"
+  WHITESPACE " "
+  SORT_VARS_DECL
+    L_PAREN "("
+    IDENT_SORT_DECL
+      NAME
+        IDENT "A"
+    COMMA ","
+    WHITESPACE " "
+    R_PAREN ")"
+  WHITESPACE " "
+  FUNC_SORTS
+    L_BRACK "["
+    R_BRACK "]"
+  WHITESPACE " "
+  THIN_ARROW "->"
+  WHITESPACE " "
+  IDENT_SORT
+    NAME_REF
+      IDENT "Int"
+  WHITESPACE "\n"
+error 17: expected sort variable name
+

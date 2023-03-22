@@ -1,7 +1,13 @@
 use crate::ast::{self, support, AstNode};
 
-pub trait HasIdentifier: AstNode {
-    fn identifier(&self) -> Option<ast::Identifier> {
+pub trait HasName: AstNode {
+    fn name(&self) -> Option<ast::Name> {
+        support::child(self.syntax())
+    }
+}
+
+pub trait HasNameRef: AstNode {
+    fn name_ref(&self) -> Option<ast::NameRef> {
         support::child(self.syntax())
     }
 }

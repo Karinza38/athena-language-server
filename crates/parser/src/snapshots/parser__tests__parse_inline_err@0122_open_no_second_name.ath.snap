@@ -6,7 +6,7 @@ input_file: crates/parser/test_data/parser/inline/err/dir/0122_open_no_second_na
 OPEN_DIR
   OPEN_KW "open"
   WHITESPACE " "
-  IDENTIFIER
+  NAME_REF
     IDENT "List"
   COMMA ","
   WHITESPACE "\n"

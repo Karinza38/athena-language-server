@@ -6,16 +6,17 @@ use la_arena::Idx;
 use paste::paste;
 use syntax::{
     ast::{
-        self, AstChildren, HasDefineBody, HasDefineName, HasIdentifier, MaybeWildcardTypedParam,
+        self, AstChildren, HasDefineBody, HasDefineName, HasName, HasNameRef,
+        MaybeWildcardTypedParam,
     },
-    AstNode, AstPtr,
+    AstNode, AstPtr, AstToken,
 };
 
 use crate::{
     expr::{Expr, ExprId},
     file_hir::{FileHirSourceMap, ModuleSource},
-    identifier::IdentifierId,
     name::{AsName, Name},
+    name_ref::NameRefId,
     pat::{Pat, PatId, PatKind},
     phrase::PhraseId,
     scope::{Scope, ScopeId, ScopeKind, ScopeTree},
@@ -25,8 +26,8 @@ use crate::{
 
 use super::{
     DataType, DataTypeId, DatatypeSource, Ded, DedId, DedSource, Definition, DefinitionId,
-    DefinitionSource, ExprSource, FileHir, IdentifierSource, Module, ModuleId, ModuleItem,
-    PatSource, Sort, SortId, SortSource, Structure, StructureId, StructureSource,
+    DefinitionSource, ExprSource, FileHir, Module, ModuleId, ModuleItem, NameRefSource, PatSource,
+    Sort, SortId, SortSource, Structure, StructureId, StructureSource,
 };
 
 struct Ctx {
@@ -391,7 +392,7 @@ impl Ctx {
     fn lower_dir(&mut self, dir: ast::Dir) -> Option<Vec<ModuleItem>> {
         match dir {
             ast::Dir::ModuleDir(module) => {
-                let name = module.identifier().unwrap().as_name();
+                let name = module.name().unwrap().as_name();
 
                 let module_id = self.alloc_module(Module {
                     name: name.clone(),
@@ -452,7 +453,7 @@ impl Ctx {
                 if let Some(expr) = assert.expr() {
                     let _ = self.lower_expr(expr);
                 }
-                if let Some(name) = assert.identifier() {
+                if let Some(name) = assert.name() {
                     let name = name.as_name();
                     let (def, new_scope) = self
                         .builder::<ast::MetaDefinition>(ast::Assertion::from(assert).into())
@@ -472,7 +473,7 @@ impl Ctx {
                 for expr in exprs {
                     let _ = self.lower_expr(expr);
                 }
-                if let Some(name) = assert.identifier() {
+                if let Some(name) = assert.name() {
                     let name = name.as_name();
                     let (def, new_scope) = self
                         .builder::<ast::MetaDefinition>(ast::Assertion::from(assert).into())
@@ -489,7 +490,7 @@ impl Ctx {
                 match declare {
                     ast::ConstantDeclareDir::InfixConstantDeclare(declare) => {
                         let names: Vec<Name> =
-                            declare.identifiers().map(|ident| ident.as_name()).collect();
+                            declare.names().map(|ident| ident.as_name()).collect();
                         let mut defs = Vec::new();
                         for name in &names {
                             let def = self
@@ -524,8 +525,7 @@ impl Ctx {
                     None
                 }
                 ast::DeclareDir::InfixDeclareDir(declare) => {
-                    let names: Vec<Name> =
-                        declare.identifiers().map(|ident| ident.as_name()).collect();
+                    let names: Vec<Name> = declare.names().map(|ident| ident.as_name()).collect();
                     let mut defs = Vec::new();
                     for name in &names {
                         let def = self
@@ -591,13 +591,13 @@ impl Ctx {
     {
         let define_name = define.define_name()?;
         let names = match define_name {
-            ast::DefineName::Identifier(id) => vec![id.as_name()],
+            ast::DefineName::Name(id) => vec![id.as_name()],
             ast::DefineName::DefineNamedPattern(named) => {
-                vec![named.identifier()?.as_name()]
+                vec![named.name()?.as_name()]
             }
             ast::DefineName::DefineProc(proc) => {
                 // let args =
-                let name = proc.identifier()?.as_name();
+                let name = proc.name()?.as_name();
                 let def = self.alloc_definition(Definition { name: name.clone() });
 
                 let outer_scope = self.make_scope(vec![name], ScopeKind::ModuleItem(def.into()));
@@ -833,7 +833,8 @@ impl Ctx {
 
         self.push_scope(new_scope);
 
-        let _sort_id = self.lower_sort(sort_decl.clone().into())?;
+        // let _sort_id = self.lower_sort(sort_decl.clone().into())?;
+        todo!();
 
         Some(domain_id)
     }
@@ -841,11 +842,11 @@ impl Ctx {
     fn lower_sort(&mut self, sort: ast::Sort) -> Option<SortId> {
         let kind = match sort.clone() {
             ast::Sort::VarSort(v) => {
-                let v = v.identifier()?.as_name();
+                let v = ast::Ident::cast(v.ident_token()?).unwrap().as_name();
                 SortKind::Var(v)
             }
             ast::Sort::IdentSort(ident) => {
-                let id = ident.identifier()?.as_name();
+                let id = ident.name_ref()?.as_name();
 
                 SortKind::Ident(id)
             }
@@ -868,14 +869,14 @@ impl Ctx {
     fn lower_param(&mut self, param: MaybeWildcardTypedParam) -> Option<Name> {
         Some(match param {
             ast::MaybeWildcardTypedParam::MaybeTypedParam(p) => match p {
-                ast::MaybeTypedParam::Identifier(id) => id.as_name(),
+                ast::MaybeTypedParam::Name(id) => id.as_name(),
                 ast::MaybeTypedParam::TypedParam(tp) => {
                     if let Some(sort) = tp.sort() {
                         self.lower_sort(sort);
                     }
-                    tp.identifier()?.as_name()
+                    tp.name()?.as_name()
                 }
-                ast::MaybeTypedParam::OpAnnotatedParam(op) => op.identifier()?.as_name(),
+                ast::MaybeTypedParam::OpAnnotatedParam(op) => op.name()?.as_name(),
             },
             ast::MaybeWildcardTypedParam::Wildcard(_) => return None,
         })
@@ -893,13 +894,12 @@ impl Ctx {
 
 fn sort_decl_name(sort_decl: &ast::SortDecl) -> Option<Name> {
     match sort_decl {
-        ast::SortDecl::IdentSort(ident) => Some(ident.identifier()?.as_name()),
-        ast::SortDecl::CompoundSort(compound) => compound
-            .sorts()
+        ast::SortDecl::IdentSortDecl(ident) => Some(ident.name()?.as_name()),
+        ast::SortDecl::CompoundSortDecl(compound) => compound
+            .ident_sort_decls()
             .next()?
-            .as_ident_sort()?
-            .identifier()
-            .map(|ident| ident.as_name()),
+            .name()
+            .map(|n| n.as_name()),
     }
 }
 
@@ -937,7 +937,7 @@ trait WithSource {
     [DedId]             [DedSource]             [deds]              ;
     [ExprId]            [ExprSource]            [exprs]             ;
     [ModuleId]          [ModuleSource]          [modules]           ;
-    [IdentifierId]      [IdentifierSource]      [identifiers]       ;
+    [NameRefId]      [NameRefSource]      [name_refs]       ;
     [PatId]             [PatSource]             [pats]              ;
 )]
 impl WithSource for id_ty {
@@ -962,7 +962,7 @@ trait WithScope: Sized {
     [SortId]            [Self]              [set_sort_scope]        ;
     [DedId]             [Self]              [set_ded_scope]         ;
     [ExprId]            [Self]              [set_expr_scope]        ;
-    [IdentifierId]      [Self]              [set_identifier_scope]  ;
+    [NameRefId]      [Self]              [set_identifier_scope]  ;
     [PatId]             [Self]              [set_pat_scope]         ;
 )]
 impl WithScope for id_ty {

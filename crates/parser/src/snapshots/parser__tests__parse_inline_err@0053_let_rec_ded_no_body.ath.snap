@@ -9,24 +9,24 @@ INFIX_LET_REC_DED
   L_CURLY "{"
   WHITESPACE " "
   LET_REC_PART
-    IDENTIFIER
+    NAME
       IDENT "a"
     WHITESPACE " "
     COLON_EQ ":="
     WHITESPACE " "
     IDENT_EXPR
-      IDENTIFIER
+      NAME_REF
         IDENT "b"
   LET_REC_PART
     SEMI ";"
     WHITESPACE " "
-    IDENTIFIER
+    NAME
       IDENT "c"
     WHITESPACE " "
     COLON_EQ ":="
     WHITESPACE " "
     IDENT_EXPR
-      IDENTIFIER
+      NAME_REF
         IDENT "d"
   WHITESPACE " "
   R_CURLY "}"

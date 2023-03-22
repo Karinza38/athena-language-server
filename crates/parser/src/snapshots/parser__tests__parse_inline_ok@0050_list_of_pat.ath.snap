@@ -8,11 +8,11 @@ LIST_OF_PAT
   LIST_OF_KW "list-of"
   WHITESPACE " "
   IDENT_PAT
-    IDENTIFIER
+    NAME
       IDENT "a"
   WHITESPACE " "
   IDENT_PAT
-    IDENTIFIER
+    NAME
       IDENT "b"
   R_PAREN ")"
   WHITESPACE "\n"

@@ -10,10 +10,10 @@ INFIX_DEFINE_DIR
   WHITESPACE " "
   DEFINE_PROC
     L_PAREN "("
-    IDENTIFIER
+    NAME
       IDENT "foo"
     WHITESPACE " "
-    IDENTIFIER
+    NAME
       IDENT "b"
     R_PAREN ")"
   WHITESPACE " "
@@ -21,7 +21,7 @@ INFIX_DEFINE_DIR
   WHITESPACE " "
   EXPR_PHRASE
     IDENT_EXPR
-      IDENTIFIER
+      NAME_REF
         IDENT "b"
   WHITESPACE "\n"
 

@@ -8,14 +8,14 @@ SOURCE_FILE
     DEFINE_SORT_DIR
       DEFINE_SORT_KW "define-sort"
       WHITESPACE " "
-      IDENTIFIER
+      NAME
         IDENT "Foo"
       WHITESPACE " "
       COLON_EQ ":="
       WHITESPACE " "
       EXPR_PHRASE
         IDENT_EXPR
-          IDENTIFIER
+          NAME_REF
             IDENT "Int"
   WHITESPACE "\n"
 

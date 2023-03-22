@@ -9,7 +9,7 @@ INFIX_DEFINE_DIR
   LIST_PAT
     L_BRACK "["
     IDENT_PAT
-      IDENTIFIER
+      NAME
         IDENT "foo"
     R_BRACK "]"
   WHITESPACE " "
@@ -17,7 +17,7 @@ INFIX_DEFINE_DIR
   WHITESPACE " "
   EXPR_PHRASE
     IDENT_EXPR
-      IDENTIFIER
+      NAME_REF
         IDENT "true"
   WHITESPACE "\n"
 

@@ -8,7 +8,7 @@ PREFIX_RULE_DIR
   PRIMITIVE_METHOD_KW "primitive-method"
   WHITESPACE " "
   L_PAREN "("
-  IDENTIFIER
+  NAME
     IDENT "false-intro"
   R_PAREN ")"
   WHITESPACE "\n "
@@ -16,7 +16,7 @@ PREFIX_RULE_DIR
     L_PAREN "("
     EXPR_PHRASE
       IDENT_EXPR
-        IDENTIFIER
+        NAME_REF
           IDENT "not"
     WHITESPACE " "
     EXPR_PHRASE
@@ -24,7 +24,7 @@ PREFIX_RULE_DIR
         L_PAREN "("
         EXPR_PHRASE
           IDENT_EXPR
-            IDENTIFIER
+            NAME_REF
               IDENT "false"
         R_PAREN ")"
     R_PAREN ")"

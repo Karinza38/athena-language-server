@@ -9,7 +9,7 @@ MAP_EXPR
   MAP_BINDING
     EXPR_PHRASE
       IDENT_EXPR
-        IDENTIFIER
+        NAME_REF
           IDENT "foo"
     WHITESPACE " "
     COLON_EQ ":="
@@ -21,14 +21,14 @@ MAP_EXPR
         MAP_BINDING
           EXPR_PHRASE
             IDENT_EXPR
-              IDENTIFIER
+              NAME_REF
                 IDENT "bar"
           WHITESPACE " "
           COLON_EQ ":="
           WHITESPACE " "
           EXPR_PHRASE
             IDENT_EXPR
-              IDENTIFIER
+              NAME_REF
                 IDENT "1"
         WHITESPACE " "
         CURLY_PIPE "}|"

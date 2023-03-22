@@ -6,7 +6,7 @@ use crate::SyntaxKind::{self, IDENT};
 use crate::T;
 
 use super::sorts::sort;
-use super::{identifier, LIT_SET};
+use super::{name, name_ref, LIT_SET};
 
 // test(pat) simple_ident_pat
 // foopat
@@ -106,7 +106,7 @@ fn named_pat(p: &mut Parser) {
     p.bump(T!['(']);
 
     if p.at(IDENT) {
-        identifier(p);
+        name(p);
         if p.at(T![as]) {
             p.bump(T![as]);
         } else if p.at(T![bind]) {
@@ -131,7 +131,7 @@ fn named_pat(p: &mut Parser) {
         } else {
             p.bump(T![bind]);
         }
-        identifier(p);
+        name(p);
         if !pat(p) {
             // test_err(pat) named_bind_pat_no_pat
             // (bind foo )
@@ -195,7 +195,7 @@ fn val_of_pat(p: &mut Parser) {
         // (val-of )
         p.error("expected an identifier as part of the `val-of` pattern");
     } else {
-        identifier(p);
+        name_ref(p);
     }
 
     p.expect(T![')']);

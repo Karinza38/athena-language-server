@@ -8,14 +8,14 @@ INDUCT_DED
   WHITESPACE " "
   EXPR_PHRASE
     IDENT_EXPR
-      IDENTIFIER
+      NAME_REF
         IDENT "foo"
   WHITESPACE " "
   L_CURLY "{"
   WHITESPACE " "
   RESTRICTED_MATCH_DED
     IDENT_PAT
-      IDENTIFIER
+      NAME
         IDENT "a"
     WHITESPACE " "
     FAT_ARROW "=>"
@@ -24,12 +24,12 @@ INDUCT_DED
       L_PAREN "("
       BANG "!"
       IDENT_EXPR
-        IDENTIFIER
+        NAME_REF
           IDENT "claim"
       WHITESPACE " "
       EXPR_PHRASE
         IDENT_EXPR
-          IDENTIFIER
+          NAME_REF
             IDENT "a"
       R_PAREN ")"
   WHITESPACE " "

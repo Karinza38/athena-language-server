@@ -3,8 +3,8 @@ use la_arena::Idx;
 use crate::name::Name;
 
 #[derive(PartialEq, Eq, Debug, Hash, Clone)]
-pub struct Identifier {
+pub struct NameRef {
     pub name: Name,
 }
 
-pub type IdentifierId = Idx<Identifier>;
+pub type NameRefId = Idx<NameRef>;

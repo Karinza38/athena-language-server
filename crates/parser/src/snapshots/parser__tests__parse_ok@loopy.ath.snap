@@ -20,7 +20,7 @@ SOURCE_FILE
     MODULE_DIR
       MODULE_KW "module"
       WHITESPACE " "
-      IDENTIFIER
+      NAME
         IDENT "Factorial"
       WHITESPACE " "
       L_CURLY "{"
@@ -31,21 +31,21 @@ SOURCE_FILE
         INFIX_DECLARE_DIR
           DECLARE_KW "declare"
           WHITESPACE " "
-          IDENTIFIER
+          NAME
             IDENT "factorial"
           COLON ":"
           WHITESPACE " "
           FUNC_SORTS
             L_BRACK "["
             IDENT_SORT
-              IDENTIFIER
+              NAME_REF
                 IDENT "N"
             R_BRACK "]"
           WHITESPACE " "
           THIN_ARROW "->"
           WHITESPACE " "
           IDENT_SORT
-            IDENTIFIER
+            NAME_REF
               IDENT "N"
           WHITESPACE " "
           DECLARE_ATTRS
@@ -53,7 +53,7 @@ SOURCE_FILE
             INPUT_TRANSFORM_DECL
               L_BRACK "["
               IDENT_EXPR
-                IDENTIFIER
+                NAME_REF
                   IDENT "int->nat"
               R_BRACK "]"
             R_BRACK "]"
@@ -64,12 +64,12 @@ SOURCE_FILE
             L_PAREN "("
             EXPR_PHRASE
               IDENT_EXPR
-                IDENTIFIER
+                NAME_REF
                   IDENT "transform-output"
             WHITESPACE " "
             EXPR_PHRASE
               IDENT_EXPR
-                IDENTIFIER
+                NAME_REF
                   IDENT "eval"
             WHITESPACE " "
             EXPR_PHRASE
@@ -77,7 +77,7 @@ SOURCE_FILE
                 L_BRACK "["
                 EXPR_PHRASE
                   IDENT_EXPR
-                    IDENTIFIER
+                    NAME_REF
                       IDENT "nat->int"
                 R_BRACK "]"
             R_PAREN ")"
@@ -86,7 +86,7 @@ SOURCE_FILE
         INFIX_ASSERT_DIR
           ASSERT_KW "assert"
           WHITESPACE " "
-          IDENTIFIER
+          NAME
             IDENT "f_zero"
           WHITESPACE " "
           COLON_EQ ":="
@@ -95,57 +95,57 @@ SOURCE_FILE
             L_PAREN "("
             EXPR_PHRASE
               IDENT_EXPR
-                IDENTIFIER
+                NAME_REF
                   IDENT "forall"
             WHITESPACE " "
             EXPR_PHRASE
               IDENT_EXPR
-                IDENTIFIER
+                NAME_REF
                   IDENT "x"
             WHITESPACE " "
             EXPR_PHRASE
               IDENT_EXPR
-                IDENTIFIER
+                NAME_REF
                   IDENT "."
             WHITESPACE " "
             EXPR_PHRASE
               IDENT_EXPR
-                IDENTIFIER
+                NAME_REF
                   IDENT "x"
             WHITESPACE " "
             EXPR_PHRASE
               IDENT_EXPR
-                IDENTIFIER
+                NAME_REF
                   IDENT "="
             WHITESPACE " "
             EXPR_PHRASE
               IDENT_EXPR
-                IDENTIFIER
+                NAME_REF
                   IDENT "zero"
             WHITESPACE " "
             EXPR_PHRASE
               IDENT_EXPR
-                IDENTIFIER
+                NAME_REF
                   IDENT "==>"
             WHITESPACE " "
             EXPR_PHRASE
               IDENT_EXPR
-                IDENTIFIER
+                NAME_REF
                   IDENT "factorial"
             WHITESPACE " "
             EXPR_PHRASE
               IDENT_EXPR
-                IDENTIFIER
+                NAME_REF
                   IDENT "x"
             WHITESPACE " "
             EXPR_PHRASE
               IDENT_EXPR
-                IDENTIFIER
+                NAME_REF
                   IDENT "="
             WHITESPACE " "
             EXPR_PHRASE
               IDENT_EXPR
-                IDENTIFIER
+                NAME_REF
                   IDENT "one"
             R_PAREN ")"
       WHITESPACE "\n\n    "
@@ -153,7 +153,7 @@ SOURCE_FILE
         INFIX_ASSERT_DIR
           ASSERT_KW "assert"
           WHITESPACE " "
-          IDENTIFIER
+          NAME
             IDENT "f_x"
           WHITESPACE " "
           COLON_EQ ":="
@@ -162,37 +162,37 @@ SOURCE_FILE
             L_PAREN "("
             EXPR_PHRASE
               IDENT_EXPR
-                IDENTIFIER
+                NAME_REF
                   IDENT "forall"
             WHITESPACE " "
             EXPR_PHRASE
               IDENT_EXPR
-                IDENTIFIER
+                NAME_REF
                   IDENT "x"
             WHITESPACE " "
             EXPR_PHRASE
               IDENT_EXPR
-                IDENTIFIER
+                NAME_REF
                   IDENT "."
             WHITESPACE " "
             EXPR_PHRASE
               IDENT_EXPR
-                IDENTIFIER
+                NAME_REF
                   IDENT "one"
             WHITESPACE " "
             EXPR_PHRASE
               IDENT_EXPR
-                IDENTIFIER
+                NAME_REF
                   IDENT "<"
             WHITESPACE " "
             EXPR_PHRASE
               IDENT_EXPR
-                IDENTIFIER
+                NAME_REF
                   IDENT "x"
             WHITESPACE " "
             EXPR_PHRASE
               IDENT_EXPR
-                IDENTIFIER
+                NAME_REF
                   IDENT "==>"
             WHITESPACE " "
             EXPR_PHRASE
@@ -200,18 +200,18 @@ SOURCE_FILE
                 L_PAREN "("
                 EXPR_PHRASE
                   IDENT_EXPR
-                    IDENTIFIER
+                    NAME_REF
                       IDENT "factorial"
                 WHITESPACE " "
                 EXPR_PHRASE
                   IDENT_EXPR
-                    IDENTIFIER
+                    NAME_REF
                       IDENT "x"
                 R_PAREN ")"
             WHITESPACE " "
             EXPR_PHRASE
               IDENT_EXPR
-                IDENTIFIER
+                NAME_REF
                   IDENT "="
             WHITESPACE " "
             EXPR_PHRASE
@@ -219,12 +219,12 @@ SOURCE_FILE
                 L_PAREN "("
                 EXPR_PHRASE
                   IDENT_EXPR
-                    IDENTIFIER
+                    NAME_REF
                       IDENT "x"
                 WHITESPACE " "
                 EXPR_PHRASE
                   IDENT_EXPR
-                    IDENTIFIER
+                    NAME_REF
                       IDENT "*"
                 WHITESPACE " "
                 EXPR_PHRASE
@@ -232,7 +232,7 @@ SOURCE_FILE
                     L_PAREN "("
                     EXPR_PHRASE
                       IDENT_EXPR
-                        IDENTIFIER
+                        NAME_REF
                           IDENT "factorial"
                     WHITESPACE " "
                     EXPR_PHRASE
@@ -240,17 +240,17 @@ SOURCE_FILE
                         L_PAREN "("
                         EXPR_PHRASE
                           IDENT_EXPR
-                            IDENTIFIER
+                            NAME_REF
                               IDENT "x"
                         WHITESPACE " "
                         EXPR_PHRASE
                           IDENT_EXPR
-                            IDENTIFIER
+                            NAME_REF
                               IDENT "-"
                         WHITESPACE " "
                         EXPR_PHRASE
                           IDENT_EXPR
-                            IDENTIFIER
+                            NAME_REF
                               IDENT "one"
                         R_PAREN ")"
                     R_PAREN ")"
@@ -261,7 +261,7 @@ SOURCE_FILE
         INFIX_ASSERT_DIR
           ASSERT_KW "assert"
           WHITESPACE " "
-          IDENTIFIER
+          NAME
             IDENT "f_one"
           WHITESPACE " "
           COLON_EQ ":="
@@ -270,37 +270,37 @@ SOURCE_FILE
             L_PAREN "("
             EXPR_PHRASE
               IDENT_EXPR
-                IDENTIFIER
+                NAME_REF
                   IDENT "forall"
             WHITESPACE " "
             EXPR_PHRASE
               IDENT_EXPR
-                IDENTIFIER
+                NAME_REF
                   IDENT "x"
             WHITESPACE " "
             EXPR_PHRASE
               IDENT_EXPR
-                IDENTIFIER
+                NAME_REF
                   IDENT "."
             WHITESPACE " "
             EXPR_PHRASE
               IDENT_EXPR
-                IDENTIFIER
+                NAME_REF
                   IDENT "one"
             WHITESPACE " "
             EXPR_PHRASE
               IDENT_EXPR
-                IDENTIFIER
+                NAME_REF
                   IDENT "="
             WHITESPACE " "
             EXPR_PHRASE
               IDENT_EXPR
-                IDENTIFIER
+                NAME_REF
                   IDENT "x"
             WHITESPACE " "
             EXPR_PHRASE
               IDENT_EXPR
-                IDENTIFIER
+                NAME_REF
                   IDENT "==>"
             WHITESPACE " "
             EXPR_PHRASE
@@ -308,23 +308,23 @@ SOURCE_FILE
                 L_PAREN "("
                 EXPR_PHRASE
                   IDENT_EXPR
-                    IDENTIFIER
+                    NAME_REF
                       IDENT "factorial"
                 WHITESPACE " "
                 EXPR_PHRASE
                   IDENT_EXPR
-                    IDENTIFIER
+                    NAME_REF
                       IDENT "x"
                 R_PAREN ")"
             WHITESPACE " "
             EXPR_PHRASE
               IDENT_EXPR
-                IDENTIFIER
+                NAME_REF
                   IDENT "="
             WHITESPACE " "
             EXPR_PHRASE
               IDENT_EXPR
-                IDENTIFIER
+                NAME_REF
                   IDENT "one"
             R_PAREN ")"
       WHITESPACE "\n\n    "
@@ -334,7 +334,7 @@ SOURCE_FILE
             L_PAREN "("
             EXPR_PHRASE
               IDENT_EXPR
-                IDENTIFIER
+                NAME_REF
                   IDENT "eval"
             WHITESPACE " "
             EXPR_PHRASE
@@ -342,12 +342,12 @@ SOURCE_FILE
                 L_PAREN "("
                 EXPR_PHRASE
                   IDENT_EXPR
-                    IDENTIFIER
+                    NAME_REF
                       IDENT "factorial"
                 WHITESPACE " "
                 EXPR_PHRASE
                   IDENT_EXPR
-                    IDENTIFIER
+                    NAME_REF
                       IDENT "4"
                 R_PAREN ")"
             R_PAREN ")"
@@ -358,7 +358,7 @@ SOURCE_FILE
             L_PAREN "("
             EXPR_PHRASE
               IDENT_EXPR
-                IDENTIFIER
+                NAME_REF
                   IDENT "eval"
             WHITESPACE " "
             EXPR_PHRASE
@@ -366,12 +366,12 @@ SOURCE_FILE
                 L_PAREN "("
                 EXPR_PHRASE
                   IDENT_EXPR
-                    IDENTIFIER
+                    NAME_REF
                       IDENT "factorial"
                 WHITESPACE " "
                 EXPR_PHRASE
                   IDENT_EXPR
-                    IDENTIFIER
+                    NAME_REF
                       IDENT "5"
                 R_PAREN ")"
             R_PAREN ")"
@@ -380,7 +380,7 @@ SOURCE_FILE
         INFIX_DEFINE_DIR
           DEFINE_KW "define"
           WHITESPACE " "
-          IDENTIFIER
+          NAME
             IDENT "nothing-less-than-zero"
           WHITESPACE " "
           COLON_EQ ":="
@@ -390,37 +390,37 @@ SOURCE_FILE
               L_PAREN "("
               EXPR_PHRASE
                 IDENT_EXPR
-                  IDENTIFIER
+                  NAME_REF
                     IDENT "forall"
               WHITESPACE " "
               EXPR_PHRASE
                 IDENT_EXPR
-                  IDENTIFIER
+                  NAME_REF
                     IDENT "x"
               WHITESPACE " "
               EXPR_PHRASE
                 IDENT_EXPR
-                  IDENTIFIER
+                  NAME_REF
                     IDENT "."
               WHITESPACE " "
               EXPR_PHRASE
                 IDENT_EXPR
-                  IDENTIFIER
+                  NAME_REF
                     IDENT "~"
               WHITESPACE " "
               EXPR_PHRASE
                 IDENT_EXPR
-                  IDENTIFIER
+                  NAME_REF
                     IDENT "x"
               WHITESPACE " "
               EXPR_PHRASE
                 IDENT_EXPR
-                  IDENTIFIER
+                  NAME_REF
                     IDENT "<"
               WHITESPACE " "
               EXPR_PHRASE
                 IDENT_EXPR
-                  IDENTIFIER
+                  NAME_REF
                     IDENT "zero"
               R_PAREN ")"
       WHITESPACE "\n    \n    "
@@ -428,7 +428,7 @@ SOURCE_FILE
         INFIX_DEFINE_DIR
           DEFINE_KW "define"
           WHITESPACE " "
-          IDENTIFIER
+          NAME
             IDENT "f_x_less_than"
           WHITESPACE " "
           COLON_EQ ":="
@@ -438,22 +438,22 @@ SOURCE_FILE
               L_PAREN "("
               EXPR_PHRASE
                 IDENT_EXPR
-                  IDENTIFIER
+                  NAME_REF
                     IDENT "forall"
               WHITESPACE " "
               EXPR_PHRASE
                 IDENT_EXPR
-                  IDENTIFIER
+                  NAME_REF
                     IDENT "x"
               WHITESPACE " "
               EXPR_PHRASE
                 IDENT_EXPR
-                  IDENTIFIER
+                  NAME_REF
                     IDENT "."
               WHITESPACE " "
               EXPR_PHRASE
                 IDENT_EXPR
-                  IDENTIFIER
+                  NAME_REF
                     IDENT "factorial"
               WHITESPACE " "
               EXPR_PHRASE
@@ -461,33 +461,33 @@ SOURCE_FILE
                   L_PAREN "("
                   EXPR_PHRASE
                     IDENT_EXPR
-                      IDENTIFIER
+                      NAME_REF
                         IDENT "x"
                   WHITESPACE " "
                   EXPR_PHRASE
                     IDENT_EXPR
-                      IDENTIFIER
+                      NAME_REF
                         IDENT "-"
                   WHITESPACE " "
                   EXPR_PHRASE
                     IDENT_EXPR
-                      IDENTIFIER
+                      NAME_REF
                         IDENT "one"
                   R_PAREN ")"
               WHITESPACE " "
               EXPR_PHRASE
                 IDENT_EXPR
-                  IDENTIFIER
+                  NAME_REF
                     IDENT "<="
               WHITESPACE " "
               EXPR_PHRASE
                 IDENT_EXPR
-                  IDENTIFIER
+                  NAME_REF
                     IDENT "factorial"
               WHITESPACE " "
               EXPR_PHRASE
                 IDENT_EXPR
-                  IDENTIFIER
+                  NAME_REF
                     IDENT "x"
               WHITESPACE " "
               R_PAREN ")"
@@ -496,7 +496,7 @@ SOURCE_FILE
         INFIX_DEFINE_DIR
           DEFINE_KW "define"
           WHITESPACE " "
-          IDENTIFIER
+          NAME
             IDENT "lte-def"
           WHITESPACE " "
           COLON_EQ ":="
@@ -506,22 +506,22 @@ SOURCE_FILE
               L_PAREN "("
               EXPR_PHRASE
                 IDENT_EXPR
-                  IDENTIFIER
+                  NAME_REF
                     IDENT "forall"
               WHITESPACE " "
               EXPR_PHRASE
                 IDENT_EXPR
-                  IDENTIFIER
+                  NAME_REF
                     IDENT "x"
               WHITESPACE " "
               EXPR_PHRASE
                 IDENT_EXPR
-                  IDENTIFIER
+                  NAME_REF
                     IDENT "y"
               WHITESPACE " "
               EXPR_PHRASE
                 IDENT_EXPR
-                  IDENTIFIER
+                  NAME_REF
                     IDENT "."
               WHITESPACE " "
               EXPR_PHRASE
@@ -529,57 +529,57 @@ SOURCE_FILE
                   L_PAREN "("
                   EXPR_PHRASE
                     IDENT_EXPR
-                      IDENTIFIER
+                      NAME_REF
                         IDENT "x"
                   WHITESPACE " "
                   EXPR_PHRASE
                     IDENT_EXPR
-                      IDENTIFIER
+                      NAME_REF
                         IDENT "<="
                   WHITESPACE " "
                   EXPR_PHRASE
                     IDENT_EXPR
-                      IDENTIFIER
+                      NAME_REF
                         IDENT "y"
                   WHITESPACE " "
                   EXPR_PHRASE
                     IDENT_EXPR
-                      IDENTIFIER
+                      NAME_REF
                         IDENT "<==>"
                   WHITESPACE " "
                   EXPR_PHRASE
                     IDENT_EXPR
-                      IDENTIFIER
+                      NAME_REF
                         IDENT "x"
                   WHITESPACE " "
                   EXPR_PHRASE
                     IDENT_EXPR
-                      IDENTIFIER
+                      NAME_REF
                         IDENT "<"
                   WHITESPACE " "
                   EXPR_PHRASE
                     IDENT_EXPR
-                      IDENTIFIER
+                      NAME_REF
                         IDENT "y"
                   WHITESPACE " "
                   EXPR_PHRASE
                     IDENT_EXPR
-                      IDENTIFIER
+                      NAME_REF
                         IDENT "|"
                   WHITESPACE " "
                   EXPR_PHRASE
                     IDENT_EXPR
-                      IDENTIFIER
+                      NAME_REF
                         IDENT "x"
                   WHITESPACE " "
                   EXPR_PHRASE
                     IDENT_EXPR
-                      IDENTIFIER
+                      NAME_REF
                         IDENT "="
                   WHITESPACE " "
                   EXPR_PHRASE
                     IDENT_EXPR
-                      IDENTIFIER
+                      NAME_REF
                         IDENT "y"
                   R_PAREN ")"
               R_PAREN ")"
@@ -588,14 +588,14 @@ SOURCE_FILE
         INFIX_DEFINE_DIR
           DEFINE_KW "define"
           WHITESPACE " "
-          IDENTIFIER
+          NAME
             IDENT "foo"
           WHITESPACE " "
           COLON_EQ ":="
           WHITESPACE " "
           EXPR_PHRASE
             IDENT_EXPR
-              IDENTIFIER
+              NAME_REF
                 IDENT "bar"
       WHITESPACE "\n    "
       PHRASE_STMT
@@ -605,14 +605,14 @@ SOURCE_FILE
             WHITESPACE " "
             EXPR_PHRASE
               IDENT_EXPR
-                IDENTIFIER
+                NAME_REF
                   IDENT "f_x_less_than"
             WHITESPACE " "
             L_CURLY "{"
             WHITESPACE "\n        "
             RESTRICTED_MATCH_DED
               IDENT_PAT
-                IDENTIFIER
+                NAME
                   IDENT "zero"
               WHITESPACE " "
               FAT_ARROW "=>"
@@ -620,7 +620,7 @@ SOURCE_FILE
               CONCLUDE_DED
                 CONCLUDE_KW "conclude"
                 WHITESPACE " "
-                IDENTIFIER
+                NAME
                   IDENT "base_case"
                 WHITESPACE " "
                 COLON_EQ ":="
@@ -629,7 +629,7 @@ SOURCE_FILE
                   L_PAREN "("
                   EXPR_PHRASE
                     IDENT_EXPR
-                      IDENTIFIER
+                      NAME_REF
                         IDENT "factorial"
                   WHITESPACE " "
                   EXPR_PHRASE
@@ -637,33 +637,33 @@ SOURCE_FILE
                       L_PAREN "("
                       EXPR_PHRASE
                         IDENT_EXPR
-                          IDENTIFIER
+                          NAME_REF
                             IDENT "zero"
                       WHITESPACE " "
                       EXPR_PHRASE
                         IDENT_EXPR
-                          IDENTIFIER
+                          NAME_REF
                             IDENT "-"
                       WHITESPACE " "
                       EXPR_PHRASE
                         IDENT_EXPR
-                          IDENTIFIER
+                          NAME_REF
                             IDENT "one"
                       R_PAREN ")"
                   WHITESPACE " "
                   EXPR_PHRASE
                     IDENT_EXPR
-                      IDENTIFIER
+                      NAME_REF
                         IDENT "<="
                   WHITESPACE " "
                   EXPR_PHRASE
                     IDENT_EXPR
-                      IDENTIFIER
+                      NAME_REF
                         IDENT "factorial"
                   WHITESPACE " "
                   EXPR_PHRASE
                     IDENT_EXPR
-                      IDENTIFIER
+                      NAME_REF
                         IDENT "zero"
                   R_PAREN ")"
                 WHITESPACE "\n                    "
@@ -672,12 +672,12 @@ SOURCE_FILE
                     L_PAREN "("
                     BANG "!"
                     IDENT_EXPR
-                      IDENTIFIER
+                      NAME_REF
                         IDENT "force"
                     WHITESPACE " "
                     EXPR_PHRASE
                       IDENT_EXPR
-                        IDENTIFIER
+                        NAME_REF
                           IDENT "base_case"
                     R_PAREN ")"
             WHITESPACE "\n                        \n                    \n        "
@@ -686,7 +686,7 @@ SOURCE_FILE
               WHITESPACE " "
               NAMED_PAT
                 L_PAREN "("
-                IDENTIFIER
+                NAME
                   IDENT "m"
                 WHITESPACE " "
                 AS_KW "as"
@@ -694,11 +694,11 @@ SOURCE_FILE
                 COMPOUND_PAT
                   L_PAREN "("
                   IDENT_PAT
-                    IDENTIFIER
+                    NAME
                       IDENT "S"
                   WHITESPACE " "
                   IDENT_PAT
-                    IDENTIFIER
+                    NAME
                       IDENT "n"
                   R_PAREN ")"
                 R_PAREN ")"
@@ -708,7 +708,7 @@ SOURCE_FILE
               CONCLUDE_DED
                 CONCLUDE_KW "conclude"
                 WHITESPACE " "
-                IDENTIFIER
+                NAME
                   IDENT "inductive_step"
                 WHITESPACE " "
                 COLON_EQ ":="
@@ -720,7 +720,7 @@ SOURCE_FILE
                       L_PAREN "("
                       EXPR_PHRASE
                         IDENT_EXPR
-                          IDENTIFIER
+                          NAME_REF
                             IDENT "factorial"
                       WHITESPACE " "
                       EXPR_PHRASE
@@ -728,24 +728,24 @@ SOURCE_FILE
                           L_PAREN "("
                           EXPR_PHRASE
                             IDENT_EXPR
-                              IDENTIFIER
+                              NAME_REF
                                 IDENT "m"
                           WHITESPACE " "
                           EXPR_PHRASE
                             IDENT_EXPR
-                              IDENTIFIER
+                              NAME_REF
                                 IDENT "-"
                           WHITESPACE " "
                           EXPR_PHRASE
                             IDENT_EXPR
-                              IDENTIFIER
+                              NAME_REF
                                 IDENT "one"
                           R_PAREN ")"
                       R_PAREN ")"
                   WHITESPACE " "
                   EXPR_PHRASE
                     IDENT_EXPR
-                      IDENTIFIER
+                      NAME_REF
                         IDENT "<="
                   WHITESPACE " "
                   EXPR_PHRASE
@@ -753,12 +753,12 @@ SOURCE_FILE
                       L_PAREN "("
                       EXPR_PHRASE
                         IDENT_EXPR
-                          IDENTIFIER
+                          NAME_REF
                             IDENT "factorial"
                       WHITESPACE " "
                       EXPR_PHRASE
                         IDENT_EXPR
-                          IDENTIFIER
+                          NAME_REF
                             IDENT "m"
                       R_PAREN ")"
                   R_PAREN ")"
@@ -768,12 +768,12 @@ SOURCE_FILE
                     L_PAREN "("
                     BANG "!"
                     IDENT_EXPR
-                      IDENTIFIER
+                      NAME_REF
                         IDENT "force"
                     WHITESPACE " "
                     EXPR_PHRASE
                       IDENT_EXPR
-                        IDENTIFIER
+                        NAME_REF
                           IDENT "inductive_step"
                     R_PAREN ")"
             WHITESPACE "\n    "

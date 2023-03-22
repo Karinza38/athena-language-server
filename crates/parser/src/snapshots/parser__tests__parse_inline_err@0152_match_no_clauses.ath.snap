@@ -8,7 +8,7 @@ INFIX_MATCH_EXPR
   WHITESPACE " "
   EXPR_PHRASE
     IDENT_EXPR
-      IDENTIFIER
+      NAME_REF
         IDENT "foo"
   WHITESPACE "\n"
 error 9: Expected to find clauses for the match

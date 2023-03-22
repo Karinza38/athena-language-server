@@ -7,7 +7,7 @@ MAKE_VECTOR_EXPR
   MAKE_VECTOR_KW "make-vector"
   WHITESPACE " "
   IDENT_EXPR
-    IDENTIFIER
+    NAME_REF
       IDENT "foo"
   WHITESPACE "\n"
 error 15: Expected to find a value (phrase) for the make_vector expression

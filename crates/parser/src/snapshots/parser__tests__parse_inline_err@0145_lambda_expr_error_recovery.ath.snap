@@ -7,19 +7,19 @@ LAMBDA_EXPR
   LAMBDA_KW "lambda"
   WHITESPACE " "
   L_PAREN "("
-  IDENTIFIER
+  NAME
     IDENT "x"
   WHITESPACE " "
-  IDENTIFIER
+  NAME
     IDENT "y"
   WHITESPACE " "
-  IDENTIFIER
+  NAME
     IDENT "z"
   WHITESPACE " "
   ERROR
     DOMAIN_KW "domain"
   WHITESPACE " "
-  IDENTIFIER
+  NAME
     IDENT "D"
   R_PAREN ")"
   WHITESPACE "\n"

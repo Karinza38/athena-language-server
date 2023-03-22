@@ -8,7 +8,7 @@ ASSUME_DED
   WHITESPACE " "
   EXPR_PHRASE
     IDENT_EXPR
-      IDENTIFIER
+      NAME_REF
         IDENT "a"
   WHITESPACE "\n"
 error 8: expected body for assumption

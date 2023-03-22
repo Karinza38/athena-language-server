@@ -13,7 +13,7 @@ SOURCE_FILE
           WHITESPACE " "
           EXPR_PHRASE
             IDENT_EXPR
-              IDENTIFIER
+              NAME_REF
                 IDENT "foo"
           WHITESPACE " "
           L_CURLY "{"
@@ -33,13 +33,13 @@ SOURCE_FILE
               R_PAREN ")"
               WHITESPACE " "
               IDENT_EXPR
-                IDENTIFIER
+                NAME_REF
                   IDENT "1"
           R_CURLY "}"
         WHITESPACE " "
         EXPR_PHRASE
           IDENT_EXPR
-            IDENTIFIER
+            NAME_REF
               IDENT "0"
         R_PAREN ")"
 

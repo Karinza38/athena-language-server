@@ -11,11 +11,11 @@ TERM_VAR_EXPR
   COMPOUND_SORT
     L_PAREN "("
     IDENT_SORT
-      IDENTIFIER
+      NAME_REF
         IDENT "List"
     WHITESPACE " "
     IDENT_SORT
-      IDENTIFIER
+      NAME_REF
         IDENT "Int"
     R_PAREN ")"
   WHITESPACE "\n"

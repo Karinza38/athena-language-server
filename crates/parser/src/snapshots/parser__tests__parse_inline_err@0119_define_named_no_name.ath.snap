@@ -15,7 +15,7 @@ ERROR
       LIST_PAT
         L_BRACK "["
         IDENT_PAT
-          IDENTIFIER
+          NAME
             IDENT "a"
         R_BRACK "]"
       R_PAREN ")"
@@ -24,7 +24,7 @@ ERROR
     WHITESPACE " "
     EXPR_PHRASE
       IDENT_EXPR
-        IDENTIFIER
+        NAME_REF
           IDENT "true"
   R_PAREN ")"
   WHITESPACE "\n"

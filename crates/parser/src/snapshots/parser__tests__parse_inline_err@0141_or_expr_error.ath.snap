@@ -9,7 +9,7 @@ OR_EXPR
   WHITESPACE " "
   EXPR_PHRASE
     IDENT_EXPR
-      IDENTIFIER
+      NAME_REF
         IDENT "bar"
   WHITESPACE " "
   ERROR
@@ -17,7 +17,7 @@ OR_EXPR
   WHITESPACE " "
   EXPR_PHRASE
     IDENT_EXPR
-      IDENTIFIER
+      NAME_REF
         IDENT "D"
   R_PAREN ")"
   WHITESPACE "\n"

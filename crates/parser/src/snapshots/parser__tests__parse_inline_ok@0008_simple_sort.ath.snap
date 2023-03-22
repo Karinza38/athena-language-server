@@ -9,7 +9,7 @@ TERM_VAR_EXPR
   COLON ":"
   WHITESPACE " "
   IDENT_SORT
-    IDENTIFIER
+    NAME_REF
       IDENT "Int"
   WHITESPACE "\n"
 

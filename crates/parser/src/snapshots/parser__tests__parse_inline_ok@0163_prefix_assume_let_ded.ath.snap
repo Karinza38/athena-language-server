@@ -10,12 +10,12 @@ PREFIX_ASSUME_LET_DED
   PREFIX_BINDING
     L_PAREN "("
     IDENT_PAT
-      IDENTIFIER
+      NAME
         IDENT "x"
     WHITESPACE " "
     EXPR_PHRASE
       IDENT_EXPR
-        IDENTIFIER
+        NAME_REF
           IDENT "A"
     R_PAREN ")"
   WHITESPACE " "
@@ -23,12 +23,12 @@ PREFIX_ASSUME_LET_DED
     L_PAREN "("
     BANG "!"
     IDENT_EXPR
-      IDENTIFIER
+      NAME_REF
         IDENT "claim"
     WHITESPACE " "
     EXPR_PHRASE
       IDENT_EXPR
-        IDENTIFIER
+        NAME_REF
           IDENT "x"
     R_PAREN ")"
   R_PAREN ")"

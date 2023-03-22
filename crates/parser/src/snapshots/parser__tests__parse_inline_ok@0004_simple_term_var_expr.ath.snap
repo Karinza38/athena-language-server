@@ -8,7 +8,7 @@ TERM_VAR_EXPR
   IDENT "foo"
   COLON ":"
   IDENT_SORT
-    IDENTIFIER
+    NAME_REF
       IDENT "bar"
   WHITESPACE "\n"
 

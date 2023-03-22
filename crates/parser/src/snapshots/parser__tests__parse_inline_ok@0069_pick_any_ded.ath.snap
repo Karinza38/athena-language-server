@@ -7,25 +7,25 @@ PICK_ANY_DED
   PICK_ANY_KW "pick-any"
   WHITESPACE " "
   TYPED_PARAM
-    IDENTIFIER
+    NAME
       IDENT "a"
     WHITESPACE " "
     COLON ":"
     WHITESPACE " "
     IDENT_SORT
-      IDENTIFIER
+      NAME_REF
         IDENT "Int"
   WHITESPACE " "
   BANG_METHOD_CALL_DED
     L_PAREN "("
     BANG "!"
     IDENT_EXPR
-      IDENTIFIER
+      NAME_REF
         IDENT "claim"
     WHITESPACE " "
     EXPR_PHRASE
       IDENT_EXPR
-        IDENTIFIER
+        NAME_REF
           IDENT "A"
     R_PAREN ")"
   WHITESPACE "\n"

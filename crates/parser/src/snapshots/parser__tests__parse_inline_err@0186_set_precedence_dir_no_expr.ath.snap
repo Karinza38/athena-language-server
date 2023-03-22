@@ -6,7 +6,7 @@ input_file: crates/parser/test_data/parser/inline/err/dir/0186_set_precedence_di
 SET_PRECEDENCE_DIR
   SET_PRECEDENCE_KW "set-precedence"
   WHITESPACE " "
-  IDENTIFIER
+  NAME_REF
     IDENT "foo"
   WHITESPACE "\n"
 error 18: expected expression to set precedence to

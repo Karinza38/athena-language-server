@@ -122,7 +122,8 @@ pub enum SyntaxKind {
     WHITESPACE,
     COMMENT,
     SOURCE_FILE,
-    IDENTIFIER,
+    NAME,
+    NAME_REF,
     LITERAL,
     META_IDENT,
     UNIT,
@@ -130,6 +131,9 @@ pub enum SyntaxKind {
     IDENT_SORT,
     VAR_SORT,
     COMPOUND_SORT,
+    LIMITED_COMPOUND_SORT,
+    IDENT_SORT_DECL,
+    COMPOUND_SORT_DECL,
     EXPR_PHRASE,
     DED_PHRASE,
     IDENT_EXPR,
@@ -234,7 +238,6 @@ pub enum SyntaxKind {
     WILDCARD,
     FUNC_SORTS,
     SORT_VARS_DECL,
-    COMPOUND_SORT_DECL,
     PREFIX_DEFINE,
     PREFIX_DEFINE_BLOCKS,
     PREFIX_DEFINE_BLOCK,
@@ -275,7 +278,7 @@ pub enum SyntaxKind {
     STRUCTURE_NAME_DEF,
     CONSTANT_CONSTRUCTOR,
     COMPOUND_CONSTRUCTOR,
-    MAYBE_TAGGED_SORT_DECL,
+    MAYBE_TAGGED_FIELD_SORT,
     STRUCTURE_DEF,
     DATATYPE_STMT,
     DATATYPES_STMT,
@@ -409,7 +412,8 @@ impl SyntaxKind {
         matches!(
             self,
             SOURCE_FILE
-                | IDENTIFIER
+                | NAME
+                | NAME_REF
                 | LITERAL
                 | META_IDENT
                 | UNIT
@@ -417,6 +421,9 @@ impl SyntaxKind {
                 | IDENT_SORT
                 | VAR_SORT
                 | COMPOUND_SORT
+                | LIMITED_COMPOUND_SORT
+                | IDENT_SORT_DECL
+                | COMPOUND_SORT_DECL
                 | EXPR_PHRASE
                 | DED_PHRASE
                 | IDENT_EXPR
@@ -521,7 +528,6 @@ impl SyntaxKind {
                 | WILDCARD
                 | FUNC_SORTS
                 | SORT_VARS_DECL
-                | COMPOUND_SORT_DECL
                 | PREFIX_DEFINE
                 | PREFIX_DEFINE_BLOCKS
                 | PREFIX_DEFINE_BLOCK
@@ -562,7 +568,7 @@ impl SyntaxKind {
                 | STRUCTURE_NAME_DEF
                 | CONSTANT_CONSTRUCTOR
                 | COMPOUND_CONSTRUCTOR
-                | MAYBE_TAGGED_SORT_DECL
+                | MAYBE_TAGGED_FIELD_SORT
                 | STRUCTURE_DEF
                 | DATATYPE_STMT
                 | DATATYPES_STMT

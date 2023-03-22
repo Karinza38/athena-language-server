@@ -8,35 +8,35 @@ DATATYPE_STMT
   WHITESPACE " "
   STRUCTURE_DEF
     STRUCTURE_NAME_DEF
-      IDENT_SORT
-        IDENTIFIER
+      IDENT_SORT_DECL
+        NAME
           IDENT "Foo"
     WHITESPACE " "
     COLON_EQ ":="
     WHITESPACE " "
     CONSTANT_CONSTRUCTOR
-      IDENTIFIER
+      NAME
         IDENT "bar"
     WHITESPACE " "
     PIPE "|"
     WHITESPACE " "
     CONSTANT_CONSTRUCTOR
-      IDENTIFIER
+      NAME
         IDENT "baz"
     WHITESPACE " "
     PIPE "|"
     WHITESPACE " "
     COMPOUND_CONSTRUCTOR
       L_PAREN "("
-      IDENTIFIER
+      NAME
         IDENT "quz"
       WHITESPACE " "
-      MAYBE_TAGGED_SORT_DECL
-        IDENTIFIER
+      MAYBE_TAGGED_FIELD_SORT
+        NAME
           IDENT "num"
         COLON ":"
         IDENT_SORT
-          IDENTIFIER
+          NAME_REF
             IDENT "Int"
       R_PAREN ")"
   WHITESPACE "\n"

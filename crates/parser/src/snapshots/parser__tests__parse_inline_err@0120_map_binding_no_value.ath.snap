@@ -9,7 +9,7 @@ MAP_EXPR
   MAP_BINDING
     EXPR_PHRASE
       IDENT_EXPR
-        IDENTIFIER
+        NAME_REF
           IDENT "foo"
     WHITESPACE " "
     COLON_EQ ":="

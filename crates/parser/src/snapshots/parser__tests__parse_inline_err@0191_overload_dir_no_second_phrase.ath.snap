@@ -8,7 +8,7 @@ OVERLOAD_SINGLE
   WHITESPACE " "
   EXPR_PHRASE
     IDENT_EXPR
-      IDENTIFIER
+      NAME_REF
         IDENT "foo"
   WHITESPACE "\n"
 error 12: expected phrase to overload to

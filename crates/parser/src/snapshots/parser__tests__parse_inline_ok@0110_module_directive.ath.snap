@@ -6,7 +6,7 @@ input_file: crates/parser/test_data/parser/inline/ok/dir/0110_module_directive.a
 MODULE_DIR
   MODULE_KW "module"
   WHITESPACE " "
-  IDENTIFIER
+  NAME
     IDENT "foo"
   WHITESPACE " "
   L_CURLY "{"
@@ -15,12 +15,12 @@ MODULE_DIR
     INFIX_DECLARE_DIR
       DECLARE_KW "declare"
       WHITESPACE " "
-      IDENTIFIER
+      NAME
         IDENT "joe"
       COLON ":"
       WHITESPACE " "
       IDENT_SORT
-        IDENTIFIER
+        NAME_REF
           IDENT "Person"
   WHITESPACE " "
   R_CURLY "}"

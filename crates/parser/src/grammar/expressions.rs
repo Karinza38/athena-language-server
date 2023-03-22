@@ -5,7 +5,7 @@ use super::{
     LIT_SET,
 };
 use crate::{
-    grammar::{deductions::ded, maybe_wildcard_typed_param},
+    grammar::{deductions::ded, maybe_wildcard_typed_param, name_ref},
     parser::{Marker, Parser},
     token_set::TokenSet,
     SyntaxKind::{self, IDENT, IDENT_EXPR, UNIT_EXPR},
@@ -20,7 +20,15 @@ use crate::{
 fn ident_expr(p: &mut Parser) {
     assert!(p.at(IDENT));
     let m = p.start();
-    super::maybe_typed_param(p);
+    name_ref(p);
+    if p.at(T![:]) {
+        p.bump(T![:]);
+        if !super::sorts::sort(p) {
+            // test_err(expr) ident_expr_no_sort
+            // foo:
+            p.error("Expected to find a sort annotation");
+        }
+    }
     m.complete(p, IDENT_EXPR);
 }
 

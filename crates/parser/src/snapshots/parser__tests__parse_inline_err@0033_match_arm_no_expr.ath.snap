@@ -8,14 +8,14 @@ INFIX_MATCH_EXPR
   WHITESPACE " "
   EXPR_PHRASE
     IDENT_EXPR
-      IDENTIFIER
+      NAME_REF
         IDENT "foo"
   WHITESPACE " "
   L_CURLY "{"
   WHITESPACE " "
   MATCH_ARM
     IDENT_PAT
-      IDENTIFIER
+      NAME
         IDENT "bar"
     WHITESPACE " "
     FAT_ARROW "=>"

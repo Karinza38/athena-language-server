@@ -6,7 +6,7 @@ pub(crate) fn ident_sort(p: &mut Parser) {
     assert!(p.at(SyntaxKind::IDENT));
 
     let m = p.start();
-    super::identifier(p);
+    super::name_ref(p);
     m.complete(p, SyntaxKind::IDENT_SORT);
 }
 
@@ -17,9 +17,7 @@ fn var_sort(p: &mut Parser) {
 
     let m = p.start();
     p.bump(T!['\'']);
-    if p.at(SyntaxKind::IDENT) {
-        super::identifier(p);
-    } else {
+    if !p.eat(SyntaxKind::IDENT) {
         p.error("Expected identifier as part of a sort variable");
     }
     m.complete(p, SyntaxKind::VAR_SORT);
@@ -50,27 +48,31 @@ fn compound_sort_decl(p: &mut Parser) {
     let m = p.start();
     p.bump(T!['(']);
 
-    if !p.at(SyntaxKind::IDENT) {
-        p.error("Expected at least one sort in a compound sort");
-    }
-
     while !p.at(T![')']) {
         if !p.at(SyntaxKind::IDENT) {
             p.error("Expected a sort in a compound sort");
             break;
         }
-        ident_sort(p);
+        ident_sort_decl(p);
     }
 
     p.expect(T![')']);
     m.complete(p, SyntaxKind::COMPOUND_SORT);
 }
 
+pub(crate) fn ident_sort_decl(p: &mut Parser) {
+    assert!(p.at(SyntaxKind::IDENT));
+
+    let m = p.start();
+    super::name(p);
+    m.complete(p, SyntaxKind::IDENT_SORT_DECL);
+}
+
 pub(crate) const SORT_DECL_START: TokenSet = TokenSet::new(&[SyntaxKind::IDENT, T!['(']]);
 
 pub(crate) fn sort_decl(p: &mut Parser) -> bool {
     if p.at(SyntaxKind::IDENT) {
-        ident_sort(p);
+        ident_sort_decl(p);
     } else if p.at(T!['(']) {
         compound_sort_decl(p);
     } else {

@@ -1,7 +1,7 @@
 pub mod ded;
 pub mod expr;
 pub mod file_hir;
-pub mod identifier;
+pub mod name_ref;
 pub mod item_tree;
 pub mod module;
 pub mod name;

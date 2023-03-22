@@ -8,8 +8,8 @@ DATATYPE_STMT
   WHITESPACE " "
   STRUCTURE_DEF
     STRUCTURE_NAME_DEF
-      IDENT_SORT
-        IDENTIFIER
+      IDENT_SORT_DECL
+        NAME
           IDENT "Foo"
     WHITESPACE " "
     COLON_EQ ":="
@@ -17,7 +17,7 @@ DATATYPE_STMT
     PIPE "|"
     WHITESPACE " "
     CONSTANT_CONSTRUCTOR
-      IDENTIFIER
+      NAME
         IDENT "bar"
   WHITESPACE "\n"
 error 15: leading `|` is not allowed in constructor list

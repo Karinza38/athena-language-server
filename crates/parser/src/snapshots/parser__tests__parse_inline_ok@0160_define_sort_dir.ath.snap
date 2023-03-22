@@ -6,14 +6,14 @@ input_file: crates/parser/test_data/parser/inline/ok/dir/0160_define_sort_dir.at
 DEFINE_SORT_DIR
   DEFINE_SORT_KW "define-sort"
   WHITESPACE " "
-  IDENTIFIER
+  NAME
     IDENT "Foo"
   WHITESPACE " "
   COLON_EQ ":="
   WHITESPACE " "
   EXPR_PHRASE
     IDENT_EXPR
-      IDENTIFIER
+      NAME_REF
         IDENT "Int"
   WHITESPACE "\n"
 

@@ -11,7 +11,7 @@ MAP_EXPR
     WHITESPACE " "
     EXPR_PHRASE
       IDENT_EXPR
-        IDENTIFIER
+        NAME_REF
           IDENT "1"
   WHITESPACE " "
   CURLY_PIPE "}|"

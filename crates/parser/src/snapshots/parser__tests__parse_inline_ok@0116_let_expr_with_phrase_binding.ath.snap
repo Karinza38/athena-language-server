@@ -10,7 +10,7 @@ LET_EXPR
   WHITESPACE " "
   LET_PART
     IDENT_PAT
-      IDENTIFIER
+      NAME
         IDENT "foo"
     WHITESPACE " "
     COLON_EQ ":="
@@ -20,19 +20,19 @@ LET_EXPR
         L_PAREN "("
         BANG "!"
         IDENT_EXPR
-          IDENTIFIER
+          NAME_REF
             IDENT "claim"
         WHITESPACE " "
         EXPR_PHRASE
           IDENT_EXPR
-            IDENTIFIER
+            NAME_REF
               IDENT "A"
         R_PAREN ")"
   WHITESPACE " "
   R_CURLY "}"
   WHITESPACE " "
   IDENT_EXPR
-    IDENTIFIER
+    NAME_REF
       IDENT "qwer"
   WHITESPACE "\n"
 

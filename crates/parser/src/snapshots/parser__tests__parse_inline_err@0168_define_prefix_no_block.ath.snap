@@ -10,19 +10,19 @@ PREFIX_DEFINE_BLOCKS
   PREFIX_DEFINE_BLOCK
     DEFINE_PROC
       L_PAREN "("
-      IDENTIFIER
+      NAME
         IDENT "foo"
       WHITESPACE " "
-      IDENTIFIER
+      NAME
         IDENT "a"
       WHITESPACE " "
-      IDENTIFIER
+      NAME
         IDENT "b"
       R_PAREN ")"
     WHITESPACE " "
     EXPR_PHRASE
       IDENT_EXPR
-        IDENTIFIER
+        NAME_REF
           IDENT "a"
   WHITESPACE " "
   ERROR

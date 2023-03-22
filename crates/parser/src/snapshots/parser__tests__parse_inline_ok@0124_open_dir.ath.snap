@@ -6,11 +6,11 @@ input_file: crates/parser/test_data/parser/inline/ok/dir/0124_open_dir.ath
 OPEN_DIR
   OPEN_KW "open"
   WHITESPACE " "
-  IDENTIFIER
+  NAME_REF
     IDENT "List"
   COMMA ","
   WHITESPACE " "
-  IDENTIFIER
+  NAME_REF
     IDENT "Set"
   WHITESPACE "\n"
 

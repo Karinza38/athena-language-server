@@ -10,14 +10,14 @@ INFER_BLOCK_DED
     INFERENCE
       INFER_FROM
         IDENT_EXPR
-          IDENTIFIER
+          NAME_REF
             IDENT "A"
         WHITESPACE " "
         FROM_KW "from"
         WHITESPACE " "
         EXPR_PHRASE
           IDENT_EXPR
-            IDENTIFIER
+            NAME_REF
               IDENT "B"
         COMMA ","
   WHITESPACE " "

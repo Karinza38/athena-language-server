@@ -11,7 +11,7 @@ SOURCE_FILE
         WHITESPACE " "
         EXPR_PHRASE
           IDENT_EXPR
-            IDENTIFIER
+            NAME_REF
               IDENT "p"
         WHITESPACE " "
         L_CURLY "{"
@@ -33,7 +33,7 @@ SOURCE_FILE
             COMPOUND_PAT
               L_PAREN "("
               IDENT_PAT
-                IDENTIFIER
+                NAME
                   IDENT "~"
               WHITESPACE " "
               SOME_THING_PAT
@@ -50,7 +50,7 @@ SOURCE_FILE
           FAT_ARROW "=>"
           WHITESPACE " "
           IDENT_EXPR
-            IDENTIFIER
+            NAME_REF
               IDENT "true"
         WHITESPACE "\n"
         MATCH_ARM
@@ -62,7 +62,7 @@ SOURCE_FILE
           FAT_ARROW "=>"
           WHITESPACE " "
           IDENT_EXPR
-            IDENTIFIER
+            NAME_REF
               IDENT "false"
         WHITESPACE "\n"
         R_CURLY "}"

@@ -10,12 +10,12 @@ OVERLOAD_MULTI
     L_PAREN "("
     EXPR_PHRASE
       IDENT_EXPR
-        IDENTIFIER
+        NAME_REF
           IDENT "=="
     WHITESPACE " "
     EXPR_PHRASE
       IDENT_EXPR
-        IDENTIFIER
+        NAME_REF
           IDENT "eq"
     R_PAREN ")"
   WHITESPACE " "
@@ -23,12 +23,12 @@ OVERLOAD_MULTI
     L_PAREN "("
     EXPR_PHRASE
       IDENT_EXPR
-        IDENTIFIER
+        NAME_REF
           IDENT "+"
     WHITESPACE " "
     EXPR_PHRASE
       IDENT_EXPR
-        IDENTIFIER
+        NAME_REF
           IDENT "N.+"
     R_PAREN ")"
   WHITESPACE " "
@@ -36,12 +36,12 @@ OVERLOAD_MULTI
     L_PAREN "("
     EXPR_PHRASE
       IDENT_EXPR
-        IDENTIFIER
+        NAME_REF
           IDENT "-"
     WHITESPACE " "
     EXPR_PHRASE
       IDENT_EXPR
-        IDENTIFIER
+        NAME_REF
           IDENT "N.-"
     R_PAREN ")"
   WHITESPACE "\n"

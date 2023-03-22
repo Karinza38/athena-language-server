@@ -7,7 +7,7 @@ WITH_WITNESS_DED
   WITH_WITNESS_KW "with-witness"
   WHITESPACE " "
   IDENT_EXPR
-    IDENTIFIER
+    NAME_REF
       IDENT "a"
   WHITESPACE "\n"
 error 14: expected phrase in with witness binding

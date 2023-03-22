@@ -118,19 +118,27 @@ pub(crate) mod entry {
     }
 }
 
-fn identifier(p: &mut Parser) {
+fn name(p: &mut Parser) {
     assert!(p.at(IDENT));
 
     let m = p.start();
     p.bump(IDENT);
-    m.complete(p, SyntaxKind::IDENTIFIER);
+    m.complete(p, SyntaxKind::NAME);
+}
+
+fn name_ref(p: &mut Parser) {
+    assert!(p.at(IDENT));
+
+    let m = p.start();
+    p.bump(IDENT);
+    m.complete(p, SyntaxKind::NAME_REF);
 }
 
 fn op_annotated_param(p: &mut Parser) {
     assert!(p.at(IDENT));
 
     let m = p.start();
-    identifier(p);
+    name(p);
 
     p.expect(T![:]);
 
@@ -138,7 +146,7 @@ fn op_annotated_param(p: &mut Parser) {
     p.expect(T![OP]);
 
     if p.at(IDENT) {
-        identifier(p);
+        name_ref(p);
     } else {
         p.error("expected operator arity");
     }
@@ -152,7 +160,7 @@ fn typed_param(p: &mut Parser) {
     assert!(p.at(IDENT));
 
     let m = p.start();
-    identifier(p);
+    name(p);
 
     p.expect(T![:]);
     if !sorts::sort(p) {
@@ -171,7 +179,7 @@ fn maybe_typed_param(p: &mut Parser) {
             typed_param(p);
         }
     } else {
-        identifier(p);
+        name(p);
     }
 }
 

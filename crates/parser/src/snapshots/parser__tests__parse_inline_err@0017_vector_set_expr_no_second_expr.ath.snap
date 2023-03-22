@@ -7,7 +7,7 @@ VECTOR_SET_EXPR
   VECTOR_SETBANG_KW "vector-set!"
   WHITESPACE " "
   IDENT_EXPR
-    IDENTIFIER
+    NAME_REF
       IDENT "foo"
   WHITESPACE "\n"
 error 15: Expected to find an index (expr) for the vector-set! expression

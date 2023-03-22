@@ -8,7 +8,7 @@ TERM_VAR_EXPR
   WHITESPACE " "
   COLON ":"
   IDENT_SORT
-    IDENTIFIER
+    NAME_REF
       IDENT "bar"
   WHITESPACE "\n"
 error 1: Expected to find an identifier for the term variable

@@ -9,7 +9,7 @@ LET_REC_EXPR
   L_CURLY "{"
   WHITESPACE " "
   LET_REC_PART
-    IDENTIFIER
+    NAME
       IDENT "foo"
     WHITESPACE " "
     COLON_EQ ":="
@@ -17,7 +17,7 @@ LET_REC_EXPR
   R_CURLY "}"
   WHITESPACE " "
   IDENT_EXPR
-    IDENTIFIER
+    NAME_REF
       IDENT "foo"
   WHITESPACE "\n"
 error 15: Expected to find an expression for the letrec binding

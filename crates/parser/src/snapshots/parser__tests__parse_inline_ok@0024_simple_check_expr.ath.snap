@@ -11,13 +11,13 @@ CHECK_EXPR
   CHECK_ARM
     EXPR_PHRASE
       IDENT_EXPR
-        IDENTIFIER
+        NAME_REF
           IDENT "false"
     WHITESPACE " "
     FAT_ARROW "=>"
     WHITESPACE " "
     IDENT_EXPR
-      IDENTIFIER
+      NAME_REF
         IDENT "true"
   WHITESPACE "\n     "
   CHECK_ARM
@@ -25,13 +25,13 @@ CHECK_EXPR
     WHITESPACE " "
     EXPR_PHRASE
       IDENT_EXPR
-        IDENTIFIER
+        NAME_REF
           IDENT "else"
     WHITESPACE " "
     FAT_ARROW "=>"
     WHITESPACE " "
     IDENT_EXPR
-      IDENTIFIER
+      NAME_REF
         IDENT "false"
   WHITESPACE "\n"
   R_CURLY "}"

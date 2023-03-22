@@ -7,7 +7,7 @@ PREFIX_DEFINE
   L_PAREN "("
   DEFINE_KW "define"
   WHITESPACE " "
-  IDENTIFIER
+  NAME
     IDENT "foo"
   R_PAREN ")"
   WHITESPACE "\n"

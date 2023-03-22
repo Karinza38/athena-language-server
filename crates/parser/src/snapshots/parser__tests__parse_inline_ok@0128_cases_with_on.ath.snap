@@ -8,20 +8,20 @@ CASES_DED
   WHITESPACE " "
   EXPR_PHRASE
     IDENT_EXPR
-      IDENTIFIER
+      NAME_REF
         IDENT "a"
   WHITESPACE " "
   ON_KW "on"
   WHITESPACE " "
   IDENT_EXPR
-    IDENTIFIER
+    NAME_REF
       IDENT "b"
   WHITESPACE " "
   L_CURLY "{"
   WHITESPACE " "
   RESTRICTED_MATCH_DED
     IDENT_PAT
-      IDENTIFIER
+      NAME
         IDENT "c"
     WHITESPACE " "
     FAT_ARROW "=>"
@@ -30,12 +30,12 @@ CASES_DED
       L_PAREN "("
       BANG "!"
       IDENT_EXPR
-        IDENTIFIER
+        NAME_REF
           IDENT "claim"
       WHITESPACE " "
       EXPR_PHRASE
         IDENT_EXPR
-          IDENTIFIER
+          NAME_REF
             IDENT "d"
       R_PAREN ")"
   WHITESPACE " "

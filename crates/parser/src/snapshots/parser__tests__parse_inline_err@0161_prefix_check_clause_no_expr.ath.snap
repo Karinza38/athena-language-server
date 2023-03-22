@@ -11,7 +11,7 @@ PREFIX_CHECK_EXPR
     L_PAREN "("
     EXPR_PHRASE
       IDENT_EXPR
-        IDENTIFIER
+        NAME_REF
           IDENT "B"
     WHITESPACE " "
     R_PAREN ")"

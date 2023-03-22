@@ -2,8 +2,8 @@ use la_arena::{Arena, ArenaMap, Idx};
 use rustc_hash::FxHashMap;
 
 use crate::{
-    ded::DedId, expr::ExprId, file_hir::ModuleItem, identifier::IdentifierId, name::Name,
-    pat::PatId, sort::SortId,
+    ded::DedId, expr::ExprId, file_hir::ModuleItem, name::Name, name_ref::NameRefId, pat::PatId,
+    sort::SortId,
 };
 
 #[derive(PartialEq, Eq, Debug)]
@@ -55,7 +55,7 @@ pub struct ScopeTree {
     scopes_by_module_item: FxHashMap<ModuleItem, ScopeId>,
     scopes_by_sort: ArenaMap<SortId, ScopeId>,
     scopes_by_pat: ArenaMap<PatId, ScopeId>,
-    scopes_by_identifier: ArenaMap<IdentifierId, ScopeId>,
+    scopes_by_identifier: ArenaMap<NameRefId, ScopeId>,
 }
 
 impl std::ops::Index<ScopeId> for ScopeTree {
@@ -116,7 +116,7 @@ impl ScopeTree {
         self.scopes_by_module_item.insert(item, scope);
     }
 
-    pub fn set_identifier_scope(&mut self, identifier: IdentifierId, scope: ScopeId) {
+    pub fn set_identifier_scope(&mut self, identifier: NameRefId, scope: ScopeId) {
         self.scopes_by_identifier.insert(identifier, scope);
     }
 
@@ -140,7 +140,7 @@ impl ScopeTree {
         self.scopes_by_sort.get(id).copied()
     }
 
-    pub fn scope_by_identifier(&self, id: IdentifierId) -> Option<ScopeId> {
+    pub fn scope_by_identifier(&self, id: NameRefId) -> Option<ScopeId> {
         self.scopes_by_identifier.get(id).copied()
     }
 

@@ -6,7 +6,7 @@ input_file: crates/parser/test_data/parser/inline/err/ded/0116_pick_witness_no_p
 PICK_WITNESS_DED
   PICK_WITNESS_KW "pick-witness"
   WHITESPACE " "
-  IDENTIFIER
+  NAME
     IDENT "a"
   WHITESPACE " "
   FOR_KW "for"

@@ -6,15 +6,15 @@ input_file: crates/parser/test_data/parser/inline/err/pat/0043_list_pat_no_end.a
 LIST_PAT
   L_BRACK "["
   IDENT_PAT
-    IDENTIFIER
+    NAME
       IDENT "a"
   WHITESPACE " "
   IDENT_PAT
-    IDENTIFIER
+    NAME
       IDENT "b"
   WHITESPACE " "
   IDENT_PAT
-    IDENTIFIER
+    NAME
       IDENT "c"
   WHITESPACE "\n"
 error 6: expected R_BRACK

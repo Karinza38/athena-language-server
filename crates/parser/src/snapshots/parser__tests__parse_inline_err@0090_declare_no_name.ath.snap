@@ -11,14 +11,14 @@ INFIX_DECLARE_DIR
   FUNC_SORTS
     L_BRACK "["
     IDENT_SORT
-      IDENTIFIER
+      NAME_REF
         IDENT "Int"
     R_BRACK "]"
   WHITESPACE " "
   THIN_ARROW "->"
   WHITESPACE " "
   IDENT_SORT
-    IDENTIFIER
+    NAME_REF
       IDENT "Int"
   WHITESPACE "\n"
 error 7: expected function symbol name

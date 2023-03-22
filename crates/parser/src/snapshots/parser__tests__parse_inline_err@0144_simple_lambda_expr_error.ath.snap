@@ -8,13 +8,13 @@ ERROR
     LAMBDA_KW "lambda"
     WHITESPACE " "
     L_PAREN "("
-    IDENTIFIER
+    NAME
       IDENT "x"
     WHITESPACE " "
-    IDENTIFIER
+    NAME
       IDENT "y"
     WHITESPACE " "
-    IDENTIFIER
+    NAME
       IDENT "z"
     R_PAREN ")"
   WHITESPACE " "

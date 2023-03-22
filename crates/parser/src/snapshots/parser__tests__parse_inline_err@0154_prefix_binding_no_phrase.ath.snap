@@ -14,7 +14,7 @@ PREFIX_LET_EXPR
   R_PAREN ")"
   WHITESPACE " "
   IDENT_EXPR
-    IDENTIFIER
+    NAME_REF
       IDENT "foo"
   R_PAREN ")"
   WHITESPACE "\n"

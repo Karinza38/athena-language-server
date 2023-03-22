@@ -11,7 +11,7 @@ ERROR
       L_CURLY "{"
       WHITESPACE " "
       IDENT_EXPR
-        IDENTIFIER
+        NAME_REF
           IDENT "foo"
   WHITESPACE " "
   FAT_ARROW "=>"

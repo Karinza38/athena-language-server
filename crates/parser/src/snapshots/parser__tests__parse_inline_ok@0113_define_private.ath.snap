@@ -8,14 +8,14 @@ INFIX_DEFINE_DIR
   WHITESPACE " "
   DEFINE_KW "define"
   WHITESPACE " "
-  IDENTIFIER
+  NAME
     IDENT "bar"
   WHITESPACE " "
   COLON_EQ ":="
   WHITESPACE " "
   EXPR_PHRASE
     IDENT_EXPR
-      IDENTIFIER
+      NAME_REF
         IDENT "false"
   WHITESPACE "\n"
 

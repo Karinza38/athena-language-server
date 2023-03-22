@@ -6,7 +6,7 @@ input_file: crates/parser/test_data/parser/inline/err/dir/0079_module_no_rbrace.
 MODULE_DIR
   MODULE_KW "module"
   WHITESPACE " "
-  IDENTIFIER
+  NAME
     IDENT "foo"
   WHITESPACE " "
   L_CURLY "{"

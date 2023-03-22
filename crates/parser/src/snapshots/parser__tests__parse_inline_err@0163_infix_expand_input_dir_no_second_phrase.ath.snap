@@ -8,7 +8,7 @@ EXPAND_INPUT_DIR
   WHITESPACE " "
   EXPR_PHRASE
     IDENT_EXPR
-      IDENTIFIER
+      NAME_REF
         IDENT "foo"
   COMMA ","
   WHITESPACE "\n"

@@ -6,7 +6,7 @@ input_file: crates/parser/test_data/parser/inline/err/dir/0081_define_empty.ath
 INFIX_DEFINE_DIR
   DEFINE_KW "define"
   WHITESPACE " "
-  IDENTIFIER
+  NAME
     IDENT "foo"
   WHITESPACE " "
   COLON_EQ ":="

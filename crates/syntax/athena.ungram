@@ -37,25 +37,28 @@ Tokens =
 // Names and Literals //
 //********************//
 
-Identifier =
+Name =
+    'ident'
+
+NameRef =
     'ident'
 
 Literal =
     'string' | 'char'
 
 MetaIdent =
-    '\'' Identifier
+    '\'' 'ident'
 
 Unit =
     '(' ')'
 
 MaybeTypedParam =
-    Identifier
+    Name
     | TypedParam
     | OpAnnotatedParam
 
 TypedParam =
-    Identifier ':' Sort
+    Name ':' Sort
 
 MaybeWildcardTypedParam =
     MaybeTypedParam
@@ -65,7 +68,7 @@ Wildcard =
     '_'
 
 OpAnnotatedParam =
-    Identifier ':' '(' 'OP' Identifier Identifier? ')'
+    Name ':' '(' 'OP' NameRef NameRef? ')'
 
 //*********//
 //  Misc   //
@@ -83,10 +86,10 @@ Sort =
     | CompoundSort // ✅
 
 IdentSort =
-    Identifier
+    NameRef
 
 VarSort =
-    '\'' Identifier 
+    '\'' 'ident' 
 
 CompoundSort =
     '(' Sort* ')'
@@ -124,13 +127,20 @@ StructureConstructor =
     | CompoundConstructor
 
 ConstantConstructor =
-    Identifier
+    Name
+
+LimitedSort =
+    IdentSort
+    | LimitedCompoundSort
+    
+LimitedCompoundSort =
+    '(' IdentSort LimitedSort* ')'
 
 CompoundConstructor =
-    '(' Identifier MaybeTaggedSortDecl ')'
+    '(' Name MaybeTaggedFieldSort ')'
 
-MaybeTaggedSortDecl =
-    (tag:Identifier ':')? SortDecl
+MaybeTaggedFieldSort =
+    (tag:Name ':')? LimitedSort
 
 StructureDef =
     StructureNameDef ':=' (StructureConstructor ('|' StructureConstructor)*)
@@ -212,10 +222,10 @@ Dir =
     | RuleDir
 
 ModuleDir =
-    'module' Identifier '{' Stmt* '}'
+    'module' Name '{' Stmt* '}'
 
 ExtendModuleDir =
-    'extend-module' Identifier '{' Stmt* '}'
+    'extend-module' Name '{' Stmt* '}'
 
 DomainDir =
     'domain' SortDecl
@@ -223,19 +233,25 @@ DomainDir =
 DomainsDir =
     'domains' (SortDecl (',' SortDecl)*)
 
+IdentSortDecl =
+    Name
+
+CompoundSortDecl =
+    '(' IdentSortDecl* ')'
+
 SortDecl =
-    IdentSort
-    | CompoundSort
+    IdentSortDecl
+    | CompoundSortDecl
 
 ConstantDeclareDir =
     InfixConstantDeclare
     | PrefixConstantDeclare
 
 InfixConstantDeclare =
-    'declare' (Identifier (',' Identifier)*) ':' Sort
+    'declare' (Name (',' Name)*) ':' Sort
 
 PrefixConstantDeclare =
-    '(' 'declare' PrefixDeclareSymbols SortDecl ')'
+    '(' 'declare' PrefixDeclareSymbols Sort ')'
 
 PrefixDeclareDir =
     '(' 'declare' PrefixDeclareSymbols '(' PrefixSortVarsDecl?  '->' '(' Sort* ')' Sort ')' PrefixDeclareAttrs? ')'
@@ -245,10 +261,10 @@ PrefixDeclareSymbols =
     | PrefixMultiSymbols
 
 PrefixSingleSymbol =
-    Identifier
+    Name
 
 PrefixMultiSymbols =
-    '(' Identifier* ')'
+    '(' Name* ')'
 
 PrefixDeclareAttrs =
     '(' DeclareAttr* InputTransformDecl? ')'
@@ -258,7 +274,7 @@ DeclareDir =
     | InfixDeclareDir
 
 InfixDeclareDir =
-    'declare' (Identifier (',' Identifier)*) ':' SortVarsDecl? FuncSorts '->' return_sort:Sort DeclareAttrs?
+    'declare' (Name (',' Name)*) ':' SortVarsDecl? FuncSorts '->' return_sort:Sort DeclareAttrs?
 
 InputTransformDecl =
     '[' Expr Expr* ']'
@@ -266,7 +282,7 @@ InputTransformDecl =
 DeclareAttr =
     'left-assoc'
     | 'right-assoc'
-    | Identifier
+    | Name
 
 DeclareAttrs =
     '[' DeclareAttr* InputTransformDecl? ']'
@@ -275,10 +291,10 @@ FuncSorts =
     '[' Sort* ']'
 
 SortVarsDecl =
-    '(' (IdentSort (',' IdentSort)*) ')'
+    '(' (IdentSortDecl (',' IdentSortDecl)*) ')'
 
 PrefixSortVarsDecl =
-    '(' IdentSort* ')'
+    '(' IdentSortDecl* ')'
 
 DefineDir =
     InfixDefineDir
@@ -298,16 +314,16 @@ InfixDefineDir =
     'private'? 'define' DefineName ':=' define_body:Phrase
 
 DefineName =
-    Identifier
+    Name
     | DefineNamedPattern
     | DefineProc
     | ListPat
 
 DefineNamedPattern =
-    '(' Identifier 'as' ListPat ')' 
+    '(' Name 'as' ListPat ')' 
 
 DefineProc = 
-    '(' Identifier args:MaybeWildcardTypedParam* ')'
+    '(' Name args:MaybeWildcardTypedParam* ')'
 
 LoadDir =
     '('? 'load' 'string' ')'? // can be surrounded by parens
@@ -317,41 +333,41 @@ AssertDir =
     | PrefixAssertDir
 
 InfixAssertDir =
-    'assert' (Identifier ':=')? (Expr (',' Expr)*) // TODO: validate that it's either named or comma separated
+    'assert' (Name ':=')? (Expr (',' Expr)*) // TODO: validate that it's either named or comma separated
 
 PrefixAssertDir =
-    '(' 'assert' (Identifier ':=')? Expr* ')' // TODO: validate that it's either named or multiple
+    '(' 'assert' (Name ':=')? Expr* ')' // TODO: validate that it's either named or multiple
 
 AssertClosedDir =
-    'assert*' (Identifier ':=')? Expr
+    'assert*' (Name ':=')? Expr
 
 OpenDir =
-    'open' (Identifier (',' Identifier)*)
+    'open' (NameRef (',' NameRef)*)
 
 AssociativityDir =
-    ('left-assoc' | 'right-assoc') Identifier
+    ('left-assoc' | 'right-assoc') NameRef
 
 RuleDir =
     InfixRuleDir
     | PrefixRuleDir
 
 InfixRuleDir =
-    'primitive-method' '(' Identifier MaybeWildcardTypedParam* ')' ':=' Expr
+    'primitive-method' '(' Name MaybeWildcardTypedParam* ')' ':=' Expr
 
 PrefixRuleDir =
-    '(' 'primitive-method' '(' Identifier MaybeWildcardTypedParam* ')' Expr ')'
+    '(' 'primitive-method' '(' Name MaybeWildcardTypedParam* ')' Expr ')'
 
 ExpandInputDir =
     'expand-input' (Phrase (',' Phrase)*) expander:Phrase
 
 DefineSortDir =
-    'define-sort' Identifier ':=' Sort
+    'define-sort' Name ':=' Sort
 
 PrefixDefineBlock =
     DefineProc ':='? define_body:Phrase
 
 SetPrecedenceDir = // if multiple idents, must be surrounded by parens
-    '('? 'set-precedence' '('? Identifier* ')'? Expr ')'? // can be surrounded by parens
+    '('? 'set-precedence' '('? NameRef* ')'? Expr ')'? // can be surrounded by parens
 
 PhrasePair =
     '(' Phrase Phrase ')'
@@ -410,7 +426,7 @@ Expr =
     | PrefixCheckExpr
 
 IdentExpr =
-    MaybeTypedParam
+    NameRef (':' Sort)?
 
 LiteralExpr =
     Literal
@@ -552,7 +568,7 @@ Ded =
     | SeqDed
 
 ConcludeDed =
-    '('? 'conclude' (Identifier ':=')? Expr Ded ')'?
+    '('? 'conclude' (Name ':=')? Expr Ded ')'?
 
 MethodCallDed =
     '(' 'apply-method' Expr Phrase* ')'
@@ -567,7 +583,7 @@ NamedAssumeDed =
     'assume' AssumePart* Ded
 
 AssumePart =
-    ';'? Identifier ':=' Phrase
+    ';'? Name ':=' Phrase
 
 PrefixAssumeDed =
     PrefixNamedAssumeDed
@@ -575,7 +591,7 @@ PrefixAssumeDed =
     | PrefixAssumeLetDed
 
 PrefixNamedAssumeDed =
-    '(' 'assume' Identifier ':=' Phrase Ded ')'
+    '(' 'assume' Name ':=' Phrase Ded ')'
 
 PrefixSingleAssumeDed =
     '(' 'assume' Phrase Ded ')'
@@ -596,10 +612,10 @@ WithWitnessDed =
     'with-witness' Expr Phrase Ded
 
 PickWitnessDed =
-    '('? 'pick-witness' Identifier 'for'? Phrase Identifier? Ded ')'? // for is mandatory if no parens
+    '('? 'pick-witness' Name 'for'? Phrase Name? Ded ')'? // for is mandatory if no parens
 
 PickWitnessesDed =
-    'pick-witnesses' Identifier Identifier* 'for' Phrase Identifier? Ded
+    'pick-witnesses' Name Name* 'for' Phrase Name? Ded
 
 InductDed =
     'by-induction' Phrase '{' RestrictedMatchDed* '}'
@@ -666,7 +682,7 @@ PrefixLetRecDed =
     '(' 'dletrec' '(' PrefixBinding* ')' Ded ')'
 
 LetRecPart = 
-    ';'? Identifier ':=' Expr
+    ';'? Name ':=' Expr
 
 TryDed =
     InfixTryDed
@@ -694,7 +710,7 @@ InferOrExpr =
 MaybeWildcardOpAnnotatedParam =
     '_'
     | OpAnnotatedParam
-    | Identifier
+    | Name
 
 Inference =
     InferFrom
@@ -748,11 +764,11 @@ UnitPat =
     Unit
 
 NamedPat =
-    '(' ('bind' | 'as') Identifier Pat ')'
-    | '(' Identifier ('bind' | 'as') Pat ')'
+    '(' ('bind' | 'as') Name Pat ')'
+    | '(' Name ('bind' | 'as') Pat ')'
 
 ValOfPat =
-    '(' 'val-of' Identifier ')'
+    '(' 'val-of' NameRef ')'
 
 ListOfPat =
     '(' 'list-of' Pat Pat ')'

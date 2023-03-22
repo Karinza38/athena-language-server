@@ -8,14 +8,14 @@ INDUCT_DED
   WHITESPACE " "
   EXPR_PHRASE
     IDENT_EXPR
-      IDENTIFIER
+      NAME_REF
         IDENT "f_x_less_than"
   WHITESPACE " "
   L_CURLY "{"
   WHITESPACE "\n    "
   RESTRICTED_MATCH_DED
     IDENT_PAT
-      IDENTIFIER
+      NAME
         IDENT "zero"
     WHITESPACE " "
     FAT_ARROW "=>"
@@ -23,7 +23,7 @@ INDUCT_DED
     CONCLUDE_DED
       CONCLUDE_KW "conclude"
       WHITESPACE " "
-      IDENTIFIER
+      NAME
         IDENT "base_case"
       WHITESPACE " "
       COLON_EQ ":="
@@ -32,7 +32,7 @@ INDUCT_DED
         L_PAREN "("
         EXPR_PHRASE
           IDENT_EXPR
-            IDENTIFIER
+            NAME_REF
               IDENT "factorial"
         WHITESPACE " "
         EXPR_PHRASE
@@ -40,33 +40,33 @@ INDUCT_DED
             L_PAREN "("
             EXPR_PHRASE
               IDENT_EXPR
-                IDENTIFIER
+                NAME_REF
                   IDENT "zero"
             WHITESPACE " "
             EXPR_PHRASE
               IDENT_EXPR
-                IDENTIFIER
+                NAME_REF
                   IDENT "-"
             WHITESPACE " "
             EXPR_PHRASE
               IDENT_EXPR
-                IDENTIFIER
+                NAME_REF
                   IDENT "one"
             R_PAREN ")"
         WHITESPACE " "
         EXPR_PHRASE
           IDENT_EXPR
-            IDENTIFIER
+            NAME_REF
               IDENT "<="
         WHITESPACE " "
         EXPR_PHRASE
           IDENT_EXPR
-            IDENTIFIER
+            NAME_REF
               IDENT "factorial"
         WHITESPACE " "
         EXPR_PHRASE
           IDENT_EXPR
-            IDENTIFIER
+            NAME_REF
               IDENT "zero"
         R_PAREN ")"
       WHITESPACE "\n                "
@@ -75,12 +75,12 @@ INDUCT_DED
           L_PAREN "("
           BANG "!"
           IDENT_EXPR
-            IDENTIFIER
+            NAME_REF
               IDENT "force"
           WHITESPACE " "
           EXPR_PHRASE
             IDENT_EXPR
-              IDENTIFIER
+              NAME_REF
                 IDENT "base_case"
           R_PAREN ")"
   WHITESPACE "\n\n\n    "
@@ -89,7 +89,7 @@ INDUCT_DED
     WHITESPACE " "
     NAMED_PAT
       L_PAREN "("
-      IDENTIFIER
+      NAME
         IDENT "m"
       WHITESPACE " "
       AS_KW "as"
@@ -97,11 +97,11 @@ INDUCT_DED
       COMPOUND_PAT
         L_PAREN "("
         IDENT_PAT
-          IDENTIFIER
+          NAME
             IDENT "S"
         WHITESPACE " "
         IDENT_PAT
-          IDENTIFIER
+          NAME
             IDENT "n"
         R_PAREN ")"
       R_PAREN ")"
@@ -111,7 +111,7 @@ INDUCT_DED
     CONCLUDE_DED
       CONCLUDE_KW "conclude"
       WHITESPACE " "
-      IDENTIFIER
+      NAME
         IDENT "inductive_step"
       WHITESPACE " "
       COLON_EQ ":="
@@ -123,7 +123,7 @@ INDUCT_DED
             L_PAREN "("
             EXPR_PHRASE
               IDENT_EXPR
-                IDENTIFIER
+                NAME_REF
                   IDENT "factorial"
             WHITESPACE " "
             EXPR_PHRASE
@@ -131,24 +131,24 @@ INDUCT_DED
                 L_PAREN "("
                 EXPR_PHRASE
                   IDENT_EXPR
-                    IDENTIFIER
+                    NAME_REF
                       IDENT "m"
                 WHITESPACE " "
                 EXPR_PHRASE
                   IDENT_EXPR
-                    IDENTIFIER
+                    NAME_REF
                       IDENT "-"
                 WHITESPACE " "
                 EXPR_PHRASE
                   IDENT_EXPR
-                    IDENTIFIER
+                    NAME_REF
                       IDENT "one"
                 R_PAREN ")"
             R_PAREN ")"
         WHITESPACE " "
         EXPR_PHRASE
           IDENT_EXPR
-            IDENTIFIER
+            NAME_REF
               IDENT "<="
         WHITESPACE " "
         EXPR_PHRASE
@@ -156,12 +156,12 @@ INDUCT_DED
             L_PAREN "("
             EXPR_PHRASE
               IDENT_EXPR
-                IDENTIFIER
+                NAME_REF
                   IDENT "factorial"
             WHITESPACE " "
             EXPR_PHRASE
               IDENT_EXPR
-                IDENTIFIER
+                NAME_REF
                   IDENT "m"
             R_PAREN ")"
         R_PAREN ")"
@@ -171,12 +171,12 @@ INDUCT_DED
           L_PAREN "("
           BANG "!"
           IDENT_EXPR
-            IDENTIFIER
+            NAME_REF
               IDENT "force"
           WHITESPACE " "
           EXPR_PHRASE
             IDENT_EXPR
-              IDENTIFIER
+              NAME_REF
                 IDENT "inductive_step"
           R_PAREN ")"
   WHITESPACE "\n"

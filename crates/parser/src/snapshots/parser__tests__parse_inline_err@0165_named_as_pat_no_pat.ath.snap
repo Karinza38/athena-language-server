@@ -5,7 +5,7 @@ input_file: crates/parser/test_data/parser/inline/err/pat/0165_named_as_pat_no_p
 ---
 NAMED_PAT
   L_PAREN "("
-  IDENTIFIER
+  NAME
     IDENT "foo"
   WHITESPACE " "
   AS_KW "as"

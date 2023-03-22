@@ -10,13 +10,13 @@ PREFIX_DEFINE_BLOCKS
   PREFIX_DEFINE_BLOCK
     DEFINE_PROC
       L_PAREN "("
-      IDENTIFIER
+      NAME
         IDENT "foo"
       WHITESPACE " "
-      IDENTIFIER
+      NAME
         IDENT "a"
       WHITESPACE " "
-      IDENTIFIER
+      NAME
         IDENT "b"
       R_PAREN ")"
     WHITESPACE " "
@@ -31,7 +31,7 @@ PREFIX_DEFINE_BLOCKS
             R_PAREN ")"
             WHITESPACE " "
             IDENT_EXPR
-              IDENTIFIER
+              NAME_REF
                 IDENT "b"
         R_PAREN ")"
   R_PAREN ")"
