@@ -160,6 +160,7 @@ MetaDefinition =
     Definition
     | Domain
     | FunctionSymbol
+    | Assertion
 
 Definition =
     InfixDefineDir

@@ -2908,6 +2908,7 @@ pub enum MetaDefinition {
     Definition(Definition),
     Domain(Domain),
     FunctionSymbol(FunctionSymbol),
+    Assertion(Assertion),
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
@@ -6306,9 +6307,17 @@ impl From<FunctionSymbol> for MetaDefinition {
         MetaDefinition::FunctionSymbol(node)
     }
 }
+impl From<Assertion> for MetaDefinition {
+    fn from(node: Assertion) -> MetaDefinition {
+        MetaDefinition::Assertion(node)
+    }
+}
 impl AstNode for MetaDefinition {
     fn can_cast(kind: SyntaxKind) -> bool {
-        Definition::can_cast(kind) || Domain::can_cast(kind) || FunctionSymbol::can_cast(kind)
+        Definition::can_cast(kind)
+            || Domain::can_cast(kind)
+            || FunctionSymbol::can_cast(kind)
+            || Assertion::can_cast(kind)
     }
     fn cast(syntax: SyntaxNode) -> Option<Self> {
         match syntax.kind() {
@@ -6321,6 +6330,8 @@ impl AstNode for MetaDefinition {
                     return Domain::cast(syntax).map(Self::Domain);
                 } else if FunctionSymbol::can_cast(other) {
                     return FunctionSymbol::cast(syntax).map(Self::FunctionSymbol);
+                } else if Assertion::can_cast(other) {
+                    return Assertion::cast(syntax).map(Self::Assertion);
                 } else {
                     return None;
                 }
@@ -6333,6 +6344,7 @@ impl AstNode for MetaDefinition {
             MetaDefinition::Definition(it) => it.syntax(),
             MetaDefinition::Domain(it) => it.syntax(),
             MetaDefinition::FunctionSymbol(it) => it.syntax(),
+            MetaDefinition::Assertion(it) => it.syntax(),
         }
     }
 }

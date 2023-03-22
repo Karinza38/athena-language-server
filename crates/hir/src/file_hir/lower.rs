@@ -439,10 +439,6 @@ impl Ctx {
                 // todo!(); TODO: implement
                 None
             }
-            ast::Dir::AssertClosedDir(_) => {
-                // todo!(); TODO: implement
-                None
-            }
             ast::Dir::ExtendModuleDir(_) => {
                 // todo!(); TODO: implement
                 None
@@ -452,9 +448,41 @@ impl Ctx {
                 None
             }
             ast::Dir::AssociativityDir(_) => None,
-            ast::Dir::AssertDir(_) => {
-                // todo!(); TODO: implement
-                None
+            ast::Dir::AssertClosedDir(assert) => {
+                if let Some(expr) = assert.expr() {
+                    let _ = self.lower_expr(expr);
+                }
+                if let Some(name) = assert.identifier() {
+                    let name = name.as_name();
+                    let (def, new_scope) = self
+                        .builder::<ast::MetaDefinition>(ast::Assertion::from(assert).into())
+                        .introduces(Some(name.clone()))
+                        .build_binding(self, Definition { name: name.clone() });
+                    self.push_scope(new_scope);
+                    Some(vec![def.into()])
+                } else {
+                    None
+                }
+            }
+            ast::Dir::AssertDir(assert) => {
+                let exprs = match &assert {
+                    ast::AssertDir::InfixAssertDir(infix) => infix.exprs(),
+                    ast::AssertDir::PrefixAssertDir(prefix) => prefix.exprs(),
+                };
+                for expr in exprs {
+                    let _ = self.lower_expr(expr);
+                }
+                if let Some(name) = assert.identifier() {
+                    let name = name.as_name();
+                    let (def, new_scope) = self
+                        .builder::<ast::MetaDefinition>(ast::Assertion::from(assert).into())
+                        .introduces(Some(name.clone()))
+                        .build_binding(self, Definition { name: name.clone() });
+                    self.push_scope(new_scope);
+                    Some(vec![def.into()])
+                } else {
+                    None
+                }
             }
             ast::Dir::ConstantDeclareDir(_) => {
                 // todo!(); TODO: implement

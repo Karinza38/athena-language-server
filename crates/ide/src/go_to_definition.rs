@@ -297,6 +297,32 @@ mod tests {
     }
 
     #[test]
+    fn assert() {
+        check(
+            r#"
+            module Foo {
+                assert a := (1 = 1)
+                //     ^
+                define b := $0a
+            }
+            "#,
+        )
+    }
+
+    #[test]
+    fn assert_closed() {
+        check(
+            r#"
+            module Foo {
+                assert* a := (1 = 1)
+                //      ^
+                define b := $0a
+            }
+            "#,
+        )
+    }
+
+    #[test]
     fn term_var_is_a_constant() {
         check_unresolved(
             r#"
