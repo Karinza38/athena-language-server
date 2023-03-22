@@ -85,8 +85,8 @@ impl Subcommand {
         Ok(match subcommand.as_str() {
             "codegen" => Self::Codegen,
             "install" => Self::Install(Install {
-                server: args.opt_value_from_str("--server")?.unwrap_or(false),
-                client: args.opt_value_from_str("--client")?.unwrap_or(false),
+                server: args.contains("--server"),
+                client: args.contains("--client"),
                 bin: args.opt_value_from_str("--code-bin")?.unwrap_or_default(),
             }),
             _ => {
