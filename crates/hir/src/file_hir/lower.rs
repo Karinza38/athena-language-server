@@ -834,7 +834,6 @@ impl Ctx {
         self.push_scope(new_scope);
 
         // let _sort_id = self.lower_sort(sort_decl.clone().into())?;
-        todo!();
 
         Some(domain_id)
     }
