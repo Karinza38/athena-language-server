@@ -5,8 +5,7 @@ input_file: crates/parser/test_data/parser/inline/ok/expr/0006_simple_ident_sort
 ---
 TERM_VAR_EXPR
   QUESTION "?"
-  IDENTIFIER
-    IDENT "x"
+  IDENT "x"
   COLON ":"
   WHITESPACE " "
   IDENT_SORT

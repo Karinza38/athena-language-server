@@ -37,9 +37,7 @@ fn var_pat(p: &mut Parser) {
     let m = p.start();
     p.bump(T![?]);
 
-    if p.at(IDENT) {
-        identifier(p);
-    } else {
+    if !p.eat(IDENT) {
         // test_err(pat) var_pat_no_ident
         // ? :Int
         p.error("expected an identifier");

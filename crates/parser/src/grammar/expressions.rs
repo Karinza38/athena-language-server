@@ -1,5 +1,5 @@
 use super::{
-    identifier, literal,
+    literal,
     patterns::pat,
     phrases::{phrase, ExprOrDed, PHRASE_START_SET},
     LIT_SET,
@@ -52,9 +52,7 @@ fn term_var_expr(p: &mut Parser) {
     let m = p.start();
     p.bump(T![?]);
 
-    if p.at(IDENT) {
-        identifier(p);
-    } else {
+    if !p.eat(IDENT) {
         // test_err(expr) term_var_no_identifier
         // ? :bar
         p.error("Expected to find an identifier for the term variable");

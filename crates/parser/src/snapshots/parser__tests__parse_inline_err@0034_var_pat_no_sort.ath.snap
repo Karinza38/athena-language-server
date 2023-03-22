@@ -5,8 +5,7 @@ input_file: crates/parser/test_data/parser/inline/err/pat/0034_var_pat_no_sort.a
 ---
 VAR_PAT
   QUESTION "?"
-  IDENTIFIER
-    IDENT "foo"
+  IDENT "foo"
   COLON ":"
   WHITESPACE "\n"
 error 5: expected a sort annotation

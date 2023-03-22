@@ -5,8 +5,7 @@ input_file: crates/parser/test_data/parser/inline/err/expr/0003_term_var_no_sort
 ---
 TERM_VAR_EXPR
   QUESTION "?"
-  IDENTIFIER
-    IDENT "foo"
+  IDENT "foo"
   WHITESPACE " "
   COLON ":"
   WHITESPACE "\n"

@@ -1046,10 +1046,12 @@ impl UnitExpr {
 pub struct TermVarExpr {
     pub(crate) syntax: SyntaxNode,
 }
-impl ast::HasIdentifier for TermVarExpr {}
 impl TermVarExpr {
     pub fn question_mark_token(&self) -> Option<SyntaxToken> {
         support::token(&self.syntax, T![?])
+    }
+    pub fn ident_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T![ident])
     }
     pub fn colon_token(&self) -> Option<SyntaxToken> {
         support::token(&self.syntax, T![:])
@@ -2499,10 +2501,12 @@ impl IdentPat {
 pub struct VarPat {
     pub(crate) syntax: SyntaxNode,
 }
-impl ast::HasIdentifier for VarPat {}
 impl VarPat {
     pub fn question_mark_token(&self) -> Option<SyntaxToken> {
         support::token(&self.syntax, T![?])
+    }
+    pub fn ident_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T![ident])
     }
     pub fn colon_token(&self) -> Option<SyntaxToken> {
         support::token(&self.syntax, T![:])
@@ -7438,7 +7442,6 @@ impl AstNode for AnyHasIdentifier {
                 | INFIX_RULE_DIR
                 | PREFIX_RULE_DIR
                 | DEFINE_SORT_DIR
-                | TERM_VAR_EXPR
                 | LET_REC_PART
                 | PICK_WITNESS_DED
                 | PICK_WITNESSES_DED
@@ -7446,7 +7449,6 @@ impl AstNode for AnyHasIdentifier {
                 | ASSUME_PART
                 | PREFIX_NAMED_ASSUME_DED
                 | MAYBE_WILDCARD_OP_ANNOTATED_PARAM
-                | VAR_PAT
                 | NAMED_PAT
                 | VAL_OF_PAT
         )

@@ -5,8 +5,7 @@ input_file: crates/parser/test_data/parser/inline/ok/expr/0004_simple_term_var_e
 ---
 TERM_VAR_EXPR
   QUESTION "?"
-  IDENTIFIER
-    IDENT "foo"
+  IDENT "foo"
   COLON ":"
   IDENT_SORT
     IDENTIFIER

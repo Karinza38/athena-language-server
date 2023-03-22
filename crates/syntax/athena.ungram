@@ -421,7 +421,7 @@ MetaIdentExpr =
     MetaIdent
 
 TermVarExpr =
-    '?' Identifier (':' Sort)?
+    '?' 'ident' (':' Sort)?
 
 WildcardExpr =
     '_'
@@ -735,7 +735,7 @@ IdentPat =
     MaybeWildcardTypedParam
 
 VarPat =
-    '?' Identifier ':' Sort
+    '?' 'ident' ':' Sort
 
 LiteralPat =
     Literal

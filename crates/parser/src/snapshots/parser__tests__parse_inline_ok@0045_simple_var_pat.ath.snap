@@ -5,8 +5,7 @@ input_file: crates/parser/test_data/parser/inline/ok/pat/0045_simple_var_pat.ath
 ---
 VAR_PAT
   QUESTION "?"
-  IDENTIFIER
-    IDENT "foo"
+  IDENT "foo"
   COLON ":"
   IDENT_SORT
     IDENTIFIER
