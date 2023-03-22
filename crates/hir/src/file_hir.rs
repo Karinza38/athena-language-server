@@ -126,17 +126,17 @@ pub enum Visibility {
 #[derive(PartialEq, Eq, Debug)]
 pub struct FunctionSym {
     name: Name,
-    scope: ScopeId,
-    sort_args: Vec<Name>,
-    arg_sorts: Vec<Sort>,
-    ret_sort: Sort,
+    // sort_args: Vec<Name>,
+    arg_sorts: Vec<SortId>,
+    ret_sort: SortId,
 }
 
 #[derive(PartialEq, Eq, Debug)]
 pub enum DefKind {
-    FunctionSym(FunctionSym),
-    Value(PhraseId),
-    Sort(SortId),
+    FunctionSym,
+    Proc,
+    Value,
+    Sort,
 }
 
 #[derive(PartialEq, Eq, Debug)]
@@ -144,7 +144,7 @@ pub struct Definition {
     name: Name,
     // parent: Option<ModuleId>,
     // visibility: Visibility,
-    // kind: DefKind,
+    kind: DefKind,
 }
 
 #[derive(PartialEq, Eq, Debug)]
@@ -269,6 +269,8 @@ pub trait HasHir {
     type Hir: HirNode;
 
     fn hir(&self, source_map: &FileHirSourceMap) -> Option<<Self::Hir as HirNode>::Id>;
+
+    fn file_id(&self) -> FileId;
 }
 
 pub trait HirNode {
@@ -329,6 +331,10 @@ duplicate::duplicate! {
 
         fn hir(&self, source_map: &FileHirSourceMap) -> Option<id_type> {
             source_map.arena_name.get(self).cloned()
+        }
+
+        fn file_id(&self) -> FileId {
+            self.file_id
         }
     }
 }

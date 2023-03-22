@@ -25,7 +25,7 @@ use crate::{
 };
 
 use super::{
-    DataType, DataTypeId, DatatypeSource, Ded, DedId, DedSource, Definition, DefinitionId,
+    DataType, DataTypeId, DatatypeSource, Ded, DedId, DedSource, DefKind, Definition, DefinitionId,
     DefinitionSource, ExprSource, FileHir, Module, ModuleId, ModuleItem, NameRefSource, PatSource,
     Sort, SortId, SortSource, Structure, StructureId, StructureSource,
 };
@@ -458,7 +458,13 @@ impl Ctx {
                     let (def, new_scope) = self
                         .builder::<ast::MetaDefinition>(ast::Assertion::from(assert).into())
                         .introduces(Some(name.clone()))
-                        .build_binding(self, Definition { name });
+                        .build_binding(
+                            self,
+                            Definition {
+                                name,
+                                kind: DefKind::Value,
+                            },
+                        );
                     self.push_scope(new_scope);
                     Some(vec![def.into()])
                 } else {
@@ -478,7 +484,13 @@ impl Ctx {
                     let (def, new_scope) = self
                         .builder::<ast::MetaDefinition>(ast::Assertion::from(assert).into())
                         .introduces(Some(name.clone()))
-                        .build_binding(self, Definition { name });
+                        .build_binding(
+                            self,
+                            Definition {
+                                name,
+                                kind: DefKind::Value,
+                            },
+                        );
                     self.push_scope(new_scope);
                     Some(vec![def.into()])
                 } else {
@@ -500,7 +512,13 @@ impl Ctx {
                                     ))
                                     .into(),
                                 )
-                                .build(self, Definition { name: name.clone() });
+                                .build(
+                                    self,
+                                    Definition {
+                                        name: name.clone(),
+                                        kind: DefKind::FunctionSym,
+                                    },
+                                );
                             defs.push(def);
                         }
                         let new_scope = self.make_scope(
@@ -533,7 +551,13 @@ impl Ctx {
                                 ast::FunctionSymbol::from(ast::DeclareDir::from(declare.clone()))
                                     .into(),
                             )
-                            .build(self, Definition { name: name.clone() });
+                            .build(
+                                self,
+                                Definition {
+                                    name: name.clone(),
+                                    kind: DefKind::FunctionSym,
+                                },
+                            );
                         defs.push(def);
                     }
                     let new_scope = self.make_scope(
@@ -598,7 +622,10 @@ impl Ctx {
             ast::DefineName::DefineProc(proc) => {
                 // let args =
                 let name = proc.name()?.as_name();
-                let def = self.alloc_definition(Definition { name: name.clone() });
+                let def = self.alloc_definition(Definition {
+                    name: name.clone(),
+                    kind: DefKind::Value,
+                });
 
                 let outer_scope = self.make_scope(vec![name], ScopeKind::ModuleItem(def.into()));
                 let src = self.make_source(&ast::Definition::from(define.clone()).into());
@@ -637,7 +664,10 @@ impl Ctx {
 
         let mut module_items: Vec<ModuleItem> = Vec::new();
         for name in names.clone() {
-            let def = self.alloc_definition(Definition { name });
+            let def = self.alloc_definition(Definition {
+                name,
+                kind: DefKind::Value,
+            });
             self.set_definition_source(src.clone(), def);
             module_items.push(def.into());
         }
@@ -825,7 +855,10 @@ impl Ctx {
     ) -> Option<DefinitionId> {
         let name = sort_decl_name(sort_decl)?;
 
-        let domain_id = self.alloc_definition(Definition { name: name.clone() });
+        let domain_id = self.alloc_definition(Definition {
+            name: name.clone(),
+            kind: DefKind::Sort,
+        });
 
         let new_scope = self.make_scope(vec![name], ScopeKind::ModuleItem(domain_id.into())); // FIXME: this is wrong, there should be a shared scope for all the introduced sorts
         self.set_module_item_scope(domain_id.into(), new_scope);

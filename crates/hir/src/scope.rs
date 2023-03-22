@@ -6,7 +6,7 @@ use crate::{
     sort::SortId,
 };
 
-#[derive(PartialEq, Eq, Debug)]
+#[derive(PartialEq, Eq, Debug, Clone)]
 pub struct Scope {
     pub parent: Option<ScopeId>,
     pub introduced: Vec<Name>,
