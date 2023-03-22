@@ -24,7 +24,7 @@ pub(crate) fn semantic_tokens_full(
 
     let semantic_tokens = snapshot.semantic_token_map.get(&uri).map(|v| v.clone());
     if let Some(semantic_tokens) = semantic_tokens {
-        tracing::debug!("it's in the cache! {:#?}", semantic_tokens);
+        tracing::debug!("it's in the cache!");
         Ok(Some(SemanticTokensResult::Tokens(semantic_tokens)))
     } else {
         tracing::debug!("it's not in the cache!");

@@ -16,6 +16,7 @@ use crate::{
     file_hir::{FileHirSourceMap, ModuleSource},
     identifier::IdentifierId,
     name::{AsName, Name},
+    pat::{Pat, PatId, PatKind},
     phrase::PhraseId,
     scope::{Scope, ScopeId, ScopeKind, ScopeTree},
     sort::SortKind,
@@ -24,8 +25,8 @@ use crate::{
 
 use super::{
     DataType, DataTypeId, DatatypeSource, Ded, DedId, DedSource, Definition, DefinitionId,
-    DefinitionSource, ExprSource, FileHir, Module, ModuleId, ModuleItem, Sort, SortId, SortSource,
-    Structure, StructureId, StructureSource,
+    DefinitionSource, ExprSource, FileHir, IdentifierSource, Module, ModuleId, ModuleItem,
+    PatSource, Sort, SortId, SortSource, Structure, StructureId, StructureSource,
 };
 
 struct Ctx {
@@ -115,6 +116,7 @@ set_source_fns!(
         ded DedSource -> DedId in deds,
         sort SortSource -> SortId in sorts,
         expr ExprSource -> ExprId in exprs,
+        pat PatSource -> PatId in pats,
     }
 );
 
@@ -128,6 +130,7 @@ alloc_fns!(
         Ded -> DedId in deds,
         Sort -> SortId in sorts,
         Expr -> ExprId in exprs,
+        Pat -> PatId in pats,
     }
 );
 
@@ -165,6 +168,7 @@ struct HirBuilder<N> {
     file_id: FileId,
     ast: N,
     scope: Option<ScopeId>,
+    introduces: Option<Vec<Name>>,
 }
 
 impl<N> HirBuilder<N> {
@@ -173,6 +177,7 @@ impl<N> HirBuilder<N> {
             file_id: ctx.file_id,
             ast,
             scope: None,
+            introduces: None,
         }
     }
 
@@ -203,6 +208,7 @@ where
             file_id,
             ast,
             scope,
+            introduces: _,
         } = self;
 
         let ptr = AstPtr::new(&ast);
@@ -221,6 +227,53 @@ where
         hir_id.set_scope(scope, &mut ctx.scopes);
 
         hir_id
+    }
+}
+
+impl<N> HirBuilder<N>
+where
+    N: AstNode,
+    SourceOf<N>: HasHir,
+    HirIdOf<N>: WithScope,
+    HirOf<N>: MakeNode,
+    HirIdOf<N>: BindingItem,
+    <SourceOf<N> as HasHir>::Hir: HirNode<Id = Idx<HirOf<N>>>,
+    HirIdOf<N>: WithSource<Source = SourceOf<N>>,
+{
+    fn introduces(self, names: impl IntoIterator<Item = Name>) -> Self {
+        HirBuilder {
+            introduces: Some(names.into_iter().collect()),
+            ..self
+        }
+    }
+    fn build_binding(self, ctx: &mut Ctx, hir: HirOf<N>) -> (HirIdOf<N>, ScopeId) {
+        let HirBuilder {
+            file_id,
+            ast,
+            scope,
+            introduces,
+        } = self;
+
+        let introduces = introduces.unwrap_or_default();
+
+        let ptr = AstPtr::new(&ast);
+
+        let source = InFile {
+            file_id,
+            value: ptr,
+        };
+
+        let hir_id = hir.make_node(&mut ctx.hir);
+
+        let current_scope = scope.unwrap_or_else(|| ctx.current_scope());
+
+        let new_scope = ctx.alloc_scope(hir_id.make_scope(introduces, Some(current_scope)));
+
+        hir_id.set_source(source, &mut ctx.source_map);
+
+        hir_id.set_scope(current_scope, &mut ctx.scopes);
+
+        (hir_id, new_scope)
     }
 }
 
@@ -279,6 +332,10 @@ impl Ctx {
             introduced: names,
             kind,
         };
+        self.scopes.alloc_scope(scope)
+    }
+
+    fn alloc_scope(&mut self, scope: Scope) -> ScopeId {
         self.scopes.alloc_scope(scope)
     }
 
@@ -504,9 +561,17 @@ impl Ctx {
 
                 return Some(vec![def.into()]);
             }
-            ast::DefineName::ListPat(_) => {
+            ast::DefineName::ListPat(list_pat) => {
+                let lowered = self.lower_pat(list_pat.into())?;
+
+                if let Some(scope) = lowered.1 {
+                    self.push_scope(scope);
+                }
+
+                self.lower_phrase(define.define_body()?);
+                return Some(vec![]);
                 // todo!(); TODO: implement
-                Vec::new()
+                // Vec::new()
             }
         };
 
@@ -528,12 +593,83 @@ impl Ctx {
         Some(module_items)
     }
 
+    fn lower_pat(&mut self, pat: ast::Pat) -> Option<(PatId, Option<ScopeId>)> {
+        match pat.clone() {
+            ast::Pat::IdentPat(ident_pat) => {
+                let name = self.lower_param(ident_pat.maybe_wildcard_typed_param()?)?;
+                let (pat, scope) = self
+                    .builder(pat)
+                    .introduces(Some(name.clone()))
+                    .build_binding(
+                        self,
+                        Pat {
+                            kind: PatKind::Ident(name),
+                        },
+                    );
+                Some((pat, Some(scope)))
+            }
+            ast::Pat::ListPat(list_pat) => {
+                let mut pats = Vec::new();
+                let mut scope = None;
+                for pat in list_pat.pats() {
+                    if let Some(temp_scope) = scope {
+                        if let Some((p, s)) =
+                            self.with_scope(temp_scope, |ctx| ctx.lower_pat(pat.clone()))
+                        {
+                            pats.push(p);
+                            if let Some(s) = s {
+                                scope = Some(s);
+                            }
+                        }
+                    } else {
+                        if let Some((pat, s)) = self.lower_pat(pat) {
+                            pats.push(pat);
+                            if let Some(s) = s {
+                                scope = Some(s);
+                            }
+                        }
+                    }
+                }
+                let scope = scope.unwrap_or_else(|| self.current_scope());
+                let (pat, scope) = self.builder(pat).with_scope(scope).build_binding(
+                    self,
+                    Pat {
+                        kind: PatKind::List(pats),
+                    },
+                );
+                self.add_pat_bindings(scope, pat);
+                Some((pat, Some(scope)))
+            }
+            ast::Pat::VarPat(_)
+            | ast::Pat::MetaIdentPat(_)
+            | ast::Pat::LiteralPat(_)
+            | ast::Pat::UnitPat(_)
+            | ast::Pat::NamedPat(_)
+            | ast::Pat::ValOfPat(_)
+            | ast::Pat::ListOfPat(_)
+            | ast::Pat::SplitPat(_)
+            | ast::Pat::CompoundPat(_)
+            | ast::Pat::WherePat(_)
+            | ast::Pat::SomeThingPat(_) => {
+                // todo!(); TODO: implement
+                None
+            }
+        }
+    }
+
+    fn add_pat_bindings(&mut self, scope: ScopeId, pat: PatId) {
+        let pattern = self.hir[pat].clone();
+        if let PatKind::Ident(ref name) = pattern.kind {
+            self.scopes[scope].introduced.push(name.clone());
+        }
+        pattern.walk_child_pats(|sub| self.add_pat_bindings(scope, sub));
+    }
+
     fn lower_expr(&mut self, expr: ast::Expr) -> Option<ExprId> {
         match &expr {
             ast::Expr::IdentExpr(_)
             | ast::Expr::LiteralExpr(_)
             | ast::Expr::UnitExpr(_)
-            | ast::Expr::TermVarExpr(_)
             | ast::Expr::CheckExpr(_)
             | ast::Expr::ApplicationExpr(_)
             | ast::Expr::ListExpr(_)
@@ -558,6 +694,12 @@ impl Ctx {
                 walk_child_exprs(expr, |exp| {
                     self.lower_expr(exp);
                 });
+
+                Some(id)
+            }
+            ast::Expr::TermVarExpr(var) => {
+                let _sort = var.sort().and_then(|s| self.lower_sort(s));
+                let id = self.builder(expr.clone()).build(self, Expr {});
 
                 Some(id)
             }
@@ -667,24 +809,26 @@ impl Ctx {
         Some(id)
     }
 
+    fn lower_param(&mut self, param: MaybeWildcardTypedParam) -> Option<Name> {
+        Some(match param {
+            ast::MaybeWildcardTypedParam::MaybeTypedParam(p) => match p {
+                ast::MaybeTypedParam::Identifier(id) => id.as_name(),
+                ast::MaybeTypedParam::TypedParam(tp) => {
+                    if let Some(sort) = tp.sort() {
+                        self.lower_sort(sort);
+                    }
+                    tp.identifier()?.as_name()
+                }
+                ast::MaybeTypedParam::OpAnnotatedParam(op) => op.identifier()?.as_name(),
+            },
+            ast::MaybeWildcardTypedParam::Wildcard(_) => return None,
+        })
+    }
+
     fn lower_args(&mut self, args: AstChildren<MaybeWildcardTypedParam>) -> Vec<Name> {
         let mut arg_names = Vec::new();
         for p in args {
-            let arg = match p {
-                ast::MaybeWildcardTypedParam::MaybeTypedParam(p) => match p {
-                    ast::MaybeTypedParam::Identifier(id) => id.as_name(),
-                    ast::MaybeTypedParam::TypedParam(tp) => {
-                        if let Some(sort) = tp.sort() {
-                            self.lower_sort(sort);
-                        }
-                        or_continue!(tp.identifier()).as_name()
-                    }
-                    ast::MaybeTypedParam::OpAnnotatedParam(op) => {
-                        or_continue!(op.identifier()).as_name()
-                    }
-                },
-                ast::MaybeWildcardTypedParam::Wildcard(_) => continue,
-            };
+            let arg = or_continue!(self.lower_param(p));
             arg_names.push(arg);
         }
         arg_names
@@ -737,6 +881,8 @@ trait WithSource {
     [DedId]             [DedSource]             [deds]              ;
     [ExprId]            [ExprSource]            [exprs]             ;
     [ModuleId]          [ModuleSource]          [modules]           ;
+    [IdentifierId]      [IdentifierSource]      [identifiers]       ;
+    [PatId]             [PatSource]             [pats]              ;
 )]
 impl WithSource for id_ty {
     type Source = source_ty;
@@ -761,6 +907,7 @@ trait WithScope: Sized {
     [DedId]             [Self]              [set_ded_scope]         ;
     [ExprId]            [Self]              [set_expr_scope]        ;
     [IdentifierId]      [Self]              [set_identifier_scope]  ;
+    [PatId]             [Self]              [set_pat_scope]         ;
 )]
 impl WithScope for id_ty {
     type ScopeMapKey = scope_map_key;
@@ -807,6 +954,7 @@ trait MakeNode: Sized {
     [Ded]                  [deds]              ;
     [Expr]                 [exprs]             ;
     [Module]               [modules]           ;
+    [Pat]                  [pats]              ;
 )]
 impl MakeNode for node_ty {
     fn make_node(self, hir: &mut FileHir) -> Idx<node_ty> {

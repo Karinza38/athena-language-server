@@ -3,7 +3,7 @@ use rustc_hash::FxHashMap;
 
 use crate::{
     ded::DedId, expr::ExprId, file_hir::ModuleItem, identifier::IdentifierId, name::Name,
-    sort::SortId,
+    pat::PatId, sort::SortId,
 };
 
 #[derive(PartialEq, Eq, Debug)]
@@ -19,6 +19,7 @@ pub type ScopeId = Idx<Scope>;
 pub enum ScopeKind {
     Expr(ExprId),
     ModuleItem(ModuleItem),
+    Pat(PatId),
     Root,
 }
 
@@ -37,6 +38,12 @@ where
     }
 }
 
+impl From<PatId> for ScopeKind {
+    fn from(pat: PatId) -> Self {
+        Self::Pat(pat)
+    }
+}
+
 #[derive(PartialEq, Eq, Debug)]
 pub struct ScopeTree {
     scopes: Arena<Scope>,
@@ -47,8 +54,22 @@ pub struct ScopeTree {
     scopes_by_ded: ArenaMap<DedId, ScopeId>,
     scopes_by_module_item: FxHashMap<ModuleItem, ScopeId>,
     scopes_by_sort: ArenaMap<SortId, ScopeId>,
-
+    scopes_by_pat: ArenaMap<PatId, ScopeId>,
     scopes_by_identifier: ArenaMap<IdentifierId, ScopeId>,
+}
+
+impl std::ops::Index<ScopeId> for ScopeTree {
+    type Output = Scope;
+
+    fn index(&self, index: ScopeId) -> &Self::Output {
+        &self.scopes[index]
+    }
+}
+
+impl std::ops::IndexMut<ScopeId> for ScopeTree {
+    fn index_mut(&mut self, index: ScopeId) -> &mut Self::Output {
+        &mut self.scopes[index]
+    }
 }
 
 impl ScopeTree {
@@ -62,6 +83,7 @@ impl ScopeTree {
         Self {
             scopes,
             root,
+            scopes_by_pat: ArenaMap::default(),
             scopes_by_expr: ArenaMap::default(),
             scopes_by_ded: ArenaMap::default(),
             scopes_by_module_item: FxHashMap::default(),
@@ -98,6 +120,10 @@ impl ScopeTree {
         self.scopes_by_identifier.insert(identifier, scope);
     }
 
+    pub fn set_pat_scope(&mut self, pat: PatId, scope: ScopeId) {
+        self.scopes_by_pat.insert(pat, scope);
+    }
+
     pub fn scope_by_expr(&self, id: ExprId) -> Option<ScopeId> {
         self.scopes_by_expr.get(id).copied()
     }
@@ -118,6 +144,10 @@ impl ScopeTree {
         self.scopes_by_identifier.get(id).copied()
     }
 
+    pub fn scope_by_pat(&self, id: PatId) -> Option<ScopeId> {
+        self.scopes_by_pat.get(id).copied()
+    }
+
     pub fn alloc_scope(&mut self, scope: Scope) -> ScopeId {
         let id = self.scopes.alloc(scope);
         match &self.scopes[id].kind {
@@ -126,6 +156,9 @@ impl ScopeTree {
             }
             ScopeKind::ModuleItem(item) => {
                 self.scopes_by_module_item.insert(*item, id);
+            }
+            ScopeKind::Pat(pat) => {
+                self.scopes_by_pat.insert(*pat, id);
             }
             ScopeKind::Root => {}
         }

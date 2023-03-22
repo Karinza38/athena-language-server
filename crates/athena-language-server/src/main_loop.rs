@@ -196,7 +196,7 @@ impl LanguageServer for Backend {
             .await;
     }
 
-    #[tracing::instrument(skip(self))]
+    #[tracing::instrument(skip(self, params))]
     async fn semantic_tokens_full(
         &self,
         params: SemanticTokensParams,
@@ -384,7 +384,10 @@ impl GlobalState {
                 }
                 Some(StateClientMessage::FilesChanged(files)) => {
                     let _sp = tracing::info_span!("files changed");
-                    tracing::info!("files changed: {:?}", files);
+                    tracing::info!(
+                        "files changed: {:?}",
+                        files.iter().map(|(p, _)| p).collect::<Vec<_>>()
+                    );
                     let diagnostics = on_changed(&mut analysis_host, &semantic_token_map, files);
                     tracing::debug!("now here");
                     for (url, diagnostic) in diagnostics {
@@ -404,13 +407,16 @@ impl GlobalState {
     }
 }
 
-#[tracing::instrument(skip(host, token_map))]
+#[tracing::instrument(skip(host, token_map, files))]
 fn on_changed(
     host: &mut AnalysisHost,
     token_map: &DashMap<String, SemanticTokens>,
     files: Vec<(AbsPathBuf, String)>,
 ) -> Vec<(Url, Vec<Diagnostic>)> {
-    tracing::info!("applied change: {:?}", files);
+    tracing::info!(
+        "applied change: {:?}",
+        files.iter().map(|(p, _)| p).collect::<Vec<_>>()
+    );
 
     let mut file_diagnostics = Vec::new();
     for (file_path, file_contents) in files {

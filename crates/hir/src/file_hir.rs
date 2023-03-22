@@ -13,6 +13,7 @@ use crate::{
     expr::{Expr, ExprId},
     identifier::{Identifier, IdentifierId},
     name::Name,
+    pat::{Pat, PatId},
     phrase::PhraseId,
     scope::{Scope, ScopeId, ScopeTree},
     sort::{Sort, SortId},
@@ -29,6 +30,27 @@ pub struct FileHir {
     pub structures: Arena<Structure>,
     pub sorts: Arena<Sort>,
     pub identifiers: Arena<Identifier>,
+    pub pats: Arena<Pat>,
+}
+
+#[duplicate::duplicate_item(
+    id              hir             arena;
+    [ExprId]        [Expr]          [exprs]         ;
+    [DedId]         [Ded]           [deds]          ;
+    [ModuleId]      [Module]        [modules]       ;
+    [DefinitionId]  [Definition]    [definitions]   ;
+    [DataTypeId]    [DataType]      [data_types]    ;
+    [StructureId]   [Structure]     [structures]    ;
+    [SortId]        [Sort]          [sorts]         ;
+    [IdentifierId]  [Identifier]    [identifiers]   ;
+    [PatId]         [Pat]           [pats]          ;
+)]
+impl std::ops::Index<id> for FileHir {
+    type Output = hir;
+
+    fn index(&self, index: id) -> &Self::Output {
+        &self.arena[index]
+    }
 }
 
 pub enum DefId {
@@ -63,6 +85,9 @@ pub struct FileHirSourceMap {
 
     pub identifiers: FxHashMap<IdentifierSource, IdentifierId>,
     pub identifiers_back: ArenaMap<IdentifierId, IdentifierSource>,
+
+    pub pats: FxHashMap<PatSource, PatId>,
+    pub pats_back: ArenaMap<PatId, PatSource>,
 }
 
 pub type IdentifierPtr = AstPtr<ast::Identifier>;
@@ -88,6 +113,9 @@ pub type StructureSource = InFile<StructurePtr>;
 
 pub type SortPtr = AstPtr<ast::Sort>;
 pub type SortSource = InFile<SortPtr>;
+
+pub type PatPtr = AstPtr<ast::Pat>;
+pub type PatSource = InFile<PatPtr>;
 
 #[derive(PartialEq, Eq, Debug)]
 pub enum Visibility {
@@ -279,6 +307,7 @@ duplicate::duplicate! {
         [SortId]        [Sort]          [SortSource]        [sorts]         [scope_by_sort]        ;
         [IdentifierId]  [Identifier]    [IdentifierSource]  [identifiers]   [scope_by_identifier]  ;
         [DedId]         [Ded]           [DedSource]         [deds]          [scope_by_ded]         ;
+        [PatId]         [Pat]           [PatSource]         [pats]          [scope_by_pat]         ;
     ]
     impl HirNode for hir_type {
         type Source = source_type;

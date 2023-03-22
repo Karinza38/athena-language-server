@@ -1,7 +1,7 @@
 use std::fmt::Debug;
 
 use hir::{
-    file_hir::ExprSource,
+    file_hir::{ExprSource, PatSource},
     name::{AsName, Name},
     scope::{Scope, ScopeKind},
     FileSema, HasHir, HasSyntaxNodePtr, HirDatabase, HirNode, InFile,
@@ -39,7 +39,7 @@ pub(crate) fn go_to_definition(
         },
     ) else {
         tracing::info!("no definition found");
-        return None;
+        return Some(RangeInfo::new(token.text_range(), Vec::new()));
     };
 
     Some(RangeInfo {
@@ -102,6 +102,10 @@ fn find_def_new(
         return None;
     };
     let name = ident.as_name();
+
+    if !ast::Identifier::can_cast(token.parent()?.kind()) {
+        return None;
+    }
 
     tracing::info!(?name, "finding interesting node");
     let node = find_interesting_node(&token)?;
@@ -174,6 +178,10 @@ fn scope_kind_to_node(scope: ScopeKind, root: &SyntaxNode, sema: &FileSema) -> O
             hir::file_hir::ModuleItem::StructureId(_) => todo!(),
             hir::file_hir::ModuleItem::DataTypeId(_) => todo!(),
         },
+        ScopeKind::Pat(p) => {
+            let source: PatSource = sema.get_source_for::<hir::pat::Pat>(p)?;
+            Some(source.value.syntax_node_ptr().to_node(root))
+        }
         ScopeKind::Root => None,
     }
 }
@@ -193,9 +201,10 @@ mod tests {
     use itertools::Itertools;
 
     #[track_caller]
-    fn check(fixture: &str) {
+    fn check(ra_fixture: &str) {
+        // calling the parameter `ra_fixture` seems to make rust analyzer highlight the fixture more nicely (presumably because rust-analyzer uses fixtures internally)
         test_utils::init_logging();
-        let (analysis, position, expected) = fixture::annotations(fixture);
+        let (analysis, position, expected) = fixture::annotations(ra_fixture);
         let navs = analysis
             .go_to_definition(position)
             .unwrap()
@@ -220,8 +229,8 @@ mod tests {
     }
 
     #[allow(dead_code)]
-    fn check_unresolved(fixture: &str) {
-        let (analysis, position) = fixture::position(fixture);
+    fn check_unresolved(ra_fixture: &str) {
+        let (analysis, position) = fixture::position(ra_fixture);
         let navs = analysis
             .go_to_definition(position)
             .unwrap()
@@ -269,6 +278,30 @@ mod tests {
                 declare fun : [] -> Bar
                 //      ^^^
                 define a := $0fun
+            }
+            "#,
+        )
+    }
+
+    #[test]
+    fn define_list() {
+        check(
+            r#"
+            module Foo {
+                define [a [b]] := [1 [2]]
+                //         ^
+                define c := $0b
+            }
+            "#,
+        )
+    }
+
+    #[test]
+    fn term_var_is_a_constant() {
+        check_unresolved(
+            r#"
+            module Foo {
+                define x := ?$0x:A
             }
             "#,
         )
