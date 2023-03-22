@@ -50,7 +50,7 @@ fn syntax_validation() {
         eprintln!("running test: {:?}", path.file_name().unwrap());
         let tree = crate::ast::SourceFile::parse(&contents);
         let actual = display_tree(&tree);
-        assert!(tree.errors().len() > 0, "no errors:\n{actual}",);
+        assert!(!tree.errors().is_empty(), "no errors:\n{actual}",);
         insta::with_settings!({description => &contents, omit_expression => true }, { assert_snapshot!(actual) });
     });
 }

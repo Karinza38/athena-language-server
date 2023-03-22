@@ -457,7 +457,7 @@ impl Ctx {
                     let (def, new_scope) = self
                         .builder::<ast::MetaDefinition>(ast::Assertion::from(assert).into())
                         .introduces(Some(name.clone()))
-                        .build_binding(self, Definition { name: name.clone() });
+                        .build_binding(self, Definition { name });
                     self.push_scope(new_scope);
                     Some(vec![def.into()])
                 } else {
@@ -477,7 +477,7 @@ impl Ctx {
                     let (def, new_scope) = self
                         .builder::<ast::MetaDefinition>(ast::Assertion::from(assert).into())
                         .introduces(Some(name.clone()))
-                        .build_binding(self, Definition { name: name.clone() });
+                        .build_binding(self, Definition { name });
                     self.push_scope(new_scope);
                     Some(vec![def.into()])
                 } else {
@@ -679,12 +679,10 @@ impl Ctx {
                                 scope = Some(s);
                             }
                         }
-                    } else {
-                        if let Some((pat, s)) = self.lower_pat(pat) {
-                            pats.push(pat);
-                            if let Some(s) = s {
-                                scope = Some(s);
-                            }
+                    } else if let Some((pat, s)) = self.lower_pat(pat) {
+                        pats.push(pat);
+                        if let Some(s) = s {
+                            scope = Some(s);
                         }
                     }
                 }

@@ -221,7 +221,7 @@ impl TestCase {
         {
             return TestCase {
                 ath: path.into(),
-                text: fs::read_to_string(&path).unwrap(),
+                text: fs::read_to_string(path).unwrap(),
                 entry: ParseEntryOrLexer::Lexer,
             };
         }

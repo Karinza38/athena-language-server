@@ -28,7 +28,7 @@ impl FileWatcher for TestDB {
 
 impl Upcast<dyn HirDatabase> for TestDB {
     fn upcast(&self) -> &(dyn HirDatabase + 'static) {
-        &*self
+        self
     }
 }
 
