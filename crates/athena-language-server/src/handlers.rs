@@ -33,9 +33,11 @@ pub(crate) fn semantic_tokens_full(
         Ok(Some(SemanticTokensResult::Tokens(semantic_tokens)))
     } else {
         tracing::debug!("it's not in the cache!");
+        let conf = snapshot.config.as_ref().clone();
+        let highlight_config = conf.into();
         let index = analysis.file_line_index(file_id)?;
         let src = analysis.file_text(file_id)?;
-        let highlights = analysis.highlight(file_id)?;
+        let highlights = analysis.highlight(highlight_config, file_id)?;
         let tokens = to_proto::semantic_tokens(&src, &index, highlights);
         snapshot.semantic_token_map.insert(uri, tokens.clone());
         Ok(Some(SemanticTokensResult::Tokens(tokens)))

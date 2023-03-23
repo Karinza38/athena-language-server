@@ -17,7 +17,7 @@ use std::{panic::UnwindSafe, sync::Arc};
 
 pub use crate::syntax_highlighting::{
     tags::{Highlight, HlPunct, HlTag},
-    HlRange,
+    HighlightConfig, HlRange,
 };
 pub use ide_db::{
     base_db::{
@@ -93,8 +93,8 @@ impl Analysis {
     }
 
     /// Computes syntax highlighting for the given file
-    pub fn highlight(&self, file_id: FileId) -> Cancellable<Vec<HlRange>> {
-        self.with_db(|db| syntax_highlighting::highlight(db, file_id, None))
+    pub fn highlight(&self, config: HighlightConfig, file_id: FileId) -> Cancellable<Vec<HlRange>> {
+        self.with_db(|db| syntax_highlighting::highlight(db, config, file_id, None))
     }
 
     pub fn go_to_definition(

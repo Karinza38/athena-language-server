@@ -13,6 +13,10 @@ use crate::{HlPunct, HlTag};
 
 use self::{highlights::Highlights, tags::Highlight};
 
+pub struct HighlightConfig {
+    pub with_name_res: bool,
+}
+
 #[derive(Debug, Clone)]
 pub struct HlRange {
     pub range: TextRange,
@@ -21,6 +25,7 @@ pub struct HlRange {
 
 pub(crate) fn highlight(
     db: &RootDatabase,
+    config: HighlightConfig,
     file_id: FileId,
     range_to_highlight: Option<TextRange>,
 ) -> Vec<HlRange> {
@@ -43,7 +48,7 @@ pub(crate) fn highlight(
 
     let mut hl = Highlights::new(node.text_range());
 
-    traverse(&mut hl, &sema, &node, file_id, range_to_highlight);
+    traverse(&mut hl, &sema, &config, &node, file_id, range_to_highlight);
 
     hl.to_vec()
 }
@@ -51,6 +56,7 @@ pub(crate) fn highlight(
 fn traverse(
     hl: &mut Highlights,
     sema: &Semantics<'_, RootDatabase>,
+    config: &HighlightConfig,
     node: &SyntaxNode,
     file_id: FileId,
     range_to_highlight: TextRange,
@@ -75,7 +81,7 @@ fn traverse(
         let h = match element {
             NodeOrToken::Node(n) => {
                 if let Some(id) = ast::NameOrNameRef::cast(n.clone()) {
-                    name_or_name_ref(sema, file_id, id)
+                    name_or_name_ref(sema, file_id, id, config.with_name_res)
                 } else {
                     if let Some(_meta) = ast::MetaIdent::cast(n) {
                         Some(HlTag::IdentLiteral.into())
@@ -160,10 +166,11 @@ fn name_or_name_ref(
     sema: &Semantics<'_, RootDatabase>,
     file_id: FileId,
     name_like: ast::NameOrNameRef,
+    with_name_res: bool,
 ) -> Option<Highlight> {
     match name_like {
         ast::NameOrNameRef::Name(it) => name(sema, it),
-        ast::NameOrNameRef::NameRef(it) => name_ref(sema, file_id, it),
+        ast::NameOrNameRef::NameRef(it) => name_ref(sema, file_id, it, with_name_res),
     }
 }
 
@@ -207,31 +214,37 @@ fn name_ref(
     sema: &Semantics<'_, RootDatabase>,
     file_id: FileId,
     name_ref: ast::NameRef,
+    with_name_res: bool,
 ) -> Option<Highlight> {
-    Some(
-        match sema.resolve_name_ref(InFile::new(file_id, name_ref.clone())) {
-            Some(name_res) => match name_res {
-                hir::semantics::NameRefResolution::ModuleItem(mi) => match mi {
-                    hir::file_hir::ModuleItem::ModuleId(_) => SymbolKind::Module.into(),
-                    hir::file_hir::ModuleItem::DefinitionId(def) => {
-                        let def: hir::file_hir::Definition = sema.hir(InFile::new(file_id, def));
-                        match def.kind {
-                            hir::file_hir::DefKind::FunctionSym => SymbolKind::FnSym.into(),
-                            hir::file_hir::DefKind::Proc => SymbolKind::Func.into(),
-                            hir::file_hir::DefKind::Value => SymbolKind::Value.into(),
-                            hir::file_hir::DefKind::Sort => SymbolKind::Sort.into(),
+    if with_name_res {
+        Some(
+            match sema.resolve_name_ref(InFile::new(file_id, name_ref.clone())) {
+                Some(name_res) => match name_res {
+                    hir::semantics::NameRefResolution::ModuleItem(mi) => match mi {
+                        hir::file_hir::ModuleItem::ModuleId(_) => SymbolKind::Module.into(),
+                        hir::file_hir::ModuleItem::DefinitionId(def) => {
+                            let def: hir::file_hir::Definition =
+                                sema.hir(InFile::new(file_id, def));
+                            match def.kind {
+                                hir::file_hir::DefKind::FunctionSym => SymbolKind::FnSym.into(),
+                                hir::file_hir::DefKind::Proc => SymbolKind::Func.into(),
+                                hir::file_hir::DefKind::Value => SymbolKind::Value.into(),
+                                hir::file_hir::DefKind::Sort => SymbolKind::Sort.into(),
+                            }
                         }
-                    }
-                    hir::file_hir::ModuleItem::DataTypeId(_) => todo!(),
-                    hir::file_hir::ModuleItem::StructureId(_) => todo!(),
-                    hir::file_hir::ModuleItem::PhraseId(_) => todo!(),
+                        hir::file_hir::ModuleItem::DataTypeId(_) => todo!(),
+                        hir::file_hir::ModuleItem::StructureId(_) => todo!(),
+                        hir::file_hir::ModuleItem::PhraseId(_) => todo!(),
+                    },
+                    hir::semantics::NameRefResolution::Local(_) => SymbolKind::Value.into(),
                 },
-                hir::semantics::NameRefResolution::Local(_) => SymbolKind::Value.into(),
+                None => {
+                    tracing::warn!("failed to resolve name ref: {name_ref:?}");
+                    SymbolKind::Value.into()
+                }
             },
-            None => {
-                tracing::warn!("failed to resolve name ref: {name_ref:?}");
-                SymbolKind::Value.into()
-            }
-        },
-    )
+        )
+    } else {
+        Some(SymbolKind::Value.into())
+    }
 }

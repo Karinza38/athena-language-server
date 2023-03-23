@@ -3,6 +3,7 @@ use std::sync::Arc;
 use dashmap::DashMap;
 use ide::{Analysis, AnalysisHost, Cancellable, LineIndex};
 use ide_db::base_db::FileId;
+use parking_lot::RwLock;
 use paths::AbsPathBuf;
 use tokio::sync::mpsc::{UnboundedReceiver, UnboundedSender};
 use tower_lsp::{
@@ -46,6 +47,7 @@ pub(crate) struct GlobalState {
     pub(crate) semantic_token_map: Arc<DashMap<String, SemanticTokens>>,
     pub(crate) client: Option<Client>,
     pub(crate) receiver: UnboundedReceiver<StateClientMessage>,
+    pub(crate) config: Arc<RwLock<crate::config::Config>>,
 }
 
 pub(crate) struct GlobalStateSnapshot {
@@ -53,6 +55,7 @@ pub(crate) struct GlobalStateSnapshot {
     pub(crate) semantic_token_map: Arc<DashMap<String, SemanticTokens>>,
     #[allow(dead_code)]
     pub(crate) client: Client,
+    pub(crate) config: Arc<crate::config::Config>,
 }
 type Handler = Box<dyn FnOnce(GlobalStateSnapshot) + Send>;
 
