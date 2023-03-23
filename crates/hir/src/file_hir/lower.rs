@@ -299,7 +299,7 @@ impl Ctx {
     fn lower_stmt(&mut self, stmt: ast::Stmt) -> Vec<ModuleItem> {
         match stmt {
             ast::Stmt::DirStmt(dir) => self
-                .lower_dir(dir.dir().unwrap())
+                .lower_dir(or_return!(dir.dir(), vec![]))
                 .into_iter()
                 .flatten()
                 .collect(),
@@ -392,7 +392,7 @@ impl Ctx {
     fn lower_dir(&mut self, dir: ast::Dir) -> Option<Vec<ModuleItem>> {
         match dir {
             ast::Dir::ModuleDir(module) => {
-                let name = module.name().unwrap().as_name();
+                let name = module.name()?.as_name();
 
                 let module_id = self.alloc_module(Module {
                     name: name.clone(),
