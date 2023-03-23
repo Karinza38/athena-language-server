@@ -1,6 +1,7 @@
 mod go_to_definition;
 mod helpers;
 mod navigation_target;
+mod syntax_highlighting;
 
 #[cfg(test)]
 mod fixture;
@@ -14,6 +15,10 @@ use ide_db::{
 use core::fmt;
 use std::{panic::UnwindSafe, sync::Arc};
 
+pub use crate::syntax_highlighting::{
+    tags::{Highlight, HlPunct, HlTag},
+    HlRange,
+};
 pub use ide_db::{
     base_db::{
         salsa::{self, ParallelDatabase},
@@ -79,12 +84,17 @@ impl Analysis {
         self.with_db(|db| db.line_index(file_id))
     }
 
-    pub fn intern_path(&self, path: AbsPathBuf) -> FileId {
-        self.db.intern_path(path.into())
+    pub fn intern_path(&self, path: AbsPathBuf) -> Cancellable<FileId> {
+        self.with_db(|db| db.intern_path(path.into()))
     }
 
-    pub fn file_path(&self, file_id: FileId) -> Option<AbsPathBuf> {
-        self.db.lookup_intern_path(file_id).to_real_path()
+    pub fn file_path(&self, file_id: FileId) -> Cancellable<Option<AbsPathBuf>> {
+        self.with_db(|db| db.lookup_intern_path(file_id).to_real_path())
+    }
+
+    /// Computes syntax highlighting for the given file
+    pub fn highlight(&self, file_id: FileId) -> Cancellable<Vec<HlRange>> {
+        self.with_db(|db| syntax_highlighting::highlight(db, file_id, None))
     }
 
     pub fn go_to_definition(

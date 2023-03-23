@@ -420,8 +420,9 @@ fn on_changed(
 
     let mut file_diagnostics = Vec::new();
     for (file_path, file_contents) in files {
+        let contents = Arc::new(file_contents);
         host.raw_db_mut()
-            .set_in_mem_contents(file_path.clone(), Arc::new(file_contents));
+            .set_in_mem_contents(file_path.clone(), contents.clone());
         let file_id = host.raw_db().intern_path(file_path.clone().into());
         host.did_change_file(file_id);
         tracing::debug!("did change it");
@@ -440,7 +441,8 @@ fn on_changed(
             })
             .collect::<Vec<_>>();
 
-        let tokens = semantic_tokens::semantic_tokens_for_file(ast.tree(), &index);
+        let highlights = analysis.highlight(file_id).unwrap();
+        let tokens = to_proto::semantic_tokens(&contents, &index, highlights);
 
         token_map.insert(url.to_string(), tokens);
 

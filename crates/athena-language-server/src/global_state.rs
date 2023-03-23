@@ -78,13 +78,16 @@ impl std::fmt::Debug for StateClientMessage {
 }
 
 impl GlobalStateSnapshot {
-    pub(crate) fn file_id(&self, url: &Url) -> crate::Result<FileId> {
-        Ok(self.analysis.intern_path(from_proto::abs_path(url)?))
+    pub(crate) fn file_id(&self, url: &Url) -> Cancellable<crate::Result<FileId>> {
+        match from_proto::abs_path(url) {
+            Ok(pth) => Ok(Ok(self.analysis.intern_path(pth)?)),
+            Err(e) => return Ok(Err(e)),
+        }
     }
 
-    pub(crate) fn file_id_to_url(&self, id: FileId) -> Url {
-        let path = self.analysis.file_path(id).unwrap();
-        to_proto::url_from_abs_path(&path)
+    pub(crate) fn file_id_to_url(&self, id: FileId) -> Cancellable<Url> {
+        let path = self.analysis.file_path(id)?.unwrap();
+        Ok(to_proto::url_from_abs_path(&path))
     }
 
     pub(crate) fn file_line_index(&self, file_id: FileId) -> Cancellable<Arc<LineIndex>> {

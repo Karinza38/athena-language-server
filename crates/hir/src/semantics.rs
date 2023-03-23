@@ -69,6 +69,15 @@ where
         source.hir(&file_sema.file_hir_source_map)
     }
 
+    pub fn hir<N>(&self, id: InFile<N::Id>) -> N
+    where
+        N: HirNode + Clone,
+    {
+        let InFile { file_id, value: id } = id;
+        let file_sema = self.db.file_sema(file_id);
+        N::node(id, &file_sema.file_hir).clone()
+    }
+
     pub fn get_scope_for<N>(&self, hir: InFile<N::Id>) -> Option<ScopeId>
     where
         N: HirNode,

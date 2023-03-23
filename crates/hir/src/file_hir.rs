@@ -29,7 +29,7 @@ pub struct FileHir {
     pub data_types: Arena<DataType>,
     pub structures: Arena<Structure>,
     pub sorts: Arena<Sort>,
-    pub identifiers: Arena<NameRef>,
+    pub name_refs: Arena<NameRef>,
     pub pats: Arena<Pat>,
 }
 
@@ -42,7 +42,7 @@ pub struct FileHir {
     [DataTypeId]    [DataType]      [data_types]    ;
     [StructureId]   [Structure]     [structures]    ;
     [SortId]        [Sort]          [sorts]         ;
-    [NameRefId]  [NameRef]    [identifiers]   ;
+    [NameRefId]  [NameRef]    [name_refs]   ;
     [PatId]         [Pat]           [pats]          ;
 )]
 impl std::ops::Index<id> for FileHir {
@@ -117,13 +117,13 @@ pub type SortSource = InFile<SortPtr>;
 pub type PatPtr = AstPtr<ast::Pat>;
 pub type PatSource = InFile<PatPtr>;
 
-#[derive(PartialEq, Eq, Debug)]
+#[derive(PartialEq, Eq, Debug, Clone)]
 pub enum Visibility {
     Public,
     Private,
 }
 
-#[derive(PartialEq, Eq, Debug)]
+#[derive(PartialEq, Eq, Debug, Clone)]
 pub struct FunctionSym {
     name: Name,
     // sort_args: Vec<Name>,
@@ -131,7 +131,7 @@ pub struct FunctionSym {
     ret_sort: SortId,
 }
 
-#[derive(PartialEq, Eq, Debug)]
+#[derive(PartialEq, Eq, Debug, Clone)]
 pub enum DefKind {
     FunctionSym,
     Proc,
@@ -139,32 +139,32 @@ pub enum DefKind {
     Sort,
 }
 
-#[derive(PartialEq, Eq, Debug)]
+#[derive(PartialEq, Eq, Debug, Clone)]
 pub struct Definition {
-    name: Name,
+    pub name: Name,
     // parent: Option<ModuleId>,
     // visibility: Visibility,
-    kind: DefKind,
+    pub kind: DefKind,
 }
 
-#[derive(PartialEq, Eq, Debug)]
+#[derive(PartialEq, Eq, Debug, Clone)]
 pub struct DataType {
-    name: Name,
+    pub name: Name,
     // parent: Option<ModuleId>,
-    constructors: Vec<DataTypeConstructor>,
+    pub constructors: Vec<DataTypeConstructor>,
 }
 
-#[derive(PartialEq, Eq, Debug)]
+#[derive(PartialEq, Eq, Debug, Clone)]
 pub struct DataTypeConstructor {
-    name: Name,
+    pub name: Name,
     // parent: DataTypeId,
 }
 
-#[derive(PartialEq, Eq, Debug)]
+#[derive(PartialEq, Eq, Debug, Clone)]
 pub struct Structure {
-    name: Name,
+    pub name: Name,
     // parent: Option<ModuleId>,
-    constructors: Vec<DataTypeConstructor>,
+    pub constructors: Vec<DataTypeConstructor>,
 }
 
 pub type DataTypeId = Idx<DataType>;
@@ -280,6 +280,8 @@ pub trait HirNode {
     fn source(id: Self::Id, source_map: &FileHirSourceMap) -> Option<Self::Source>;
 
     fn scope(id: Self::Id, scope_tree: &ScopeTree) -> Option<ScopeId>;
+
+    fn node(id: Self::Id, hir: &FileHir) -> &Self;
 }
 
 pub trait HasSyntaxNodePtr {
@@ -324,6 +326,12 @@ duplicate::duplicate! {
         fn scope(id: id_type, scope_tree: &ScopeTree) -> Option<ScopeId> {
             #[allow(clippy::useless_conversion)]
             scope_tree.scope_lookup(id.into())
+        }
+
+        fn node(id: id_type, hir: &FileHir) -> &Self {
+            paste::paste! {
+                &hir.[<arena_name>][id]
+            }
         }
     }
     impl HasHir for source_type {
