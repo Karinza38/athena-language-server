@@ -5,8 +5,8 @@ mod highlights;
 use hir::{InFile, Semantics};
 use ide_db::{base_db::FileId, RootDatabase, SymbolKind};
 use syntax::{
-    ast, match_ast, AstNode, NodeOrToken, SyntaxKind, SyntaxNode, SyntaxToken, TextRange,
-    WalkEvent, T,
+    ast::{self, HasName},
+    match_ast, AstNode, NodeOrToken, SyntaxKind, SyntaxNode, SyntaxToken, TextRange, WalkEvent, T,
 };
 
 use crate::{HlPunct, HlTag};
@@ -54,6 +54,7 @@ pub(crate) fn highlight(
     hl.to_vec()
 }
 
+#[tracing::instrument(skip(hl, sema, config, node))]
 fn traverse(
     hl: &mut Highlights,
     sema: &Semantics<'_, RootDatabase>,
@@ -164,6 +165,7 @@ fn token(tok: SyntaxToken) -> Option<Highlight> {
     })
 }
 
+#[tracing::instrument(skip(sema, file_id))]
 fn name_or_name_ref(
     sema: &Semantics<'_, RootDatabase>,
     file_id: FileId,
@@ -176,12 +178,46 @@ fn name_or_name_ref(
     }
 }
 
+#[tracing::instrument(skip(_sema))]
 fn name(_sema: &Semantics<'_, RootDatabase>, name: ast::Name) -> Option<Highlight> {
     let parent = name.syntax().parent()?;
 
     if name.text().chars().all(|c| c.is_numeric()) {
         return Some(HlTag::NumberLiteral.into());
     }
+
+    let param_idx = |needle: &ast::Name,
+                     first: Option<ast::Name>,
+                     params: ast::AstChildren<ast::MaybeWildcardTypedParam>| {
+        if first.as_ref() == Some(needle) {
+            Some(0usize)
+        } else {
+            params.into_iter().position(|it| match it {
+                ast::MaybeWildcardTypedParam::MaybeTypedParam(mtp) => match mtp {
+                    ast::MaybeTypedParam::Name(n) => &n == needle,
+                    ast::MaybeTypedParam::TypedParam(tp) => tp.name().as_ref() == Some(needle),
+                    ast::MaybeTypedParam::OpAnnotatedParam(op) => {
+                        op.name().as_ref() == Some(needle)
+                    }
+                },
+                ast::MaybeWildcardTypedParam::Wildcard(_) => false,
+            })
+        }
+    };
+
+    let rule_param_idx = |rule: ast::RuleDir, name: &ast::Name| {
+        let (n, params) = match rule {
+            ast::RuleDir::InfixRuleDir(infix) => {
+                (infix.name(), infix.maybe_wildcard_typed_params())
+            }
+            ast::RuleDir::PrefixRuleDir(pre) => (pre.name(), pre.maybe_wildcard_typed_params()),
+        };
+        param_idx(name, n, params)
+    };
+
+    let proc_param_idx = |def_proc: ast::DefineProc, name: &ast::Name| {
+        param_idx(name, def_proc.name(), def_proc.args())
+    };
 
     Some(match_ast! {
         match parent {
@@ -191,10 +227,26 @@ fn name(_sema: &Semantics<'_, RootDatabase>, name: ast::Name) -> Option<Highligh
             ast::IdentSortDecl(_) => SymbolKind::Sort.into(),
             ast::InfixConstantDeclare(_) => SymbolKind::Const.into(),
             ast::DefineSortDir(_) => SymbolKind::Sort.into(),
-            ast::DefineProc(_) => SymbolKind::Value.into(),
+            ast::DefineProc(proc) => {
+                if let Some(idx) = proc_param_idx(proc, &name) {
+                    tracing::debug!(?name, ?idx, "idx of proc param");
+                    if idx == 0 { SymbolKind::Func } else { SymbolKind::Value }.into()
+                } else {
+                    tracing::debug!(?name, "proc param not found");
+                    SymbolKind::Value.into()
+                }
+            },
             ast::DefineName(_) => SymbolKind::Value.into(),
             ast::AssertDir(_) => SymbolKind::Value.into(),
-            ast::RuleDir(_) => SymbolKind::Func.into(),
+            ast::RuleDir(rule) => {
+                if let Some(idx) = rule_param_idx(rule, &name) {
+                    tracing::debug!(?name, ?idx, "idx of rule param");
+                    if idx == 0 { SymbolKind::Func } else { SymbolKind::Value }.into()
+                } else {
+                    tracing::debug!(?name, "rule param not found");
+                    SymbolKind::Value.into()
+                }
+            },
             ast::PickWitnessDed(_) => SymbolKind::Value.into(),
             ast::PickWitnessesDed(_) => SymbolKind::Value.into(),
             ast::AssumePart(_) => SymbolKind::Value.into(),
