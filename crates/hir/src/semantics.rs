@@ -113,7 +113,7 @@ impl Resolvable {
     fn scope<'a>(&self, sema: &'a FileSema) -> Option<&'a Scope> {
         match self {
             Resolvable::Expr(expr) => node_to_scope(expr, sema),
-            Resolvable::Sort(sort) => node_to_scope(sort, sema),
+            Resolvable::Sort(sort) => node_to_scope(&ast::SortLike::from(sort.clone()), sema),
         }
     }
 }

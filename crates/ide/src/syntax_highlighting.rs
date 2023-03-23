@@ -133,6 +133,23 @@ fn token(tok: SyntaxToken) -> Option<Highlight> {
         literal(tok)
     } else if kind == SyntaxKind::COMMENT {
         HlTag::Comment.into()
+    } else if kind == SyntaxKind::IDENT {
+        match tok.parent() {
+            Some(node) => match node.kind() {
+                SyntaxKind::META_IDENT => HlTag::IdentLiteral.into(),
+                SyntaxKind::VAR_SORT => SymbolKind::Sort.into(),
+                SyntaxKind::TERM_VAR_EXPR => SymbolKind::Value.into(),
+                SyntaxKind::VAR_PAT => SymbolKind::Value.into(),
+                _ => {
+                    tracing::warn!("unexpected ident parent: {:?}", node);
+                    return None;
+                }
+            },
+            None => {
+                tracing::warn!("unexpected ident without parent: {:?}", tok);
+                return None;
+            }
+        }
     } else {
         tracing::warn!("unhandled token: {:?}", kind);
         return None;

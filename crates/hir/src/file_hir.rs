@@ -111,7 +111,7 @@ pub type DatatypeSource = InFile<DatatypePtr>;
 pub type StructurePtr = AstPtr<ast::Structure>;
 pub type StructureSource = InFile<StructurePtr>;
 
-pub type SortPtr = AstPtr<ast::Sort>;
+pub type SortPtr = AstPtr<ast::SortLike>;
 pub type SortSource = InFile<SortPtr>;
 
 pub type PatPtr = AstPtr<ast::Pat>;

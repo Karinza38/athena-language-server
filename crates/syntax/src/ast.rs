@@ -12,7 +12,7 @@ mod traits;
 
 pub use self::{
     generated::{nodes::*, tokens::*},
-    node_ext::NameOrNameRef,
+    node_ext::{NameOrNameRef, SortLike},
 };
 pub use traits::{HasDefineBody, HasDefineName, HasName, HasNameRef};
 /// The main trait to go from untyped `SyntaxNode`  to a typed ast. The

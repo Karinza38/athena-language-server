@@ -59,6 +59,24 @@ pub enum SortLike {
     LimitedSort(ast::LimitedSort),
 }
 
+impl From<ast::Sort> for SortLike {
+    fn from(sort: ast::Sort) -> Self {
+        SortLike::Sort(sort)
+    }
+}
+
+impl From<ast::SortDecl> for SortLike {
+    fn from(decl: ast::SortDecl) -> Self {
+        SortLike::SortDecl(decl)
+    }
+}
+
+impl From<ast::LimitedSort> for SortLike {
+    fn from(limited: ast::LimitedSort) -> Self {
+        SortLike::LimitedSort(limited)
+    }
+}
+
 impl ast::AstNode for SortLike {
     fn can_cast(kind: SyntaxKind) -> bool {
         ast::Sort::can_cast(kind)

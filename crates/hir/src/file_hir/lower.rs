@@ -498,7 +498,6 @@ impl Ctx {
                 }
             }
             ast::Dir::ConstantDeclareDir(declare) => {
-                // todo!(); TODO: implement
                 match declare {
                     ast::ConstantDeclareDir::InfixConstantDeclare(declare) => {
                         let names: Vec<Name> =
@@ -565,6 +564,33 @@ impl Ctx {
                         ScopeKind::ModuleItem(ModuleItem::DefinitionId(*defs.last()?)),
                     );
 
+                    let sort_var_scope = if let Some(sort_vars) = declare.sort_vars_decl() {
+                        let mut vars = Vec::new();
+                        for sv in sort_vars.ident_sort_decls() {
+                            vars.push(or_continue!(sv.name()).as_name());
+                        }
+                        let def = self
+                            .builder::<ast::MetaDefinition>(
+                                ast::FunctionSymbol::from(ast::DeclareDir::from(declare.clone()))
+                                    .into(),
+                            )
+                            .build(
+                                self,
+                                Definition {
+                                    name: vars[0].clone(),
+                                    kind: DefKind::Sort,
+                                },
+                            );
+                        Some(self.make_scope(vars, ScopeKind::ModuleItem(def.into())))
+                    } else {
+                        None
+                    };
+
+                    let pop_scope = sort_var_scope.is_some();
+                    if let Some(scope) = sort_var_scope {
+                        self.push_scope(scope);
+                    }
+
                     if let Some(sorts) = declare.func_sorts() {
                         for sort in sorts.sorts() {
                             self.lower_sort(sort);
@@ -572,6 +598,10 @@ impl Ctx {
                     }
 
                     self.lower_sort_opt(declare.return_sort());
+
+                    if pop_scope {
+                        self.pop_scope();
+                    }
 
                     self.push_scope(new_scope);
 
@@ -893,7 +923,9 @@ impl Ctx {
             }
         };
 
-        let id = self.builder(sort).build(self, Sort { kind });
+        let id = self
+            .builder::<ast::SortLike>(sort.into())
+            .build(self, Sort { kind });
 
         Some(id)
     }
