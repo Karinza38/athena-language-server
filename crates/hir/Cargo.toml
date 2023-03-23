@@ -16,6 +16,7 @@ paste = "1.0.12"
 util.workspace = true
 tracing.workspace = true
 duplicate = "1.0.0"
+im = "15.1.0"
 
 [dev-dependencies]
 insta.workspace = true

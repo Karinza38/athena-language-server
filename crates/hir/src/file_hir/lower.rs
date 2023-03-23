@@ -40,8 +40,11 @@ struct Ctx {
     current_module: Option<ModuleId>,
 
     scope_stack: Vec<ScopeId>,
+
+    name_env: im::HashMap<Name, ScopeId>,
 }
 
+#[tracing::instrument(skip(file))]
 pub(super) fn lower(
     file_id: FileId,
     file: ast::SourceFile,
@@ -59,6 +62,7 @@ pub(super) fn lower(
         current_module: None,
         scopes,
         scope_stack: vec![root],
+        name_env: im::HashMap::new(),
     };
 
     ctx.lower_file(file);
@@ -268,7 +272,7 @@ where
 
         let current_scope = scope.unwrap_or_else(|| ctx.current_scope());
 
-        let new_scope = ctx.alloc_scope(hir_id.make_scope(introduces, Some(current_scope)));
+        let new_scope = ctx.alloc_scope(hir_id.make_scope(&ctx, introduces, Some(current_scope)));
 
         hir_id.set_source(source, &mut ctx.source_map);
 
@@ -332,6 +336,7 @@ impl Ctx {
             parent: Some(self.current_scope()),
             introduced: names,
             kind,
+            name_env: self.name_env.clone(),
         };
         self.scopes.alloc_scope(scope)
     }
@@ -353,6 +358,7 @@ impl Ctx {
             parent: Some(self.current_scope()),
             introduced: names.into_iter().collect(),
             kind: ScopeKind::ModuleItem(item.into()),
+            name_env: self.name_env.clone(),
         };
         let id = self.scopes.alloc_scope(scope);
         self.set_module_item_scope(item.into(), id);
@@ -371,11 +377,21 @@ impl Ctx {
     }
 
     fn push_scope(&mut self, scope: ScopeId) {
+        let scope_introduced = &self.scopes[scope].introduced;
+        for name in scope_introduced {
+            self.name_env.insert(name.clone(), scope);
+        }
+        self.scopes[scope].name_env = self.name_env.clone();
         self.scope_stack.push(scope)
     }
 
     fn pop_scope(&mut self) -> ScopeId {
-        self.scope_stack.pop().expect("we never pop the root scope")
+        let scope = self.scope_stack.pop().expect("we never pop the root scope");
+        let scope_introduced = &self.scopes[scope].introduced;
+        for name in scope_introduced {
+            self.name_env.remove(name);
+        }
+        scope
     }
 
     fn with_scope<R>(&mut self, scope: ScopeId, f: impl FnOnce(&mut Self) -> R) -> R {
@@ -1040,6 +1056,7 @@ impl WithScope for id_ty {
 trait BindingItem {
     fn make_scope(
         self,
+        ctx: &Ctx,
         introduces: impl IntoIterator<Item = Name>,
         parent: Option<ScopeId>,
     ) -> Scope;
@@ -1052,6 +1069,7 @@ where
 {
     fn make_scope(
         self,
+        ctx: &Ctx,
         introduces: impl IntoIterator<Item = Name>,
         parent: Option<ScopeId>,
     ) -> Scope {
@@ -1059,6 +1077,7 @@ where
             parent,
             introduced: introduces.into_iter().collect(),
             kind: ScopeKind::from(self),
+            name_env: ctx.name_env.clone(),
         }
     }
 }

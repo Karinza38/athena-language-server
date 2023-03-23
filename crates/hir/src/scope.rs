@@ -11,6 +11,8 @@ pub struct Scope {
     pub parent: Option<ScopeId>,
     pub introduced: Vec<Name>,
     pub kind: ScopeKind,
+
+    pub name_env: im::HashMap<Name, ScopeId>,
 }
 
 pub type ScopeId = Idx<Scope>;
@@ -79,6 +81,7 @@ impl ScopeTree {
             parent: None,
             introduced: Vec::new(),
             kind: ScopeKind::Root,
+            name_env: im::HashMap::new(),
         });
         Self {
             scopes,

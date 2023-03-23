@@ -23,6 +23,7 @@ pub struct HlRange {
     pub highlight: Highlight,
 }
 
+#[tracing::instrument(skip(db, config))]
 pub(crate) fn highlight(
     db: &RootDatabase,
     config: HighlightConfig,
@@ -146,6 +147,7 @@ fn token(tok: SyntaxToken) -> Option<Highlight> {
                 SyntaxKind::VAR_SORT => SymbolKind::Sort.into(),
                 SyntaxKind::TERM_VAR_EXPR => SymbolKind::Value.into(),
                 SyntaxKind::VAR_PAT => SymbolKind::Value.into(),
+                SyntaxKind::NAME | SyntaxKind::NAME_REF => return None,
                 _ => {
                     tracing::warn!("unexpected ident parent: {:?}", node);
                     return None;

@@ -5,7 +5,7 @@ use syntax::{ast, match_ast, AstNode, AstPtr};
 use crate::{
     expr::ExprId,
     file_hir::ModuleItem,
-    name::{AsName, Name},
+    name::AsName,
     pat::PatId,
     scope::{Scope, ScopeId, ScopeKind},
     FileSema, HasHir, HirDatabase, HirNode, InFile,
@@ -31,6 +31,7 @@ where
         self.db.file_sema(file_id)
     }
 
+    #[tracing::instrument(skip(self))]
     pub fn resolve_name_ref(&self, name: InFile<ast::NameRef>) -> Option<NameRefResolution> {
         let InFile {
             file_id,
@@ -41,7 +42,9 @@ where
         let resolvable = find_resolvable_node(&name)?;
         let scope = resolvable.scope(&file_sema)?;
 
-        let def_scope = find_defining_scope(&name.as_name(), scope, &file_sema)?;
+        let def_scope_id = scope.name_env.get(&name.as_name())?;
+        let def_scope = file_sema.scope(*def_scope_id);
+        // let def_scope = find_defining_scope(&name.as_name(), scope, &file_sema)?;
 
         let resolution = NameRefResolution::from(def_scope.kind.clone());
 
@@ -142,23 +145,6 @@ fn find_resolvable_node(name_ref: &ast::NameRef) -> Option<Resolvable> {
             }
         }
         node = parent.parent();
-    }
-    None
-}
-
-fn find_defining_scope<'s>(
-    name: &Name,
-    start_scope: &'s Scope,
-    sema: &'s FileSema,
-) -> Option<&'s Scope> {
-    let mut scope = start_scope;
-    tracing::info!(?scope, "finding defining scope");
-    while scope.kind != ScopeKind::Root {
-        tracing::info!(?scope, "considering scope");
-        if scope.introduced.contains(name) {
-            return Some(scope);
-        }
-        scope = sema.scope_tree.scope(scope.parent?);
     }
     None
 }
