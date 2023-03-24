@@ -83,12 +83,12 @@ fn semantic_token_type_and_modifiers(
 
     let type_ = match highlight.tag {
         ide::HlTag::Symbol(sym) => match sym {
-            SymbolKind::FnSym => semantic_tokens::FUNCTION,
+            SymbolKind::FnSym => semantic_tokens::ENUM_MEMBER,
             SymbolKind::Value => semantic_tokens::VARIABLE,
             SymbolKind::Sort => semantic_tokens::TYPE,
             SymbolKind::Func => semantic_tokens::METHOD,
             SymbolKind::Module => semantic_tokens::NAMESPACE,
-            SymbolKind::Const => semantic_tokens::VARIABLE,
+            SymbolKind::Const => semantic_tokens::ENUM_MEMBER,
         },
         ide::HlTag::Comment => semantic_tokens::COMMENT,
         ide::HlTag::Keyword => semantic_tokens::KEYWORD,
