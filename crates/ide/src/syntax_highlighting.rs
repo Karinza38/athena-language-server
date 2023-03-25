@@ -51,7 +51,7 @@ pub(crate) fn highlight(
 
     traverse(&mut hl, &sema, &config, &node, file_id, range_to_highlight);
 
-    hl.to_vec()
+    hl.into_vec()
 }
 
 #[tracing::instrument(skip(hl, sema, config, node))]
@@ -84,12 +84,10 @@ fn traverse(
             NodeOrToken::Node(n) => {
                 if let Some(id) = ast::NameOrNameRef::cast(n.clone()) {
                     name_or_name_ref(sema, file_id, id, config.with_name_res)
+                } else if let Some(_meta) = ast::MetaIdent::cast(n) {
+                    Some(HlTag::IdentLiteral.into())
                 } else {
-                    if let Some(_meta) = ast::MetaIdent::cast(n) {
-                        Some(HlTag::IdentLiteral.into())
-                    } else {
-                        continue;
-                    }
+                    continue;
                 }
             }
             NodeOrToken::Token(tok) => token(tok),

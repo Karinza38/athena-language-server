@@ -7,10 +7,10 @@ pub struct Config {
     pub wip_full_semantic_tokens_enable: bool,
 }
 
-impl Into<ide::HighlightConfig> for Config {
-    fn into(self) -> ide::HighlightConfig {
+impl From<Config> for ide::HighlightConfig {
+    fn from(val: Config) -> ide::HighlightConfig {
         ide::HighlightConfig {
-            with_name_res: self.wip_full_semantic_tokens_enable,
+            with_name_res: val.wip_full_semantic_tokens_enable,
         }
     }
 }

@@ -272,7 +272,7 @@ where
 
         let current_scope = scope.unwrap_or_else(|| ctx.current_scope());
 
-        let new_scope = ctx.alloc_scope(hir_id.make_scope(&ctx, introduces, Some(current_scope)));
+        let new_scope = ctx.alloc_scope(hir_id.make_scope(ctx, introduces, Some(current_scope)));
 
         hir_id.set_source(source, &mut ctx.source_map);
 

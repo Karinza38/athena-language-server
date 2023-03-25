@@ -46,7 +46,7 @@ where
         let def_scope = file_sema.scope(*def_scope_id);
         // let def_scope = find_defining_scope(&name.as_name(), scope, &file_sema)?;
 
-        let resolution = NameRefResolution::from(def_scope.kind.clone());
+        let resolution = NameRefResolution::from(def_scope.kind);
 
         Some(resolution)
     }

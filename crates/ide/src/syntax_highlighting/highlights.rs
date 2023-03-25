@@ -29,7 +29,7 @@ impl Highlights {
         self.root.add(range);
     }
 
-    pub(super) fn to_vec(self) -> Vec<HlRange> {
+    pub(super) fn into_vec(self) -> Vec<HlRange> {
         let mut res = Vec::new();
         self.root.flatten(&mut res);
         res

@@ -78,7 +78,7 @@ fn find_def_new(
 
     let sema = Semantics::new(db);
 
-    let nr = InFile::new(file_id, name_ref.clone());
+    let nr = InFile::new(file_id, name_ref);
     let res = sema.resolve_name_ref(nr)?;
 
     let root = db.parse(file_id).syntax_node();

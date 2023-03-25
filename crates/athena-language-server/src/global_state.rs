@@ -84,7 +84,7 @@ impl GlobalStateSnapshot {
     pub(crate) fn file_id(&self, url: &Url) -> Cancellable<crate::Result<FileId>> {
         match from_proto::abs_path(url) {
             Ok(pth) => Ok(Ok(self.analysis.intern_path(pth)?)),
-            Err(e) => return Ok(Err(e)),
+            Err(e) => Ok(Err(e)),
         }
     }
 
