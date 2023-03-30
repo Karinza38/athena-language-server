@@ -1,5 +1,1 @@
-
-pub struct Module {
-
-}
-
+pub struct Module {}
