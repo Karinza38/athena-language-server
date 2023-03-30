@@ -38,7 +38,7 @@ use crate::{
 struct Backend {
     client: Client,
     state_client: StateClient,
-    config: RwLock<config::Config>,
+    config: Arc<RwLock<config::Config>>,
 }
 
 #[derive(Debug)]
@@ -50,11 +50,11 @@ struct TextDocumentItem {
 }
 
 impl Backend {
-    fn new(client: Client, state_client: StateClient) -> Self {
+    fn new(client: Client, state_client: StateClient, config: Arc<RwLock<config::Config>>) -> Self {
         Self {
             client,
             state_client,
-            config: RwLock::new(config::Config::default()),
+            config,
         }
     }
 }
@@ -344,7 +344,7 @@ impl Backend {
 }
 
 impl GlobalState {
-    fn new() -> (StateClient, GlobalState) {
+    fn new(config: Arc<RwLock<config::Config>>) -> (StateClient, GlobalState) {
         let analysis_host = AnalysisHost::new();
         let semantic_token_map = Arc::new(DashMap::new());
         let (sender, receiver) = mpsc::unbounded_channel();
@@ -355,6 +355,7 @@ impl GlobalState {
                 semantic_token_map,
                 client: None,
                 receiver,
+                config,
             },
         )
     }
@@ -364,6 +365,7 @@ impl GlobalState {
             semantic_token_map,
             client,
             mut receiver,
+            config,
         } = self;
         let client = client.unwrap();
         loop {
@@ -373,11 +375,13 @@ impl GlobalState {
                     let analysis = analysis_host.analysis();
                     let semantic_token_map = semantic_token_map.clone();
                     let client = client.clone();
+                    let config = Arc::new(config.read().clone());
                     tokio::task::spawn_blocking(move || {
                         let snapshot = GlobalStateSnapshot {
                             analysis,
                             semantic_token_map,
                             client,
+                            config,
                         };
                         handler(snapshot);
                     });
@@ -388,7 +392,9 @@ impl GlobalState {
                         "files changed: {:?}",
                         files.iter().map(|(p, _)| p).collect::<Vec<_>>()
                     );
-                    let diagnostics = on_changed(&mut analysis_host, &semantic_token_map, files);
+                    let config = Arc::new(config.read().clone());
+                    let diagnostics =
+                        on_changed(&mut analysis_host, &semantic_token_map, files, config);
                     tracing::debug!("now here");
                     for (url, diagnostic) in diagnostics {
                         let client = client.clone();
@@ -412,6 +418,7 @@ fn on_changed(
     host: &mut AnalysisHost,
     token_map: &DashMap<String, SemanticTokens>,
     files: Vec<(AbsPathBuf, String)>,
+    config: Arc<config::Config>,
 ) -> Vec<(Url, Vec<Diagnostic>)> {
     tracing::info!(
         "applied change: {:?}",
@@ -420,8 +427,9 @@ fn on_changed(
 
     let mut file_diagnostics = Vec::new();
     for (file_path, file_contents) in files {
+        let contents = Arc::new(file_contents);
         host.raw_db_mut()
-            .set_in_mem_contents(file_path.clone(), Arc::new(file_contents));
+            .set_in_mem_contents(file_path.clone(), contents.clone());
         let file_id = host.raw_db().intern_path(file_path.clone().into());
         host.did_change_file(file_id);
         tracing::debug!("did change it");
@@ -440,7 +448,9 @@ fn on_changed(
             })
             .collect::<Vec<_>>();
 
-        let tokens = semantic_tokens::semantic_tokens_for_file(ast.tree(), &index);
+        let config = config.as_ref().clone().into();
+        let highlights = analysis.highlight(config, file_id).unwrap();
+        let tokens = to_proto::semantic_tokens(&contents, &index, highlights);
 
         token_map.insert(url.to_string(), tokens);
 
@@ -492,9 +502,11 @@ pub async fn run_server() {
     let stdin = tokio::io::stdin();
     let stdout = tokio::io::stdout();
 
-    let (state_client, mut state) = GlobalState::new();
+    let config = Arc::new(RwLock::new(config::Config::default()));
 
-    let (service, socket) = LspService::build(move |c| Backend::new(c, state_client))
+    let (state_client, mut state) = GlobalState::new(config.clone());
+
+    let (service, socket) = LspService::build(move |c| Backend::new(c, state_client, config))
         .custom_method(
             "athena-language-server/dumpSyntaxTree",
             Backend::show_syntax_tree,

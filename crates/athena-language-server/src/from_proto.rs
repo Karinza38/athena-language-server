@@ -29,7 +29,7 @@ pub(crate) fn offset(line_index: &LineIndex, position: lsp_types::Position) -> R
 }
 
 pub(crate) fn file_id(snapshot: &GlobalStateSnapshot, url: &lsp_types::Url) -> Result<FileId> {
-    snapshot.file_id(url)
+    snapshot.file_id(url)?
 }
 
 pub(crate) fn file_position(

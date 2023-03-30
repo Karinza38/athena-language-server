@@ -1,5 +1,5 @@
+use crate::global_state::GlobalStateSnapshot;
 use crate::{from_proto, to_proto, Result};
-use crate::{global_state::GlobalStateSnapshot, semantic_tokens};
 use anyhow::Context;
 use ide::Cancellable;
 use ide_db::base_db::FileRange;
@@ -17,8 +17,13 @@ pub(crate) fn semantic_tokens_full(
     tracing::info!("here");
     let analysis = &snapshot.analysis;
 
-    let file_id = snapshot
+    let Some(file_id) = snapshot
         .file_id(&params.text_document.uri)
+        .ok()
+    else {
+        return Ok(None);
+    };
+    let file_id = file_id
         .with_context(|| format!("failed to get file id for uri {}", params.text_document.uri))?;
     let uri = params.text_document.uri.to_string();
 
@@ -28,10 +33,12 @@ pub(crate) fn semantic_tokens_full(
         Ok(Some(SemanticTokensResult::Tokens(semantic_tokens)))
     } else {
         tracing::debug!("it's not in the cache!");
+        let conf = snapshot.config.as_ref().clone();
+        let highlight_config = conf.into();
         let index = analysis.file_line_index(file_id)?;
-        let ast = analysis.parse(file_id)?;
-
-        let tokens = semantic_tokens::semantic_tokens_for_file(ast.tree(), &index);
+        let src = analysis.file_text(file_id)?;
+        let highlights = analysis.highlight(highlight_config, file_id)?;
+        let tokens = to_proto::semantic_tokens(&src, &index, highlights);
         snapshot.semantic_token_map.insert(uri, tokens.clone());
         Ok(Some(SemanticTokensResult::Tokens(tokens)))
     }
@@ -69,9 +76,14 @@ pub(crate) fn dump_syntax_tree(
     snapshot: GlobalStateSnapshot,
     params: TextDocumentIdentifier,
 ) -> Result<String> {
-    let file_id = snapshot
+    let Some(file_id) = snapshot
         .file_id(&params.uri)
-        .with_context(|| format!("failed to get file id for uri {}", params.uri))?;
+        .ok()
+    else {
+        return Ok(String::new());
+    };
+    let file_id =
+        file_id.with_context(|| format!("failed to get file id for uri {}", params.uri))?;
 
     let analysis = &snapshot.analysis;
     let ast = analysis.parse(file_id)?;

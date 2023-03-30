@@ -25,7 +25,7 @@ use crate::{
 };
 
 use super::{
-    DataType, DataTypeId, DatatypeSource, Ded, DedId, DedSource, Definition, DefinitionId,
+    DataType, DataTypeId, DatatypeSource, Ded, DedId, DedSource, DefKind, Definition, DefinitionId,
     DefinitionSource, ExprSource, FileHir, Module, ModuleId, ModuleItem, NameRefSource, PatSource,
     Sort, SortId, SortSource, Structure, StructureId, StructureSource,
 };
@@ -40,8 +40,11 @@ struct Ctx {
     current_module: Option<ModuleId>,
 
     scope_stack: Vec<ScopeId>,
+
+    name_env: im::HashMap<Name, ScopeId>,
 }
 
+#[tracing::instrument(skip(file))]
 pub(super) fn lower(
     file_id: FileId,
     file: ast::SourceFile,
@@ -59,6 +62,7 @@ pub(super) fn lower(
         current_module: None,
         scopes,
         scope_stack: vec![root],
+        name_env: im::HashMap::new(),
     };
 
     ctx.lower_file(file);
@@ -268,7 +272,7 @@ where
 
         let current_scope = scope.unwrap_or_else(|| ctx.current_scope());
 
-        let new_scope = ctx.alloc_scope(hir_id.make_scope(introduces, Some(current_scope)));
+        let new_scope = ctx.alloc_scope(hir_id.make_scope(ctx, introduces, Some(current_scope)));
 
         hir_id.set_source(source, &mut ctx.source_map);
 
@@ -299,7 +303,7 @@ impl Ctx {
     fn lower_stmt(&mut self, stmt: ast::Stmt) -> Vec<ModuleItem> {
         match stmt {
             ast::Stmt::DirStmt(dir) => self
-                .lower_dir(dir.dir().unwrap())
+                .lower_dir(or_return!(dir.dir(), vec![]))
                 .into_iter()
                 .flatten()
                 .collect(),
@@ -332,6 +336,7 @@ impl Ctx {
             parent: Some(self.current_scope()),
             introduced: names,
             kind,
+            name_env: self.name_env.clone(),
         };
         self.scopes.alloc_scope(scope)
     }
@@ -353,6 +358,7 @@ impl Ctx {
             parent: Some(self.current_scope()),
             introduced: names.into_iter().collect(),
             kind: ScopeKind::ModuleItem(item.into()),
+            name_env: self.name_env.clone(),
         };
         let id = self.scopes.alloc_scope(scope);
         self.set_module_item_scope(item.into(), id);
@@ -371,11 +377,21 @@ impl Ctx {
     }
 
     fn push_scope(&mut self, scope: ScopeId) {
+        let scope_introduced = &self.scopes[scope].introduced;
+        for name in scope_introduced {
+            self.name_env.insert(name.clone(), scope);
+        }
+        self.scopes[scope].name_env = self.name_env.clone();
         self.scope_stack.push(scope)
     }
 
     fn pop_scope(&mut self) -> ScopeId {
-        self.scope_stack.pop().expect("we never pop the root scope")
+        let scope = self.scope_stack.pop().expect("we never pop the root scope");
+        let scope_introduced = &self.scopes[scope].introduced;
+        for name in scope_introduced {
+            self.name_env.remove(name);
+        }
+        scope
     }
 
     fn with_scope<R>(&mut self, scope: ScopeId, f: impl FnOnce(&mut Self) -> R) -> R {
@@ -392,7 +408,7 @@ impl Ctx {
     fn lower_dir(&mut self, dir: ast::Dir) -> Option<Vec<ModuleItem>> {
         match dir {
             ast::Dir::ModuleDir(module) => {
-                let name = module.name().unwrap().as_name();
+                let name = module.name()?.as_name();
 
                 let module_id = self.alloc_module(Module {
                     name: name.clone(),
@@ -458,7 +474,13 @@ impl Ctx {
                     let (def, new_scope) = self
                         .builder::<ast::MetaDefinition>(ast::Assertion::from(assert).into())
                         .introduces(Some(name.clone()))
-                        .build_binding(self, Definition { name });
+                        .build_binding(
+                            self,
+                            Definition {
+                                name,
+                                kind: DefKind::Value,
+                            },
+                        );
                     self.push_scope(new_scope);
                     Some(vec![def.into()])
                 } else {
@@ -478,7 +500,13 @@ impl Ctx {
                     let (def, new_scope) = self
                         .builder::<ast::MetaDefinition>(ast::Assertion::from(assert).into())
                         .introduces(Some(name.clone()))
-                        .build_binding(self, Definition { name });
+                        .build_binding(
+                            self,
+                            Definition {
+                                name,
+                                kind: DefKind::Value,
+                            },
+                        );
                     self.push_scope(new_scope);
                     Some(vec![def.into()])
                 } else {
@@ -486,7 +514,6 @@ impl Ctx {
                 }
             }
             ast::Dir::ConstantDeclareDir(declare) => {
-                // todo!(); TODO: implement
                 match declare {
                     ast::ConstantDeclareDir::InfixConstantDeclare(declare) => {
                         let names: Vec<Name> =
@@ -500,7 +527,13 @@ impl Ctx {
                                     ))
                                     .into(),
                                 )
-                                .build(self, Definition { name: name.clone() });
+                                .build(
+                                    self,
+                                    Definition {
+                                        name: name.clone(),
+                                        kind: DefKind::FunctionSym,
+                                    },
+                                );
                             defs.push(def);
                         }
                         let new_scope = self.make_scope(
@@ -533,13 +566,46 @@ impl Ctx {
                                 ast::FunctionSymbol::from(ast::DeclareDir::from(declare.clone()))
                                     .into(),
                             )
-                            .build(self, Definition { name: name.clone() });
+                            .build(
+                                self,
+                                Definition {
+                                    name: name.clone(),
+                                    kind: DefKind::FunctionSym,
+                                },
+                            );
                         defs.push(def);
                     }
                     let new_scope = self.make_scope(
                         names,
                         ScopeKind::ModuleItem(ModuleItem::DefinitionId(*defs.last()?)),
                     );
+
+                    let sort_var_scope = if let Some(sort_vars) = declare.sort_vars_decl() {
+                        let mut vars = Vec::new();
+                        for sv in sort_vars.ident_sort_decls() {
+                            vars.push(or_continue!(sv.name()).as_name());
+                        }
+                        let def = self
+                            .builder::<ast::MetaDefinition>(
+                                ast::FunctionSymbol::from(ast::DeclareDir::from(declare.clone()))
+                                    .into(),
+                            )
+                            .build(
+                                self,
+                                Definition {
+                                    name: vars[0].clone(),
+                                    kind: DefKind::Sort,
+                                },
+                            );
+                        Some(self.make_scope(vars, ScopeKind::ModuleItem(def.into())))
+                    } else {
+                        None
+                    };
+
+                    let pop_scope = sort_var_scope.is_some();
+                    if let Some(scope) = sort_var_scope {
+                        self.push_scope(scope);
+                    }
 
                     if let Some(sorts) = declare.func_sorts() {
                         for sort in sorts.sorts() {
@@ -548,6 +614,10 @@ impl Ctx {
                     }
 
                     self.lower_sort_opt(declare.return_sort());
+
+                    if pop_scope {
+                        self.pop_scope();
+                    }
 
                     self.push_scope(new_scope);
 
@@ -598,7 +668,10 @@ impl Ctx {
             ast::DefineName::DefineProc(proc) => {
                 // let args =
                 let name = proc.name()?.as_name();
-                let def = self.alloc_definition(Definition { name: name.clone() });
+                let def = self.alloc_definition(Definition {
+                    name: name.clone(),
+                    kind: DefKind::Value,
+                });
 
                 let outer_scope = self.make_scope(vec![name], ScopeKind::ModuleItem(def.into()));
                 let src = self.make_source(&ast::Definition::from(define.clone()).into());
@@ -637,7 +710,10 @@ impl Ctx {
 
         let mut module_items: Vec<ModuleItem> = Vec::new();
         for name in names.clone() {
-            let def = self.alloc_definition(Definition { name });
+            let def = self.alloc_definition(Definition {
+                name,
+                kind: DefKind::Value,
+            });
             self.set_definition_source(src.clone(), def);
             module_items.push(def.into());
         }
@@ -825,7 +901,10 @@ impl Ctx {
     ) -> Option<DefinitionId> {
         let name = sort_decl_name(sort_decl)?;
 
-        let domain_id = self.alloc_definition(Definition { name: name.clone() });
+        let domain_id = self.alloc_definition(Definition {
+            name: name.clone(),
+            kind: DefKind::Sort,
+        });
 
         let new_scope = self.make_scope(vec![name], ScopeKind::ModuleItem(domain_id.into())); // FIXME: this is wrong, there should be a shared scope for all the introduced sorts
         self.set_module_item_scope(domain_id.into(), new_scope);
@@ -860,7 +939,9 @@ impl Ctx {
             }
         };
 
-        let id = self.builder(sort).build(self, Sort { kind });
+        let id = self
+            .builder::<ast::SortLike>(sort.into())
+            .build(self, Sort { kind });
 
         Some(id)
     }
@@ -975,6 +1056,7 @@ impl WithScope for id_ty {
 trait BindingItem {
     fn make_scope(
         self,
+        ctx: &Ctx,
         introduces: impl IntoIterator<Item = Name>,
         parent: Option<ScopeId>,
     ) -> Scope;
@@ -987,6 +1069,7 @@ where
 {
     fn make_scope(
         self,
+        ctx: &Ctx,
         introduces: impl IntoIterator<Item = Name>,
         parent: Option<ScopeId>,
     ) -> Scope {
@@ -994,6 +1077,7 @@ where
             parent,
             introduced: introduces.into_iter().collect(),
             kind: ScopeKind::from(self),
+            name_env: ctx.name_env.clone(),
         }
     }
 }

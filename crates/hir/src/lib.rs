@@ -8,6 +8,7 @@ pub mod name_ref;
 pub mod pat;
 pub mod phrase;
 pub mod scope;
+pub mod semantics;
 pub mod sort;
 
 pub mod ast_mapping;
@@ -22,6 +23,7 @@ mod test_db;
 
 pub use file_hir::{FileHir, FileHirSourceMap, FileSema, HasHir, HasSyntaxNodePtr, HirNode};
 pub use scope::ScopeTree;
+pub use semantics::Semantics;
 
 use base_db::FileId;
 

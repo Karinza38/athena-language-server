@@ -3,17 +3,14 @@ use std::fmt::Debug;
 use hir::{
     file_hir::{ExprSource, PatSource},
     name::{AsName, Name},
-    scope::{Scope, ScopeKind},
-    FileSema, HasHir, HasSyntaxNodePtr, HirDatabase, HirNode, InFile,
+    semantics::NameRefResolution,
+    FileSema, HasSyntaxNodePtr, HirNode, InFile, Semantics,
 };
 use ide_db::{
     base_db::{FilePosition, SourceDatabase},
     RootDatabase,
 };
-use syntax::{
-    ast, match_ast, AstNode, AstPtr, AstToken, NodeOrToken, SyntaxKind, SyntaxNode, SyntaxToken,
-    TextRange,
-};
+use syntax::{ast, AstNode, AstToken, NodeOrToken, SyntaxKind, SyntaxNode, SyntaxToken, TextRange};
 
 use crate::{helpers::pick_best_token, navigation_target::NavigationTarget, RangeInfo};
 
@@ -48,32 +45,6 @@ pub(crate) fn go_to_definition(
     })
 }
 
-#[derive(Debug, Clone)]
-enum Interesting {
-    Expr(ast::Expr),
-    Sort(ast::Sort),
-}
-
-#[tracing::instrument]
-fn find_interesting_node(tok: &SyntaxToken) -> Option<Interesting> {
-    let mut node = tok.parent();
-    while let Some(parent) = node {
-        match_ast! {
-            match parent {
-                ast::Expr(it) => {
-                    return Some(Interesting::Expr(it));
-                },
-                ast::Sort(it) => {
-                    return Some(Interesting::Sort(it));
-                },
-                _ => {}
-            }
-        }
-        node = parent.parent();
-    }
-    None
-}
-
 fn find_focus_range(name: &Name, full_node: &SyntaxNode) -> Option<TextRange> {
     for desc in full_node.descendants_with_tokens() {
         match desc {
@@ -103,28 +74,17 @@ fn find_def_new(
     };
     let name = ident.as_name();
 
-    if !ast::Name::can_cast(token.parent()?.kind())
-        && !ast::NameRef::can_cast(token.parent()?.kind())
-    {
-        return None;
-    }
+    let name_ref = ast::NameRef::cast(token.parent()?)?;
 
-    tracing::info!(?name, "finding interesting node");
-    let node = find_interesting_node(&token)?;
+    let sema = Semantics::new(db);
 
-    let sema = db.file_sema(file_id);
+    let nr = InFile::new(file_id, name_ref);
+    let res = sema.resolve_name_ref(nr)?;
 
     let root = db.parse(file_id).syntax_node();
 
-    let scope = match node {
-        Interesting::Expr(expr) => to_scope(expr, &sema),
-        Interesting::Sort(sort) => to_scope(sort, &sema),
-    }?;
+    let node = name_res_to_node(res, &root, &sema.file_sema(file_id))?;
 
-    let scope = find_defining_scope(&name, scope, &sema)?;
-
-    tracing::info!("found defining scope: {:?}", scope.kind);
-    let node = scope_kind_to_node(scope.kind, &root, &sema)?;
     Some(NavigationTarget {
         full_range: node.text_range(),
         focus_range: find_focus_range(&name, &node),
@@ -133,40 +93,18 @@ fn find_def_new(
     })
 }
 
-fn find_defining_scope<'s>(
-    name: &Name,
-    start_scope: &'s Scope,
-    sema: &'s FileSema,
-) -> Option<&'s Scope> {
-    let mut scope = start_scope;
-    tracing::info!(?scope, "finding defining scope");
-    while scope.kind != ScopeKind::Root {
-        tracing::info!(?scope, "considering scope");
-        if scope.introduced.contains(name) {
-            return Some(scope);
-        }
-        scope = sema.scope_tree.scope(scope.parent?);
-    }
-    None
-}
-
-#[tracing::instrument(skip(sema))]
-fn to_scope<N: AstNode + Debug>(node: N, sema: &FileSema) -> Option<&Scope>
-where
-    InFile<AstPtr<N>>: HasHir,
-{
-    let source = InFile::new(sema.file_id, AstPtr::new(&node));
-    Some(sema.scope(sema.get_scope_for_source(source)?))
-}
-
 #[tracing::instrument(skip(root, sema))]
-fn scope_kind_to_node(scope: ScopeKind, root: &SyntaxNode, sema: &FileSema) -> Option<SyntaxNode> {
+fn name_res_to_node(
+    scope: NameRefResolution,
+    root: &SyntaxNode,
+    sema: &FileSema,
+) -> Option<SyntaxNode> {
     match scope {
-        ScopeKind::Expr(e) => {
+        NameRefResolution::Local(hir::semantics::Local::Expr(e)) => {
             let source: ExprSource = sema.get_source_for::<hir::expr::Expr>(e)?;
             Some(source.value.syntax_node_ptr().to_node(root))
         }
-        ScopeKind::ModuleItem(mi) => match mi {
+        NameRefResolution::ModuleItem(mi) => match mi {
             hir::file_hir::ModuleItem::ModuleId(m) => {
                 id_to_node::<hir::file_hir::Module>(m, root, sema)
             }
@@ -180,11 +118,10 @@ fn scope_kind_to_node(scope: ScopeKind, root: &SyntaxNode, sema: &FileSema) -> O
             hir::file_hir::ModuleItem::StructureId(_) => todo!(),
             hir::file_hir::ModuleItem::DataTypeId(_) => todo!(),
         },
-        ScopeKind::Pat(p) => {
+        NameRefResolution::Local(hir::semantics::Local::Pat(p)) => {
             let source: PatSource = sema.get_source_for::<hir::pat::Pat>(p)?;
             Some(source.value.syntax_node_ptr().to_node(root))
         }
-        ScopeKind::Root => None,
     }
 }
 

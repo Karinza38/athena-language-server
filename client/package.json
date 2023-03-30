@@ -63,6 +63,11 @@
                     "type": "boolean",
                     "default": false,
                     "description": "Enable WIP goto definition support. May be incomplete and buggy. Not recommended for use."
+                },
+                "athena-language-server.wip_full_semantic_tokens_enable": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Enable WIP full semantic tokens support. May be incomplete and buggy and slow. Not recommended for use."
                 }
             }
         },
