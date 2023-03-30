@@ -14,19 +14,16 @@ PREFIX_RULE_DIR
   WHITESPACE "\n "
   APPLICATION_EXPR
     L_PAREN "("
-    EXPR_PHRASE
+    IDENT_EXPR
+      NAME_REF
+        IDENT "not"
+    WHITESPACE " "
+    APPLICATION_EXPR
+      L_PAREN "("
       IDENT_EXPR
         NAME_REF
-          IDENT "not"
-    WHITESPACE " "
-    EXPR_PHRASE
-      APPLICATION_EXPR
-        L_PAREN "("
-        EXPR_PHRASE
-          IDENT_EXPR
-            NAME_REF
-              IDENT "false"
-        R_PAREN ")"
+          IDENT "false"
+      R_PAREN ")"
     R_PAREN ")"
   R_PAREN ")"
   WHITESPACE "\n"

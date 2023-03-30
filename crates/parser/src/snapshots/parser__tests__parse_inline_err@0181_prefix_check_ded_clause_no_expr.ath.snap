@@ -9,10 +9,9 @@ PREFIX_CHECK_DED
   WHITESPACE " "
   CHECK_DED_CLAUSE
     L_PAREN "("
-    EXPR_PHRASE
-      IDENT_EXPR
-        NAME_REF
-          IDENT "B"
+    IDENT_EXPR
+      NAME_REF
+        IDENT "B"
     WHITESPACE " "
     R_PAREN ")"
   R_PAREN ")"

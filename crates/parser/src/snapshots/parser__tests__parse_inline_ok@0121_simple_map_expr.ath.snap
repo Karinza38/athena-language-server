@@ -7,31 +7,27 @@ MAP_EXPR
   PIPE_CURLY "|{"
   WHITESPACE " "
   MAP_BINDING
-    EXPR_PHRASE
-      IDENT_EXPR
-        NAME_REF
-          IDENT "foo"
+    IDENT_EXPR
+      NAME_REF
+        IDENT "foo"
     WHITESPACE " "
     COLON_EQ ":="
     WHITESPACE " "
-    EXPR_PHRASE
-      IDENT_EXPR
-        NAME_REF
-          IDENT "1"
+    IDENT_EXPR
+      NAME_REF
+        IDENT "1"
   COMMA ","
   WHITESPACE " "
   MAP_BINDING
-    EXPR_PHRASE
-      IDENT_EXPR
-        NAME_REF
-          IDENT "bar"
+    IDENT_EXPR
+      NAME_REF
+        IDENT "bar"
     WHITESPACE " "
     COLON_EQ ":="
     WHITESPACE " "
-    EXPR_PHRASE
-      IDENT_EXPR
-        NAME_REF
-          IDENT "2"
+    IDENT_EXPR
+      NAME_REF
+        IDENT "2"
   WHITESPACE " "
   CURLY_PIPE "}|"
   WHITESPACE "\n"

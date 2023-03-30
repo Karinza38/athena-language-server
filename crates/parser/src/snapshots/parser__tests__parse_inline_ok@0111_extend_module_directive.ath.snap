@@ -11,17 +11,16 @@ EXTEND_MODULE_DIR
   WHITESPACE " "
   L_CURLY "{"
   WHITESPACE " "
-  DIR_STMT
-    INFIX_DECLARE_DIR
-      DECLARE_KW "declare"
-      WHITESPACE " "
-      NAME
-        IDENT "joe"
-      COLON ":"
-      WHITESPACE " "
-      IDENT_SORT
-        NAME_REF
-          IDENT "Person"
+  INFIX_DECLARE_DIR
+    DECLARE_KW "declare"
+    WHITESPACE " "
+    NAME
+      IDENT "joe"
+    COLON ":"
+    WHITESPACE " "
+    IDENT_SORT
+      NAME_REF
+        IDENT "Person"
   WHITESPACE " "
   R_CURLY "}"
   WHITESPACE "\n"

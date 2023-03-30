@@ -10,9 +10,8 @@ MAKE_VECTOR_EXPR
     NAME_REF
       IDENT "foo"
   WHITESPACE " "
-  EXPR_PHRASE
-    IDENT_EXPR
-      NAME_REF
-        IDENT "bar"
+  IDENT_EXPR
+    NAME_REF
+      IDENT "bar"
   WHITESPACE "\n"
 

@@ -13,9 +13,7 @@ use super::{directives::DIR_START_SET, phrases::PHRASE_START_SET, sorts::sort_de
 fn phrase_stmt(p: &mut Parser) {
     // test_err(stmt) phrase_stmt_err
     // (! )
-    let m = p.start();
     super::phrases::phrase(p);
-    m.complete(p, SyntaxKind::PHRASE_STMT);
 }
 
 // test(stmt) dir_stmt
@@ -23,9 +21,7 @@ fn phrase_stmt(p: &mut Parser) {
 fn dir_stmt(p: &mut Parser) {
     // test_err(stmt) dir_stmt_err
     // domain
-    let m = p.start();
     super::directives::dir(p);
-    m.complete(p, SyntaxKind::DIR_STMT);
 }
 
 const LIMITED_SORT_START: TokenSet = TokenSet::new(&[IDENT, T!['(']]);
@@ -51,7 +47,7 @@ fn limited_compound_sort(p: &mut Parser) {
         limited_sort(p);
     }
     p.expect(T![')']);
-    m.complete(p, SyntaxKind::COMPOUND_SORT);
+    m.complete(p, SyntaxKind::LIMITED_COMPOUND_SORT);
 }
 
 fn limited_sort(p: &mut Parser) -> bool {

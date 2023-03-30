@@ -22,10 +22,9 @@ ERROR
     WHITESPACE " "
     COLON_EQ ":="
     WHITESPACE " "
-    EXPR_PHRASE
-      IDENT_EXPR
-        NAME_REF
-          IDENT "true"
+    IDENT_EXPR
+      NAME_REF
+        IDENT "true"
   R_PAREN ")"
   WHITESPACE "\n"
 error 8: expected name for define

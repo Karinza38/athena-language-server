@@ -5,10 +5,9 @@ input_file: crates/parser/test_data/parser/inline/ok/expr/0015_application_expr_
 ---
 APPLICATION_EXPR
   L_PAREN "("
-  EXPR_PHRASE
-    IDENT_EXPR
-      NAME_REF
-        IDENT "foo"
+  IDENT_EXPR
+    NAME_REF
+      IDENT "foo"
   R_PAREN ")"
   WHITESPACE "\n"
 

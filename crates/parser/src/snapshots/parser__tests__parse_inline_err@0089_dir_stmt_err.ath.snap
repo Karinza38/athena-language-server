@@ -3,9 +3,8 @@ source: crates/parser/src/tests.rs
 description: "domain\n"
 input_file: crates/parser/test_data/parser/inline/err/stmt/0089_dir_stmt_err.ath
 ---
-DIR_STMT
-  DOMAIN_DIR
-    DOMAIN_KW "domain"
+DOMAIN_DIR
+  DOMAIN_KW "domain"
   WHITESPACE "\n"
 error 6: expected domain sort declaration
 

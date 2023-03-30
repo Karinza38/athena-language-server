@@ -9,10 +9,9 @@ CHECK_EXPR
   L_CURLY "{"
   WHITESPACE " "
   CHECK_ARM
-    EXPR_PHRASE
-      IDENT_EXPR
-        NAME_REF
-          IDENT "foo"
+    IDENT_EXPR
+      NAME_REF
+        IDENT "foo"
     WHITESPACE " "
     FAT_ARROW "=>"
     WHITESPACE " "
@@ -23,10 +22,9 @@ CHECK_EXPR
   CHECK_ARM
     PIPE "|"
     WHITESPACE " "
-    EXPR_PHRASE
-      IDENT_EXPR
-        NAME_REF
-          IDENT "baz"
+    IDENT_EXPR
+      NAME_REF
+        IDENT "baz"
     WHITESPACE " "
     FAT_ARROW "=>"
   WHITESPACE " "

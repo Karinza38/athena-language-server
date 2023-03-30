@@ -15,10 +15,9 @@ PREFIX_LET_REC_EXPR
     IDENT "Foo"
   R_PAREN ")"
   WHITESPACE " "
-  EXPR_PHRASE
-    IDENT_EXPR
-      NAME_REF
-        IDENT "foo"
+  IDENT_EXPR
+    NAME_REF
+      IDENT "foo"
   R_PAREN ")"
   WHITESPACE "\n"
 error 9: Expected to find a prefix binding in parens

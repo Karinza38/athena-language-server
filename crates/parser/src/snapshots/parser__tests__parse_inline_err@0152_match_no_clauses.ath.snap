@@ -6,10 +6,9 @@ input_file: crates/parser/test_data/parser/inline/err/expr/0152_match_no_clauses
 INFIX_MATCH_EXPR
   MATCH_KW "match"
   WHITESPACE " "
-  EXPR_PHRASE
-    IDENT_EXPR
-      NAME_REF
-        IDENT "foo"
+  IDENT_EXPR
+    NAME_REF
+      IDENT "foo"
   WHITESPACE "\n"
 error 9: Expected to find clauses for the match
 

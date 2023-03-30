@@ -7,20 +7,17 @@ AND_EXPR
   L_PAREN "("
   AMP2 "&&"
   WHITESPACE " "
-  EXPR_PHRASE
-    IDENT_EXPR
-      NAME_REF
-        IDENT "foo"
+  IDENT_EXPR
+    NAME_REF
+      IDENT "foo"
   WHITESPACE " "
-  EXPR_PHRASE
-    IDENT_EXPR
-      NAME_REF
-        IDENT "bar"
+  IDENT_EXPR
+    NAME_REF
+      IDENT "bar"
   WHITESPACE " "
-  EXPR_PHRASE
-    IDENT_EXPR
-      NAME_REF
-        IDENT "true"
+  IDENT_EXPR
+    NAME_REF
+      IDENT "true"
   R_PAREN ")"
   WHITESPACE "\n"
 

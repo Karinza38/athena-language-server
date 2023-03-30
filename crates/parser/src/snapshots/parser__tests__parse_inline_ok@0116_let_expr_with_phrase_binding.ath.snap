@@ -15,19 +15,17 @@ LET_EXPR
     WHITESPACE " "
     COLON_EQ ":="
     WHITESPACE " "
-    DED_PHRASE
-      BANG_METHOD_CALL_DED
-        L_PAREN "("
-        BANG "!"
-        IDENT_EXPR
-          NAME_REF
-            IDENT "claim"
-        WHITESPACE " "
-        EXPR_PHRASE
-          IDENT_EXPR
-            NAME_REF
-              IDENT "A"
-        R_PAREN ")"
+    BANG_METHOD_CALL_DED
+      L_PAREN "("
+      BANG "!"
+      IDENT_EXPR
+        NAME_REF
+          IDENT "claim"
+      WHITESPACE " "
+      IDENT_EXPR
+        NAME_REF
+          IDENT "A"
+      R_PAREN ")"
   WHITESPACE " "
   R_CURLY "}"
   WHITESPACE " "

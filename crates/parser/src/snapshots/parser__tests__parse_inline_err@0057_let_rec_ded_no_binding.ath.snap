@@ -17,10 +17,9 @@ INFIX_LET_REC_DED
       NAME_REF
         IDENT "claim"
     WHITESPACE " "
-    EXPR_PHRASE
-      IDENT_EXPR
-        NAME_REF
-          IDENT "A"
+    IDENT_EXPR
+      NAME_REF
+        IDENT "A"
     R_PAREN ")"
   WHITESPACE "\n"
 error 8: Expected to find at least one binding for the letrec expression

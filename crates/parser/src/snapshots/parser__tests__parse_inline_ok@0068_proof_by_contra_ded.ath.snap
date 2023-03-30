@@ -6,10 +6,9 @@ input_file: crates/parser/test_data/parser/inline/ok/ded/0068_proof_by_contra_de
 PROOF_BY_CONTRA_DED
   SUPPOSE_ABSURD_KW "suppose-absurd"
   WHITESPACE " "
-  EXPR_PHRASE
-    IDENT_EXPR
-      NAME_REF
-        IDENT "A"
+  IDENT_EXPR
+    NAME_REF
+      IDENT "A"
   WHITESPACE " "
   BANG_METHOD_CALL_DED
     L_PAREN "("
@@ -18,10 +17,9 @@ PROOF_BY_CONTRA_DED
       NAME_REF
         IDENT "claim"
     WHITESPACE " "
-    EXPR_PHRASE
-      IDENT_EXPR
-        NAME_REF
-          IDENT "A"
+    IDENT_EXPR
+      NAME_REF
+        IDENT "A"
     R_PAREN ")"
   WHITESPACE "\n"
 

@@ -21,16 +21,14 @@ INFER_BLOCK_DED
         WHITESPACE " "
         FROM_KW "from"
         WHITESPACE " "
-        EXPR_PHRASE
-          IDENT_EXPR
-            NAME_REF
-              IDENT "B"
+        IDENT_EXPR
+          NAME_REF
+            IDENT "B"
         COMMA ","
         WHITESPACE " "
-        EXPR_PHRASE
-          IDENT_EXPR
-            NAME_REF
-              IDENT "C"
+        IDENT_EXPR
+          NAME_REF
+            IDENT "C"
   SEMI ";"
   WHITESPACE "\n  "
   MAYBE_NAMED_INFERENCE
@@ -54,16 +52,14 @@ INFER_BLOCK_DED
         WHITESPACE " "
         ON_KW "on"
         WHITESPACE " "
-        EXPR_PHRASE
-          IDENT_EXPR
-            NAME_REF
-              IDENT "F"
+        IDENT_EXPR
+          NAME_REF
+            IDENT "F"
         COMMA ","
         WHITESPACE " "
-        EXPR_PHRASE
-          IDENT_EXPR
-            NAME_REF
-              IDENT "G"
+        IDENT_EXPR
+          NAME_REF
+            IDENT "G"
   SEMI ";"
   WHITESPACE "\n  "
   MAYBE_NAMED_INFERENCE
@@ -89,10 +85,9 @@ INFER_BLOCK_DED
           NAME_REF
             IDENT "claim"
         WHITESPACE " "
-        EXPR_PHRASE
-          IDENT_EXPR
-            NAME_REF
-              IDENT "X"
+        IDENT_EXPR
+          NAME_REF
+            IDENT "X"
         R_PAREN ")"
   SEMI ";"
   WHITESPACE "\n  "
@@ -105,10 +100,9 @@ INFER_BLOCK_DED
           NAME_REF
             IDENT "claim"
         WHITESPACE " "
-        EXPR_PHRASE
-          IDENT_EXPR
-            NAME_REF
-              IDENT "Z"
+        IDENT_EXPR
+          NAME_REF
+            IDENT "Z"
         R_PAREN ")"
   WHITESPACE "\n"
   R_CURLY "}"

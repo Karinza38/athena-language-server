@@ -6,12 +6,11 @@ input_file: crates/parser/test_data/parser/inline/err/ded/0074_induct_no_phrase.
 INDUCT_DED
   BY_INDUCTION_KW "by-induction"
   WHITESPACE " "
-  DED_PHRASE
-    L_CURLY "{"
-    WHITESPACE " "
-    IDENT_EXPR
-      NAME_REF
-        IDENT "a"
+  L_CURLY "{"
+  WHITESPACE " "
+  IDENT_EXPR
+    NAME_REF
+      IDENT "a"
   WHITESPACE " "
   RESTRICTED_MATCH_DED
     FAT_ARROW "=>"
@@ -23,10 +22,9 @@ INDUCT_DED
         NAME_REF
           IDENT "claim"
       WHITESPACE " "
-      EXPR_PHRASE
-        IDENT_EXPR
-          NAME_REF
-            IDENT "a"
+      IDENT_EXPR
+        NAME_REF
+          IDENT "a"
       R_PAREN ")"
   WHITESPACE " "
   R_CURLY "}"

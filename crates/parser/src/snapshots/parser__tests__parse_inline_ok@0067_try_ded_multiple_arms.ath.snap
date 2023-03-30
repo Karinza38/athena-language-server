@@ -16,10 +16,9 @@ INFIX_TRY_DED
         NAME_REF
           IDENT "claim"
       WHITESPACE " "
-      EXPR_PHRASE
-        IDENT_EXPR
-          NAME_REF
-            IDENT "A"
+      IDENT_EXPR
+        NAME_REF
+          IDENT "A"
       R_PAREN ")"
   WHITESPACE " "
   TRY_DED_ARM
@@ -32,10 +31,9 @@ INFIX_TRY_DED
         NAME_REF
           IDENT "claim"
       WHITESPACE " "
-      EXPR_PHRASE
-        IDENT_EXPR
-          NAME_REF
-            IDENT "B"
+      IDENT_EXPR
+        NAME_REF
+          IDENT "B"
       R_PAREN ")"
   WHITESPACE " "
   TRY_DED_ARM
@@ -48,10 +46,9 @@ INFIX_TRY_DED
         NAME_REF
           IDENT "claim"
       WHITESPACE " "
-      EXPR_PHRASE
-        IDENT_EXPR
-          NAME_REF
-            IDENT "C"
+      IDENT_EXPR
+        NAME_REF
+          IDENT "C"
       R_PAREN ")"
   WHITESPACE " "
   R_CURLY "}"

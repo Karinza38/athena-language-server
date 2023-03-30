@@ -6,16 +6,14 @@ input_file: crates/parser/test_data/parser/inline/err/dir/0164_infix_expand_inpu
 EXPAND_INPUT_DIR
   EXPAND_INPUT_KW "expand-input"
   WHITESPACE " "
-  EXPR_PHRASE
-    IDENT_EXPR
-      NAME_REF
-        IDENT "foo"
+  IDENT_EXPR
+    NAME_REF
+      IDENT "foo"
   COMMA ","
   WHITESPACE " "
-  EXPR_PHRASE
-    IDENT_EXPR
-      NAME_REF
-        IDENT "bar"
+  IDENT_EXPR
+    NAME_REF
+      IDENT "bar"
   WHITESPACE "\n"
 error 21: expected input expansion
 

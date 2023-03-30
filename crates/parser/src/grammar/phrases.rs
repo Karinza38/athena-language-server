@@ -697,25 +697,14 @@ pub(crate) const PHRASE_START_SET: TokenSet = EXPR_START_SET.union(DED_START_SET
 pub(crate) fn phrase(p: &mut Parser) -> bool {
     #[cfg(test)]
     eprintln!("parsing phrase: {:?} {:?}", p.current(), p.nth(1));
-    let m = p.start();
 
     match expr_or_ded(p) {
-        Some(ExprOrDed::Expr) => {
-            m.complete(p, SyntaxKind::EXPR_PHRASE);
-            true
-        }
-        Some(ExprOrDed::Ded) => {
-            m.complete(p, SyntaxKind::DED_PHRASE);
-            true
-        }
+        Some(ExprOrDed::Expr) => true,
+        Some(ExprOrDed::Ded) => true,
         Some(ExprOrDed::Ambig) => {
             p.error("Ambiguous phrase");
-            m.abandon(p);
             false
         }
-        None => {
-            m.abandon(p);
-            false
-        }
+        None => false,
     }
 }

@@ -34,7 +34,7 @@ impl AstIdMap {
 
         bdfs(node, |node| {
             let kind = node.kind();
-            if ast::DirStmt::can_cast(kind) || ast::PhraseStmt::can_cast(kind) {
+            if ast::Dir::can_cast(kind) || ast::Phrase::can_cast(kind) {
                 return true;
             }
             if ast::DefineDir::can_cast(kind)

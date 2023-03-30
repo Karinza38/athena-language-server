@@ -20,20 +20,18 @@ PREFIX_DEFINE_BLOCKS
         IDENT "b"
       R_PAREN ")"
     WHITESPACE " "
-    EXPR_PHRASE
-      APPLICATION_EXPR
+    APPLICATION_EXPR
+      L_PAREN "("
+      LAMBDA_EXPR
+        LAMBDA_KW "lambda"
+        WHITESPACE " "
         L_PAREN "("
-        EXPR_PHRASE
-          LAMBDA_EXPR
-            LAMBDA_KW "lambda"
-            WHITESPACE " "
-            L_PAREN "("
-            R_PAREN ")"
-            WHITESPACE " "
-            IDENT_EXPR
-              NAME_REF
-                IDENT "b"
         R_PAREN ")"
+        WHITESPACE " "
+        IDENT_EXPR
+          NAME_REF
+            IDENT "b"
+      R_PAREN ")"
   R_PAREN ")"
   WHITESPACE "\n"
 

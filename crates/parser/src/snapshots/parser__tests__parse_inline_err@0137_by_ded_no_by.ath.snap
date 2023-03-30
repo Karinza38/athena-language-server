@@ -5,10 +5,9 @@ input_file: crates/parser/test_data/parser/inline/err/ded/0137_by_ded_no_by.ath
 ---
 BY_DED
   L_PAREN "("
-  EXPR_PHRASE
-    IDENT_EXPR
-      NAME_REF
-        IDENT "B"
+  IDENT_EXPR
+    NAME_REF
+      IDENT "B"
   WHITESPACE " "
   BANG_METHOD_CALL_DED
     L_PAREN "("
@@ -17,10 +16,9 @@ BY_DED
       NAME_REF
         IDENT "claim"
     WHITESPACE " "
-    EXPR_PHRASE
-      IDENT_EXPR
-        NAME_REF
-          IDENT "A"
+    IDENT_EXPR
+      NAME_REF
+        IDENT "A"
     R_PAREN ")"
   R_PAREN ")"
   WHITESPACE "\n"

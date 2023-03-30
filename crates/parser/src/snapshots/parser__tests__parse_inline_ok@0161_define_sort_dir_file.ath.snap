@@ -4,18 +4,16 @@ description: "define-sort Foo := Int\n"
 input_file: crates/parser/test_data/parser/inline/ok/file/0161_define_sort_dir_file.ath
 ---
 SOURCE_FILE
-  DIR_STMT
-    DEFINE_SORT_DIR
-      DEFINE_SORT_KW "define-sort"
-      WHITESPACE " "
-      NAME
-        IDENT "Foo"
-      WHITESPACE " "
-      COLON_EQ ":="
-      WHITESPACE " "
-      EXPR_PHRASE
-        IDENT_EXPR
-          NAME_REF
-            IDENT "Int"
+  DEFINE_SORT_DIR
+    DEFINE_SORT_KW "define-sort"
+    WHITESPACE " "
+    NAME
+      IDENT "Foo"
+    WHITESPACE " "
+    COLON_EQ ":="
+    WHITESPACE " "
+    IDENT_EXPR
+      NAME_REF
+        IDENT "Int"
   WHITESPACE "\n"
 

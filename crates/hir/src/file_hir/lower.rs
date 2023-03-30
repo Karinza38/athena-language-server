@@ -302,16 +302,8 @@ impl Ctx {
     #[tracing::instrument(skip(self))]
     fn lower_stmt(&mut self, stmt: ast::Stmt) -> Vec<ModuleItem> {
         match stmt {
-            ast::Stmt::DirStmt(dir) => self
-                .lower_dir(or_return!(dir.dir(), vec![]))
-                .into_iter()
-                .flatten()
-                .collect(),
-            ast::Stmt::PhraseStmt(p) => self
-                .lower_phrase(or_return!(p.phrase(), vec![]))
-                .into_iter()
-                .map(Into::into)
-                .collect(),
+            ast::Stmt::Dir(dir) => self.lower_dir(dir).into_iter().flatten().collect(),
+            ast::Stmt::Phrase(p) => self.lower_phrase(p).into_iter().map(Into::into).collect(),
             ast::Stmt::DatatypeStmt(_) => {
                 // todo!(); TODO: implement
                 Vec::new()
@@ -873,12 +865,12 @@ impl Ctx {
 
     fn lower_phrase(&mut self, phrase: ast::Phrase) -> Option<PhraseId> {
         match phrase {
-            ast::Phrase::ExprPhrase(exp) => {
-                let id = self.lower_expr(exp.expr()?)?;
+            ast::Phrase::Expr(exp) => {
+                let id = self.lower_expr(exp)?;
                 Some(id.into())
             }
-            ast::Phrase::DedPhrase(d) => {
-                let id = self.lower_ded(d.ded()?)?;
+            ast::Phrase::Ded(d) => {
+                let id = self.lower_ded(d)?;
                 Some(id.into())
             }
         }

@@ -28,15 +28,13 @@ LET_REC_EXPR
     WHITESPACE " "
     APPLICATION_EXPR
       L_PAREN "("
-      EXPR_PHRASE
-        IDENT_EXPR
-          NAME_REF
-            IDENT "myfun"
+      IDENT_EXPR
+        NAME_REF
+          IDENT "myfun"
       WHITESPACE " "
-      EXPR_PHRASE
-        LITERAL_EXPR
-          LITERAL
-            STRING "\"cool\""
+      LITERAL_EXPR
+        LITERAL
+          STRING "\"cool\""
       R_PAREN ")"
   WHITESPACE " "
   R_CURLY "}"

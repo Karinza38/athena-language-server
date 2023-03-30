@@ -6,10 +6,9 @@ input_file: crates/parser/test_data/parser/inline/err/ded/0061_proof_by_contra_n
 PROOF_BY_CONTRA_DED
   SUPPOSE_ABSURD_KW "suppose-absurd"
   WHITESPACE " "
-  EXPR_PHRASE
-    IDENT_EXPR
-      NAME_REF
-        IDENT "A"
+  IDENT_EXPR
+    NAME_REF
+      IDENT "A"
   WHITESPACE "\n"
 error 16: expected body for proof by contradiction
 

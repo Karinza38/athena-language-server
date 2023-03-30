@@ -24,10 +24,9 @@ PICK_ANY_DED
       NAME_REF
         IDENT "claim"
     WHITESPACE " "
-    EXPR_PHRASE
-      IDENT_EXPR
-        NAME_REF
-          IDENT "A"
+    IDENT_EXPR
+      NAME_REF
+        IDENT "A"
     R_PAREN ")"
   R_PAREN ")"
   WHITESPACE "\n"

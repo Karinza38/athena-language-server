@@ -15,16 +15,14 @@ INFER_BLOCK_DED
         WHITESPACE " "
         FROM_KW "from"
         WHITESPACE " "
-        EXPR_PHRASE
-          IDENT_EXPR
-            NAME_REF
-              IDENT "B"
+        IDENT_EXPR
+          NAME_REF
+            IDENT "B"
         COMMA ","
         WHITESPACE " "
-        EXPR_PHRASE
-          IDENT_EXPR
-            NAME_REF
-              IDENT "C"
+        IDENT_EXPR
+          NAME_REF
+            IDENT "C"
   WHITESPACE " "
   R_CURLY "}"
   WHITESPACE "\n"

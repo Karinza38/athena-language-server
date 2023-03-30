@@ -6,10 +6,9 @@ input_file: crates/parser/test_data/parser/inline/ok/ded/0128_cases_with_on.ath
 CASES_DED
   DATATYPE_CASES_KW "datatype-cases"
   WHITESPACE " "
-  EXPR_PHRASE
-    IDENT_EXPR
-      NAME_REF
-        IDENT "a"
+  IDENT_EXPR
+    NAME_REF
+      IDENT "a"
   WHITESPACE " "
   ON_KW "on"
   WHITESPACE " "
@@ -33,10 +32,9 @@ CASES_DED
         NAME_REF
           IDENT "claim"
       WHITESPACE " "
-      EXPR_PHRASE
-        IDENT_EXPR
-          NAME_REF
-            IDENT "d"
+      IDENT_EXPR
+        NAME_REF
+          IDENT "d"
       R_PAREN ")"
   WHITESPACE " "
   R_CURLY "}"

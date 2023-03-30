@@ -9,10 +9,9 @@ PREFIX_CHECK_DED
   WHITESPACE " "
   CHECK_DED_CLAUSE
     L_PAREN "("
-    EXPR_PHRASE
-      IDENT_EXPR
-        NAME_REF
-          IDENT "A"
+    IDENT_EXPR
+      NAME_REF
+        IDENT "A"
     WHITESPACE " "
     BANG_METHOD_CALL_DED
       L_PAREN "("
@@ -21,19 +20,17 @@ PREFIX_CHECK_DED
         NAME_REF
           IDENT "claim"
       WHITESPACE " "
-      EXPR_PHRASE
-        IDENT_EXPR
-          NAME_REF
-            IDENT "B"
+      IDENT_EXPR
+        NAME_REF
+          IDENT "B"
       R_PAREN ")"
     R_PAREN ")"
   WHITESPACE " "
   CHECK_DED_CLAUSE
     L_PAREN "("
-    EXPR_PHRASE
-      IDENT_EXPR
-        NAME_REF
-          IDENT "else"
+    IDENT_EXPR
+      NAME_REF
+        IDENT "else"
     WHITESPACE " "
     BANG_METHOD_CALL_DED
       L_PAREN "("
@@ -42,10 +39,9 @@ PREFIX_CHECK_DED
         NAME_REF
           IDENT "claim"
       WHITESPACE " "
-      EXPR_PHRASE
-        IDENT_EXPR
-          NAME_REF
-            IDENT "D"
+      IDENT_EXPR
+        NAME_REF
+          IDENT "D"
       R_PAREN ")"
     R_PAREN ")"
   R_PAREN ")"

@@ -6,10 +6,9 @@ input_file: crates/parser/test_data/parser/inline/ok/ded/0063_match_ded.ath
 INFIX_MATCH_DED
   MATCH_KW "match"
   WHITESPACE " "
-  EXPR_PHRASE
-    IDENT_EXPR
-      NAME_REF
-        IDENT "A"
+  IDENT_EXPR
+    NAME_REF
+      IDENT "A"
   WHITESPACE " "
   L_CURLY "{"
   WHITESPACE " "
@@ -27,10 +26,9 @@ INFIX_MATCH_DED
         NAME_REF
           IDENT "claim"
       WHITESPACE " "
-      EXPR_PHRASE
-        IDENT_EXPR
-          NAME_REF
-            IDENT "C"
+      IDENT_EXPR
+        NAME_REF
+          IDENT "C"
       R_PAREN ")"
   WHITESPACE " "
   R_CURLY "}"

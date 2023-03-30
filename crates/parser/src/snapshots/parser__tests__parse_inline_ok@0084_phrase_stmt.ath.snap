@@ -3,19 +3,16 @@ source: crates/parser/src/tests.rs
 description: "(!claim A)\n"
 input_file: crates/parser/test_data/parser/inline/ok/stmt/0084_phrase_stmt.ath
 ---
-PHRASE_STMT
-  DED_PHRASE
-    BANG_METHOD_CALL_DED
-      L_PAREN "("
-      BANG "!"
-      IDENT_EXPR
-        NAME_REF
-          IDENT "claim"
-      WHITESPACE " "
-      EXPR_PHRASE
-        IDENT_EXPR
-          NAME_REF
-            IDENT "A"
-      R_PAREN ")"
+BANG_METHOD_CALL_DED
+  L_PAREN "("
+  BANG "!"
+  IDENT_EXPR
+    NAME_REF
+      IDENT "claim"
+  WHITESPACE " "
+  IDENT_EXPR
+    NAME_REF
+      IDENT "A"
+  R_PAREN ")"
   WHITESPACE "\n"
 

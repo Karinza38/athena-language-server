@@ -6,22 +6,19 @@ input_file: crates/parser/test_data/parser/inline/ok/expr/0033_simple_while_expr
 WHILE_EXPR
   WHILE_KW "while"
   WHITESPACE " "
-  EXPR_PHRASE
-    IDENT_EXPR
-      NAME_REF
-        IDENT "true"
+  IDENT_EXPR
+    NAME_REF
+      IDENT "true"
   WHITESPACE " "
   APPLICATION_EXPR
     L_PAREN "("
-    EXPR_PHRASE
-      IDENT_EXPR
-        NAME_REF
-          IDENT "print"
+    IDENT_EXPR
+      NAME_REF
+        IDENT "print"
     WHITESPACE " "
-    EXPR_PHRASE
-      LITERAL_EXPR
-        LITERAL
-          STRING "\"hello world\""
+    LITERAL_EXPR
+      LITERAL
+        STRING "\"hello world\""
     R_PAREN ")"
   WHITESPACE "\n"
 

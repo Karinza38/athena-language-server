@@ -5,24 +5,20 @@ input_file: crates/parser/test_data/parser/inline/ok/expr/0013_nested_applicatio
 ---
 APPLICATION_EXPR
   L_PAREN "("
-  EXPR_PHRASE
+  IDENT_EXPR
+    NAME_REF
+      IDENT "foo"
+  WHITESPACE " "
+  APPLICATION_EXPR
+    L_PAREN "("
     IDENT_EXPR
       NAME_REF
-        IDENT "foo"
-  WHITESPACE " "
-  EXPR_PHRASE
-    APPLICATION_EXPR
-      L_PAREN "("
-      EXPR_PHRASE
-        IDENT_EXPR
-          NAME_REF
-            IDENT "bar"
-      WHITESPACE " "
-      EXPR_PHRASE
-        IDENT_EXPR
-          NAME_REF
-            IDENT "baz"
-      R_PAREN ")"
+        IDENT "bar"
+    WHITESPACE " "
+    IDENT_EXPR
+      NAME_REF
+        IDENT "baz"
+    R_PAREN ")"
   R_PAREN ")"
   WHITESPACE "\n"
 

@@ -10,59 +10,49 @@ CONCLUDE_DED
   WHITESPACE " "
   APPLICATION_EXPR
     L_PAREN "("
-    EXPR_PHRASE
-      IDENT_EXPR
-        NAME_REF
-          IDENT "factorial"
+    IDENT_EXPR
+      NAME_REF
+        IDENT "factorial"
     WHITESPACE " "
-    EXPR_PHRASE
-      APPLICATION_EXPR
-        L_PAREN "("
-        EXPR_PHRASE
-          IDENT_EXPR
-            NAME_REF
-              IDENT "zero"
-        WHITESPACE " "
-        EXPR_PHRASE
-          IDENT_EXPR
-            NAME_REF
-              IDENT "-"
-        WHITESPACE " "
-        EXPR_PHRASE
-          IDENT_EXPR
-            NAME_REF
-              IDENT "one"
-        R_PAREN ")"
-    WHITESPACE " "
-    EXPR_PHRASE
-      IDENT_EXPR
-        NAME_REF
-          IDENT "<="
-    WHITESPACE " "
-    EXPR_PHRASE
-      IDENT_EXPR
-        NAME_REF
-          IDENT "factorial"
-    WHITESPACE " "
-    EXPR_PHRASE
+    APPLICATION_EXPR
+      L_PAREN "("
       IDENT_EXPR
         NAME_REF
           IDENT "zero"
-    R_PAREN ")"
-  WHITESPACE "\n "
-  DED_PHRASE
-    BANG_METHOD_CALL_DED
-      L_PAREN "("
-      BANG "!"
+      WHITESPACE " "
       IDENT_EXPR
         NAME_REF
-          IDENT "force"
+          IDENT "-"
       WHITESPACE " "
-      EXPR_PHRASE
-        IDENT_EXPR
-          NAME_REF
-            IDENT "base_case"
+      IDENT_EXPR
+        NAME_REF
+          IDENT "one"
       R_PAREN ")"
+    WHITESPACE " "
+    IDENT_EXPR
+      NAME_REF
+        IDENT "<="
+    WHITESPACE " "
+    IDENT_EXPR
+      NAME_REF
+        IDENT "factorial"
+    WHITESPACE " "
+    IDENT_EXPR
+      NAME_REF
+        IDENT "zero"
+    R_PAREN ")"
+  WHITESPACE "\n "
+  BANG_METHOD_CALL_DED
+    L_PAREN "("
+    BANG "!"
+    IDENT_EXPR
+      NAME_REF
+        IDENT "force"
+    WHITESPACE " "
+    IDENT_EXPR
+      NAME_REF
+        IDENT "base_case"
+    R_PAREN ")"
   WHITESPACE "\n"
 error 8: expected identifier in conclude deduction
 

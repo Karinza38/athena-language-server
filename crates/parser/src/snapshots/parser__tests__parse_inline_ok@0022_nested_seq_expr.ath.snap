@@ -7,21 +7,18 @@ SEQ_EXPR
   L_PAREN "("
   SEQ_KW "seq"
   WHITESPACE " "
-  EXPR_PHRASE
+  IDENT_EXPR
+    NAME_REF
+      IDENT "bar"
+  WHITESPACE " "
+  SEQ_EXPR
+    L_PAREN "("
+    SEQ_KW "seq"
+    WHITESPACE " "
     IDENT_EXPR
       NAME_REF
-        IDENT "bar"
-  WHITESPACE " "
-  EXPR_PHRASE
-    SEQ_EXPR
-      L_PAREN "("
-      SEQ_KW "seq"
-      WHITESPACE " "
-      EXPR_PHRASE
-        IDENT_EXPR
-          NAME_REF
-            IDENT "baz"
-      R_PAREN ")"
+        IDENT "baz"
+    R_PAREN ")"
   R_PAREN ")"
   WHITESPACE "\n"
 

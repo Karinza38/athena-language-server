@@ -8,28 +8,24 @@ OVERLOAD_MULTI
   WHITESPACE " "
   PHRASE_PAIR
     L_PAREN "("
-    EXPR_PHRASE
-      IDENT_EXPR
-        NAME_REF
-          IDENT "foo"
+    IDENT_EXPR
+      NAME_REF
+        IDENT "foo"
     WHITESPACE " "
-    EXPR_PHRASE
-      IDENT_EXPR
-        NAME_REF
-          IDENT "bar"
+    IDENT_EXPR
+      NAME_REF
+        IDENT "bar"
     R_PAREN ")"
   WHITESPACE " "
   PHRASE_PAIR
     L_PAREN "("
-    EXPR_PHRASE
-      IDENT_EXPR
-        NAME_REF
-          IDENT "baz"
+    IDENT_EXPR
+      NAME_REF
+        IDENT "baz"
     WHITESPACE " "
-    EXPR_PHRASE
-      IDENT_EXPR
-        NAME_REF
-          IDENT "quux"
+    IDENT_EXPR
+      NAME_REF
+        IDENT "quux"
     R_PAREN ")"
   WHITESPACE "\n"
 

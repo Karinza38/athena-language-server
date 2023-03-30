@@ -4,65 +4,64 @@ description: "declare set->map: (S, T) [(Set (Pair S T))] -> (Map S T)"
 input_file: crates/parser/test_data/parser/ok/file/complex-declare.ath
 ---
 SOURCE_FILE
-  DIR_STMT
-    INFIX_DECLARE_DIR
-      DECLARE_KW "declare"
+  INFIX_DECLARE_DIR
+    DECLARE_KW "declare"
+    WHITESPACE " "
+    NAME
+      IDENT "set->map"
+    COLON ":"
+    WHITESPACE " "
+    SORT_VARS_DECL
+      L_PAREN "("
+      IDENT_SORT_DECL
+        NAME
+          IDENT "S"
+      COMMA ","
       WHITESPACE " "
-      NAME
-        IDENT "set->map"
-      COLON ":"
-      WHITESPACE " "
-      SORT_VARS_DECL
-        L_PAREN "("
-        IDENT_SORT_DECL
-          NAME
-            IDENT "S"
-        COMMA ","
-        WHITESPACE " "
-        IDENT_SORT_DECL
-          NAME
-            IDENT "T"
-        R_PAREN ")"
-      WHITESPACE " "
-      FUNC_SORTS
-        L_BRACK "["
-        COMPOUND_SORT
-          L_PAREN "("
-          IDENT_SORT
-            NAME_REF
-              IDENT "Set"
-          WHITESPACE " "
-          COMPOUND_SORT
-            L_PAREN "("
-            IDENT_SORT
-              NAME_REF
-                IDENT "Pair"
-            WHITESPACE " "
-            IDENT_SORT
-              NAME_REF
-                IDENT "S"
-            WHITESPACE " "
-            IDENT_SORT
-              NAME_REF
-                IDENT "T"
-            R_PAREN ")"
-          R_PAREN ")"
-        R_BRACK "]"
-      WHITESPACE " "
-      THIN_ARROW "->"
-      WHITESPACE " "
+      IDENT_SORT_DECL
+        NAME
+          IDENT "T"
+      R_PAREN ")"
+    WHITESPACE " "
+    FUNC_SORTS
+      L_BRACK "["
       COMPOUND_SORT
         L_PAREN "("
         IDENT_SORT
           NAME_REF
-            IDENT "Map"
+            IDENT "Set"
         WHITESPACE " "
-        IDENT_SORT
-          NAME_REF
-            IDENT "S"
-        WHITESPACE " "
-        IDENT_SORT
-          NAME_REF
-            IDENT "T"
+        COMPOUND_SORT
+          L_PAREN "("
+          IDENT_SORT
+            NAME_REF
+              IDENT "Pair"
+          WHITESPACE " "
+          IDENT_SORT
+            NAME_REF
+              IDENT "S"
+          WHITESPACE " "
+          IDENT_SORT
+            NAME_REF
+              IDENT "T"
+          R_PAREN ")"
         R_PAREN ")"
+      R_BRACK "]"
+    WHITESPACE " "
+    THIN_ARROW "->"
+    WHITESPACE " "
+    COMPOUND_SORT
+      L_PAREN "("
+      IDENT_SORT
+        NAME_REF
+          IDENT "Map"
+      WHITESPACE " "
+      IDENT_SORT
+        NAME_REF
+          IDENT "S"
+      WHITESPACE " "
+      IDENT_SORT
+        NAME_REF
+          IDENT "T"
+      R_PAREN ")"
 

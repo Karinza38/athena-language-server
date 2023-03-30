@@ -9,10 +9,9 @@ PREFIX_CHECK_EXPR
   WHITESPACE " "
   CHECK_CLAUSE
     L_PAREN "("
-    EXPR_PHRASE
-      IDENT_EXPR
-        NAME_REF
-          IDENT "A"
+    IDENT_EXPR
+      NAME_REF
+        IDENT "A"
     WHITESPACE " "
     IDENT_EXPR
       NAME_REF
@@ -21,10 +20,9 @@ PREFIX_CHECK_EXPR
   WHITESPACE " "
   CHECK_CLAUSE
     L_PAREN "("
-    EXPR_PHRASE
-      IDENT_EXPR
-        NAME_REF
-          IDENT "else"
+    IDENT_EXPR
+      NAME_REF
+        IDENT "else"
     WHITESPACE " "
     IDENT_EXPR
       NAME_REF

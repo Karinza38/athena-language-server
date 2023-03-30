@@ -125,9 +125,6 @@ KindsSrc(
         "LIMITED_COMPOUND_SORT",
         "IDENT_SORT_DECL",
         "COMPOUND_SORT_DECL",
-        // Phrases
-        "EXPR_PHRASE",
-        "DED_PHRASE",
         // Exprs
         "IDENT_EXPR",
         "LITERAL_EXPR",
@@ -271,8 +268,6 @@ KindsSrc(
         "OVERLOAD_SINGLE",
         "OVERLOAD_MULTI",
         // Statements
-        "DIR_STMT",
-        "PHRASE_STMT",
         "STRUCTURE_NAME_DEF",
         "CONSTANT_CONSTRUCTOR",
         "COMPOUND_CONSTRUCTOR",

@@ -6,10 +6,9 @@ input_file: crates/parser/test_data/parser/inline/err/expr/0021_while_expr_no_ph
 WHILE_EXPR
   WHILE_KW "while"
   WHITESPACE " "
-  EXPR_PHRASE
-    IDENT_EXPR
-      NAME_REF
-        IDENT "foo"
+  IDENT_EXPR
+    NAME_REF
+      IDENT "foo"
   WHITESPACE "\n"
 error 9: Expected to find a body (expr) for the while expression
 

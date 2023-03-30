@@ -8,41 +8,35 @@ OVERLOAD_MULTI
   WHITESPACE " "
   PHRASE_PAIR
     L_PAREN "("
-    EXPR_PHRASE
-      IDENT_EXPR
-        NAME_REF
-          IDENT "=="
+    IDENT_EXPR
+      NAME_REF
+        IDENT "=="
     WHITESPACE " "
-    EXPR_PHRASE
-      IDENT_EXPR
-        NAME_REF
-          IDENT "eq"
+    IDENT_EXPR
+      NAME_REF
+        IDENT "eq"
     R_PAREN ")"
   WHITESPACE " "
   PHRASE_PAIR
     L_PAREN "("
-    EXPR_PHRASE
-      IDENT_EXPR
-        NAME_REF
-          IDENT "+"
+    IDENT_EXPR
+      NAME_REF
+        IDENT "+"
     WHITESPACE " "
-    EXPR_PHRASE
-      IDENT_EXPR
-        NAME_REF
-          IDENT "N.+"
+    IDENT_EXPR
+      NAME_REF
+        IDENT "N.+"
     R_PAREN ")"
   WHITESPACE " "
   PHRASE_PAIR
     L_PAREN "("
-    EXPR_PHRASE
-      IDENT_EXPR
-        NAME_REF
-          IDENT "-"
+    IDENT_EXPR
+      NAME_REF
+        IDENT "-"
     WHITESPACE " "
-    EXPR_PHRASE
-      IDENT_EXPR
-        NAME_REF
-          IDENT "N.-"
+    IDENT_EXPR
+      NAME_REF
+        IDENT "N.-"
     R_PAREN ")"
   WHITESPACE "\n"
 

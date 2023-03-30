@@ -11,10 +11,9 @@ PICK_WITNESS_DED
   WHITESPACE " "
   FOR_KW "for"
   WHITESPACE " "
-  EXPR_PHRASE
-    IDENT_EXPR
-      NAME_REF
-        IDENT "b"
+  IDENT_EXPR
+    NAME_REF
+      IDENT "b"
   WHITESPACE "\n"
 error 20: expected body for pick witness
 

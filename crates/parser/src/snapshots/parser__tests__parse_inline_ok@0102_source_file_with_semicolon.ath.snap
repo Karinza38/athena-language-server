@@ -4,21 +4,19 @@ description: "domain Bar;\ndomain Foo\n"
 input_file: crates/parser/test_data/parser/inline/ok/file/0102_source_file_with_semicolon.ath
 ---
 SOURCE_FILE
-  DIR_STMT
-    DOMAIN_DIR
-      DOMAIN_KW "domain"
-      WHITESPACE " "
-      IDENT_SORT_DECL
-        NAME
-          IDENT "Bar"
+  DOMAIN_DIR
+    DOMAIN_KW "domain"
+    WHITESPACE " "
+    IDENT_SORT_DECL
+      NAME
+        IDENT "Bar"
   SEMI ";"
   WHITESPACE "\n"
-  DIR_STMT
-    DOMAIN_DIR
-      DOMAIN_KW "domain"
-      WHITESPACE " "
-      IDENT_SORT_DECL
-        NAME
-          IDENT "Foo"
+  DOMAIN_DIR
+    DOMAIN_KW "domain"
+    WHITESPACE " "
+    IDENT_SORT_DECL
+      NAME
+        IDENT "Foo"
   WHITESPACE "\n"
 

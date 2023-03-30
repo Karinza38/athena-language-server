@@ -10,10 +10,9 @@ PICK_WITNESS_DED
   NAME
     IDENT "a"
   WHITESPACE " "
-  EXPR_PHRASE
-    IDENT_EXPR
-      NAME_REF
-        IDENT "b"
+  IDENT_EXPR
+    NAME_REF
+      IDENT "b"
   WHITESPACE " "
   BANG_METHOD_CALL_DED
     L_PAREN "("
@@ -22,10 +21,9 @@ PICK_WITNESS_DED
       NAME_REF
         IDENT "claim"
     WHITESPACE " "
-    EXPR_PHRASE
-      IDENT_EXPR
-        NAME_REF
-          IDENT "a"
+    IDENT_EXPR
+      NAME_REF
+        IDENT "a"
     R_PAREN ")"
   R_PAREN ")"
   WHITESPACE "\n"

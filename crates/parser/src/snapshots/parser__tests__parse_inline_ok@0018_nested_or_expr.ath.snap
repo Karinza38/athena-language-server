@@ -7,21 +7,18 @@ OR_EXPR
   L_PAREN "("
   PIPE2 "||"
   WHITESPACE " "
-  EXPR_PHRASE
+  IDENT_EXPR
+    NAME_REF
+      IDENT "bar"
+  WHITESPACE " "
+  OR_EXPR
+    L_PAREN "("
+    PIPE2 "||"
+    WHITESPACE " "
     IDENT_EXPR
       NAME_REF
-        IDENT "bar"
-  WHITESPACE " "
-  EXPR_PHRASE
-    OR_EXPR
-      L_PAREN "("
-      PIPE2 "||"
-      WHITESPACE " "
-      EXPR_PHRASE
-        IDENT_EXPR
-          NAME_REF
-            IDENT "baz"
-      R_PAREN ")"
+        IDENT "baz"
+    R_PAREN ")"
   R_PAREN ")"
   WHITESPACE "\n"
 

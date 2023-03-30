@@ -9,15 +9,13 @@ PREFIX_TRY_EXPR
   WHITESPACE " "
   APPLICATION_EXPR
     L_PAREN "("
-    EXPR_PHRASE
-      IDENT_EXPR
-        NAME_REF
-          IDENT "A"
+    IDENT_EXPR
+      NAME_REF
+        IDENT "A"
     WHITESPACE " "
-    EXPR_PHRASE
-      IDENT_EXPR
-        NAME_REF
-          IDENT "B"
+    IDENT_EXPR
+      NAME_REF
+        IDENT "B"
     R_PAREN ")"
   WHITESPACE " "
   IDENT_EXPR

@@ -20,10 +20,9 @@ PREFIX_DEFINE_BLOCKS
         IDENT "b"
       R_PAREN ")"
     WHITESPACE " "
-    EXPR_PHRASE
-      IDENT_EXPR
-        NAME_REF
-          IDENT "a"
+    IDENT_EXPR
+      NAME_REF
+        IDENT "a"
   WHITESPACE " "
   ERROR
     IDENT "b"

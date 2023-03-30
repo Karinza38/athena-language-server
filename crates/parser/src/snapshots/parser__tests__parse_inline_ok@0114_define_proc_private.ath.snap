@@ -19,9 +19,8 @@ INFIX_DEFINE_DIR
   WHITESPACE " "
   COLON_EQ ":="
   WHITESPACE " "
-  EXPR_PHRASE
-    IDENT_EXPR
-      NAME_REF
-        IDENT "b"
+  IDENT_EXPR
+    NAME_REF
+      IDENT "b"
   WHITESPACE "\n"
 

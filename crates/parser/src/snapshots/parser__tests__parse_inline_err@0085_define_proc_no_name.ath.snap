@@ -13,16 +13,15 @@ INFIX_DEFINE_DIR
   WHITESPACE " "
   COLON_EQ ":="
   WHITESPACE " "
-  EXPR_PHRASE
-    LAMBDA_EXPR
-      LAMBDA_KW "lambda"
-      WHITESPACE " "
-      L_PAREN "("
-      R_PAREN ")"
-      WHITESPACE " "
-      IDENT_EXPR
-        NAME_REF
-          IDENT "true"
+  LAMBDA_EXPR
+    LAMBDA_KW "lambda"
+    WHITESPACE " "
+    L_PAREN "("
+    R_PAREN ")"
+    WHITESPACE " "
+    IDENT_EXPR
+      NAME_REF
+        IDENT "true"
   WHITESPACE "\n"
 error 8: expected procedure name
 

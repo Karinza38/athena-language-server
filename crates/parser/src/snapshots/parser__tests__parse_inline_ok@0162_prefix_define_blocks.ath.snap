@@ -22,10 +22,9 @@ PREFIX_DEFINE_BLOCKS
     WHITESPACE " "
     COLON_EQ ":="
     WHITESPACE " "
-    EXPR_PHRASE
-      IDENT_EXPR
-        NAME_REF
-          IDENT "a"
+    IDENT_EXPR
+      NAME_REF
+        IDENT "a"
   WHITESPACE " "
   PREFIX_DEFINE_BLOCK
     DEFINE_PROC
@@ -42,10 +41,9 @@ PREFIX_DEFINE_BLOCKS
     WHITESPACE " "
     COLON_EQ ":="
     WHITESPACE " "
-    EXPR_PHRASE
-      IDENT_EXPR
-        NAME_REF
-          IDENT "b"
+    IDENT_EXPR
+      NAME_REF
+        IDENT "b"
   R_PAREN ")"
   WHITESPACE "\n"
 

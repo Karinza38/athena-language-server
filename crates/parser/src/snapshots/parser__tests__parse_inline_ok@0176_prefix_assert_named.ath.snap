@@ -14,20 +14,17 @@ PREFIX_ASSERT_DIR
   WHITESPACE " "
   APPLICATION_EXPR
     L_PAREN "("
-    EXPR_PHRASE
-      IDENT_EXPR
-        NAME_REF
-          IDENT "bar"
+    IDENT_EXPR
+      NAME_REF
+        IDENT "bar"
     WHITESPACE " "
-    EXPR_PHRASE
-      IDENT_EXPR
-        NAME_REF
-          IDENT "="
+    IDENT_EXPR
+      NAME_REF
+        IDENT "="
     WHITESPACE " "
-    EXPR_PHRASE
-      IDENT_EXPR
-        NAME_REF
-          IDENT "bar"
+    IDENT_EXPR
+      NAME_REF
+        IDENT "bar"
     R_PAREN ")"
   R_PAREN ")"
   WHITESPACE "\n"

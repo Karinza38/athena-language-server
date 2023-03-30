@@ -7,10 +7,9 @@ PREFIX_MATCH_DED
   L_PAREN "("
   DMATCH_KW "dmatch"
   WHITESPACE " "
-  EXPR_PHRASE
-    IDENT_EXPR
-      NAME_REF
-        IDENT "foo"
+  IDENT_EXPR
+    NAME_REF
+      IDENT "foo"
   WHITESPACE " "
   R_PAREN ")"
   WHITESPACE "\n"

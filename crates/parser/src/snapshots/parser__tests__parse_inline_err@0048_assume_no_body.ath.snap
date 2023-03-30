@@ -6,10 +6,9 @@ input_file: crates/parser/test_data/parser/inline/err/ded/0048_assume_no_body.at
 ASSUME_DED
   ASSUME_KW "assume"
   WHITESPACE " "
-  EXPR_PHRASE
-    IDENT_EXPR
-      NAME_REF
-        IDENT "a"
+  IDENT_EXPR
+    NAME_REF
+      IDENT "a"
   WHITESPACE "\n"
 error 8: expected body for assumption
 

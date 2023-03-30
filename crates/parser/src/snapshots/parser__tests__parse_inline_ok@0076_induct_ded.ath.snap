@@ -6,10 +6,9 @@ input_file: crates/parser/test_data/parser/inline/ok/ded/0076_induct_ded.ath
 INDUCT_DED
   BY_INDUCTION_KW "by-induction"
   WHITESPACE " "
-  EXPR_PHRASE
-    IDENT_EXPR
-      NAME_REF
-        IDENT "foo"
+  IDENT_EXPR
+    NAME_REF
+      IDENT "foo"
   WHITESPACE " "
   L_CURLY "{"
   WHITESPACE " "
@@ -27,10 +26,9 @@ INDUCT_DED
         NAME_REF
           IDENT "claim"
       WHITESPACE " "
-      EXPR_PHRASE
-        IDENT_EXPR
-          NAME_REF
-            IDENT "a"
+      IDENT_EXPR
+        NAME_REF
+          IDENT "a"
       R_PAREN ")"
   WHITESPACE " "
   R_CURLY "}"

@@ -106,18 +106,12 @@ SourceFile =
 //************//
 
 Stmt =
-    DirStmt // ✅
-    | PhraseStmt // ✅
+    Dir // ✅
+    | Phrase // ✅
     | DatatypeStmt
     | StructureStmt
     | DatatypesStmt
     | StructuresStmt
-
-PhraseStmt =
-    Phrase
-
-DirStmt =
-    Dir
 
 StructureNameDef =
     SortDecl
@@ -156,15 +150,6 @@ DatatypesStmt =
 
 StructuresStmt =
     'structures' (StructureDef ('&&' StructureDef)*)
-
-Item =
-    Module
-    | Assertion
-    | Domain
-    | FunctionSymbol
-    | Datatype
-    | Structure
-    | DefineDir
 
 MetaDefinition =
     Definition
@@ -387,14 +372,8 @@ OverloadMulti =
 //****************************//
 
 Phrase =
-    ExprPhrase
-    | DedPhrase
-
-ExprPhrase = 
     Expr
-
-DedPhrase =
-    Ded
+    | Ded
 
 Expr =
     IdentExpr // ✅

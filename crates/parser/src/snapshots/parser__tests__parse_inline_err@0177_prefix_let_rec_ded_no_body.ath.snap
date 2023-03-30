@@ -14,10 +14,9 @@ PREFIX_LET_REC_DED
       NAME
         IDENT "foo"
     WHITESPACE " "
-    EXPR_PHRASE
-      IDENT_EXPR
-        NAME_REF
-          IDENT "1"
+    IDENT_EXPR
+      NAME_REF
+        IDENT "1"
     R_PAREN ")"
   WHITESPACE " "
   PREFIX_BINDING
@@ -26,10 +25,9 @@ PREFIX_LET_REC_DED
       NAME
         IDENT "bar"
     WHITESPACE " "
-    EXPR_PHRASE
-      IDENT_EXPR
-        NAME_REF
-          IDENT "2"
+    IDENT_EXPR
+      NAME_REF
+        IDENT "2"
     R_PAREN ")"
   R_PAREN ")"
   R_PAREN ")"

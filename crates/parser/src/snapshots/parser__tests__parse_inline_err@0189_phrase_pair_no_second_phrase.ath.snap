@@ -9,10 +9,9 @@ OVERLOAD_MULTI
   WHITESPACE "  "
   PHRASE_PAIR
     L_PAREN "("
-    EXPR_PHRASE
-      IDENT_EXPR
-        NAME_REF
-          IDENT "a"
+    IDENT_EXPR
+      NAME_REF
+        IDENT "a"
     WHITESPACE " "
     ERROR
       DOMAIN_KW "domain"

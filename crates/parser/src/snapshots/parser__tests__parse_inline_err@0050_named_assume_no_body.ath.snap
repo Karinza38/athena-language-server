@@ -12,10 +12,9 @@ NAMED_ASSUME_DED
     WHITESPACE " "
     COLON_EQ ":="
     WHITESPACE " "
-    EXPR_PHRASE
-      IDENT_EXPR
-        NAME_REF
-          IDENT "b"
+    IDENT_EXPR
+      NAME_REF
+        IDENT "b"
   WHITESPACE "\n"
 error 13: expected body for assumption
 

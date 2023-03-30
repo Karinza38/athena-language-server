@@ -13,10 +13,9 @@ PREFIX_ASSUME_LET_DED
       NAME
         IDENT "x"
     WHITESPACE " "
-    EXPR_PHRASE
-      IDENT_EXPR
-        NAME_REF
-          IDENT "A"
+    IDENT_EXPR
+      NAME_REF
+        IDENT "A"
     R_PAREN ")"
   WHITESPACE " "
   R_PAREN ")"

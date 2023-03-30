@@ -6,10 +6,9 @@ input_file: crates/parser/test_data/parser/inline/err/dir/0191_overload_dir_no_s
 OVERLOAD_SINGLE
   OVERLOAD_KW "overload"
   WHITESPACE " "
-  EXPR_PHRASE
-    IDENT_EXPR
-      NAME_REF
-        IDENT "foo"
+  IDENT_EXPR
+    NAME_REF
+      IDENT "foo"
   WHITESPACE "\n"
 error 12: expected phrase to overload to
 

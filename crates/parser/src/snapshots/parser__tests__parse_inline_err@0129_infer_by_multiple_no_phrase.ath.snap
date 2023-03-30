@@ -21,10 +21,9 @@ INFER_BLOCK_DED
         WHITESPACE " "
         ON_KW "on"
         WHITESPACE " "
-        EXPR_PHRASE
-          IDENT_EXPR
-            NAME_REF
-              IDENT "C"
+        IDENT_EXPR
+          NAME_REF
+            IDENT "C"
         COMMA ","
   WHITESPACE " "
   R_CURLY "}"

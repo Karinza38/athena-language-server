@@ -7,10 +7,9 @@ PREFIX_MATCH_DED
   L_PAREN "("
   DMATCH_KW "dmatch"
   WHITESPACE " "
-  EXPR_PHRASE
-    IDENT_EXPR
-      NAME_REF
-        IDENT "foo"
+  IDENT_EXPR
+    NAME_REF
+      IDENT "foo"
   WHITESPACE " "
   MATCH_DED_CLAUSE
     L_PAREN "("
@@ -25,10 +24,9 @@ PREFIX_MATCH_DED
         NAME_REF
           IDENT "claim"
       WHITESPACE " "
-      EXPR_PHRASE
-        IDENT_EXPR
-          NAME_REF
-            IDENT "B"
+      IDENT_EXPR
+        NAME_REF
+          IDENT "B"
       R_PAREN ")"
     R_PAREN ")"
   WHITESPACE " "
@@ -45,10 +43,9 @@ PREFIX_MATCH_DED
         NAME_REF
           IDENT "claim"
       WHITESPACE " "
-      EXPR_PHRASE
-        IDENT_EXPR
-          NAME_REF
-            IDENT "D"
+      IDENT_EXPR
+        NAME_REF
+          IDENT "D"
       R_PAREN ")"
     R_PAREN ")"
   R_PAREN ")"

@@ -19,16 +19,14 @@ INFER_BLOCK_DED
           NAME_REF
             IDENT "B"
         WHITESPACE " "
-        EXPR_PHRASE
-          IDENT_EXPR
-            NAME_REF
-              IDENT "C"
+        IDENT_EXPR
+          NAME_REF
+            IDENT "C"
         COMMA ","
         WHITESPACE " "
-        EXPR_PHRASE
-          IDENT_EXPR
-            NAME_REF
-              IDENT "D"
+        IDENT_EXPR
+          NAME_REF
+            IDENT "D"
   WHITESPACE " "
   R_CURLY "}"
   WHITESPACE "\n"

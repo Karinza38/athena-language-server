@@ -17,10 +17,9 @@ PICK_WITNESSES_DED
   WHITESPACE " "
   FOR_KW "for"
   WHITESPACE " "
-  EXPR_PHRASE
-    IDENT_EXPR
-      NAME_REF
-        IDENT "d"
+  IDENT_EXPR
+    NAME_REF
+      IDENT "d"
   WHITESPACE " "
   BANG_METHOD_CALL_DED
     L_PAREN "("
@@ -29,10 +28,9 @@ PICK_WITNESSES_DED
       NAME_REF
         IDENT "claim"
     WHITESPACE " "
-    EXPR_PHRASE
-      IDENT_EXPR
-        NAME_REF
-          IDENT "a"
+    IDENT_EXPR
+      NAME_REF
+        IDENT "a"
     R_PAREN ")"
   WHITESPACE "\n"
 

@@ -5,22 +5,19 @@ input_file: crates/parser/test_data/parser/inline/ok/expr/0165_infix_or_expr.ath
 ---
 OR_EXPR
   L_PAREN "("
-  EXPR_PHRASE
-    IDENT_EXPR
-      NAME_REF
-        IDENT "foo"
+  IDENT_EXPR
+    NAME_REF
+      IDENT "foo"
   WHITESPACE " "
   PIPE2 "||"
   WHITESPACE " "
-  EXPR_PHRASE
-    IDENT_EXPR
-      NAME_REF
-        IDENT "bar"
+  IDENT_EXPR
+    NAME_REF
+      IDENT "bar"
   WHITESPACE " "
-  EXPR_PHRASE
-    IDENT_EXPR
-      NAME_REF
-        IDENT "baz"
+  IDENT_EXPR
+    NAME_REF
+      IDENT "baz"
   R_PAREN ")"
   WHITESPACE "\n"
 

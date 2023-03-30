@@ -18,10 +18,9 @@ METHOD_EXPR
       NAME_REF
         IDENT "claim"
     WHITESPACE " "
-    EXPR_PHRASE
-      IDENT_EXPR
-        NAME_REF
-          IDENT "x"
+    IDENT_EXPR
+      NAME_REF
+        IDENT "x"
     R_PAREN ")"
   WHITESPACE "\n"
 

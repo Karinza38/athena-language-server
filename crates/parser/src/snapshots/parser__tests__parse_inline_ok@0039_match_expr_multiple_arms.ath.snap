@@ -6,10 +6,9 @@ input_file: crates/parser/test_data/parser/inline/ok/expr/0039_match_expr_multip
 INFIX_MATCH_EXPR
   MATCH_KW "match"
   WHITESPACE " "
-  EXPR_PHRASE
-    IDENT_EXPR
-      NAME_REF
-        IDENT "foo"
+  IDENT_EXPR
+    NAME_REF
+      IDENT "foo"
   WHITESPACE " "
   L_CURLY "{"
   WHITESPACE " "
@@ -35,15 +34,13 @@ INFIX_MATCH_EXPR
     WHITESPACE " "
     APPLICATION_EXPR
       L_PAREN "("
-      EXPR_PHRASE
-        IDENT_EXPR
-          NAME_REF
-            IDENT "quux"
+      IDENT_EXPR
+        NAME_REF
+          IDENT "quux"
       WHITESPACE " "
-      EXPR_PHRASE
-        LITERAL_EXPR
-          LITERAL
-            STRING "\"cool\""
+      LITERAL_EXPR
+        LITERAL
+          STRING "\"cool\""
       R_PAREN ")"
   WHITESPACE " "
   R_CURLY "}"

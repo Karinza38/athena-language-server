@@ -15,19 +15,16 @@ LET_EXPR
     WHITESPACE " "
     COLON_EQ ":="
     WHITESPACE " "
-    EXPR_PHRASE
-      APPLICATION_EXPR
-        L_PAREN "("
-        EXPR_PHRASE
-          IDENT_EXPR
-            NAME_REF
-              IDENT "hotline"
-        WHITESPACE " "
-        EXPR_PHRASE
-          IDENT_EXPR
-            NAME_REF
-              IDENT "miami"
-        R_PAREN ")"
+    APPLICATION_EXPR
+      L_PAREN "("
+      IDENT_EXPR
+        NAME_REF
+          IDENT "hotline"
+      WHITESPACE " "
+      IDENT_EXPR
+        NAME_REF
+          IDENT "miami"
+      R_PAREN ")"
   WHITESPACE " "
   R_CURLY "}"
   WHITESPACE " "

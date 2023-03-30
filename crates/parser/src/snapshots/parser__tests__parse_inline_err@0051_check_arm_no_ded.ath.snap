@@ -9,10 +9,9 @@ INFIX_CHECK_DED
   L_CURLY "{"
   WHITESPACE " "
   CHECK_DED_ARM
-    EXPR_PHRASE
-      IDENT_EXPR
-        NAME_REF
-          IDENT "foo"
+    IDENT_EXPR
+      NAME_REF
+        IDENT "foo"
     WHITESPACE " "
     FAT_ARROW "=>"
     WHITESPACE " "
@@ -23,19 +22,17 @@ INFIX_CHECK_DED
         NAME_REF
           IDENT "claim"
       WHITESPACE " "
-      EXPR_PHRASE
-        IDENT_EXPR
-          NAME_REF
-            IDENT "A"
+      IDENT_EXPR
+        NAME_REF
+          IDENT "A"
       R_PAREN ")"
   WHITESPACE "\n"
   CHECK_DED_ARM
     PIPE "|"
     WHITESPACE " "
-    EXPR_PHRASE
-      IDENT_EXPR
-        NAME_REF
-          IDENT "baz"
+    IDENT_EXPR
+      NAME_REF
+        IDENT "baz"
     WHITESPACE " "
     FAT_ARROW "=>"
   WHITESPACE " "

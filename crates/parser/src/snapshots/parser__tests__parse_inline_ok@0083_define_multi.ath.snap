@@ -23,23 +23,19 @@ INFIX_DEFINE_DIR
   WHITESPACE " "
   COLON_EQ ":="
   WHITESPACE " "
-  EXPR_PHRASE
-    LIST_EXPR
-      L_BRACK "["
-      EXPR_PHRASE
-        IDENT_EXPR
-          NAME_REF
-            IDENT "true"
-      WHITESPACE " "
-      EXPR_PHRASE
-        IDENT_EXPR
-          NAME_REF
-            IDENT "false"
-      WHITESPACE " "
-      EXPR_PHRASE
-        IDENT_EXPR
-          NAME_REF
-            IDENT "true"
-      R_BRACK "]"
+  LIST_EXPR
+    L_BRACK "["
+    IDENT_EXPR
+      NAME_REF
+        IDENT "true"
+    WHITESPACE " "
+    IDENT_EXPR
+      NAME_REF
+        IDENT "false"
+    WHITESPACE " "
+    IDENT_EXPR
+      NAME_REF
+        IDENT "true"
+    R_BRACK "]"
   WHITESPACE "\n"
 

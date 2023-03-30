@@ -8,15 +8,13 @@ OVERLOAD_SINGLE
   WHITESPACE " "
   OVERLOAD_KW "overload"
   WHITESPACE " "
-  EXPR_PHRASE
-    IDENT_EXPR
-      NAME_REF
-        IDENT "foo"
+  IDENT_EXPR
+    NAME_REF
+      IDENT "foo"
   WHITESPACE " "
-  EXPR_PHRASE
-    IDENT_EXPR
-      NAME_REF
-        IDENT "bar"
+  IDENT_EXPR
+    NAME_REF
+      IDENT "bar"
   WHITESPACE " "
   R_PAREN ")"
   WHITESPACE "\n"

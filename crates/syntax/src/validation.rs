@@ -15,7 +15,7 @@ pub(crate) fn validate(root: &SyntaxNode) -> Vec<SyntaxError> {
 
 fn validate_by_ded_starts_with_expr(by_ded: ast::ByDed, errors: &mut Vec<SyntaxError>) {
     match by_ded.phrase() {
-        Some(ast::Phrase::ExprPhrase(_)) => {}
+        Some(ast::Phrase::Expr(_)) => {}
         Some(phrase) => {
             let error = SyntaxError::new(
                 "By deduction must start with an expression",

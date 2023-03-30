@@ -134,8 +134,6 @@ pub enum SyntaxKind {
     LIMITED_COMPOUND_SORT,
     IDENT_SORT_DECL,
     COMPOUND_SORT_DECL,
-    EXPR_PHRASE,
-    DED_PHRASE,
     IDENT_EXPR,
     LITERAL_EXPR,
     UNIT_EXPR,
@@ -273,8 +271,6 @@ pub enum SyntaxKind {
     SET_PRECEDENCE_DIR,
     OVERLOAD_SINGLE,
     OVERLOAD_MULTI,
-    DIR_STMT,
-    PHRASE_STMT,
     STRUCTURE_NAME_DEF,
     CONSTANT_CONSTRUCTOR,
     COMPOUND_CONSTRUCTOR,
@@ -424,8 +420,6 @@ impl SyntaxKind {
                 | LIMITED_COMPOUND_SORT
                 | IDENT_SORT_DECL
                 | COMPOUND_SORT_DECL
-                | EXPR_PHRASE
-                | DED_PHRASE
                 | IDENT_EXPR
                 | LITERAL_EXPR
                 | UNIT_EXPR
@@ -563,8 +557,6 @@ impl SyntaxKind {
                 | SET_PRECEDENCE_DIR
                 | OVERLOAD_SINGLE
                 | OVERLOAD_MULTI
-                | DIR_STMT
-                | PHRASE_STMT
                 | STRUCTURE_NAME_DEF
                 | CONSTANT_CONSTRUCTOR
                 | COMPOUND_CONSTRUCTOR

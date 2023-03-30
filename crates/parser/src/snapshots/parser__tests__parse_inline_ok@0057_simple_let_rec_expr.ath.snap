@@ -16,15 +16,13 @@ LET_REC_EXPR
     WHITESPACE " "
     APPLICATION_EXPR
       L_PAREN "("
-      EXPR_PHRASE
-        IDENT_EXPR
-          NAME_REF
-            IDENT "hotline"
+      IDENT_EXPR
+        NAME_REF
+          IDENT "hotline"
       WHITESPACE " "
-      EXPR_PHRASE
-        IDENT_EXPR
-          NAME_REF
-            IDENT "miami"
+      IDENT_EXPR
+        NAME_REF
+          IDENT "miami"
       R_PAREN ")"
   WHITESPACE " "
   R_CURLY "}"

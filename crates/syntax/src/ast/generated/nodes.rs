@@ -176,26 +176,6 @@ impl SourceFile {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
-pub struct DirStmt {
-    pub(crate) syntax: SyntaxNode,
-}
-impl DirStmt {
-    pub fn dir(&self) -> Option<Dir> {
-        support::child(&self.syntax)
-    }
-}
-
-#[derive(Debug, Clone, PartialEq, Eq, Hash)]
-pub struct PhraseStmt {
-    pub(crate) syntax: SyntaxNode,
-}
-impl PhraseStmt {
-    pub fn phrase(&self) -> Option<Phrase> {
-        support::child(&self.syntax)
-    }
-}
-
-#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct DatatypeStmt {
     pub(crate) syntax: SyntaxNode,
 }
@@ -676,11 +656,14 @@ impl InputTransformDecl {
     pub fn l_brack_token(&self) -> Option<SyntaxToken> {
         support::token(&self.syntax, T!['['])
     }
+    pub fn expr(&self) -> Option<Expr> {
+        support::child(&self.syntax)
+    }
+    pub fn exprs(&self) -> AstChildren<Expr> {
+        support::children(&self.syntax)
+    }
     pub fn r_brack_token(&self) -> Option<SyntaxToken> {
         support::token(&self.syntax, T![']'])
-    }
-    pub fn infer_or_expr(&self) -> Option<InferOrExpr> {
-        support::child(&self.syntax)
     }
 }
 
@@ -1043,26 +1026,6 @@ impl OverloadMulti {
     }
     pub fn r_paren_token(&self) -> Option<SyntaxToken> {
         support::token(&self.syntax, T![')'])
-    }
-}
-
-#[derive(Debug, Clone, PartialEq, Eq, Hash)]
-pub struct ExprPhrase {
-    pub(crate) syntax: SyntaxNode,
-}
-impl ExprPhrase {
-    pub fn expr(&self) -> Option<Expr> {
-        support::child(&self.syntax)
-    }
-}
-
-#[derive(Debug, Clone, PartialEq, Eq, Hash)]
-pub struct DedPhrase {
-    pub(crate) syntax: SyntaxNode,
-}
-impl DedPhrase {
-    pub fn ded(&self) -> Option<Ded> {
-        support::child(&self.syntax)
     }
 }
 
@@ -2512,17 +2475,20 @@ pub struct InferBy {
     pub(crate) syntax: SyntaxNode,
 }
 impl InferBy {
+    pub fn expr(&self) -> Option<Expr> {
+        support::child(&self.syntax)
+    }
     pub fn by_token(&self) -> Option<SyntaxToken> {
         support::token(&self.syntax, T![by])
+    }
+    pub fn by_expr(&self) -> Option<Expr> {
+        support::child(&self.syntax)
     }
     pub fn on_token(&self) -> Option<SyntaxToken> {
         support::token(&self.syntax, T![on])
     }
     pub fn phrases(&self) -> AstChildren<Phrase> {
         support::children(&self.syntax)
-    }
-    pub fn infer_or_expr(&self) -> Option<InferOrExpr> {
-        support::child(&self.syntax)
     }
 }
 
@@ -2861,14 +2827,14 @@ pub enum Pat {
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub enum Phrase {
-    ExprPhrase(ExprPhrase),
-    DedPhrase(DedPhrase),
+    Expr(Expr),
+    Ded(Ded),
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub enum Stmt {
-    DirStmt(DirStmt),
-    PhraseStmt(PhraseStmt),
+    Dir(Dir),
+    Phrase(Phrase),
     DatatypeStmt(DatatypeStmt),
     StructureStmt(StructureStmt),
     DatatypesStmt(DatatypesStmt),
@@ -2914,63 +2880,6 @@ pub enum LimitedSort {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
-pub enum Item {
-    Module(Module),
-    Assertion(Assertion),
-    Domain(Domain),
-    FunctionSymbol(FunctionSymbol),
-    Datatype(Datatype),
-    Structure(Structure),
-    DefineDir(DefineDir),
-}
-
-#[derive(Debug, Clone, PartialEq, Eq, Hash)]
-pub enum Module {
-    ModuleDir(ModuleDir),
-    ExtendModuleDir(ExtendModuleDir),
-}
-impl ast::HasName for Module {}
-
-#[derive(Debug, Clone, PartialEq, Eq, Hash)]
-pub enum Assertion {
-    AssertDir(AssertDir),
-    AssertClosedDir(AssertClosedDir),
-}
-impl ast::HasName for Assertion {}
-
-#[derive(Debug, Clone, PartialEq, Eq, Hash)]
-pub enum Domain {
-    DomainDir(DomainDir),
-    DomainsDir(DomainsDir),
-}
-
-#[derive(Debug, Clone, PartialEq, Eq, Hash)]
-pub enum FunctionSymbol {
-    DeclareDir(DeclareDir),
-    ConstantDeclareDir(ConstantDeclareDir),
-}
-
-#[derive(Debug, Clone, PartialEq, Eq, Hash)]
-pub enum Datatype {
-    DatatypeStmt(DatatypeStmt),
-    DatatypesStmt(DatatypesStmt),
-}
-
-#[derive(Debug, Clone, PartialEq, Eq, Hash)]
-pub enum Structure {
-    StructureStmt(StructureStmt),
-    StructuresStmt(StructuresStmt),
-}
-
-#[derive(Debug, Clone, PartialEq, Eq, Hash)]
-pub enum DefineDir {
-    InfixDefineDir(InfixDefineDir),
-    PrefixDefineDir(PrefixDefineDir),
-}
-impl ast::HasDefineBody for DefineDir {}
-impl ast::HasDefineName for DefineDir {}
-
-#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub enum MetaDefinition {
     Definition(Definition),
     Domain(Domain),
@@ -2987,10 +2896,48 @@ impl ast::HasDefineBody for Definition {}
 impl ast::HasDefineName for Definition {}
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
+pub enum Domain {
+    DomainDir(DomainDir),
+    DomainsDir(DomainsDir),
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+pub enum FunctionSymbol {
+    DeclareDir(DeclareDir),
+    ConstantDeclareDir(ConstantDeclareDir),
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+pub enum Assertion {
+    AssertDir(AssertDir),
+    AssertClosedDir(AssertClosedDir),
+}
+impl ast::HasName for Assertion {}
+
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub enum PrefixDefineDir {
     PrefixDefine(PrefixDefine),
     PrefixDefineBlocks(PrefixDefineBlocks),
 }
+
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+pub enum Structure {
+    StructureStmt(StructureStmt),
+    StructuresStmt(StructuresStmt),
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+pub enum Datatype {
+    DatatypeStmt(DatatypeStmt),
+    DatatypesStmt(DatatypesStmt),
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+pub enum Module {
+    ModuleDir(ModuleDir),
+    ExtendModuleDir(ExtendModuleDir),
+}
+impl ast::HasName for Module {}
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub enum AssertDir {
@@ -3010,6 +2957,14 @@ pub enum ConstantDeclareDir {
     InfixConstantDeclare(InfixConstantDeclare),
     PrefixConstantDeclare(PrefixConstantDeclare),
 }
+
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+pub enum DefineDir {
+    InfixDefineDir(InfixDefineDir),
+    PrefixDefineDir(PrefixDefineDir),
+}
+impl ast::HasDefineBody for DefineDir {}
+impl ast::HasDefineName for DefineDir {}
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub enum OverloadDir {
@@ -3356,36 +3311,6 @@ impl AstNode for CompoundSort {
 impl AstNode for SourceFile {
     fn can_cast(kind: SyntaxKind) -> bool {
         kind == SOURCE_FILE
-    }
-    fn cast(syntax: SyntaxNode) -> Option<Self> {
-        if Self::can_cast(syntax.kind()) {
-            Some(Self { syntax })
-        } else {
-            None
-        }
-    }
-    fn syntax(&self) -> &SyntaxNode {
-        &self.syntax
-    }
-}
-impl AstNode for DirStmt {
-    fn can_cast(kind: SyntaxKind) -> bool {
-        kind == DIR_STMT
-    }
-    fn cast(syntax: SyntaxNode) -> Option<Self> {
-        if Self::can_cast(syntax.kind()) {
-            Some(Self { syntax })
-        } else {
-            None
-        }
-    }
-    fn syntax(&self) -> &SyntaxNode {
-        &self.syntax
-    }
-}
-impl AstNode for PhraseStmt {
-    fn can_cast(kind: SyntaxKind) -> bool {
-        kind == PHRASE_STMT
     }
     fn cast(syntax: SyntaxNode) -> Option<Self> {
         if Self::can_cast(syntax.kind()) {
@@ -4136,36 +4061,6 @@ impl AstNode for OverloadSingle {
 impl AstNode for OverloadMulti {
     fn can_cast(kind: SyntaxKind) -> bool {
         kind == OVERLOAD_MULTI
-    }
-    fn cast(syntax: SyntaxNode) -> Option<Self> {
-        if Self::can_cast(syntax.kind()) {
-            Some(Self { syntax })
-        } else {
-            None
-        }
-    }
-    fn syntax(&self) -> &SyntaxNode {
-        &self.syntax
-    }
-}
-impl AstNode for ExprPhrase {
-    fn can_cast(kind: SyntaxKind) -> bool {
-        kind == EXPR_PHRASE
-    }
-    fn cast(syntax: SyntaxNode) -> Option<Self> {
-        if Self::can_cast(syntax.kind()) {
-            Some(Self { syntax })
-        } else {
-            None
-        }
-    }
-    fn syntax(&self) -> &SyntaxNode {
-        &self.syntax
-    }
-}
-impl AstNode for DedPhrase {
-    fn can_cast(kind: SyntaxKind) -> bool {
-        kind == DED_PHRASE
     }
     fn cast(syntax: SyntaxNode) -> Option<Self> {
         if Self::can_cast(syntax.kind()) {
@@ -5806,44 +5701,51 @@ impl AstNode for Pat {
         }
     }
 }
-impl From<ExprPhrase> for Phrase {
-    fn from(node: ExprPhrase) -> Phrase {
-        Phrase::ExprPhrase(node)
+impl From<Expr> for Phrase {
+    fn from(node: Expr) -> Phrase {
+        Phrase::Expr(node)
     }
 }
-impl From<DedPhrase> for Phrase {
-    fn from(node: DedPhrase) -> Phrase {
-        Phrase::DedPhrase(node)
+impl From<Ded> for Phrase {
+    fn from(node: Ded) -> Phrase {
+        Phrase::Ded(node)
     }
 }
 impl AstNode for Phrase {
     fn can_cast(kind: SyntaxKind) -> bool {
-        matches!(kind, EXPR_PHRASE | DED_PHRASE)
+        Expr::can_cast(kind) || Ded::can_cast(kind)
     }
     fn cast(syntax: SyntaxNode) -> Option<Self> {
-        let res = match syntax.kind() {
-            EXPR_PHRASE => Self::ExprPhrase(ExprPhrase { syntax }),
-            DED_PHRASE => Self::DedPhrase(DedPhrase { syntax }),
-            _ => return None,
-        };
-        Some(res)
+        match syntax.kind() {
+            other => {
+                if false {
+                    return None;
+                } else if Expr::can_cast(other) {
+                    return Expr::cast(syntax).map(Self::Expr);
+                } else if Ded::can_cast(other) {
+                    return Ded::cast(syntax).map(Self::Ded);
+                } else {
+                    return None;
+                }
+            }
+        }
     }
     #[inline]
     fn syntax(&self) -> &SyntaxNode {
         match self {
-            Phrase::ExprPhrase(it) => it.syntax(),
-            Phrase::DedPhrase(it) => it.syntax(),
+            Phrase::Expr(it) => it.syntax(),
+            Phrase::Ded(it) => it.syntax(),
         }
     }
 }
-impl From<DirStmt> for Stmt {
-    fn from(node: DirStmt) -> Stmt {
-        Stmt::DirStmt(node)
+impl From<Dir> for Stmt {
+    fn from(node: Dir) -> Stmt {
+        Stmt::Dir(node)
     }
 }
-impl From<PhraseStmt> for Stmt {
-    fn from(node: PhraseStmt) -> Stmt {
-        Stmt::PhraseStmt(node)
+impl From<Phrase> for Stmt {
+    fn from(node: Phrase) -> Stmt {
+        Stmt::Phrase(node)
     }
 }
 impl From<DatatypeStmt> for Stmt {
@@ -5870,31 +5772,35 @@ impl AstNode for Stmt {
     fn can_cast(kind: SyntaxKind) -> bool {
         matches!(
             kind,
-            DIR_STMT
-                | PHRASE_STMT
-                | DATATYPE_STMT
-                | STRUCTURE_STMT
-                | DATATYPES_STMT
-                | STRUCTURES_STMT
-        )
+            DATATYPE_STMT | STRUCTURE_STMT | DATATYPES_STMT | STRUCTURES_STMT
+        ) || Dir::can_cast(kind)
+            || Phrase::can_cast(kind)
     }
     fn cast(syntax: SyntaxNode) -> Option<Self> {
         let res = match syntax.kind() {
-            DIR_STMT => Self::DirStmt(DirStmt { syntax }),
-            PHRASE_STMT => Self::PhraseStmt(PhraseStmt { syntax }),
             DATATYPE_STMT => Self::DatatypeStmt(DatatypeStmt { syntax }),
             STRUCTURE_STMT => Self::StructureStmt(StructureStmt { syntax }),
             DATATYPES_STMT => Self::DatatypesStmt(DatatypesStmt { syntax }),
             STRUCTURES_STMT => Self::StructuresStmt(StructuresStmt { syntax }),
-            _ => return None,
+            other => {
+                if false {
+                    return None;
+                } else if Dir::can_cast(other) {
+                    return Dir::cast(syntax).map(Self::Dir);
+                } else if Phrase::can_cast(other) {
+                    return Phrase::cast(syntax).map(Self::Phrase);
+                } else {
+                    return None;
+                }
+            }
         };
         Some(res)
     }
     #[inline]
     fn syntax(&self) -> &SyntaxNode {
         match self {
-            Stmt::DirStmt(it) => it.syntax(),
-            Stmt::PhraseStmt(it) => it.syntax(),
+            Stmt::Dir(it) => it.syntax(),
+            Stmt::Phrase(it) => it.syntax(),
             Stmt::DatatypeStmt(it) => it.syntax(),
             Stmt::StructureStmt(it) => it.syntax(),
             Stmt::DatatypesStmt(it) => it.syntax(),
@@ -6141,320 +6047,6 @@ impl AstNode for LimitedSort {
         }
     }
 }
-impl From<Module> for Item {
-    fn from(node: Module) -> Item {
-        Item::Module(node)
-    }
-}
-impl From<Assertion> for Item {
-    fn from(node: Assertion) -> Item {
-        Item::Assertion(node)
-    }
-}
-impl From<Domain> for Item {
-    fn from(node: Domain) -> Item {
-        Item::Domain(node)
-    }
-}
-impl From<FunctionSymbol> for Item {
-    fn from(node: FunctionSymbol) -> Item {
-        Item::FunctionSymbol(node)
-    }
-}
-impl From<Datatype> for Item {
-    fn from(node: Datatype) -> Item {
-        Item::Datatype(node)
-    }
-}
-impl From<Structure> for Item {
-    fn from(node: Structure) -> Item {
-        Item::Structure(node)
-    }
-}
-impl From<DefineDir> for Item {
-    fn from(node: DefineDir) -> Item {
-        Item::DefineDir(node)
-    }
-}
-impl AstNode for Item {
-    fn can_cast(kind: SyntaxKind) -> bool {
-        Module::can_cast(kind)
-            || Assertion::can_cast(kind)
-            || Domain::can_cast(kind)
-            || FunctionSymbol::can_cast(kind)
-            || Datatype::can_cast(kind)
-            || Structure::can_cast(kind)
-            || DefineDir::can_cast(kind)
-    }
-    fn cast(syntax: SyntaxNode) -> Option<Self> {
-        match syntax.kind() {
-            other => {
-                if false {
-                    return None;
-                } else if Module::can_cast(other) {
-                    return Module::cast(syntax).map(Self::Module);
-                } else if Assertion::can_cast(other) {
-                    return Assertion::cast(syntax).map(Self::Assertion);
-                } else if Domain::can_cast(other) {
-                    return Domain::cast(syntax).map(Self::Domain);
-                } else if FunctionSymbol::can_cast(other) {
-                    return FunctionSymbol::cast(syntax).map(Self::FunctionSymbol);
-                } else if Datatype::can_cast(other) {
-                    return Datatype::cast(syntax).map(Self::Datatype);
-                } else if Structure::can_cast(other) {
-                    return Structure::cast(syntax).map(Self::Structure);
-                } else if DefineDir::can_cast(other) {
-                    return DefineDir::cast(syntax).map(Self::DefineDir);
-                } else {
-                    return None;
-                }
-            }
-        }
-    }
-    #[inline]
-    fn syntax(&self) -> &SyntaxNode {
-        match self {
-            Item::Module(it) => it.syntax(),
-            Item::Assertion(it) => it.syntax(),
-            Item::Domain(it) => it.syntax(),
-            Item::FunctionSymbol(it) => it.syntax(),
-            Item::Datatype(it) => it.syntax(),
-            Item::Structure(it) => it.syntax(),
-            Item::DefineDir(it) => it.syntax(),
-        }
-    }
-}
-impl From<ModuleDir> for Module {
-    fn from(node: ModuleDir) -> Module {
-        Module::ModuleDir(node)
-    }
-}
-impl From<ExtendModuleDir> for Module {
-    fn from(node: ExtendModuleDir) -> Module {
-        Module::ExtendModuleDir(node)
-    }
-}
-impl AstNode for Module {
-    fn can_cast(kind: SyntaxKind) -> bool {
-        matches!(kind, MODULE_DIR | EXTEND_MODULE_DIR)
-    }
-    fn cast(syntax: SyntaxNode) -> Option<Self> {
-        let res = match syntax.kind() {
-            MODULE_DIR => Self::ModuleDir(ModuleDir { syntax }),
-            EXTEND_MODULE_DIR => Self::ExtendModuleDir(ExtendModuleDir { syntax }),
-            _ => return None,
-        };
-        Some(res)
-    }
-    #[inline]
-    fn syntax(&self) -> &SyntaxNode {
-        match self {
-            Module::ModuleDir(it) => it.syntax(),
-            Module::ExtendModuleDir(it) => it.syntax(),
-        }
-    }
-}
-impl From<AssertDir> for Assertion {
-    fn from(node: AssertDir) -> Assertion {
-        Assertion::AssertDir(node)
-    }
-}
-impl From<AssertClosedDir> for Assertion {
-    fn from(node: AssertClosedDir) -> Assertion {
-        Assertion::AssertClosedDir(node)
-    }
-}
-impl AstNode for Assertion {
-    fn can_cast(kind: SyntaxKind) -> bool {
-        matches!(kind, ASSERT_CLOSED_DIR) || AssertDir::can_cast(kind)
-    }
-    fn cast(syntax: SyntaxNode) -> Option<Self> {
-        let res = match syntax.kind() {
-            ASSERT_CLOSED_DIR => Self::AssertClosedDir(AssertClosedDir { syntax }),
-            other => {
-                if false {
-                    return None;
-                } else if AssertDir::can_cast(other) {
-                    return AssertDir::cast(syntax).map(Self::AssertDir);
-                } else {
-                    return None;
-                }
-            }
-        };
-        Some(res)
-    }
-    #[inline]
-    fn syntax(&self) -> &SyntaxNode {
-        match self {
-            Assertion::AssertDir(it) => it.syntax(),
-            Assertion::AssertClosedDir(it) => it.syntax(),
-        }
-    }
-}
-impl From<DomainDir> for Domain {
-    fn from(node: DomainDir) -> Domain {
-        Domain::DomainDir(node)
-    }
-}
-impl From<DomainsDir> for Domain {
-    fn from(node: DomainsDir) -> Domain {
-        Domain::DomainsDir(node)
-    }
-}
-impl AstNode for Domain {
-    fn can_cast(kind: SyntaxKind) -> bool {
-        matches!(kind, DOMAIN_DIR | DOMAINS_DIR)
-    }
-    fn cast(syntax: SyntaxNode) -> Option<Self> {
-        let res = match syntax.kind() {
-            DOMAIN_DIR => Self::DomainDir(DomainDir { syntax }),
-            DOMAINS_DIR => Self::DomainsDir(DomainsDir { syntax }),
-            _ => return None,
-        };
-        Some(res)
-    }
-    #[inline]
-    fn syntax(&self) -> &SyntaxNode {
-        match self {
-            Domain::DomainDir(it) => it.syntax(),
-            Domain::DomainsDir(it) => it.syntax(),
-        }
-    }
-}
-impl From<DeclareDir> for FunctionSymbol {
-    fn from(node: DeclareDir) -> FunctionSymbol {
-        FunctionSymbol::DeclareDir(node)
-    }
-}
-impl From<ConstantDeclareDir> for FunctionSymbol {
-    fn from(node: ConstantDeclareDir) -> FunctionSymbol {
-        FunctionSymbol::ConstantDeclareDir(node)
-    }
-}
-impl AstNode for FunctionSymbol {
-    fn can_cast(kind: SyntaxKind) -> bool {
-        DeclareDir::can_cast(kind) || ConstantDeclareDir::can_cast(kind)
-    }
-    fn cast(syntax: SyntaxNode) -> Option<Self> {
-        match syntax.kind() {
-            other => {
-                if false {
-                    return None;
-                } else if DeclareDir::can_cast(other) {
-                    return DeclareDir::cast(syntax).map(Self::DeclareDir);
-                } else if ConstantDeclareDir::can_cast(other) {
-                    return ConstantDeclareDir::cast(syntax).map(Self::ConstantDeclareDir);
-                } else {
-                    return None;
-                }
-            }
-        }
-    }
-    #[inline]
-    fn syntax(&self) -> &SyntaxNode {
-        match self {
-            FunctionSymbol::DeclareDir(it) => it.syntax(),
-            FunctionSymbol::ConstantDeclareDir(it) => it.syntax(),
-        }
-    }
-}
-impl From<DatatypeStmt> for Datatype {
-    fn from(node: DatatypeStmt) -> Datatype {
-        Datatype::DatatypeStmt(node)
-    }
-}
-impl From<DatatypesStmt> for Datatype {
-    fn from(node: DatatypesStmt) -> Datatype {
-        Datatype::DatatypesStmt(node)
-    }
-}
-impl AstNode for Datatype {
-    fn can_cast(kind: SyntaxKind) -> bool {
-        matches!(kind, DATATYPE_STMT | DATATYPES_STMT)
-    }
-    fn cast(syntax: SyntaxNode) -> Option<Self> {
-        let res = match syntax.kind() {
-            DATATYPE_STMT => Self::DatatypeStmt(DatatypeStmt { syntax }),
-            DATATYPES_STMT => Self::DatatypesStmt(DatatypesStmt { syntax }),
-            _ => return None,
-        };
-        Some(res)
-    }
-    #[inline]
-    fn syntax(&self) -> &SyntaxNode {
-        match self {
-            Datatype::DatatypeStmt(it) => it.syntax(),
-            Datatype::DatatypesStmt(it) => it.syntax(),
-        }
-    }
-}
-impl From<StructureStmt> for Structure {
-    fn from(node: StructureStmt) -> Structure {
-        Structure::StructureStmt(node)
-    }
-}
-impl From<StructuresStmt> for Structure {
-    fn from(node: StructuresStmt) -> Structure {
-        Structure::StructuresStmt(node)
-    }
-}
-impl AstNode for Structure {
-    fn can_cast(kind: SyntaxKind) -> bool {
-        matches!(kind, STRUCTURE_STMT | STRUCTURES_STMT)
-    }
-    fn cast(syntax: SyntaxNode) -> Option<Self> {
-        let res = match syntax.kind() {
-            STRUCTURE_STMT => Self::StructureStmt(StructureStmt { syntax }),
-            STRUCTURES_STMT => Self::StructuresStmt(StructuresStmt { syntax }),
-            _ => return None,
-        };
-        Some(res)
-    }
-    #[inline]
-    fn syntax(&self) -> &SyntaxNode {
-        match self {
-            Structure::StructureStmt(it) => it.syntax(),
-            Structure::StructuresStmt(it) => it.syntax(),
-        }
-    }
-}
-impl From<InfixDefineDir> for DefineDir {
-    fn from(node: InfixDefineDir) -> DefineDir {
-        DefineDir::InfixDefineDir(node)
-    }
-}
-impl From<PrefixDefineDir> for DefineDir {
-    fn from(node: PrefixDefineDir) -> DefineDir {
-        DefineDir::PrefixDefineDir(node)
-    }
-}
-impl AstNode for DefineDir {
-    fn can_cast(kind: SyntaxKind) -> bool {
-        matches!(kind, INFIX_DEFINE_DIR) || PrefixDefineDir::can_cast(kind)
-    }
-    fn cast(syntax: SyntaxNode) -> Option<Self> {
-        let res = match syntax.kind() {
-            INFIX_DEFINE_DIR => Self::InfixDefineDir(InfixDefineDir { syntax }),
-            other => {
-                if false {
-                    return None;
-                } else if PrefixDefineDir::can_cast(other) {
-                    return PrefixDefineDir::cast(syntax).map(Self::PrefixDefineDir);
-                } else {
-                    return None;
-                }
-            }
-        };
-        Some(res)
-    }
-    #[inline]
-    fn syntax(&self) -> &SyntaxNode {
-        match self {
-            DefineDir::InfixDefineDir(it) => it.syntax(),
-            DefineDir::PrefixDefineDir(it) => it.syntax(),
-        }
-    }
-}
 impl From<Definition> for MetaDefinition {
     fn from(node: Definition) -> MetaDefinition {
         MetaDefinition::Definition(node)
@@ -6548,6 +6140,110 @@ impl AstNode for Definition {
         }
     }
 }
+impl From<DomainDir> for Domain {
+    fn from(node: DomainDir) -> Domain {
+        Domain::DomainDir(node)
+    }
+}
+impl From<DomainsDir> for Domain {
+    fn from(node: DomainsDir) -> Domain {
+        Domain::DomainsDir(node)
+    }
+}
+impl AstNode for Domain {
+    fn can_cast(kind: SyntaxKind) -> bool {
+        matches!(kind, DOMAIN_DIR | DOMAINS_DIR)
+    }
+    fn cast(syntax: SyntaxNode) -> Option<Self> {
+        let res = match syntax.kind() {
+            DOMAIN_DIR => Self::DomainDir(DomainDir { syntax }),
+            DOMAINS_DIR => Self::DomainsDir(DomainsDir { syntax }),
+            _ => return None,
+        };
+        Some(res)
+    }
+    #[inline]
+    fn syntax(&self) -> &SyntaxNode {
+        match self {
+            Domain::DomainDir(it) => it.syntax(),
+            Domain::DomainsDir(it) => it.syntax(),
+        }
+    }
+}
+impl From<DeclareDir> for FunctionSymbol {
+    fn from(node: DeclareDir) -> FunctionSymbol {
+        FunctionSymbol::DeclareDir(node)
+    }
+}
+impl From<ConstantDeclareDir> for FunctionSymbol {
+    fn from(node: ConstantDeclareDir) -> FunctionSymbol {
+        FunctionSymbol::ConstantDeclareDir(node)
+    }
+}
+impl AstNode for FunctionSymbol {
+    fn can_cast(kind: SyntaxKind) -> bool {
+        DeclareDir::can_cast(kind) || ConstantDeclareDir::can_cast(kind)
+    }
+    fn cast(syntax: SyntaxNode) -> Option<Self> {
+        match syntax.kind() {
+            other => {
+                if false {
+                    return None;
+                } else if DeclareDir::can_cast(other) {
+                    return DeclareDir::cast(syntax).map(Self::DeclareDir);
+                } else if ConstantDeclareDir::can_cast(other) {
+                    return ConstantDeclareDir::cast(syntax).map(Self::ConstantDeclareDir);
+                } else {
+                    return None;
+                }
+            }
+        }
+    }
+    #[inline]
+    fn syntax(&self) -> &SyntaxNode {
+        match self {
+            FunctionSymbol::DeclareDir(it) => it.syntax(),
+            FunctionSymbol::ConstantDeclareDir(it) => it.syntax(),
+        }
+    }
+}
+impl From<AssertDir> for Assertion {
+    fn from(node: AssertDir) -> Assertion {
+        Assertion::AssertDir(node)
+    }
+}
+impl From<AssertClosedDir> for Assertion {
+    fn from(node: AssertClosedDir) -> Assertion {
+        Assertion::AssertClosedDir(node)
+    }
+}
+impl AstNode for Assertion {
+    fn can_cast(kind: SyntaxKind) -> bool {
+        matches!(kind, ASSERT_CLOSED_DIR) || AssertDir::can_cast(kind)
+    }
+    fn cast(syntax: SyntaxNode) -> Option<Self> {
+        let res = match syntax.kind() {
+            ASSERT_CLOSED_DIR => Self::AssertClosedDir(AssertClosedDir { syntax }),
+            other => {
+                if false {
+                    return None;
+                } else if AssertDir::can_cast(other) {
+                    return AssertDir::cast(syntax).map(Self::AssertDir);
+                } else {
+                    return None;
+                }
+            }
+        };
+        Some(res)
+    }
+    #[inline]
+    fn syntax(&self) -> &SyntaxNode {
+        match self {
+            Assertion::AssertDir(it) => it.syntax(),
+            Assertion::AssertClosedDir(it) => it.syntax(),
+        }
+    }
+}
 impl From<PrefixDefine> for PrefixDefineDir {
     fn from(node: PrefixDefine) -> PrefixDefineDir {
         PrefixDefineDir::PrefixDefine(node)
@@ -6575,6 +6271,96 @@ impl AstNode for PrefixDefineDir {
         match self {
             PrefixDefineDir::PrefixDefine(it) => it.syntax(),
             PrefixDefineDir::PrefixDefineBlocks(it) => it.syntax(),
+        }
+    }
+}
+impl From<StructureStmt> for Structure {
+    fn from(node: StructureStmt) -> Structure {
+        Structure::StructureStmt(node)
+    }
+}
+impl From<StructuresStmt> for Structure {
+    fn from(node: StructuresStmt) -> Structure {
+        Structure::StructuresStmt(node)
+    }
+}
+impl AstNode for Structure {
+    fn can_cast(kind: SyntaxKind) -> bool {
+        matches!(kind, STRUCTURE_STMT | STRUCTURES_STMT)
+    }
+    fn cast(syntax: SyntaxNode) -> Option<Self> {
+        let res = match syntax.kind() {
+            STRUCTURE_STMT => Self::StructureStmt(StructureStmt { syntax }),
+            STRUCTURES_STMT => Self::StructuresStmt(StructuresStmt { syntax }),
+            _ => return None,
+        };
+        Some(res)
+    }
+    #[inline]
+    fn syntax(&self) -> &SyntaxNode {
+        match self {
+            Structure::StructureStmt(it) => it.syntax(),
+            Structure::StructuresStmt(it) => it.syntax(),
+        }
+    }
+}
+impl From<DatatypeStmt> for Datatype {
+    fn from(node: DatatypeStmt) -> Datatype {
+        Datatype::DatatypeStmt(node)
+    }
+}
+impl From<DatatypesStmt> for Datatype {
+    fn from(node: DatatypesStmt) -> Datatype {
+        Datatype::DatatypesStmt(node)
+    }
+}
+impl AstNode for Datatype {
+    fn can_cast(kind: SyntaxKind) -> bool {
+        matches!(kind, DATATYPE_STMT | DATATYPES_STMT)
+    }
+    fn cast(syntax: SyntaxNode) -> Option<Self> {
+        let res = match syntax.kind() {
+            DATATYPE_STMT => Self::DatatypeStmt(DatatypeStmt { syntax }),
+            DATATYPES_STMT => Self::DatatypesStmt(DatatypesStmt { syntax }),
+            _ => return None,
+        };
+        Some(res)
+    }
+    #[inline]
+    fn syntax(&self) -> &SyntaxNode {
+        match self {
+            Datatype::DatatypeStmt(it) => it.syntax(),
+            Datatype::DatatypesStmt(it) => it.syntax(),
+        }
+    }
+}
+impl From<ModuleDir> for Module {
+    fn from(node: ModuleDir) -> Module {
+        Module::ModuleDir(node)
+    }
+}
+impl From<ExtendModuleDir> for Module {
+    fn from(node: ExtendModuleDir) -> Module {
+        Module::ExtendModuleDir(node)
+    }
+}
+impl AstNode for Module {
+    fn can_cast(kind: SyntaxKind) -> bool {
+        matches!(kind, MODULE_DIR | EXTEND_MODULE_DIR)
+    }
+    fn cast(syntax: SyntaxNode) -> Option<Self> {
+        let res = match syntax.kind() {
+            MODULE_DIR => Self::ModuleDir(ModuleDir { syntax }),
+            EXTEND_MODULE_DIR => Self::ExtendModuleDir(ExtendModuleDir { syntax }),
+            _ => return None,
+        };
+        Some(res)
+    }
+    #[inline]
+    fn syntax(&self) -> &SyntaxNode {
+        match self {
+            Module::ModuleDir(it) => it.syntax(),
+            Module::ExtendModuleDir(it) => it.syntax(),
         }
     }
 }
@@ -6667,6 +6453,43 @@ impl AstNode for ConstantDeclareDir {
         match self {
             ConstantDeclareDir::InfixConstantDeclare(it) => it.syntax(),
             ConstantDeclareDir::PrefixConstantDeclare(it) => it.syntax(),
+        }
+    }
+}
+impl From<InfixDefineDir> for DefineDir {
+    fn from(node: InfixDefineDir) -> DefineDir {
+        DefineDir::InfixDefineDir(node)
+    }
+}
+impl From<PrefixDefineDir> for DefineDir {
+    fn from(node: PrefixDefineDir) -> DefineDir {
+        DefineDir::PrefixDefineDir(node)
+    }
+}
+impl AstNode for DefineDir {
+    fn can_cast(kind: SyntaxKind) -> bool {
+        matches!(kind, INFIX_DEFINE_DIR) || PrefixDefineDir::can_cast(kind)
+    }
+    fn cast(syntax: SyntaxNode) -> Option<Self> {
+        let res = match syntax.kind() {
+            INFIX_DEFINE_DIR => Self::InfixDefineDir(InfixDefineDir { syntax }),
+            other => {
+                if false {
+                    return None;
+                } else if PrefixDefineDir::can_cast(other) {
+                    return PrefixDefineDir::cast(syntax).map(Self::PrefixDefineDir);
+                } else {
+                    return None;
+                }
+            }
+        };
+        Some(res)
+    }
+    #[inline]
+    fn syntax(&self) -> &SyntaxNode {
+        match self {
+            DefineDir::InfixDefineDir(it) => it.syntax(),
+            DefineDir::PrefixDefineDir(it) => it.syntax(),
         }
     }
 }
@@ -7700,17 +7523,12 @@ impl std::fmt::Display for LimitedSort {
         std::fmt::Display::fmt(self.syntax(), f)
     }
 }
-impl std::fmt::Display for Item {
+impl std::fmt::Display for MetaDefinition {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         std::fmt::Display::fmt(self.syntax(), f)
     }
 }
-impl std::fmt::Display for Module {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        std::fmt::Display::fmt(self.syntax(), f)
-    }
-}
-impl std::fmt::Display for Assertion {
+impl std::fmt::Display for Definition {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         std::fmt::Display::fmt(self.syntax(), f)
     }
@@ -7725,7 +7543,12 @@ impl std::fmt::Display for FunctionSymbol {
         std::fmt::Display::fmt(self.syntax(), f)
     }
 }
-impl std::fmt::Display for Datatype {
+impl std::fmt::Display for Assertion {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        std::fmt::Display::fmt(self.syntax(), f)
+    }
+}
+impl std::fmt::Display for PrefixDefineDir {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         std::fmt::Display::fmt(self.syntax(), f)
     }
@@ -7735,22 +7558,12 @@ impl std::fmt::Display for Structure {
         std::fmt::Display::fmt(self.syntax(), f)
     }
 }
-impl std::fmt::Display for DefineDir {
+impl std::fmt::Display for Datatype {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         std::fmt::Display::fmt(self.syntax(), f)
     }
 }
-impl std::fmt::Display for MetaDefinition {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        std::fmt::Display::fmt(self.syntax(), f)
-    }
-}
-impl std::fmt::Display for Definition {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        std::fmt::Display::fmt(self.syntax(), f)
-    }
-}
-impl std::fmt::Display for PrefixDefineDir {
+impl std::fmt::Display for Module {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         std::fmt::Display::fmt(self.syntax(), f)
     }
@@ -7766,6 +7579,11 @@ impl std::fmt::Display for DeclareDir {
     }
 }
 impl std::fmt::Display for ConstantDeclareDir {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        std::fmt::Display::fmt(self.syntax(), f)
+    }
+}
+impl std::fmt::Display for DefineDir {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         std::fmt::Display::fmt(self.syntax(), f)
     }
@@ -7906,16 +7724,6 @@ impl std::fmt::Display for CompoundSort {
     }
 }
 impl std::fmt::Display for SourceFile {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        std::fmt::Display::fmt(self.syntax(), f)
-    }
-}
-impl std::fmt::Display for DirStmt {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        std::fmt::Display::fmt(self.syntax(), f)
-    }
-}
-impl std::fmt::Display for PhraseStmt {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         std::fmt::Display::fmt(self.syntax(), f)
     }
@@ -8166,16 +7974,6 @@ impl std::fmt::Display for OverloadSingle {
     }
 }
 impl std::fmt::Display for OverloadMulti {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        std::fmt::Display::fmt(self.syntax(), f)
-    }
-}
-impl std::fmt::Display for ExprPhrase {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        std::fmt::Display::fmt(self.syntax(), f)
-    }
-}
-impl std::fmt::Display for DedPhrase {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         std::fmt::Display::fmt(self.syntax(), f)
     }

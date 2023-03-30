@@ -7,10 +7,9 @@ PREFIX_SINGLE_ASSUME_DED
   L_PAREN "("
   ASSUME_KW "assume"
   WHITESPACE " "
-  EXPR_PHRASE
-    IDENT_EXPR
-      NAME_REF
-        IDENT "a"
+  IDENT_EXPR
+    NAME_REF
+      IDENT "a"
   R_PAREN ")"
   WHITESPACE "\n"
 error 9: expected body for assumption

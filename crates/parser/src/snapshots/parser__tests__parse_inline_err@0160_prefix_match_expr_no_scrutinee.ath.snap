@@ -8,19 +8,16 @@ APPLICATION_EXPR
   INFIX_MATCH_EXPR
     MATCH_KW "match"
     WHITESPACE " "
-    EXPR_PHRASE
-      APPLICATION_EXPR
-        L_PAREN "("
-        EXPR_PHRASE
-          IDENT_EXPR
-            NAME_REF
-              IDENT "A"
-        WHITESPACE " "
-        EXPR_PHRASE
-          IDENT_EXPR
-            NAME_REF
-              IDENT "B"
-        R_PAREN ")"
+    APPLICATION_EXPR
+      L_PAREN "("
+      IDENT_EXPR
+        NAME_REF
+          IDENT "A"
+      WHITESPACE " "
+      IDENT_EXPR
+        NAME_REF
+          IDENT "B"
+      R_PAREN ")"
   R_PAREN ")"
   WHITESPACE "\n"
 error 12: Expected to find clauses for the match

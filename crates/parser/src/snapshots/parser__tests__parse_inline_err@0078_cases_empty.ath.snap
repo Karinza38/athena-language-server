@@ -6,10 +6,9 @@ input_file: crates/parser/test_data/parser/inline/err/ded/0078_cases_empty.ath
 CASES_DED
   DATATYPE_CASES_KW "datatype-cases"
   WHITESPACE " "
-  EXPR_PHRASE
-    IDENT_EXPR
-      NAME_REF
-        IDENT "a"
+  IDENT_EXPR
+    NAME_REF
+      IDENT "a"
   WHITESPACE " "
   L_CURLY "{"
   R_CURLY "}"

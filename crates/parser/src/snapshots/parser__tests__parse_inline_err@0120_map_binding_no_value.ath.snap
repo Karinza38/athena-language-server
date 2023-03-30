@@ -7,15 +7,13 @@ MAP_EXPR
   PIPE_CURLY "|{"
   WHITESPACE " "
   MAP_BINDING
-    EXPR_PHRASE
-      IDENT_EXPR
-        NAME_REF
-          IDENT "foo"
+    IDENT_EXPR
+      NAME_REF
+        IDENT "foo"
     WHITESPACE " "
     COLON_EQ ":="
-    WHITESPACE " "
-    EXPR_PHRASE
+  WHITESPACE " "
   CURLY_PIPE "}|"
   WHITESPACE "\n"
-error 10: expected expression
+error 9: expected expression
 

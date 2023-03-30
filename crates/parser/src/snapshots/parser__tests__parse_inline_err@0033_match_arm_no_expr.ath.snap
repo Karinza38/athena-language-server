@@ -6,10 +6,9 @@ input_file: crates/parser/test_data/parser/inline/err/expr/0033_match_arm_no_exp
 INFIX_MATCH_EXPR
   MATCH_KW "match"
   WHITESPACE " "
-  EXPR_PHRASE
-    IDENT_EXPR
-      NAME_REF
-        IDENT "foo"
+  IDENT_EXPR
+    NAME_REF
+      IDENT "foo"
   WHITESPACE " "
   L_CURLY "{"
   WHITESPACE " "

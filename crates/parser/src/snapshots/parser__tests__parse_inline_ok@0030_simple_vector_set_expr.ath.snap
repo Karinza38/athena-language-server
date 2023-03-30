@@ -14,9 +14,8 @@ VECTOR_SET_EXPR
     NAME_REF
       IDENT "0"
   WHITESPACE " "
-  EXPR_PHRASE
-    IDENT_EXPR
-      NAME_REF
-        IDENT "bar"
+  IDENT_EXPR
+    NAME_REF
+      IDENT "bar"
   WHITESPACE "\n"
 

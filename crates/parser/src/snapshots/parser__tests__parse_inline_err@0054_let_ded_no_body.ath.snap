@@ -15,10 +15,9 @@ INFIX_LET_DED
     WHITESPACE " "
     COLON_EQ ":="
     WHITESPACE " "
-    EXPR_PHRASE
-      IDENT_EXPR
-        NAME_REF
-          IDENT "b"
+    IDENT_EXPR
+      NAME_REF
+        IDENT "b"
   LET_PART
     SEMI ";"
     WHITESPACE " "
@@ -28,10 +27,9 @@ INFIX_LET_DED
     WHITESPACE " "
     COLON_EQ ":="
     WHITESPACE " "
-    EXPR_PHRASE
-      IDENT_EXPR
-        NAME_REF
-          IDENT "d"
+    IDENT_EXPR
+      NAME_REF
+        IDENT "d"
   WHITESPACE " "
   R_CURLY "}"
   WHITESPACE "\n"

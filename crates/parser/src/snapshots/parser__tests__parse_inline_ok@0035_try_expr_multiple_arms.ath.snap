@@ -25,15 +25,13 @@ TRY_EXPR
     WHITESPACE " "
     APPLICATION_EXPR
       L_PAREN "("
-      EXPR_PHRASE
-        IDENT_EXPR
-          NAME_REF
-            IDENT "func"
+      IDENT_EXPR
+        NAME_REF
+          IDENT "func"
       WHITESPACE " "
-      EXPR_PHRASE
-        IDENT_EXPR
-          NAME_REF
-            IDENT "baz"
+      IDENT_EXPR
+        NAME_REF
+          IDENT "baz"
       R_PAREN ")"
   WHITESPACE " "
   R_CURLY "}"

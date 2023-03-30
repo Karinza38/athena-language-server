@@ -13,10 +13,9 @@ PREFIX_ASSUME_LET_DED
       NAME
         IDENT "x"
     WHITESPACE " "
-    EXPR_PHRASE
-      IDENT_EXPR
-        NAME_REF
-          IDENT "A"
+    IDENT_EXPR
+      NAME_REF
+        IDENT "A"
     R_PAREN ")"
   WHITESPACE " "
   BANG_METHOD_CALL_DED
@@ -26,10 +25,9 @@ PREFIX_ASSUME_LET_DED
       NAME_REF
         IDENT "claim"
     WHITESPACE " "
-    EXPR_PHRASE
-      IDENT_EXPR
-        NAME_REF
-          IDENT "x"
+    IDENT_EXPR
+      NAME_REF
+        IDENT "x"
     R_PAREN ")"
   R_PAREN ")"
   WHITESPACE "\n"

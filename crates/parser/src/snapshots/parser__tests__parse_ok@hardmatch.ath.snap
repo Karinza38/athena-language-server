@@ -4,42 +4,38 @@ description: "(match foo { _ => lambda (_) 1} 0)"
 input_file: crates/parser/test_data/parser/ok/file/hardmatch.ath
 ---
 SOURCE_FILE
-  PHRASE_STMT
-    EXPR_PHRASE
-      APPLICATION_EXPR
-        L_PAREN "("
-        INFIX_MATCH_EXPR
-          MATCH_KW "match"
-          WHITESPACE " "
-          EXPR_PHRASE
-            IDENT_EXPR
-              NAME_REF
-                IDENT "foo"
-          WHITESPACE " "
-          L_CURLY "{"
-          WHITESPACE " "
-          MATCH_ARM
-            IDENT_PAT
-              UNDERSCORE "_"
-            WHITESPACE " "
-            FAT_ARROW "=>"
-            WHITESPACE " "
-            LAMBDA_EXPR
-              LAMBDA_KW "lambda"
-              WHITESPACE " "
-              L_PAREN "("
-              WILDCARD
-                UNDERSCORE "_"
-              R_PAREN ")"
-              WHITESPACE " "
-              IDENT_EXPR
-                NAME_REF
-                  IDENT "1"
-          R_CURLY "}"
+  APPLICATION_EXPR
+    L_PAREN "("
+    INFIX_MATCH_EXPR
+      MATCH_KW "match"
+      WHITESPACE " "
+      IDENT_EXPR
+        NAME_REF
+          IDENT "foo"
+      WHITESPACE " "
+      L_CURLY "{"
+      WHITESPACE " "
+      MATCH_ARM
+        IDENT_PAT
+          UNDERSCORE "_"
         WHITESPACE " "
-        EXPR_PHRASE
+        FAT_ARROW "=>"
+        WHITESPACE " "
+        LAMBDA_EXPR
+          LAMBDA_KW "lambda"
+          WHITESPACE " "
+          L_PAREN "("
+          WILDCARD
+            UNDERSCORE "_"
+          R_PAREN ")"
+          WHITESPACE " "
           IDENT_EXPR
             NAME_REF
-              IDENT "0"
-        R_PAREN ")"
+              IDENT "1"
+      R_CURLY "}"
+    WHITESPACE " "
+    IDENT_EXPR
+      NAME_REF
+        IDENT "0"
+    R_PAREN ")"
 

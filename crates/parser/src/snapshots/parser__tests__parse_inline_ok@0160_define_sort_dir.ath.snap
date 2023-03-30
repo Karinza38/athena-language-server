@@ -11,9 +11,8 @@ DEFINE_SORT_DIR
   WHITESPACE " "
   COLON_EQ ":="
   WHITESPACE " "
-  EXPR_PHRASE
-    IDENT_EXPR
-      NAME_REF
-        IDENT "Int"
+  IDENT_EXPR
+    NAME_REF
+      IDENT "Int"
   WHITESPACE "\n"
 

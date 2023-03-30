@@ -15,19 +15,17 @@ LET_EXPR
     WHITESPACE " "
     COLON_EQ ":="
     WHITESPACE " "
-    EXPR_PHRASE
-      IDENT_EXPR
-        NAME_REF
-          IDENT "b"
+    IDENT_EXPR
+      NAME_REF
+        IDENT "b"
   LET_PART
     SEMI ";"
     WHITESPACE " "
     COLON_EQ ":="
     WHITESPACE " "
-    EXPR_PHRASE
-      IDENT_EXPR
-        NAME_REF
-          IDENT "c"
+    IDENT_EXPR
+      NAME_REF
+        IDENT "c"
   WHITESPACE " "
   R_CURLY "}"
   WHITESPACE " "

@@ -9,10 +9,9 @@ MAP_EXPR
   MAP_BINDING
     COLON_EQ ":="
     WHITESPACE " "
-    EXPR_PHRASE
-      IDENT_EXPR
-        NAME_REF
-          IDENT "1"
+    IDENT_EXPR
+      NAME_REF
+        IDENT "1"
   WHITESPACE " "
   CURLY_PIPE "}|"
   WHITESPACE "\n"
