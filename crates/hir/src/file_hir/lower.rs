@@ -148,27 +148,6 @@ macro_rules! or_continue {
     };
 }
 
-macro_rules! or_return {
-    ($exp: expr) => {
-        match $exp {
-            Some(it) => it,
-            None => return,
-        }
-    };
-    ($exp: expr, default) => {
-        match $exp {
-            Some(it) => it,
-            None => return Default::default(),
-        }
-    };
-    ($exp: expr, $ret: expr) => {
-        match $exp {
-            Some(it) => it,
-            None => return $ret,
-        }
-    };
-}
-
 struct HirBuilder<N> {
     file_id: FileId,
     ast: N,
