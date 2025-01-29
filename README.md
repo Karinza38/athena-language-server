@@ -1,4 +1,4 @@
-# Athena Language Server
+ # Athena Language Server
 
 A language server implementation for the Athena proof language.
 
